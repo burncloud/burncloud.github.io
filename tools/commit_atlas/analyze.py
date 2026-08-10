@@ -72,7 +72,7 @@ def changed_symbols(repo:Path,files,base,target):
     return sorted(ans)
 
 def signals(text,regex,limit=12): return list(dict.fromkeys(compact(x,120) for x in text.splitlines() if regex.search(x)))[:limit]
-def routes(text): return list(dict.fromkeys(m.group(1) for m in ROUTE.finditer(text)))[:20]
+def routes(text): return list(dict.fromkeys(compact(m.group(1),120) for m in ROUTE.finditer(text)))[:20]
 def semantic_events(text,kind):
     out=[]
     for line in text.splitlines():
