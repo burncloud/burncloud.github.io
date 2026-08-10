@@ -11,7 +11,7 @@ entry_points:
 
 # View System Monitor
 
-← [Console 管理](/#/console/)
+← [Console 管理](/console/)
 
 ## ICFG
 

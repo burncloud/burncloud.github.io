@@ -11,7 +11,7 @@ entry_points:
 
 # List / Get / Status / Delete / IP Whitelist
 
-← [API Token Management](/#/console/token-management/)
+← [API Token Management](/console/token-management/)
 
 ## ICFG
 

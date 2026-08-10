@@ -11,7 +11,7 @@ entry_points:
 
 # Router Metrics
 
-← [Internal Operator Actions](/#/operator/)
+← [Internal Operator Actions](/operator/)
 
 ## What happens here?
 

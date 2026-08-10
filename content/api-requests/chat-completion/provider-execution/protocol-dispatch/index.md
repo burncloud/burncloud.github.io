@@ -14,7 +14,7 @@ drill_down:
 
 # Chat Protocol Dispatch
 
-← [Provider Execution](/#/api-requests/chat-completion/provider-execution/) · ← [Chat Completion](/#/api-requests/chat-completion/)
+← [Provider Execution](/api-requests/chat-completion/provider-execution/) · ← [Chat Completion](/api-requests/chat-completion/)
 
 ## What happens here?
 
@@ -46,8 +46,8 @@ flowchart TD
     D -->|Convert| DA --> CV
     click FILTER "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L2160" "Open Chat path filter" _blank
     click SP "https://github.com/burncloud/burncloud/blob/main/crates/router/src/passthrough.rs#L47" "Open passthrough decision" _blank
-    click PT "/#/api-requests/chat-completion/provider-execution/passthrough/" "Passthrough drill-down" _self
-    click CV "/#/api-requests/chat-completion/provider-execution/conversion/" "Conversion drill-down" _self
+    click PT "/api-requests/chat-completion/provider-execution/passthrough/" "Passthrough drill-down" _self
+    click CV "/api-requests/chat-completion/provider-execution/conversion/" "Conversion drill-down" _self
     click DA "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L3067" "Open dynamic adaptor lookup" _blank
 ```
 
@@ -59,8 +59,8 @@ flowchart TD
 
 ## Continue Drilling Down
 
-- → [Passthrough Path](/#/api-requests/chat-completion/provider-execution/passthrough/)
-- → [Conversion Path](/#/api-requests/chat-completion/provider-execution/conversion/)
+- → [Passthrough Path](/api-requests/chat-completion/provider-execution/passthrough/)
+- → [Conversion Path](/api-requests/chat-completion/provider-execution/conversion/)
 
 ## Source Evidence
 

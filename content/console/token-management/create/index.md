@@ -11,7 +11,7 @@ entry_points:
 
 # Create API Token
 
-← [API Token Management](/#/console/token-management/)
+← [API Token Management](/console/token-management/)
 
 ## ICFG
 

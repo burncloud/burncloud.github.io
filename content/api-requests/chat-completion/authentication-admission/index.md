@@ -13,7 +13,7 @@ drill_down:
 
 # Authentication & Admission
 
-← [Chat Completion](/#/api-requests/chat-completion/)
+← [Chat Completion](/api-requests/chat-completion/)
 
 ## What happens here?
 
@@ -81,7 +81,7 @@ flowchart TD
 
 ## Continue Drilling Down
 
-→ [Model / Request Resolution](/#/api-requests/chat-completion/model-resolution/)
+→ [Model / Request Resolution](/api-requests/chat-completion/model-resolution/)
 
 ## Source Evidence
 

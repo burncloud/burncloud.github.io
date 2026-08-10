@@ -11,7 +11,7 @@ entry_points:
 
 # Video Task Polling
 
-← [API 请求](/#/api-requests/)
+← [API 请求](/api-requests/)
 
 ## What happens here?
 

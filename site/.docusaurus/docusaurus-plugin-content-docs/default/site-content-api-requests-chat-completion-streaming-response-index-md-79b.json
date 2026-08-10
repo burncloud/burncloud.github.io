@@ -1,0 +1,39 @@
+{
+  "id": "api-requests/chat-completion/streaming-response/index",
+  "title": "Streaming Response",
+  "description": "← Chat Completion · ← Provider Execution",
+  "source": "@site/../content/api-requests/chat-completion/streaming-response/index.md",
+  "sourceDirName": "api-requests/chat-completion/streaming-response",
+  "slug": "/api-requests/chat-completion/streaming-response/",
+  "permalink": "/api-requests/chat-completion/streaming-response/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/api-requests/chat-completion/streaming-response/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "Streaming Response",
+    "slug": "/api-requests/chat-completion/streaming-response/",
+    "type": "runtime-flow",
+    "flow_id": "user.api.chat.streaming",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.api.chat",
+    "entry_points": [
+      "successful upstream streaming response"
+    ],
+    "drill_down": [
+      "user.api.chat.billing"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "Failure & Retry",
+    "permalink": "/api-requests/chat-completion/provider-execution/failure-retry/"
+  },
+  "next": {
+    "title": "Billing & Logging",
+    "permalink": "/api-requests/chat-completion/billing-settlement/"
+  }
+}

@@ -12,7 +12,7 @@ entry_points:
 
 # Health Checks
 
-← [Internal Operator Actions](/#/operator/)
+← [Internal Operator Actions](/operator/)
 
 ## What happens here?
 

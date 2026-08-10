@@ -1,0 +1,40 @@
+{
+  "id": "api-requests/chat-completion/provider-execution/passthrough/index",
+  "title": "OpenAI Chat Passthrough",
+  "description": "← Provider Execution · ← Chat Completion",
+  "source": "@site/../content/api-requests/chat-completion/provider-execution/passthrough/index.md",
+  "sourceDirName": "api-requests/chat-completion/provider-execution/passthrough",
+  "slug": "/api-requests/chat-completion/provider-execution/passthrough/",
+  "permalink": "/api-requests/chat-completion/provider-execution/passthrough/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/api-requests/chat-completion/provider-execution/passthrough/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "OpenAI Chat Passthrough",
+    "slug": "/api-requests/chat-completion/provider-execution/passthrough/",
+    "type": "runtime-flow",
+    "flow_id": "user.api.chat.provider.passthrough",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.api.chat.provider",
+    "entry_points": [
+      "OpenAI candidate + PassthroughDecision::Passthrough"
+    ],
+    "drill_down": [
+      "user.api.chat.streaming",
+      "user.api.chat.provider.failure"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "Chat Protocol Dispatch",
+    "permalink": "/api-requests/chat-completion/provider-execution/protocol-dispatch/"
+  },
+  "next": {
+    "title": "Converted Provider Path",
+    "permalink": "/api-requests/chat-completion/provider-execution/conversion/"
+  }
+}

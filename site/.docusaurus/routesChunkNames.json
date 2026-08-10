@@ -1,0 +1,227 @@
+{
+  "/-687": {
+    "__comp": "5e95c892",
+    "__context": {
+      "plugin": "aba21aa0"
+    }
+  },
+  "/-31b": {
+    "__comp": "a7bd4aaa",
+    "__props": "22dd74f7"
+  },
+  "/-985": {
+    "__comp": "a94703ab"
+  },
+  "/account/-901": {
+    "__comp": "17896441",
+    "content": "65352581"
+  },
+  "/account/forgot-password/-56b": {
+    "__comp": "17896441",
+    "content": "fea8ef8a"
+  },
+  "/account/login/-353": {
+    "__comp": "17896441",
+    "content": "99a60d0b"
+  },
+  "/account/oauth/-dd4": {
+    "__comp": "17896441",
+    "content": "9c693a6e"
+  },
+  "/account/register/-7c2": {
+    "__comp": "17896441",
+    "content": "11589de7"
+  },
+  "/account/reset-password/-676": {
+    "__comp": "17896441",
+    "content": "634c3289"
+  },
+  "/api-requests/-7d3": {
+    "__comp": "17896441",
+    "content": "cb2f4aea"
+  },
+  "/api-requests/chat-completion/-709": {
+    "__comp": "17896441",
+    "content": "cd913cce"
+  },
+  "/api-requests/chat-completion/authentication-admission/-49f": {
+    "__comp": "17896441",
+    "content": "bc31689c"
+  },
+  "/api-requests/chat-completion/billing-settlement/-e30": {
+    "__comp": "17896441",
+    "content": "8eb96e9b"
+  },
+  "/api-requests/chat-completion/channel-selection/-adc": {
+    "__comp": "17896441",
+    "content": "18098700"
+  },
+  "/api-requests/chat-completion/channel-selection/affinity-ranking/-b4d": {
+    "__comp": "17896441",
+    "content": "10b73c84"
+  },
+  "/api-requests/chat-completion/channel-selection/availability-order-filter/-dc1": {
+    "__comp": "17896441",
+    "content": "55fa51b9"
+  },
+  "/api-requests/chat-completion/channel-selection/candidate-loading/-8c5": {
+    "__comp": "17896441",
+    "content": "2be36f9d"
+  },
+  "/api-requests/chat-completion/model-resolution/-87b": {
+    "__comp": "17896441",
+    "content": "3826a841"
+  },
+  "/api-requests/chat-completion/provider-execution/-404": {
+    "__comp": "17896441",
+    "content": "f74f69f6"
+  },
+  "/api-requests/chat-completion/provider-execution/candidate-attempt-loop/-b1f": {
+    "__comp": "17896441",
+    "content": "2e23bbd5"
+  },
+  "/api-requests/chat-completion/provider-execution/conversion/-c7d": {
+    "__comp": "17896441",
+    "content": "2a61714b"
+  },
+  "/api-requests/chat-completion/provider-execution/failure-retry/-374": {
+    "__comp": "17896441",
+    "content": "24113d71"
+  },
+  "/api-requests/chat-completion/provider-execution/passthrough/-f13": {
+    "__comp": "17896441",
+    "content": "db5a0d7c"
+  },
+  "/api-requests/chat-completion/provider-execution/protocol-dispatch/-1b2": {
+    "__comp": "17896441",
+    "content": "d03567ab"
+  },
+  "/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/-ea7": {
+    "__comp": "17896441",
+    "content": "020cc3f5"
+  },
+  "/api-requests/chat-completion/request-entry/-7eb": {
+    "__comp": "17896441",
+    "content": "78e32bda"
+  },
+  "/api-requests/chat-completion/streaming-response/-823": {
+    "__comp": "17896441",
+    "content": "79b978a8"
+  },
+  "/api-requests/models/-62f": {
+    "__comp": "17896441",
+    "content": "e4146e3f"
+  },
+  "/api-requests/usage/-6d5": {
+    "__comp": "17896441",
+    "content": "464e2869"
+  },
+  "/api-requests/video-task-polling/-f63": {
+    "__comp": "17896441",
+    "content": "bd0027ca"
+  },
+  "/console/-d49": {
+    "__comp": "17896441",
+    "content": "351a50ea"
+  },
+  "/console/authentication/-d30": {
+    "__comp": "17896441",
+    "content": "ea6d8c2e"
+  },
+  "/console/billing-summary/-e0b": {
+    "__comp": "17896441",
+    "content": "52bc80a1"
+  },
+  "/console/cache/-3db": {
+    "__comp": "17896441",
+    "content": "01fab6d1"
+  },
+  "/console/channel-management/-351": {
+    "__comp": "17896441",
+    "content": "8f76f8b0"
+  },
+  "/console/channel-management/create/-59f": {
+    "__comp": "17896441",
+    "content": "86561b02"
+  },
+  "/console/channel-management/get-delete/-a7b": {
+    "__comp": "17896441",
+    "content": "a7f3593c"
+  },
+  "/console/channel-management/list/-168": {
+    "__comp": "17896441",
+    "content": "0fd9436d"
+  },
+  "/console/channel-management/update/-862": {
+    "__comp": "17896441",
+    "content": "e884ce76"
+  },
+  "/console/logs-usage/-c9a": {
+    "__comp": "17896441",
+    "content": "c0a9b426"
+  },
+  "/console/monitor/-de1": {
+    "__comp": "17896441",
+    "content": "be663dbb"
+  },
+  "/console/security/-6c6": {
+    "__comp": "17896441",
+    "content": "81557a82"
+  },
+  "/console/token-management/-e07": {
+    "__comp": "17896441",
+    "content": "99c08d04"
+  },
+  "/console/token-management/create/-f6a": {
+    "__comp": "17896441",
+    "content": "067694de"
+  },
+  "/console/token-management/manage/-fd0": {
+    "__comp": "17896441",
+    "content": "157a62d7"
+  },
+  "/console/token-management/rotate/-814": {
+    "__comp": "17896441",
+    "content": "4bc5b56c"
+  },
+  "/console/user-management/-ccf": {
+    "__comp": "17896441",
+    "content": "0e6d90a2"
+  },
+  "/console/user-management/list-users/-26f": {
+    "__comp": "17896441",
+    "content": "1fc337e7"
+  },
+  "/console/user-management/recharges/-36f": {
+    "__comp": "17896441",
+    "content": "a37ff0f3"
+  },
+  "/console/user-management/topup/-c1d": {
+    "__comp": "17896441",
+    "content": "540866f2"
+  },
+  "/operator/-501": {
+    "__comp": "17896441",
+    "content": "93204e8e"
+  },
+  "/operator/circuit-breaker-trip-all/-71e": {
+    "__comp": "17896441",
+    "content": "37fd2cc6"
+  },
+  "/operator/health/-db1": {
+    "__comp": "17896441",
+    "content": "567de62c"
+  },
+  "/operator/metrics/-c61": {
+    "__comp": "17896441",
+    "content": "3ed916c8"
+  },
+  "/operator/price-sync/-798": {
+    "__comp": "17896441",
+    "content": "40c9a5ff"
+  },
+  "/-9bc": {
+    "__comp": "17896441",
+    "content": "3ac01d2c"
+  }
+}

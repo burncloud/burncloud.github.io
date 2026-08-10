@@ -13,7 +13,7 @@ drill_down:
 
 # Chat Model Resolution
 
-← [Chat Completion](/#/api-requests/chat-completion/)
+← [Chat Completion](/api-requests/chat-completion/)
 
 ## What happens here?
 
@@ -53,7 +53,7 @@ flowchart TD
     click BODY "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L1521" "Open body collection" _blank
     click CALL "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L1715" "Open proxy_logic call" _blank
     click ROUTE "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L2030" "Open model routing phase" _blank
-    click NEXT "/#/api-requests/chat-completion/channel-selection/" "Channel Selection" _self
+    click NEXT "/api-requests/chat-completion/channel-selection/" "Channel Selection" _self
 ```
 
 ## Decisions
@@ -68,7 +68,7 @@ flowchart TD
 
 ## Continue Drilling Down
 
-→ [Channel Selection](/#/api-requests/chat-completion/channel-selection/)
+→ [Channel Selection](/api-requests/chat-completion/channel-selection/)
 
 ## Source Evidence
 

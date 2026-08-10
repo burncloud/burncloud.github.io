@@ -15,7 +15,7 @@ drill_down:
 
 # Converted Provider Path
 
-← [Provider Execution](/#/api-requests/chat-completion/provider-execution/)
+← [Provider Execution](/api-requests/chat-completion/provider-execution/)
 
 ## What happens here?
 
@@ -49,7 +49,7 @@ flowchart TD
     click AD "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L3067" "Open adaptor lookup" _blank
     click CONV "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L3086" "Open request conversion" _blank
     click BUILD "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L3143" "Open request build" _blank
-    click FAIL "/#/api-requests/chat-completion/provider-execution/failure-retry/" "Failure drill-down" _self
+    click FAIL "/api-requests/chat-completion/provider-execution/failure-retry/" "Failure drill-down" _self
 ```
 
 ## Dynamic / Unable to statically resolve
@@ -58,8 +58,8 @@ flowchart TD
 
 ## Continue Drilling Down
 
-- → [Streaming Response](/#/api-requests/chat-completion/streaming-response/)
-- → [Failure + Retry](/#/api-requests/chat-completion/provider-execution/failure-retry/)
+- → [Streaming Response](/api-requests/chat-completion/streaming-response/)
+- → [Failure + Retry](/api-requests/chat-completion/provider-execution/failure-retry/)
 
 ## Source Evidence
 

@@ -13,7 +13,7 @@ drill_down:
 
 # Shaper & Circuit Breaker
 
-← [Provider Execution](/#/api-requests/chat-completion/provider-execution/)
+← [Provider Execution](/api-requests/chat-completion/provider-execution/)
 
 ## What happens here?
 
@@ -45,7 +45,7 @@ flowchart TD
     CBO -->|Yes| HTTP
     click TRY "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L2396" "Open shaper branch" _blank
     click CB "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L2428" "Open circuit breaker branch" _blank
-    click HTTP "/#/api-requests/chat-completion/provider-execution/protocol-dispatch/" "Continue to dispatch" _self
+    click HTTP "/api-requests/chat-completion/provider-execution/protocol-dispatch/" "Continue to dispatch" _self
 ```
 
 ## State / Side Effects
@@ -56,7 +56,7 @@ flowchart TD
 
 ## Continue Drilling Down
 
-→ [Protocol Dispatch](/#/api-requests/chat-completion/provider-execution/protocol-dispatch/)
+→ [Protocol Dispatch](/api-requests/chat-completion/provider-execution/protocol-dispatch/)
 
 ## Source Evidence
 

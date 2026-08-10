@@ -1,0 +1,37 @@
+{
+  "id": "operator/health/index",
+  "title": "Health Checks",
+  "description": "← Internal Operator Actions",
+  "source": "@site/../content/operator/health/index.md",
+  "sourceDirName": "operator/health",
+  "slug": "/operator/health/",
+  "permalink": "/operator/health/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/operator/health/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "Health Checks",
+    "slug": "/operator/health/",
+    "type": "runtime-flow",
+    "flow_id": "user.operator.health",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.operator",
+    "entry_points": [
+      "GET /health",
+      "GET /console/internal/health"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "Internal Operator Actions",
+    "permalink": "/operator/"
+  },
+  "next": {
+    "title": "Force Price Sync",
+    "permalink": "/operator/price-sync/"
+  }
+}

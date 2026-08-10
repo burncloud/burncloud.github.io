@@ -14,7 +14,7 @@ drill_down:
 
 # OpenAI Chat Passthrough
 
-← [Provider Execution](/#/api-requests/chat-completion/provider-execution/) · ← [Chat Completion](/#/api-requests/chat-completion/)
+← [Provider Execution](/api-requests/chat-completion/provider-execution/) · ← [Chat Completion](/api-requests/chat-completion/)
 
 ## What happens here?
 
@@ -57,9 +57,9 @@ flowchart TD
     STREAM -->|No| NS
     click SP "https://github.com/burncloud/burncloud/blob/main/crates/router/src/passthrough.rs#L63" "Open OpenAI passthrough decision" _blank
     click SEND "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L2482" "Open passthrough execution region" _blank
-    click S "/#/api-requests/chat-completion/streaming-response/" "Streaming drill-down" _self
-    click NF "/#/api-requests/chat-completion/provider-execution/failure-retry/" "Failure drill-down" _self
-    click FAIL "/#/api-requests/chat-completion/provider-execution/failure-retry/" "Failure drill-down" _self
+    click S "/api-requests/chat-completion/streaming-response/" "Streaming drill-down" _self
+    click NF "/api-requests/chat-completion/provider-execution/failure-retry/" "Failure drill-down" _self
+    click FAIL "/api-requests/chat-completion/provider-execution/failure-retry/" "Failure drill-down" _self
 ```
 
 ## Decisions
@@ -75,8 +75,8 @@ flowchart TD
 
 ## Continue Drilling Down
 
-- → [Streaming Response](/#/api-requests/chat-completion/streaming-response/)
-- → [Failure + Retry](/#/api-requests/chat-completion/provider-execution/failure-retry/)
+- → [Streaming Response](/api-requests/chat-completion/streaming-response/)
+- → [Failure + Retry](/api-requests/chat-completion/provider-execution/failure-retry/)
 
 ## Source Evidence
 

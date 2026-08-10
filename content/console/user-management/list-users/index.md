@@ -11,7 +11,7 @@ entry_points:
 
 # List Users
 
-← [User & Balance Management](/#/console/user-management/)
+← [User & Balance Management](/console/user-management/)
 
 ## ICFG
 

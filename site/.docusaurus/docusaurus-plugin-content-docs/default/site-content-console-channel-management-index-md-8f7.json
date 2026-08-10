@@ -1,0 +1,42 @@
+{
+  "id": "console/channel-management/index",
+  "title": "Channel Management",
+  "description": "← Console 管理",
+  "source": "@site/../content/console/channel-management/index.md",
+  "sourceDirName": "console/channel-management",
+  "slug": "/console/channel-management/",
+  "permalink": "/console/channel-management/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/console/channel-management/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "Channel Management",
+    "slug": "/console/channel-management/",
+    "type": "runtime-flow",
+    "flow_id": "user.console.channel",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.console",
+    "entry_points": [
+      "/console/api/channel"
+    ],
+    "drill_down": [
+      "user.console.channel.list",
+      "user.console.channel.create",
+      "user.console.channel.update",
+      "user.console.channel.getdelete"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "Protected Console Authentication",
+    "permalink": "/console/authentication/"
+  },
+  "next": {
+    "title": "List Channels",
+    "permalink": "/console/channel-management/list/"
+  }
+}

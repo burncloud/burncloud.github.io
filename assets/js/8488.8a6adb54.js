@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkburncloud_runtime_flow_icfg_atlas=self.webpackChunkburncloud_runtime_flow_icfg_atlas||[]).push([[8488],{8488(e,c,u){u.d(c,{createArchitectureServices:()=>r.S});var r=u(9221);u(1400)}}]);

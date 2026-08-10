@@ -18,7 +18,7 @@ drill_down:
 
 # Provider Execution — Overview
 
-← [Chat Completion](/#/api-requests/chat-completion/) · ← [Channel Selection](/#/api-requests/chat-completion/channel-selection/)
+← [Chat Completion](/api-requests/chat-completion/) · ← [Channel Selection](/api-requests/chat-completion/channel-selection/)
 
 ## What happens here?
 
@@ -59,11 +59,11 @@ flowchart TD
     RES -->|Failure| FAIL --> RETRY
     RETRY -->|Yes| NEXT
     RETRY -->|No| RET
-    click SH "/#/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/" "Drill into guards" _self
-    click D "/#/api-requests/chat-completion/provider-execution/protocol-dispatch/" "Drill into dispatch" _self
-    click P "/#/api-requests/chat-completion/provider-execution/passthrough/" "Passthrough path" _self
-    click CV "/#/api-requests/chat-completion/provider-execution/conversion/" "Conversion path" _self
-    click FAIL "/#/api-requests/chat-completion/provider-execution/failure-retry/" "Failure / retry" _self
+    click SH "/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/" "Drill into guards" _self
+    click D "/api-requests/chat-completion/provider-execution/protocol-dispatch/" "Drill into dispatch" _self
+    click P "/api-requests/chat-completion/provider-execution/passthrough/" "Passthrough path" _self
+    click CV "/api-requests/chat-completion/provider-execution/conversion/" "Conversion path" _self
+    click FAIL "/api-requests/chat-completion/provider-execution/failure-retry/" "Failure / retry" _self
 ```
 
 ## Dynamic Boundary
@@ -72,12 +72,12 @@ flowchart TD
 
 ## Continue Drilling Down
 
-- → [Candidate Attempt Loop](/#/api-requests/chat-completion/provider-execution/candidate-attempt-loop/)
-- → [Shaper + Circuit Breaker](/#/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/)
-- → [Protocol Dispatch](/#/api-requests/chat-completion/provider-execution/protocol-dispatch/)
-- → [Passthrough Path](/#/api-requests/chat-completion/provider-execution/passthrough/)
-- → [Conversion Path](/#/api-requests/chat-completion/provider-execution/conversion/)
-- → [Failure + Retry](/#/api-requests/chat-completion/provider-execution/failure-retry/)
+- → [Candidate Attempt Loop](/api-requests/chat-completion/provider-execution/candidate-attempt-loop/)
+- → [Shaper + Circuit Breaker](/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/)
+- → [Protocol Dispatch](/api-requests/chat-completion/provider-execution/protocol-dispatch/)
+- → [Passthrough Path](/api-requests/chat-completion/provider-execution/passthrough/)
+- → [Conversion Path](/api-requests/chat-completion/provider-execution/conversion/)
+- → [Failure + Retry](/api-requests/chat-completion/provider-execution/failure-retry/)
 
 ## Source Evidence
 

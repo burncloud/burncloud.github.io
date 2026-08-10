@@ -20,7 +20,7 @@ drill_down:
 
 # Chat Completion — End-to-End
 
-← [API 请求](/#/api-requests/)
+← [API 请求](/api-requests/)
 
 ## What happens here?
 
@@ -56,13 +56,13 @@ flowchart TD
     D -->|OpenAI native| PT --> SR
     D -->|Convert| CV --> SR
     SR --> BILL --> OUT
-    click E "/#/api-requests/chat-completion/request-entry/" "Request Entry" _self
-    click A "/#/api-requests/chat-completion/authentication-admission/" "Authentication & Admission" _self
-    click B "/#/api-requests/chat-completion/model-resolution/" "Model Resolution" _self
-    click C "/#/api-requests/chat-completion/channel-selection/" "Channel Selection" _self
-    click X "/#/api-requests/chat-completion/provider-execution/" "Provider Execution" _self
-    click SR "/#/api-requests/chat-completion/streaming-response/" "Streaming Response" _self
-    click BILL "/#/api-requests/chat-completion/billing-settlement/" "Billing" _self
+    click E "/api-requests/chat-completion/request-entry/" "Request Entry" _self
+    click A "/api-requests/chat-completion/authentication-admission/" "Authentication & Admission" _self
+    click B "/api-requests/chat-completion/model-resolution/" "Model Resolution" _self
+    click C "/api-requests/chat-completion/channel-selection/" "Channel Selection" _self
+    click X "/api-requests/chat-completion/provider-execution/" "Provider Execution" _self
+    click SR "/api-requests/chat-completion/streaming-response/" "Streaming Response" _self
+    click BILL "/api-requests/chat-completion/billing-settlement/" "Billing" _self
 ```
 
 ## Decisions
@@ -74,13 +74,13 @@ flowchart TD
 
 ## Continue Drilling Down
 
-- → [请求进入系统](/#/api-requests/chat-completion/request-entry/)
-- → [身份认证与准入](/#/api-requests/chat-completion/authentication-admission/)
-- → [Model Resolution](/#/api-requests/chat-completion/model-resolution/)
-- → [Channel Selection](/#/api-requests/chat-completion/channel-selection/)
-- → [Provider Execution](/#/api-requests/chat-completion/provider-execution/)
-- → [Streaming Response](/#/api-requests/chat-completion/streaming-response/)
-- → [Billing & Logging](/#/api-requests/chat-completion/billing-settlement/)
+- → [请求进入系统](/api-requests/chat-completion/request-entry/)
+- → [身份认证与准入](/api-requests/chat-completion/authentication-admission/)
+- → [Model Resolution](/api-requests/chat-completion/model-resolution/)
+- → [Channel Selection](/api-requests/chat-completion/channel-selection/)
+- → [Provider Execution](/api-requests/chat-completion/provider-execution/)
+- → [Streaming Response](/api-requests/chat-completion/streaming-response/)
+- → [Billing & Logging](/api-requests/chat-completion/billing-settlement/)
 
 ## Source Evidence
 

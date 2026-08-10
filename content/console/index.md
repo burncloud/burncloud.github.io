@@ -38,15 +38,15 @@ flowchart TD
     A --> M["Monitor"]
     A --> CA["Cache"]
     A --> S["Security"]
-    click A "/#/console/authentication/" "Protected auth" _self
-    click CH "/#/console/channel-management/" "Channel management" _self
-    click TK "/#/console/token-management/" "Token management" _self
-    click U "/#/console/user-management/" "User management" _self
-    click L "/#/console/logs-usage/" "Logs / usage" _self
-    click B "/#/console/billing-summary/" "Billing summary" _self
-    click M "/#/console/monitor/" "Monitor" _self
-    click CA "/#/console/cache/" "Cache" _self
-    click S "/#/console/security/" "Security" _self
+    click A "/console/authentication/" "Protected auth" _self
+    click CH "/console/channel-management/" "Channel management" _self
+    click TK "/console/token-management/" "Token management" _self
+    click U "/console/user-management/" "User management" _self
+    click L "/console/logs-usage/" "Logs / usage" _self
+    click B "/console/billing-summary/" "Billing summary" _self
+    click M "/console/monitor/" "Monitor" _self
+    click CA "/console/cache/" "Cache" _self
+    click S "/console/security/" "Security" _self
 ```
 
 ## Source Evidence

@@ -1,0 +1,39 @@
+{
+  "id": "api-requests/chat-completion/provider-execution/candidate-attempt-loop/index",
+  "title": "Candidate Attempt Loop",
+  "description": "← Provider Execution",
+  "source": "@site/../content/api-requests/chat-completion/provider-execution/candidate-attempt-loop/index.md",
+  "sourceDirName": "api-requests/chat-completion/provider-execution/candidate-attempt-loop",
+  "slug": "/api-requests/chat-completion/provider-execution/candidate-attempt-loop/",
+  "permalink": "/api-requests/chat-completion/provider-execution/candidate-attempt-loop/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/api-requests/chat-completion/provider-execution/candidate-attempt-loop/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "Candidate Attempt Loop",
+    "slug": "/api-requests/chat-completion/provider-execution/candidate-attempt-loop/",
+    "type": "runtime-flow",
+    "flow_id": "user.api.chat.provider.loop",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.api.chat.provider",
+    "entry_points": [
+      "proxy_logic for candidates"
+    ],
+    "drill_down": [
+      "user.api.chat.provider.guard"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "Provider Execution — Overview",
+    "permalink": "/api-requests/chat-completion/provider-execution/"
+  },
+  "next": {
+    "title": "Shaper & Circuit Breaker",
+    "permalink": "/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/"
+  }
+}

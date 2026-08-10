@@ -11,7 +11,7 @@ entry_points:
 
 # Trip All Circuit Breakers
 
-← [Internal Operator Actions](/#/operator/)
+← [Internal Operator Actions](/operator/)
 
 ## What happens here?
 

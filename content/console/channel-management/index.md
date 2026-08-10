@@ -16,7 +16,7 @@ drill_down:
 
 # Channel Management
 
-← [Console 管理](/#/console/)
+← [Console 管理](/console/)
 
 ## What happens here?
 
@@ -43,10 +43,10 @@ flowchart TD
     D -->|POST| CREATE
     D -->|PUT| UPDATE
     D -->|GET/DELETE id| GETDEL
-    click LIST "/#/console/channel-management/list/" "List" _self
-    click CREATE "/#/console/channel-management/create/" "Create" _self
-    click UPDATE "/#/console/channel-management/update/" "Update" _self
-    click GETDEL "/#/console/channel-management/get-delete/" "Get / Delete" _self
+    click LIST "/console/channel-management/list/" "List" _self
+    click CREATE "/console/channel-management/create/" "Create" _self
+    click UPDATE "/console/channel-management/update/" "Update" _self
+    click GETDEL "/console/channel-management/get-delete/" "Get / Delete" _self
 ```
 
 ## Source Evidence

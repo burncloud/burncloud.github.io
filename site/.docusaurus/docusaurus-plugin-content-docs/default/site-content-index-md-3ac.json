@@ -1,0 +1,28 @@
+{
+  "id": "index",
+  "title": "BurnCloud Runtime Flow & ICFG Atlas",
+  "description": "本 Atlas 只从用户行为开始。左侧菜单不是 crate / module / file tree，而是用户可以触发的执行流程。",
+  "source": "@site/../content/index.md",
+  "sourceDirName": ".",
+  "slug": "/",
+  "permalink": "/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "BurnCloud Runtime Flow & ICFG Atlas",
+    "slug": "/",
+    "type": "runtime-flow",
+    "flow_id": "user.burncloud",
+    "truth": "STATIC_CONFIRMED"
+  },
+  "sidebar": "runtimeSidebar",
+  "next": {
+    "title": "API 请求",
+    "permalink": "/api-requests/"
+  }
+}

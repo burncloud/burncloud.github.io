@@ -11,7 +11,7 @@ entry_points:
 
 # Create Channel
 
-← [Channel Management](/#/console/channel-management/)
+← [Channel Management](/console/channel-management/)
 
 ## What happens here?
 

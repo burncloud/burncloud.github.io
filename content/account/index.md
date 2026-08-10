@@ -32,11 +32,11 @@ flowchart TD
     U --> F
     U --> P
     U --> O
-    click R "/#/account/register/" "Register" _self
-    click L "/#/account/login/" "Login" _self
-    click F "/#/account/forgot-password/" "Forgot password" _self
-    click P "/#/account/reset-password/" "Reset password" _self
-    click O "/#/account/oauth/" "OAuth URL" _self
+    click R "/account/register/" "Register" _self
+    click L "/account/login/" "Login" _self
+    click F "/account/forgot-password/" "Forgot password" _self
+    click P "/account/reset-password/" "Reset password" _self
+    click O "/account/oauth/" "OAuth URL" _self
 ```
 
 这些 routes 在 `auth::public_routes()` 中注册，不经过 `/console/api/*` 的 JWT middleware。

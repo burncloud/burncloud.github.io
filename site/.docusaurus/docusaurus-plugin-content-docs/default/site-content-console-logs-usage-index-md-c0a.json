@@ -1,0 +1,37 @@
+{
+  "id": "console/logs-usage/index",
+  "title": "View Logs & User Usage",
+  "description": "← Console 管理",
+  "source": "@site/../content/console/logs-usage/index.md",
+  "sourceDirName": "console/logs-usage",
+  "slug": "/console/logs-usage/",
+  "permalink": "/console/logs-usage/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/console/logs-usage/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "View Logs & User Usage",
+    "slug": "/console/logs-usage/",
+    "type": "runtime-flow",
+    "flow_id": "user.console.logs",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.console",
+    "entry_points": [
+      "GET /console/api/logs",
+      "GET /console/api/usage/{user_id}"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "Recharge History",
+    "permalink": "/console/user-management/recharges/"
+  },
+  "next": {
+    "title": "View Billing Summary",
+    "permalink": "/console/billing-summary/"
+  }
+}

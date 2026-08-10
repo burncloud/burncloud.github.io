@@ -13,7 +13,7 @@ drill_down:
 
 # Streaming Response
 
-← [Chat Completion](/#/api-requests/chat-completion/) · ← [Provider Execution](/#/api-requests/chat-completion/provider-execution/)
+← [Chat Completion](/api-requests/chat-completion/) · ← [Provider Execution](/api-requests/chat-completion/provider-execution/)
 
 ## What happens here?
 
@@ -45,7 +45,7 @@ flowchart TD
     CHAIN --> PARSER --> USAGE --> FWD --> DONE
     click P "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L3293" "Open stream peek" _blank
     click PARSER "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L3362" "Open stream parser" _blank
-    click FAIL "/#/api-requests/chat-completion/provider-execution/failure-retry/" "Failure / retry" _self
+    click FAIL "/api-requests/chat-completion/provider-execution/failure-retry/" "Failure / retry" _self
 ```
 
 ## Dynamic Boundary
@@ -60,7 +60,7 @@ flowchart TD
 
 ## Continue Drilling Down
 
-→ [Billing & Logging](/#/api-requests/chat-completion/billing-settlement/)
+→ [Billing & Logging](/api-requests/chat-completion/billing-settlement/)
 
 ## Source Evidence
 

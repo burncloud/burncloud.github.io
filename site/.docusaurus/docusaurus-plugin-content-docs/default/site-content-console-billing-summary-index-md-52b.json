@@ -1,0 +1,36 @@
+{
+  "id": "console/billing-summary/index",
+  "title": "View Billing Summary",
+  "description": "← Console 管理",
+  "source": "@site/../content/console/billing-summary/index.md",
+  "sourceDirName": "console/billing-summary",
+  "slug": "/console/billing-summary/",
+  "permalink": "/console/billing-summary/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/console/billing-summary/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "View Billing Summary",
+    "slug": "/console/billing-summary/",
+    "type": "runtime-flow",
+    "flow_id": "user.console.billing",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.console",
+    "entry_points": [
+      "GET /api/billing/summary"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "View Logs & User Usage",
+    "permalink": "/console/logs-usage/"
+  },
+  "next": {
+    "title": "View System Monitor",
+    "permalink": "/console/monitor/"
+  }
+}

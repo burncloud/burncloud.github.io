@@ -13,7 +13,7 @@ drill_down:
 
 # Candidate Loading
 
-← [Channel Selection](/#/api-requests/chat-completion/channel-selection/) · ← [Chat Completion](/#/api-requests/chat-completion/)
+← [Channel Selection](/api-requests/chat-completion/channel-selection/) · ← [Chat Completion](/api-requests/chat-completion/)
 
 ## What happens here?
 
@@ -48,7 +48,7 @@ flowchart TD
 
 ## Continue Drilling Down
 
-→ [Availability + OrderType Filtering](/#/api-requests/chat-completion/channel-selection/availability-order-filter/)
+→ [Availability + OrderType Filtering](/api-requests/chat-completion/channel-selection/availability-order-filter/)
 
 ## Source Evidence
 

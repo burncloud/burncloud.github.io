@@ -15,7 +15,7 @@ drill_down:
 
 # API Token Management
 
-← [Console 管理](/#/console/)
+← [Console 管理](/console/)
 
 ## User Flow
 
@@ -28,11 +28,11 @@ flowchart TD
     R --> ROT["Rotate key"]
     R --> REV["Revoke old key"]
     R --> IP["Set IP whitelist"]
-    click C "/#/console/token-management/create/" "Create" _self
-    click ROT "/#/console/token-management/rotate/" "Rotate / revoke" _self
-    click S "/#/console/token-management/manage/" "Other token mutations" _self
-    click REV "/#/console/token-management/rotate/" "Rotate / revoke" _self
-    click IP "/#/console/token-management/manage/" "Whitelist" _self
+    click C "/console/token-management/create/" "Create" _self
+    click ROT "/console/token-management/rotate/" "Rotate / revoke" _self
+    click S "/console/token-management/manage/" "Other token mutations" _self
+    click REV "/console/token-management/rotate/" "Rotate / revoke" _self
+    click IP "/console/token-management/manage/" "Whitelist" _self
 ```
 
 ## Entry Routes

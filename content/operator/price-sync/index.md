@@ -12,7 +12,7 @@ entry_points:
 
 # Force Price Sync
 
-← [Internal Operator Actions](/#/operator/)
+← [Internal Operator Actions](/operator/)
 
 ## What happens here?
 

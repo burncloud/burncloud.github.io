@@ -12,7 +12,7 @@ entry_points:
 
 # OAuth URL Generation
 
-← [账号访问](/#/account/)
+← [账号访问](/account/)
 
 ## What happens here?
 

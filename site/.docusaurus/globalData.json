@@ -1,0 +1,293 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "path": "/",
+      "versions": [
+        {
+          "name": "current",
+          "label": "Next",
+          "isLast": true,
+          "path": "/",
+          "mainDocId": "index",
+          "docs": [
+            {
+              "id": "account/forgot-password/index",
+              "path": "/account/forgot-password/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "account/index",
+              "path": "/account/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "account/login/index",
+              "path": "/account/login/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "account/oauth/index",
+              "path": "/account/oauth/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "account/register/index",
+              "path": "/account/register/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "account/reset-password/index",
+              "path": "/account/reset-password/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/authentication-admission/index",
+              "path": "/api-requests/chat-completion/authentication-admission/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/billing-settlement/index",
+              "path": "/api-requests/chat-completion/billing-settlement/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/channel-selection/affinity-ranking/index",
+              "path": "/api-requests/chat-completion/channel-selection/affinity-ranking/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/channel-selection/availability-order-filter/index",
+              "path": "/api-requests/chat-completion/channel-selection/availability-order-filter/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/channel-selection/candidate-loading/index",
+              "path": "/api-requests/chat-completion/channel-selection/candidate-loading/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/channel-selection/index",
+              "path": "/api-requests/chat-completion/channel-selection/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/index",
+              "path": "/api-requests/chat-completion/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/model-resolution/index",
+              "path": "/api-requests/chat-completion/model-resolution/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/provider-execution/candidate-attempt-loop/index",
+              "path": "/api-requests/chat-completion/provider-execution/candidate-attempt-loop/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/provider-execution/conversion/index",
+              "path": "/api-requests/chat-completion/provider-execution/conversion/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/provider-execution/failure-retry/index",
+              "path": "/api-requests/chat-completion/provider-execution/failure-retry/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/provider-execution/index",
+              "path": "/api-requests/chat-completion/provider-execution/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/provider-execution/passthrough/index",
+              "path": "/api-requests/chat-completion/provider-execution/passthrough/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/provider-execution/protocol-dispatch/index",
+              "path": "/api-requests/chat-completion/provider-execution/protocol-dispatch/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/provider-execution/shaper-circuit-breaker/index",
+              "path": "/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/request-entry/index",
+              "path": "/api-requests/chat-completion/request-entry/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/chat-completion/streaming-response/index",
+              "path": "/api-requests/chat-completion/streaming-response/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/index",
+              "path": "/api-requests/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/models/index",
+              "path": "/api-requests/models/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/usage/index",
+              "path": "/api-requests/usage/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "api-requests/video-task-polling/index",
+              "path": "/api-requests/video-task-polling/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/authentication/index",
+              "path": "/console/authentication/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/billing-summary/index",
+              "path": "/console/billing-summary/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/cache/index",
+              "path": "/console/cache/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/channel-management/create/index",
+              "path": "/console/channel-management/create/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/channel-management/get-delete/index",
+              "path": "/console/channel-management/get-delete/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/channel-management/index",
+              "path": "/console/channel-management/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/channel-management/list/index",
+              "path": "/console/channel-management/list/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/channel-management/update/index",
+              "path": "/console/channel-management/update/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/index",
+              "path": "/console/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/logs-usage/index",
+              "path": "/console/logs-usage/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/monitor/index",
+              "path": "/console/monitor/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/security/index",
+              "path": "/console/security/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/token-management/create/index",
+              "path": "/console/token-management/create/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/token-management/index",
+              "path": "/console/token-management/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/token-management/manage/index",
+              "path": "/console/token-management/manage/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/token-management/rotate/index",
+              "path": "/console/token-management/rotate/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/user-management/index",
+              "path": "/console/user-management/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/user-management/list-users/index",
+              "path": "/console/user-management/list-users/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/user-management/recharges/index",
+              "path": "/console/user-management/recharges/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "console/user-management/topup/index",
+              "path": "/console/user-management/topup/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "index",
+              "path": "/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "operator/circuit-breaker-trip-all/index",
+              "path": "/operator/circuit-breaker-trip-all/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "operator/health/index",
+              "path": "/operator/health/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "operator/index",
+              "path": "/operator/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "operator/metrics/index",
+              "path": "/operator/metrics/",
+              "sidebar": "runtimeSidebar"
+            },
+            {
+              "id": "operator/price-sync/index",
+              "path": "/operator/price-sync/",
+              "sidebar": "runtimeSidebar"
+            }
+          ],
+          "draftIds": [],
+          "sidebars": {
+            "runtimeSidebar": {
+              "link": {
+                "path": "/",
+                "label": "index"
+              }
+            }
+          }
+        }
+      ],
+      "breadcrumbs": true
+    }
+  }
+}

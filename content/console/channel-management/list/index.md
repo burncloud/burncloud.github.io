@@ -11,7 +11,7 @@ entry_points:
 
 # List Channels
 
-← [Channel Management](/#/console/channel-management/)
+← [Channel Management](/console/channel-management/)
 
 ## ICFG
 

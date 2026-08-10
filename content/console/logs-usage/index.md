@@ -12,7 +12,7 @@ entry_points:
 
 # View Logs & User Usage
 
-← [Console 管理](/#/console/)
+← [Console 管理](/console/)
 
 ## ICFG
 

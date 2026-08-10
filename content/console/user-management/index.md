@@ -15,7 +15,7 @@ drill_down:
 
 # User & Balance Management
 
-← [Console 管理](/#/console/)
+← [Console 管理](/console/)
 
 ## User Flow
 
@@ -30,9 +30,9 @@ flowchart TD
     D -->|POST topup| T
     D -->|GET recharges| R
     D -->|other user routes| C
-    click L "/#/console/user-management/list-users/" "List users" _self
-    click T "/#/console/user-management/topup/" "Top up" _self
-    click R "/#/console/user-management/recharges/" "Recharge history" _self
+    click L "/console/user-management/list-users/" "List users" _self
+    click T "/console/user-management/topup/" "Top up" _self
+    click R "/console/user-management/recharges/" "Recharge history" _self
 ```
 
 注意：这些 `user::routes()` 被 merge 到 protected router，因此即使 path 名称包含 `register/login`，在当前组合方式下也会经过 Console `auth_middleware`。

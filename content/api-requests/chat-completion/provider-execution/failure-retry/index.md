@@ -11,7 +11,7 @@ entry_points:
 
 # Failure & Retry
 
-← [Provider Execution](/#/api-requests/chat-completion/provider-execution/)
+← [Provider Execution](/api-requests/chat-completion/provider-execution/)
 
 ## What happens here?
 

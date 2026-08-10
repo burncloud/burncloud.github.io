@@ -12,7 +12,7 @@ entry_points:
 
 # Get / Delete Channel
 
-← [Channel Management](/#/console/channel-management/)
+← [Channel Management](/console/channel-management/)
 
 ## ICFG
 

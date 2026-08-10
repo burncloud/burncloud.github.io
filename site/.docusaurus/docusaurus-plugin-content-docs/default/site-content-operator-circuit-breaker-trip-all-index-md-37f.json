@@ -1,0 +1,36 @@
+{
+  "id": "operator/circuit-breaker-trip-all/index",
+  "title": "Trip All Circuit Breakers",
+  "description": "← Internal Operator Actions",
+  "source": "@site/../content/operator/circuit-breaker-trip-all/index.md",
+  "sourceDirName": "operator/circuit-breaker-trip-all",
+  "slug": "/operator/circuit-breaker-trip-all/",
+  "permalink": "/operator/circuit-breaker-trip-all/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/operator/circuit-breaker-trip-all/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "Trip All Circuit Breakers",
+    "slug": "/operator/circuit-breaker-trip-all/",
+    "type": "runtime-flow",
+    "flow_id": "user.operator.cb",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.operator",
+    "entry_points": [
+      "POST /console/internal/circuit-breaker/trip-all"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "Force Price Sync",
+    "permalink": "/operator/price-sync/"
+  },
+  "next": {
+    "title": "Router Metrics",
+    "permalink": "/operator/metrics/"
+  }
+}

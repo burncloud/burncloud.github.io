@@ -16,7 +16,7 @@ drill_down:
 
 # Channel Selection — Overview
 
-← [Chat Completion](/#/api-requests/chat-completion/)
+← [Chat Completion](/api-requests/chat-completion/)
 
 ## What happens here?
 
@@ -39,9 +39,9 @@ flowchart TD
     H["Affinity 命中则提升到 rank-0"]
     T["take(5) → 有序 failover candidates"]
     P --> POLICY --> COLOR --> ORDER --> R --> C --> A --> O --> F --> S --> H --> T
-    click C "/#/api-requests/chat-completion/channel-selection/candidate-loading/" "Candidate Loading" _self
-    click A "/#/api-requests/chat-completion/channel-selection/availability-order-filter/" "Availability / OrderType" _self
-    click F "/#/api-requests/chat-completion/channel-selection/affinity-ranking/" "Affinity / Ranking" _self
+    click C "/api-requests/chat-completion/channel-selection/candidate-loading/" "Candidate Loading" _self
+    click A "/api-requests/chat-completion/channel-selection/availability-order-filter/" "Availability / OrderType" _self
+    click F "/api-requests/chat-completion/channel-selection/affinity-ranking/" "Affinity / Ranking" _self
     click R "https://github.com/burncloud/burncloud/blob/main/crates/router/src/model_router.rs#L220" "Open route_with_scheduler" _blank
 ```
 
@@ -53,9 +53,9 @@ flowchart TD
 
 ## Continue Drilling Down
 
-- → [Candidate Loading](/#/api-requests/chat-completion/channel-selection/candidate-loading/)
-- → [Availability + OrderType Filtering](/#/api-requests/chat-completion/channel-selection/availability-order-filter/)
-- → [Affinity + Ranking](/#/api-requests/chat-completion/channel-selection/affinity-ranking/)
+- → [Candidate Loading](/api-requests/chat-completion/channel-selection/candidate-loading/)
+- → [Availability + OrderType Filtering](/api-requests/chat-completion/channel-selection/availability-order-filter/)
+- → [Affinity + Ranking](/api-requests/chat-completion/channel-selection/affinity-ranking/)
 
 ## Source Evidence
 

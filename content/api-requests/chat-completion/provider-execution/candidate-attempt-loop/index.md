@@ -13,7 +13,7 @@ drill_down:
 
 # Candidate Attempt Loop
 
-← [Provider Execution](/#/api-requests/chat-completion/provider-execution/)
+← [Provider Execution](/api-requests/chat-completion/provider-execution/)
 
 ## What happens here?
 
@@ -41,12 +41,12 @@ flowchart TD
     OUT -->|terminal response| RET
     L --> END
     click L "https://github.com/burncloud/burncloud/blob/main/crates/router/src/lib.rs#L2369" "Open loop" _blank
-    click GUARD "/#/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/" "Guard drill-down" _self
+    click GUARD "/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/" "Guard drill-down" _self
 ```
 
 ## Continue Drilling Down
 
-→ [Shaper + Circuit Breaker](/#/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/)
+→ [Shaper + Circuit Breaker](/api-requests/chat-completion/provider-execution/shaper-circuit-breaker/)
 
 ## Source Evidence
 

@@ -24,10 +24,10 @@ flowchart TD
     O --> P["POST /console/internal/prices/sync"]
     O --> C["POST /console/internal/circuit-breaker/trip-all"]
     O --> M["GET /console/internal/metrics"]
-    click H "/#/operator/health/" "Health" _self
-    click P "/#/operator/price-sync/" "Price sync" _self
-    click C "/#/operator/circuit-breaker-trip-all/" "Circuit breaker" _self
-    click M "/#/operator/metrics/" "Metrics" _self
+    click H "/operator/health/" "Health" _self
+    click P "/operator/price-sync/" "Price sync" _self
+    click C "/operator/circuit-breaker-trip-all/" "Circuit breaker" _self
+    click M "/operator/metrics/" "Metrics" _self
 ```
 
 Internal Router routes are registered before LiveView catch-all so they return JSON instead of SPA HTML.

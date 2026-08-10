@@ -11,7 +11,7 @@ entry_points:
 
 # Billing & Logging
 
-← [Chat Completion](/#/api-requests/chat-completion/)
+← [Chat Completion](/api-requests/chat-completion/)
 
 ## What happens here?
 

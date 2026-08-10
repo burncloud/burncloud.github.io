@@ -11,7 +11,7 @@ entry_points:
 
 # Top Up User Balance
 
-← [User & Balance Management](/#/console/user-management/)
+← [User & Balance Management](/console/user-management/)
 
 ## What happens here?
 

@@ -11,7 +11,7 @@ entry_points:
 
 # Security Monitor Actions
 
-← [Console 管理](/#/console/)
+← [Console 管理](/console/)
 
 ## What happens here?
 

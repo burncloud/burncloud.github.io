@@ -12,7 +12,7 @@ entry_points:
 
 # Login Account
 
-← [账号访问](/#/account/)
+← [账号访问](/account/)
 
 ## What happens here?
 

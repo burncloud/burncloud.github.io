@@ -14,7 +14,7 @@ drill_down:
 
 # Request Entry
 
-← [Chat Completion](/#/api-requests/chat-completion/)
+← [Chat Completion](/api-requests/chat-completion/)
 
 ## What happens here?
 
@@ -55,7 +55,7 @@ flowchart TD
 
 ## Continue Drilling Down
 
-→ [Authentication & Admission](/#/api-requests/chat-completion/authentication-admission/)
+→ [Authentication & Admission](/api-requests/chat-completion/authentication-admission/)
 
 ## Source Evidence
 

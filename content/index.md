@@ -37,10 +37,10 @@ flowchart TD
     OPS --> HEALTH["Health / Metrics"]
     OPS --> PRICE["Price Sync"]
     OPS --> CB["Circuit Breaker Trip-All"]
-    click API "/#/api-requests/" "进入 API 请求" _self
-    click ACC "/#/account/" "进入账号访问" _self
-    click CON "/#/console/" "进入 Console 管理" _self
-    click OPS "/#/operator/" "进入内部运维" _self
+    click API "/api-requests/" "进入 API 请求" _self
+    click ACC "/account/" "进入账号访问" _self
+    click CON "/console/" "进入 Console 管理" _self
+    click OPS "/operator/" "进入内部运维" _self
 ```
 
 ## Reading Rule

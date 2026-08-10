@@ -47,18 +47,18 @@ flowchart TD
     CHAT -->|No| VIDEO
     VIDEO -->|不是该 GET path| OTHER
     click APP "https://github.com/burncloud/burncloud/blob/main/crates/server/src/lib.rs#L31" "Open create_app source" _blank
-    click CF "/#/api-requests/chat-completion/" "Drill into Chat Completion" _self
-    click VIDEO "/#/api-requests/video-task-polling/" "Drill into video task polling" _self
-    click MODELS "/#/api-requests/models/" "Drill into models API" _self
-    click USAGE "/#/api-requests/usage/" "Drill into usage API" _self
+    click CF "/api-requests/chat-completion/" "Drill into Chat Completion" _self
+    click VIDEO "/api-requests/video-task-polling/" "Drill into video task polling" _self
+    click MODELS "/api-requests/models/" "Drill into models API" _self
+    click USAGE "/api-requests/usage/" "Drill into usage API" _self
 ```
 
 ## Continue Drilling Down
 
-- → [Chat Completion](/#/api-requests/chat-completion/)
-- → [Video Task Polling](/#/api-requests/video-task-polling/)
-- → [Query Models](/#/api-requests/models/)
-- → [Query API Usage](/#/api-requests/usage/)
+- → [Chat Completion](/api-requests/chat-completion/)
+- → [Video Task Polling](/api-requests/video-task-polling/)
+- → [Query Models](/api-requests/models/)
+- → [Query API Usage](/api-requests/usage/)
 
 ## Source Evidence
 

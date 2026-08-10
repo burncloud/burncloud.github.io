@@ -13,7 +13,7 @@ drill_down:
 
 # Availability & OrderType Filtering
 
-← [Channel Selection](/#/api-requests/chat-completion/channel-selection/)
+← [Channel Selection](/api-requests/chat-completion/channel-selection/)
 
 ## What happens here?
 
@@ -54,7 +54,7 @@ flowchart TD
 
 ## Continue Drilling Down
 
-→ [Affinity + Ranking](/#/api-requests/chat-completion/channel-selection/affinity-ranking/)
+→ [Affinity + Ranking](/api-requests/chat-completion/channel-selection/affinity-ranking/)
 
 ## Source Evidence
 

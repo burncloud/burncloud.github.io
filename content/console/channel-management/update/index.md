@@ -11,7 +11,7 @@ entry_points:
 
 # Update Channel
 
-← [Channel Management](/#/console/channel-management/)
+← [Channel Management](/console/channel-management/)
 
 ## ICFG
 

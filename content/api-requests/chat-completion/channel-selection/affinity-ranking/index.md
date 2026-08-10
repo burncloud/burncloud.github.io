@@ -13,7 +13,7 @@ drill_down:
 
 # Affinity & Ranking
 
-← [Channel Selection](/#/api-requests/chat-completion/channel-selection/)
+← [Channel Selection](/api-requests/chat-completion/channel-selection/)
 
 ## What happens here?
 
@@ -49,7 +49,7 @@ flowchart TD
     POS -->|No| TOP
     TOP --> DEC --> RET
     click E "https://github.com/burncloud/burncloud/blob/main/crates/router/src/model_router.rs#L306" "Open affinity/ranking code" _blank
-    click RET "/#/api-requests/chat-completion/provider-execution/" "Continue to Provider Execution" _self
+    click RET "/api-requests/chat-completion/provider-execution/" "Continue to Provider Execution" _self
 ```
 
 ## State / Side Effects
@@ -59,7 +59,7 @@ flowchart TD
 
 ## Continue Drilling Down
 
-→ [Provider Execution](/#/api-requests/chat-completion/provider-execution/)
+→ [Provider Execution](/api-requests/chat-completion/provider-execution/)
 
 ## Source Evidence
 

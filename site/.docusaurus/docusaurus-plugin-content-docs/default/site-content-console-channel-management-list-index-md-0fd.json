@@ -1,0 +1,36 @@
+{
+  "id": "console/channel-management/list/index",
+  "title": "List Channels",
+  "description": "← Channel Management",
+  "source": "@site/../content/console/channel-management/list/index.md",
+  "sourceDirName": "console/channel-management/list",
+  "slug": "/console/channel-management/list/",
+  "permalink": "/console/channel-management/list/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/console/channel-management/list/index.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": "BurnCloud.com",
+  "lastUpdatedAt": 1786342108000,
+  "frontMatter": {
+    "title": "List Channels",
+    "slug": "/console/channel-management/list/",
+    "type": "runtime-flow",
+    "flow_id": "user.console.channel.list",
+    "truth": "STATIC_CONFIRMED",
+    "parent_flow": "user.console.channel",
+    "entry_points": [
+      "GET /console/api/channel"
+    ]
+  },
+  "sidebar": "runtimeSidebar",
+  "previous": {
+    "title": "Channel Management",
+    "permalink": "/console/channel-management/"
+  },
+  "next": {
+    "title": "Create Channel",
+    "permalink": "/console/channel-management/create/"
+  }
+}

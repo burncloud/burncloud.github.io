@@ -12,7 +12,7 @@ entry_points:
 
 # Rotate / Revoke Old Token Key
 
-← [API Token Management](/#/console/token-management/)
+← [API Token Management](/console/token-management/)
 
 ## What happens here?
 
