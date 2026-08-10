@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from .common import *
 from .analyze import *
@@ -8,6 +9,10 @@ from .analyze import *
 
 def _yaml(s: str) -> str:
     return s.replace("\\", "\\\\").replace('"', '\\"').replace("\n", " ")
+
+
+def _path(s: str) -> str:
+    return s.lower().replace("\\", "/")
 
 
 def _plain_chain(steps: list[str]) -> str:
@@ -37,7 +42,9 @@ def evidence_md(items, empty: str = "这个变化块没有可输出的历史行�
     if not items:
         return f"- **完整差异扫描：** {empty}"
     out = []
+    names = {"BASE": "修改前", "AFTER": "修改后"}
     for side, sha, path, a, b in items:
+        side = names.get(side, side)
         out.append(f"- **{side}:** [`{path}:L{a}-L{b}`]({historical_url(sha, path, a, b)})")
     return "\n".join(out)
 
@@ -58,7 +65,6 @@ def _one_line(units: list[ChangeUnit]) -> str:
 
 
 def _dimension_note(num: int, changed: bool, units: list[ChangeUnit], api_changed: bool, db_changed: bool, ext_changed: bool, tests: list[str]) -> str:
-    keys = {u.key for u in units}
     if num == 1:
         return "代码文件和符号有变化。"
     if num == 2:
@@ -133,13 +139,13 @@ def _state_summary(items: list[ChangeItem], units: list[ChangeUnit]) -> str:
 
 def _api_summary(api_changed: bool, items: list[ChangeItem]) -> str:
     client_bearer = any(
-        ("Authorization" in i.text or "Bearer" in i.text) and _low(i.path).startswith("crates/client/")
+        ("Authorization" in i.text or "Bearer" in i.text) and _path(i.path).startswith("crates/client/")
         for i in items
     )
     if not api_changed:
         extra = "\n\n> 注意：这次客户端虽然可能开始带 `Authorization: Bearer ...`，但这叫**客户端请求行为变化**，不能自动说成服务器公开 API 契约变了。" if client_bearer else ""
         return "**⚪ 没发现服务器公开 API 契约变化。**" + extra
-    files = list(dict.fromkeys(i.path for i in items if _low(i.path).startswith(("crates/server/", "crates/router/"))))[:6]
+    files = list(dict.fromkeys(i.path for i in items if _path(i.path).startswith(("crates/server/", "crates/router/"))))[:6]
     return "**🟡 检测到服务器 API 边界变化。**\n\n重点文件：\n" + "\n".join(f"- `{x}`" for x in files)
 
 
