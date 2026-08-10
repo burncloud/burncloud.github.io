@@ -56,7 +56,7 @@ def _unit_files(unit: ChangeUnit, limit: int = 8) -> list[str]:
 def _one_line(units: list[ChangeUnit]) -> str:
     names = [u.title for u in units]
     if not names:
-        return "这次提交有代码差异，但静态分析没有安全地归出一个明确的行为变化块。"
+        return "这个合并提交的 BASE → TARGET 没有实际代码差异。"
     if len(names) == 1:
         return f"这次主要改了一件事：**{names[0]}**。"
     if len(names) == 2:
@@ -66,7 +66,7 @@ def _one_line(units: list[ChangeUnit]) -> str:
 
 def _dimension_note(num: int, changed: bool, units: list[ChangeUnit], api_changed: bool, db_changed: bool, ext_changed: bool, tests: list[str]) -> str:
     if num == 1:
-        return "代码文件和符号有变化。"
+        return "代码文件和符号有变化。" if changed else "BASE → TARGET 是空 diff，没有实际文件变化。"
     if num == 2:
         return "有用户或管理员能直接感觉到的流程变化。" if changed else "没发现能安全映射到用户操作的变化。"
     if num == 3:
@@ -82,7 +82,7 @@ def _dimension_note(num: int, changed: bool, units: list[ChangeUnit], api_change
     if num == 8:
         return "BurnCloud 调外部 Provider 的方式有变化。" if ext_changed else "没发现明确的外部 Provider 调用变化。"
     if num == 9:
-        return "下面会把直接修改和可能受影响的地方分开列出来。"
+        return "下面会把直接修改和可能受影响的地方分开列出来。" if changed else "没有代码 diff，因此没有代码 Blast Radius。"
     if num == 10:
         return f"这个提交同时改了 {len(tests)} 个测试文件。" if tests else "这个提交没有同步修改测试文件；不等于没有旧测试，只表示本次 diff 没加/改测试。"
     return ""
@@ -93,16 +93,16 @@ def _status(changed: bool) -> str:
 
 
 def _flow_lines(units: list[ChangeUnit]) -> str:
-    visible = [u for u in units if u.key not in {"database", "docs", "ci", "build", "tests", "general"}]
+    visible = [u for u in units if u.key not in {"database", "docs", "ci", "build", "tests", "general", "empty"}]
     if not visible:
         return "- 没发现可以安全说成『用户流程改变』的变化；不会为了凑图硬猜。"
     return "\n".join(f"- **{u.title}：** {u.flow}" for u in visible)
 
 
 def _runtime_lines(units: list[ChangeUnit]) -> str:
-    runtime = [u for u in units if u.key not in {"docs", "ci", "tests"}]
+    runtime = [u for u in units if u.key not in {"docs", "ci", "tests", "empty"}]
     if not runtime:
-        return "- 这次主要是文档 / CI / 测试变化，没有发现线上运行步骤改变。"
+        return "- 没发现线上运行步骤改变；如果这是空 diff，就明确保持为空，不制造变化。"
     return "\n".join(f"- **{u.title}：** {u.plain}" for u in runtime)
 
 
@@ -204,7 +204,21 @@ def render(repo: Path, out: Path, pr, pos: int):
     tests_changed = [p for p in paths if is_test(p)]
     items = collect_items(files)
     units = build_units(files, pr, limit=5)
+    if not units and not files:
+        units = [ChangeUnit(
+            "empty",
+            "没有实际代码差异",
+            "这个 merge commit 的第一父提交和 TARGET 之间没有文件差异，所以这里明确写『没有代码变化』，不为了凑图编故事。",
+            "没有用户流程变化",
+            ["BASE 版本代码"],
+            ["TARGET 版本代码", "BASE → TARGET 没有新增文件差异"],
+            [],
+            0,
+            "完整 git diff 确认",
+        )]
     dims = dimension_model(files, units, tests_changed)
+    if not files:
+        dims = {n: (dims[n][0], False) for n in range(1, 11)}
     score, risk, drivers = risk_model(files, units, tests_changed, dims)
     api_changed = dims[6][1]
     db_changed = dims[7][1]
@@ -225,8 +239,8 @@ def render(repo: Path, out: Path, pr, pos: int):
 
     unit_sections = []
     for idx, u in enumerate(units, 1):
-        paths_md = "\n".join(f"- `{p}`" for p in _unit_files(u)) or "- 没有文件"
-        ev = evidence_md(unit_evidence(u, base, target))
+        paths_md = "\n".join(f"- `{p}`" for p in _unit_files(u)) or "- 没有实际变化文件"
+        ev = evidence_md(unit_evidence(u, base, target), "这个变化块来自空 diff，没有历史行号可列。")
         unit_sections.append(f'''### 变化 {idx}：{u.title}
 
 **大白话：** {u.plain}
@@ -249,7 +263,7 @@ def render(repo: Path, out: Path, pr, pos: int):
     dashboard = ["| 维度 | 结果 | 大白话 |", "|---|---|---|"]
     for n in range(1, 11):
         label, changed = dims[n]
-        if n == 10 and not tests_changed:
+        if n == 10 and not tests_changed and files:
             st = "⚠️ 本提交没改测试"
         else:
             st = _status(changed)
@@ -260,7 +274,7 @@ def render(repo: Path, out: Path, pr, pos: int):
     changed_files_short = "\n".join(
         f"- {'🟢 新增' if s.startswith('A') else '🔴 删除' if s.startswith('D') else '🟡 修改'} `{p}`"
         for s, p in changed_files[:20]
-    ) or "- 没有文件差异。"
+    ) or "- BASE → TARGET 没有文件差异。"
     symbol_short = "\n".join(f"- `{name}` — `{path}:L{ln}`" for path, kind, name, ln in symbols[:12]) or "- 没有安全解析出的 Rust 符号；不会硬猜。"
 
     control = _control_summary(items)
@@ -272,13 +286,15 @@ def render(repo: Path, out: Path, pr, pos: int):
 
     if tests_changed:
         tests_md = "**本提交同步修改了测试：**\n" + "\n".join(f"- `{p}`" for p in tests_changed[:12])
-    else:
+    elif files:
         tests_md = "**⚠️ 本提交没有同步修改测试文件。** 这不等于项目没有旧测试，只表示这次提交本身没有加 / 改测试。"
+    else:
+        tests_md = "**⚪ 这是空 diff。** 没有生产代码变化，也没有需要为这个 diff 新增的测试变化。"
     if test_refs:
         tests_md += "\n\n**名字匹配到的可能相关旧测试（只是候选，不冒充已覆盖）：**\n" + "\n".join(f"- `{name}` → `{loc}`" for name, loc in test_refs)
 
     all_ev = evidence(files, base, target, limit=10)
-    all_evidence = evidence_md(all_ev, "完整 diff 没有可输出的行号证据。")
+    all_evidence = evidence_md(all_ev, "完整 BASE → TARGET diff 是空的，没有历史行号证据。")
 
     doc = f'''---
 title: "PR #{pr['number']} · {_yaml(title)}"
