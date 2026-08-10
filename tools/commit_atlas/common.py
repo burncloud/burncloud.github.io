@@ -1,5 +1,5 @@
 from __future__ import annotations
-import html, json, os, re, subprocess, urllib.request
+import html, json, os, re, subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -20,10 +20,14 @@ def run(repo:Path,*args,check=True):
     return p.stdout
 
 def gh(url:str):
-    h={'Accept':'application/vnd.github+json','User-Agent':'burncloud-change-atlas','X-GitHub-Api-Version':'2022-11-28'}
+    cmd=['curl','-fsSL','--retry','5','--retry-delay','2','--retry-all-errors','--connect-timeout','15','--max-time','60',
+         '-H','Accept: application/vnd.github+json','-H','User-Agent: burncloud-change-atlas','-H','X-GitHub-Api-Version: 2022-11-28']
     tok=os.getenv('GH_TOKEN') or os.getenv('GITHUB_TOKEN')
-    if tok: h['Authorization']=f'Bearer {tok}'
-    with urllib.request.urlopen(urllib.request.Request(url,headers=h),timeout=45) as r: return json.load(r)
+    if tok: cmd += ['-H',f'Authorization: Bearer {tok}']
+    cmd.append(url)
+    p=subprocess.run(cmd,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+    if p.returncode: raise RuntimeError(f'GitHub API request failed after verified-TLS retries: {p.stderr}')
+    return json.loads(p.stdout)
 
 def merged_prs(n:int):
     d={}
