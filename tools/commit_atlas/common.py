@@ -55,8 +55,8 @@ def parse_patch(text:str):
     for x in text.splitlines():
         if x.startswith('diff --git '):
             m=re.match(r'diff --git a/(.+) b/(.+)',x); f=FileDiff(m.group(1),m.group(2)); out.append(f); h=None
-        elif f and x.startswith('--- '): f.oldp=x[4:][2:] if x[4:].startswith('a/') else x[4:]
-        elif f and x.startswith('+++ '): f.newp=x[4:][2:] if x[4:].startswith('b/') else x[4:]
+        elif f and h is None and x.startswith('--- '): f.oldp=x[4:][2:] if x[4:].startswith('a/') else x[4:]
+        elif f and h is None and x.startswith('+++ '): f.newp=x[4:][2:] if x[4:].startswith('b/') else x[4:]
         elif f and x.startswith('@@ '):
             m=re.match(r'@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@\s*(.*)',x)
             if m:
