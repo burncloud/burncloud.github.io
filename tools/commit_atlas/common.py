@@ -16,7 +16,7 @@ DECL=re.compile(r'^\s*(?:pub(?:\([^)]*\))?\s+)?(?:async\s+)?(?:(fn)\s+([A-Za-z_]
 
 # Raw changed-source snippets are rendered inside MDX documents. Keep the real source in immutable
 # Evidence links, but make display-only snippets inert to MDX/Markdown so Rust braces, JSX-like
-# angle brackets, Markdown links, pipes, or backticks can never become executable syntax.
+# angle brackets, Markdown links, pipes, backticks, or raw URL schemes can never become syntax.
 _DISPLAY_TRANS = str.maketrans({
     '{':'｛','}':'｝','<':'‹','>':'›','[':'［',']':'］','(':'（',')':'）',
     '|':'¦','`':'′','\\':'＼'
@@ -78,6 +78,8 @@ def is_test(path:str): return bool(re.search(r'(^|/)(tests?|e2e)(/|$)|_test\.rs$
 def is_runtime(path:str): return path.endswith('.rs') and not is_test(path) and not path.startswith('docs/')
 def compact(s:str,n=110):
     s=re.sub(r'\s+',' ',s).strip().replace('"',"'")
+    # Prevent Docusaurus/MDX autolink parsing of source literals such as http://127.0.0.1:{port}.
+    s=s.replace('https://','https∶／／').replace('http://','http∶／／')
     if len(s)>n: s=s[:n-1]+'…'
     return s.translate(_DISPLAY_TRANS)
 def esc(s:str): return html.escape(compact(s),quote=False)
