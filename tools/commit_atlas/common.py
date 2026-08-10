@@ -14,6 +14,14 @@ DYNAMIC=re.compile(r'dyn\s+|get_adaptor|trait\s+|ChannelType|provider_type',re.I
 ROUTE=re.compile(r'[\"\'](/(?:api|console|v1|health|preview)[^\"\']*)[\"\']')
 DECL=re.compile(r'^\s*(?:pub(?:\([^)]*\))?\s+)?(?:async\s+)?(?:(fn)\s+([A-Za-z_][\w]*)|(struct|enum|trait|type|const|static|mod)\s+([A-Za-z_][\w]*))')
 
+# Raw changed-source snippets are rendered inside MDX documents. Keep the real source in immutable
+# Evidence links, but make display-only snippets inert to MDX/Markdown so Rust braces, JSX-like
+# angle brackets, Markdown links, pipes, or backticks can never become executable syntax.
+_DISPLAY_TRANS = str.maketrans({
+    '{':'｛','}':'｝','<':'‹','>':'›','[':'［',']':'］','(':'（',')':'）',
+    '|':'¦','`':'′','\\':'＼'
+})
+
 def run(repo:Path,*args,check=True):
     p=subprocess.run(['git',*args],cwd=repo,text=True,stdout=subprocess.PIPE,stderr=subprocess.PIPE)
     if check and p.returncode: raise RuntimeError(f"git {' '.join(args)}: {p.stderr}")
@@ -70,8 +78,9 @@ def is_test(path:str): return bool(re.search(r'(^|/)(tests?|e2e)(/|$)|_test\.rs$
 def is_runtime(path:str): return path.endswith('.rs') and not is_test(path) and not path.startswith('docs/')
 def compact(s:str,n=110):
     s=re.sub(r'\s+',' ',s).strip().replace('"',"'")
-    return s if len(s)<=n else s[:n-1]+'…'
-def esc(s:str): return html.escape(compact(s),quote=False).replace('<','&lt;').replace('>','&gt;')
+    if len(s)>n: s=s[:n-1]+'…'
+    return s.translate(_DISPLAY_TRANS)
+def esc(s:str): return html.escape(compact(s),quote=False)
 def show_lines(repo:Path,sha:str,path:str):
     if path=='/dev/null': return []
     x=run(repo,'show',f'{sha}:{path}',check=False); return x.splitlines() if x else []
