@@ -1,0 +1,55 @@
+{
+  "pr_number": 349,
+  "title": "fix(db): register missing migrations for router_request_logs (Issue #334)",
+  "merged_at": "2026-06-13T20:03:36Z",
+  "base": "0f51207790b4e5beaf890ea378f19a80f2a0bcbc",
+  "target": "e4d26e7b5b2f1b2977a0b02179dfe7236435da77",
+  "risk": "HIGH",
+  "risk_score": 13,
+  "files_changed": 4,
+  "changed_symbols": 3,
+  "changed_functions": 0,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "Data Plane → Request Logging / Observability",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-06-13-pr-349-e4d26e7b.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "No Change"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "No Change"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

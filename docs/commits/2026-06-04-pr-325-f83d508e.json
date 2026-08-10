@@ -1,0 +1,63 @@
+{
+  "pr_number": 325,
+  "title": "test(e2e): add channel management flow tests (Issue #311)",
+  "merged_at": "2026-06-04T12:15:21Z",
+  "base": "6629637daad1be345164d79375c170a4b6bda447",
+  "target": "f83d508e133db4460b3231145b1bf01027cac762",
+  "risk": "HIGH",
+  "risk_score": 13,
+  "files_changed": 2,
+  "changed_symbols": 18,
+  "changed_functions": 16,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Channel / Model Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Account Access / Authentication",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-06-04-pr-325-f83d508e.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "No Change"
+    },
+    "Control Flow": {
+      "status": "No Change"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

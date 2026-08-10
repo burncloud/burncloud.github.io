@@ -1,0 +1,59 @@
+{
+  "pr_number": 338,
+  "title": "fix(router): use sliding window for empty response detection",
+  "merged_at": "2026-06-08T01:54:33Z",
+  "base": "bff564470265cfeffb350f37daf22e2f96269f2f",
+  "target": "3469d3e5650e7b9ce700ac1aa96a9a1641ad1d3f",
+  "risk": "HIGH",
+  "risk_score": 21,
+  "files_changed": 2,
+  "changed_symbols": 7,
+  "changed_functions": 3,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    }
+  ],
+  "doc": "2026-06-08-pr-338-3469d3e5.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "Changed"
+    },
+    "API Contract": {
+      "status": "No Change"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "No Change"
+    }
+  }
+}

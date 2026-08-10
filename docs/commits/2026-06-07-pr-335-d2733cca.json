@@ -1,0 +1,63 @@
+{
+  "pr_number": 335,
+  "title": "feat(router): 改进 Circuit Breaker 和失败检测机制 (Issue #333)",
+  "merged_at": "2026-06-07T08:16:00Z",
+  "base": "a45c27e5a80c779b9127ade8b28592691cd3367e",
+  "target": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
+  "risk": "HIGH",
+  "risk_score": 35,
+  "files_changed": 4,
+  "changed_symbols": 16,
+  "changed_functions": 12,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    }
+  ],
+  "doc": "2026-06-07-pr-335-d2733cca.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "Changed"
+    },
+    "API Contract": {
+      "status": "No Change"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

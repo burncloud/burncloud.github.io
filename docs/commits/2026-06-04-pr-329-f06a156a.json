@@ -1,0 +1,63 @@
+{
+  "pr_number": 329,
+  "title": "fix(router): failover on auth errors (401/402) and add xunfei channel type",
+  "merged_at": "2026-06-04T10:14:27Z",
+  "base": "018855c3c571e7eb42520db46e70bc8fc5ba726e",
+  "target": "f06a156afd7f4c49ccbe08fe6e8b4a00f4168787",
+  "risk": "HIGH",
+  "risk_score": 32,
+  "files_changed": 2,
+  "changed_symbols": 3,
+  "changed_functions": 3,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    }
+  ],
+  "doc": "2026-06-04-pr-329-f06a156a.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

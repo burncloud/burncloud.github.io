@@ -11,8 +11,8 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/console/user-management/topup/index.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": "BurnCloud.com",
-  "lastUpdatedAt": 1786342108000,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786344344000,
   "frontMatter": {
     "title": "Top Up User Balance",
     "slug": "/console/user-management/topup/",

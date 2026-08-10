@@ -1,0 +1,67 @@
+{
+  "pr_number": 327,
+  "title": "test(e2e): add security monitor/风控雷达 flow tests (Issue #313)",
+  "merged_at": "2026-06-04T12:17:28Z",
+  "base": "47c2869df0f822681a2d92f8ce8421a6af043853",
+  "target": "4315cf7411f39e0c0d37b693055e79060900e100",
+  "risk": "HIGH",
+  "risk_score": 13,
+  "files_changed": 2,
+  "changed_symbols": 14,
+  "changed_functions": 13,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Monitor / Security",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Account Access / Authentication",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-06-04-pr-327-4315cf74.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "No Change"
+    },
+    "Control Flow": {
+      "status": "No Change"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

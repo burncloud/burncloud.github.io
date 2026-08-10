@@ -1,0 +1,59 @@
+{
+  "pr_number": 326,
+  "title": "test(e2e): add API Key management flow tests (Issue #312)",
+  "merged_at": "2026-06-04T12:17:13Z",
+  "base": "f83d508e133db4460b3231145b1bf01027cac762",
+  "target": "47c2869df0f822681a2d92f8ce8421a6af043853",
+  "risk": "HIGH",
+  "risk_score": 13,
+  "files_changed": 2,
+  "changed_symbols": 15,
+  "changed_functions": 14,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Account Access / Authentication",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-06-04-pr-326-47c2869d.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "No Change"
+    },
+    "Control Flow": {
+      "status": "No Change"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

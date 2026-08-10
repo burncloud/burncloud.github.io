@@ -1,0 +1,79 @@
+{
+  "pr_number": 353,
+  "title": "refactor(client): unify design system CSS injection and console styling",
+  "merged_at": "2026-07-05T16:56:52Z",
+  "base": "5c0772cea399af31d96d09d040299ddf2dc37a5d",
+  "target": "8e8692ad01447b00b6b7c03f776d2bb36edbe7f5",
+  "risk": "HIGH",
+  "risk_score": 37,
+  "files_changed": 34,
+  "changed_symbols": 58,
+  "changed_functions": 39,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "Console → API Token Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Channel / Model Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Monitor / Security",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → User / Balance Management",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-07-05-pr-353-8e8692ad.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "Changed"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

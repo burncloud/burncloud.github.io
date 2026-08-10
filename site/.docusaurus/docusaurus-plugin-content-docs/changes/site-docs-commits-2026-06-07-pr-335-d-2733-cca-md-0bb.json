@@ -1,0 +1,39 @@
+{
+  "id": "commits/2026-06-07-pr-335-d2733cca",
+  "title": "PR #335 · feat(router): 改进 Circuit Breaker 和失败检测机制 (Issue #333)",
+  "description": "Executive Summary",
+  "source": "@site/../docs/commits/2026-06-07-pr-335-d2733cca.md",
+  "sourceDirName": "commits",
+  "slug": "/commits/2026-06-07-pr-335-d2733cca/",
+  "permalink": "/changes/commits/2026-06-07-pr-335-d2733cca/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-07-pr-335-d2733cca.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": null,
+  "lastUpdatedAt": null,
+  "sidebarPosition": 19,
+  "frontMatter": {
+    "title": "PR #335 · feat(router): 改进 Circuit Breaker 和失败检测机制 (Issue #333)",
+    "slug": "/commits/2026-06-07-pr-335-d2733cca/",
+    "sidebar_position": 19,
+    "doc_type": "commit-change-atlas",
+    "truth": "source-diff-derived",
+    "repository": "burncloud/burncloud",
+    "pr_number": 335,
+    "base_commit": "a45c27e5a80c779b9127ade8b28592691cd3367e",
+    "target_commit": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
+    "risk": "HIGH",
+    "merged_at": "2026-06-07T08:16:00.000Z"
+  },
+  "sidebar": "changesSidebar",
+  "previous": {
+    "title": "PR #336 · fix(router): 为流式响应添加 empty response 检测",
+    "permalink": "/changes/commits/2026-06-07-pr-336-cdb848f6/"
+  },
+  "next": {
+    "title": "PR #331 · fix(router): return JSON-formatted errors for API compatibility",
+    "permalink": "/changes/commits/2026-06-06-pr-331-a45c27e5/"
+  }
+}

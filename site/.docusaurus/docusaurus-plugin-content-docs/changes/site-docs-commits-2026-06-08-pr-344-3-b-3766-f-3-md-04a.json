@@ -1,0 +1,39 @@
+{
+  "id": "commits/2026-06-08-pr-344-3b3766f3",
+  "title": "PR #344 · Fix: Add empty response check for non-streaming passthrough path",
+  "description": "Executive Summary",
+  "source": "@site/../docs/commits/2026-06-08-pr-344-3b3766f3.md",
+  "sourceDirName": "commits",
+  "slug": "/commits/2026-06-08-pr-344-3b3766f3/",
+  "permalink": "/changes/commits/2026-06-08-pr-344-3b3766f3/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-08-pr-344-3b3766f3.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": null,
+  "lastUpdatedAt": null,
+  "sidebarPosition": 11,
+  "frontMatter": {
+    "title": "PR #344 · Fix: Add empty response check for non-streaming passthrough path",
+    "slug": "/commits/2026-06-08-pr-344-3b3766f3/",
+    "sidebar_position": 11,
+    "doc_type": "commit-change-atlas",
+    "truth": "source-diff-derived",
+    "repository": "burncloud/burncloud",
+    "pr_number": 344,
+    "base_commit": "f700a8ab7c0ff8ee964aa85a58e25b205e40fe77",
+    "target_commit": "3b3766f3c867b39ea35173a7458b9dcaf38612d2",
+    "risk": "HIGH",
+    "merged_at": "2026-06-08T19:47:36.000Z"
+  },
+  "sidebar": "changesSidebar",
+  "previous": {
+    "title": "PR #345 · feat: 实现智能熔断系统",
+    "permalink": "/changes/commits/2026-06-10-pr-345-db2430e7/"
+  },
+  "next": {
+    "title": "PR #343 · feat: Enhance EmptyResponseCounter with monitoring and admin capabilities",
+    "permalink": "/changes/commits/2026-06-08-pr-343-fe1b8765/"
+  }
+}

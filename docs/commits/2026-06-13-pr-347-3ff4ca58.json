@@ -1,0 +1,51 @@
+{
+  "pr_number": 347,
+  "title": "fix: HTTP error responses should return JSON format instead of plain text",
+  "merged_at": "2026-06-13T16:55:46Z",
+  "base": "66985337b455dc50ea1f8f02cef73d153d7e8739",
+  "target": "3ff4ca580ab4294372c40ad6b4b6ce11a1bb7ee1",
+  "risk": "HIGH",
+  "risk_score": 16,
+  "files_changed": 1,
+  "changed_symbols": 2,
+  "changed_functions": 2,
+  "flows": [
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    }
+  ],
+  "doc": "2026-06-13-pr-347-3ff4ca58.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

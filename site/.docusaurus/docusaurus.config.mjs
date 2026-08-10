@@ -4,8 +4,8 @@
  * Modify the docusaurus.config.js file at your site's root instead.
  */
 export default {
-  "title": "BurnCloud Runtime Flow & ICFG Atlas",
-  "tagline": "User Action → End-to-End Flow → ICFG → Source Evidence",
+  "title": "BurnCloud Runtime & Change Atlas",
+  "tagline": "User Action → Runtime Flow → ICFG → Commit Change Intelligence → Source Evidence",
   "url": "https://burncloud.github.io",
   "baseUrl": "/",
   "organizationName": "burncloud",
@@ -51,15 +51,36 @@ export default {
       }
     ]
   ],
+  "plugins": [
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        "id": "changes",
+        "path": "../docs",
+        "routeBasePath": "changes",
+        "sidebarPath": "/home/runner/work/burncloud.github.io/burncloud.github.io/site/sidebars-changes.js",
+        "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/",
+        "showLastUpdateAuthor": true,
+        "showLastUpdateTime": true
+      }
+    ]
+  ],
   "themeConfig": {
     "navbar": {
-      "title": "BurnCloud Runtime Atlas",
+      "title": "BurnCloud Atlas",
       "items": [
         {
           "type": "docSidebar",
           "sidebarId": "runtimeSidebar",
           "position": "left",
-          "label": "执行流程"
+          "label": "Runtime 执行树"
+        },
+        {
+          "type": "docSidebar",
+          "sidebarId": "changesSidebar",
+          "docsPluginId": "changes",
+          "position": "left",
+          "label": "Commit Change Atlas"
         },
         {
           "href": "https://github.com/burncloud/burncloud",
@@ -279,7 +300,8 @@ export default {
       },
       "additionalLanguages": [
         "rust",
-        "bash"
+        "bash",
+        "diff"
       ],
       "magicComments": [
         {
@@ -294,7 +316,7 @@ export default {
     },
     "footer": {
       "style": "dark",
-      "copyright": "BurnCloud Runtime Flow & ICFG Atlas · Evidence-first documentation",
+      "copyright": "BurnCloud Runtime & Commit Change Atlas · Evidence-first documentation",
       "links": []
     },
     "colorMode": {
@@ -354,7 +376,6 @@ export default {
     "static"
   ],
   "customFields": {},
-  "plugins": [],
   "scripts": [],
   "headTags": [],
   "stylesheets": [],

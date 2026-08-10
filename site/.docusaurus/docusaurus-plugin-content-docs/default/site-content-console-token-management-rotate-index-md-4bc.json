@@ -11,8 +11,8 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/console/token-management/rotate/index.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": "BurnCloud.com",
-  "lastUpdatedAt": 1786342108000,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786344344000,
   "frontMatter": {
     "title": "Rotate / Revoke Old Token Key",
     "slug": "/console/token-management/rotate/",

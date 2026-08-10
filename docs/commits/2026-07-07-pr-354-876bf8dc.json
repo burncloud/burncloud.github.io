@@ -1,0 +1,79 @@
+{
+  "pr_number": 354,
+  "title": "feat(client): UI design system docs, split CSS, and BCButton migration",
+  "merged_at": "2026-07-07T04:58:42Z",
+  "base": "8e8692ad01447b00b6b7c03f776d2bb36edbe7f5",
+  "target": "876bf8dc06bf8874ff433bf01c8fb5582a1e2c39",
+  "risk": "HIGH",
+  "risk_score": 38,
+  "files_changed": 57,
+  "changed_symbols": 25,
+  "changed_functions": 20,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → API Token Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Channel / Model Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Monitor / Security",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → User / Balance Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Settings",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Playground",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Account Access / Authentication",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-07-07-pr-354-876bf8dc.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "Changed"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "pr_number": 336,
+  "title": "fix(router): 为流式响应添加 empty response 检测",
+  "merged_at": "2026-06-07T10:11:15Z",
+  "base": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
+  "target": "cdb848f6b0c9199bdd2df8879b4a5e0dd0734357",
+  "risk": "HIGH",
+  "risk_score": 55,
+  "files_changed": 7,
+  "changed_symbols": 36,
+  "changed_functions": 21,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "Data Plane → Request Logging / Observability",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-06-07-pr-336-cdb848f6.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "Changed"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "Changed"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

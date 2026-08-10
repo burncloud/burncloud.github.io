@@ -11,8 +11,8 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/operator/circuit-breaker-trip-all/index.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": "BurnCloud.com",
-  "lastUpdatedAt": 1786342108000,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786344344000,
   "frontMatter": {
     "title": "Trip All Circuit Breakers",
     "slug": "/operator/circuit-breaker-trip-all/",

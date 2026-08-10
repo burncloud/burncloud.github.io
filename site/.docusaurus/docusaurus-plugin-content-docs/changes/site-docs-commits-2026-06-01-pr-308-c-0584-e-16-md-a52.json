@@ -1,0 +1,35 @@
+{
+  "id": "commits/2026-06-01-pr-308-c0584e16",
+  "title": "PR #308 · fix(ui): 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
+  "description": "Executive Summary",
+  "source": "@site/../docs/commits/2026-06-01-pr-308-c0584e16.md",
+  "sourceDirName": "commits",
+  "slug": "/commits/2026-06-01-pr-308-c0584e16/",
+  "permalink": "/changes/commits/2026-06-01-pr-308-c0584e16/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-01-pr-308-c0584e16.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": null,
+  "lastUpdatedAt": null,
+  "sidebarPosition": 30,
+  "frontMatter": {
+    "title": "PR #308 · fix(ui): 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
+    "slug": "/commits/2026-06-01-pr-308-c0584e16/",
+    "sidebar_position": 30,
+    "doc_type": "commit-change-atlas",
+    "truth": "source-diff-derived",
+    "repository": "burncloud/burncloud",
+    "pr_number": 308,
+    "base_commit": "c8a2822f31029e16102807a88e826a1e040f1e98",
+    "target_commit": "c0584e1643764c300e12bac68f7557bc609e6f0a",
+    "risk": "LOW",
+    "merged_at": "2026-06-01T12:54:05.000Z"
+  },
+  "sidebar": "changesSidebar",
+  "previous": {
+    "title": "PR #329 · fix(router): failover on auth errors (401/402) and add xunfei channel type",
+    "permalink": "/changes/commits/2026-06-04-pr-329-f06a156a/"
+  }
+}

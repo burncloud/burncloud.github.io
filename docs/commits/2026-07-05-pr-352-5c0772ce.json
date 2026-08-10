@@ -1,0 +1,75 @@
+{
+  "pr_number": 352,
+  "title": "fix(client,auth,db): unify JWT secret, fix modals, and polish desktop UI",
+  "merged_at": "2026-07-05T15:32:47Z",
+  "base": "4a1e718264db5a12482998be9c31bbcff381328c",
+  "target": "5c0772cea399af31d96d09d040299ddf2dc37a5d",
+  "risk": "HIGH",
+  "risk_score": 48,
+  "files_changed": 29,
+  "changed_symbols": 85,
+  "changed_functions": 70,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "Console → Channel / Model Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Monitor / Security",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Account Access / Authentication",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Data Plane → Request Logging / Observability",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-07-05-pr-352-5c0772ce.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "Changed"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "Changed"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

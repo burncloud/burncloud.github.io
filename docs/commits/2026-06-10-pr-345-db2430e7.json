@@ -1,0 +1,63 @@
+{
+  "pr_number": 345,
+  "title": "feat: 实现智能熔断系统",
+  "merged_at": "2026-06-10T11:38:50Z",
+  "base": "3b3766f3c867b39ea35173a7458b9dcaf38612d2",
+  "target": "db2430e7d52833632ddd1b152d45bf69c4d33f7c",
+  "risk": "HIGH",
+  "risk_score": 50,
+  "files_changed": 5,
+  "changed_symbols": 123,
+  "changed_functions": 88,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    }
+  ],
+  "doc": "2026-06-10-pr-345-db2430e7.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "Changed"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "Changed"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "No Change"
+    }
+  }
+}

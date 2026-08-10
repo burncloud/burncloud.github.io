@@ -11,8 +11,8 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/content/../content/api-requests/models/index.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": "BurnCloud.com",
-  "lastUpdatedAt": 1786342108000,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786344344000,
   "frontMatter": {
     "title": "Query Models",
     "slug": "/api-requests/models/",

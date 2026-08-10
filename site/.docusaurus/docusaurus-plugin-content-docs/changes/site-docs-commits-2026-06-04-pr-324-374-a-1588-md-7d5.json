@@ -1,0 +1,39 @@
+{
+  "id": "commits/2026-06-04-pr-324-374a1588",
+  "title": "PR #324 · test(e2e): add comprehensive user authentication flow tests (Issue #310)",
+  "description": "Executive Summary",
+  "source": "@site/../docs/commits/2026-06-04-pr-324-374a1588.md",
+  "sourceDirName": "commits",
+  "slug": "/commits/2026-06-04-pr-324-374a1588/",
+  "permalink": "/changes/commits/2026-06-04-pr-324-374a1588/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-04-pr-324-374a1588.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": null,
+  "lastUpdatedAt": null,
+  "sidebarPosition": 28,
+  "frontMatter": {
+    "title": "PR #324 · test(e2e): add comprehensive user authentication flow tests (Issue #310)",
+    "slug": "/commits/2026-06-04-pr-324-374a1588/",
+    "sidebar_position": 28,
+    "doc_type": "commit-change-atlas",
+    "truth": "source-diff-derived",
+    "repository": "burncloud/burncloud",
+    "pr_number": 324,
+    "base_commit": "f06a156afd7f4c49ccbe08fe6e8b4a00f4168787",
+    "target_commit": "374a1588ca7ae1336bdcb289f7ca4da12e3acd68",
+    "risk": "HIGH",
+    "merged_at": "2026-06-04T11:58:22.000Z"
+  },
+  "sidebar": "changesSidebar",
+  "previous": {
+    "title": "PR #301 · fix(ui): add focus-visible, active states and aria-labels to landing page buttons",
+    "permalink": "/changes/commits/2026-06-04-pr-301-6629637d/"
+  },
+  "next": {
+    "title": "PR #329 · fix(router): failover on auth errors (401/402) and add xunfei channel type",
+    "permalink": "/changes/commits/2026-06-04-pr-329-f06a156a/"
+  }
+}

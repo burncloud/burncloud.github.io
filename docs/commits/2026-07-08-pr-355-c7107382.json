@@ -1,0 +1,79 @@
+{
+  "pr_number": 355,
+  "title": "feat(client): E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
+  "merged_at": "2026-07-08T05:55:51Z",
+  "base": "876bf8dc06bf8874ff433bf01c8fb5582a1e2c39",
+  "target": "c7107382b8479deb44f992e9e5ae8dcac5efb417",
+  "risk": "HIGH",
+  "risk_score": 55,
+  "files_changed": 98,
+  "changed_symbols": 323,
+  "changed_functions": 213,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "Console → API Token Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Channel / Model Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → Monitor / Security",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → User / Balance Management",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-07-08-pr-355-c7107382.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "Changed"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "Changed"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

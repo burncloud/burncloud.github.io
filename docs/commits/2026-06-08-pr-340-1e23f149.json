@@ -1,0 +1,59 @@
+{
+  "pr_number": 340,
+  "title": "fix(router): Improve empty streaming response detection to check for actual content",
+  "merged_at": "2026-06-08T01:57:53Z",
+  "base": "3469d3e5650e7b9ce700ac1aa96a9a1641ad1d3f",
+  "target": "1e23f1493342676226aece129710ca8c0fd30ea5",
+  "risk": "HIGH",
+  "risk_score": 15,
+  "files_changed": 1,
+  "changed_symbols": 0,
+  "changed_functions": 0,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Billing / Usage",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    }
+  ],
+  "doc": "2026-06-08-pr-340-1e23f149.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "Changed"
+    },
+    "API Contract": {
+      "status": "No Change"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

@@ -1,0 +1,1856 @@
+[
+  {
+    "pr_number": 393,
+    "title": "docs: replace legacy docs with AI agent engineering harness",
+    "merged_at": "2026-08-10T12:01:39Z",
+    "base": "c7107382b8479deb44f992e9e5ae8dcac5efb417",
+    "target": "956041a8b54d8c6964e57fa2284f825cc322b0d2",
+    "risk": "HIGH",
+    "risk_score": 55,
+    "files_changed": 51,
+    "changed_symbols": 0,
+    "changed_functions": 0,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "Console → API Token Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Channel / Model Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Monitor / Security",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-08-10-pr-393-956041a8.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "No Change"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 355,
+    "title": "feat(client): E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
+    "merged_at": "2026-07-08T05:55:51Z",
+    "base": "876bf8dc06bf8874ff433bf01c8fb5582a1e2c39",
+    "target": "c7107382b8479deb44f992e9e5ae8dcac5efb417",
+    "risk": "HIGH",
+    "risk_score": 55,
+    "files_changed": 98,
+    "changed_symbols": 323,
+    "changed_functions": 213,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "Console → API Token Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Channel / Model Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Monitor / Security",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → User / Balance Management",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-07-08-pr-355-c7107382.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 354,
+    "title": "feat(client): UI design system docs, split CSS, and BCButton migration",
+    "merged_at": "2026-07-07T04:58:42Z",
+    "base": "8e8692ad01447b00b6b7c03f776d2bb36edbe7f5",
+    "target": "876bf8dc06bf8874ff433bf01c8fb5582a1e2c39",
+    "risk": "HIGH",
+    "risk_score": 38,
+    "files_changed": 57,
+    "changed_symbols": 25,
+    "changed_functions": 20,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → API Token Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Channel / Model Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Monitor / Security",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → User / Balance Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Settings",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Playground",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-07-07-pr-354-876bf8dc.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 353,
+    "title": "refactor(client): unify design system CSS injection and console styling",
+    "merged_at": "2026-07-05T16:56:52Z",
+    "base": "5c0772cea399af31d96d09d040299ddf2dc37a5d",
+    "target": "8e8692ad01447b00b6b7c03f776d2bb36edbe7f5",
+    "risk": "HIGH",
+    "risk_score": 37,
+    "files_changed": 34,
+    "changed_symbols": 58,
+    "changed_functions": 39,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "Console → API Token Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Channel / Model Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Monitor / Security",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → User / Balance Management",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-07-05-pr-353-8e8692ad.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 352,
+    "title": "fix(client,auth,db): unify JWT secret, fix modals, and polish desktop UI",
+    "merged_at": "2026-07-05T15:32:47Z",
+    "base": "4a1e718264db5a12482998be9c31bbcff381328c",
+    "target": "5c0772cea399af31d96d09d040299ddf2dc37a5d",
+    "risk": "HIGH",
+    "risk_score": 48,
+    "files_changed": 29,
+    "changed_symbols": 85,
+    "changed_functions": 70,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "Console → Channel / Model Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Monitor / Security",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Data Plane → Request Logging / Observability",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-07-05-pr-352-5c0772ce.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 351,
+    "title": "feat: Peek first chunk in streaming responses to enable retry on SSE errors",
+    "merged_at": "2026-06-19T10:45:48Z",
+    "base": "e4d26e7b5b2f1b2977a0b02179dfe7236435da77",
+    "target": "4a1e718264db5a12482998be9c31bbcff381328c",
+    "risk": "HIGH",
+    "risk_score": 43,
+    "files_changed": 3,
+    "changed_symbols": 17,
+    "changed_functions": 9,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-19-pr-351-4a1e7182.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "No Change"
+      }
+    }
+  },
+  {
+    "pr_number": 349,
+    "title": "fix(db): register missing migrations for router_request_logs (Issue #334)",
+    "merged_at": "2026-06-13T20:03:36Z",
+    "base": "0f51207790b4e5beaf890ea378f19a80f2a0bcbc",
+    "target": "e4d26e7b5b2f1b2977a0b02179dfe7236435da77",
+    "risk": "HIGH",
+    "risk_score": 13,
+    "files_changed": 4,
+    "changed_symbols": 3,
+    "changed_functions": 0,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "Data Plane → Request Logging / Observability",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-13-pr-349-e4d26e7b.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 348,
+    "title": "fix: HTTP error responses should return JSON format instead of plain text",
+    "merged_at": "2026-06-13T16:57:28Z",
+    "base": "3ff4ca580ab4294372c40ad6b4b6ce11a1bb7ee1",
+    "target": "0f51207790b4e5beaf890ea378f19a80f2a0bcbc",
+    "risk": "LOW",
+    "risk_score": 0,
+    "files_changed": 0,
+    "changed_symbols": 0,
+    "changed_functions": 0,
+    "flows": [
+      {
+        "name": "⚠ Unable to map changed code to a user-triggered flow",
+        "truth": "⚠ INFERRED / UNKNOWN"
+      }
+    ],
+    "doc": "2026-06-13-pr-348-0f512077.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "No Change"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 347,
+    "title": "fix: HTTP error responses should return JSON format instead of plain text",
+    "merged_at": "2026-06-13T16:55:46Z",
+    "base": "66985337b455dc50ea1f8f02cef73d153d7e8739",
+    "target": "3ff4ca580ab4294372c40ad6b4b6ce11a1bb7ee1",
+    "risk": "HIGH",
+    "risk_score": 16,
+    "files_changed": 1,
+    "changed_symbols": 2,
+    "changed_functions": 2,
+    "flows": [
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-13-pr-347-3ff4ca58.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 345,
+    "title": "feat: 实现智能熔断系统",
+    "merged_at": "2026-06-10T11:38:50Z",
+    "base": "3b3766f3c867b39ea35173a7458b9dcaf38612d2",
+    "target": "db2430e7d52833632ddd1b152d45bf69c4d33f7c",
+    "risk": "HIGH",
+    "risk_score": 50,
+    "files_changed": 5,
+    "changed_symbols": 123,
+    "changed_functions": 88,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-10-pr-345-db2430e7.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "No Change"
+      }
+    }
+  },
+  {
+    "pr_number": 344,
+    "title": "Fix: Add empty response check for non-streaming passthrough path",
+    "merged_at": "2026-06-08T19:47:36Z",
+    "base": "f700a8ab7c0ff8ee964aa85a58e25b205e40fe77",
+    "target": "3b3766f3c867b39ea35173a7458b9dcaf38612d2",
+    "risk": "HIGH",
+    "risk_score": 22,
+    "files_changed": 1,
+    "changed_symbols": 1,
+    "changed_functions": 1,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-08-pr-344-3b3766f3.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 343,
+    "title": "feat: Enhance EmptyResponseCounter with monitoring and admin capabilities",
+    "merged_at": "2026-06-08T11:53:54Z",
+    "base": "1114ebcaf38441116246c28a3aadedfe297b40c0",
+    "target": "fe1b87655b7123cc07da06f4d78f8deef5eb9ab4",
+    "risk": "HIGH",
+    "risk_score": 11,
+    "files_changed": 1,
+    "changed_symbols": 5,
+    "changed_functions": 5,
+    "flows": [
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-08-pr-343-fe1b8765.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "No Change"
+      }
+    }
+  },
+  {
+    "pr_number": 342,
+    "title": "Fix: Delay record_upstream_success for streaming responses until content confirmed",
+    "merged_at": "2026-06-08T11:53:07Z",
+    "base": "508978309aa47c43bd91c0bd6a2fed9840ec8a97",
+    "target": "1114ebcaf38441116246c28a3aadedfe297b40c0",
+    "risk": "HIGH",
+    "risk_score": 21,
+    "files_changed": 1,
+    "changed_symbols": 0,
+    "changed_functions": 0,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-08-pr-342-1114ebca.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 341,
+    "title": "Fix: Consistent Empty Response Penalty with Threshold Check",
+    "merged_at": "2026-06-08T05:48:02Z",
+    "base": "1e23f1493342676226aece129710ca8c0fd30ea5",
+    "target": "53b3d290e68ec4cf2573753f8a8f2605cf11f87d",
+    "risk": "HIGH",
+    "risk_score": 21,
+    "files_changed": 1,
+    "changed_symbols": 0,
+    "changed_functions": 0,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-08-pr-341-53b3d290.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 340,
+    "title": "fix(router): Improve empty streaming response detection to check for actual content",
+    "merged_at": "2026-06-08T01:57:53Z",
+    "base": "3469d3e5650e7b9ce700ac1aa96a9a1641ad1d3f",
+    "target": "1e23f1493342676226aece129710ca8c0fd30ea5",
+    "risk": "HIGH",
+    "risk_score": 15,
+    "files_changed": 1,
+    "changed_symbols": 0,
+    "changed_functions": 0,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-08-pr-340-1e23f149.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 338,
+    "title": "fix(router): use sliding window for empty response detection",
+    "merged_at": "2026-06-08T01:54:33Z",
+    "base": "bff564470265cfeffb350f37daf22e2f96269f2f",
+    "target": "3469d3e5650e7b9ce700ac1aa96a9a1641ad1d3f",
+    "risk": "HIGH",
+    "risk_score": 21,
+    "files_changed": 2,
+    "changed_symbols": 7,
+    "changed_functions": 3,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-08-pr-338-3469d3e5.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "No Change"
+      }
+    }
+  },
+  {
+    "pr_number": 339,
+    "title": "fix(router): Prevent panic when logging bodies with multi-byte UTF-8 characters",
+    "merged_at": "2026-06-08T00:28:54Z",
+    "base": "cdb848f6b0c9199bdd2df8879b4a5e0dd0734357",
+    "target": "bff564470265cfeffb350f37daf22e2f96269f2f",
+    "risk": "LOW",
+    "risk_score": 3,
+    "files_changed": 1,
+    "changed_symbols": 6,
+    "changed_functions": 5,
+    "flows": [
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-08-pr-339-bff56447.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 336,
+    "title": "fix(router): 为流式响应添加 empty response 检测",
+    "merged_at": "2026-06-07T10:11:15Z",
+    "base": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
+    "target": "cdb848f6b0c9199bdd2df8879b4a5e0dd0734357",
+    "risk": "HIGH",
+    "risk_score": 55,
+    "files_changed": 7,
+    "changed_symbols": 36,
+    "changed_functions": 21,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "Data Plane → Request Logging / Observability",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-07-pr-336-cdb848f6.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 335,
+    "title": "feat(router): 改进 Circuit Breaker 和失败检测机制 (Issue #333)",
+    "merged_at": "2026-06-07T08:16:00Z",
+    "base": "a45c27e5a80c779b9127ade8b28592691cd3367e",
+    "target": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
+    "risk": "HIGH",
+    "risk_score": 35,
+    "files_changed": 4,
+    "changed_symbols": 16,
+    "changed_functions": 12,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-07-pr-335-d2733cca.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "Changed"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 331,
+    "title": "fix(router): return JSON-formatted errors for API compatibility",
+    "merged_at": "2026-06-06T18:47:33Z",
+    "base": "7bf4a74fe0aa6aa68f2f487776c26074093de7b3",
+    "target": "a45c27e5a80c779b9127ade8b28592691cd3367e",
+    "risk": "HIGH",
+    "risk_score": 30,
+    "files_changed": 1,
+    "changed_symbols": 3,
+    "changed_functions": 3,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-06-pr-331-a45c27e5.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "No Change"
+      }
+    }
+  },
+  {
+    "pr_number": 330,
+    "title": "fix: OpenAI passthrough URL missing /v1 prefix",
+    "merged_at": "2026-06-06T12:12:19Z",
+    "base": "dacbfc245b36772a57b3571bb31d778ecbf75230",
+    "target": "84b6037202d3f30517831e02141830317552bd56",
+    "risk": "HIGH",
+    "risk_score": 23,
+    "files_changed": 6,
+    "changed_symbols": 32,
+    "changed_functions": 29,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "Console → User / Balance Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-06-pr-330-84b60372.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "Changed"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 309,
+    "title": "fix(security): migrate public auth APIs from /console/api/auth to /api/auth (Issue #303)",
+    "merged_at": "2026-06-04T12:17:47Z",
+    "base": "c3ff8f1573c1d0bcdaef71af2dcd4b0a9d38d360",
+    "target": "64514d957e728a3662a685bb583216ac1483c410",
+    "risk": "HIGH",
+    "risk_score": 13,
+    "files_changed": 1,
+    "changed_symbols": 2,
+    "changed_functions": 2,
+    "flows": [
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-04-pr-309-64514d95.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 328,
+    "title": "E2E 测试：用户管理和充值流程",
+    "merged_at": "2026-06-04T12:17:37Z",
+    "base": "4315cf7411f39e0c0d37b693055e79060900e100",
+    "target": "c3ff8f1573c1d0bcdaef71af2dcd4b0a9d38d360",
+    "risk": "HIGH",
+    "risk_score": 18,
+    "files_changed": 2,
+    "changed_symbols": 13,
+    "changed_functions": 12,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → User / Balance Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-04-pr-328-c3ff8f15.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "No Change"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "Changed"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 327,
+    "title": "test(e2e): add security monitor/风控雷达 flow tests (Issue #313)",
+    "merged_at": "2026-06-04T12:17:28Z",
+    "base": "47c2869df0f822681a2d92f8ce8421a6af043853",
+    "target": "4315cf7411f39e0c0d37b693055e79060900e100",
+    "risk": "HIGH",
+    "risk_score": 13,
+    "files_changed": 2,
+    "changed_symbols": 14,
+    "changed_functions": 13,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Monitor / Security",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-04-pr-327-4315cf74.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "No Change"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 326,
+    "title": "test(e2e): add API Key management flow tests (Issue #312)",
+    "merged_at": "2026-06-04T12:17:13Z",
+    "base": "f83d508e133db4460b3231145b1bf01027cac762",
+    "target": "47c2869df0f822681a2d92f8ce8421a6af043853",
+    "risk": "HIGH",
+    "risk_score": 13,
+    "files_changed": 2,
+    "changed_symbols": 15,
+    "changed_functions": 14,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-04-pr-326-47c2869d.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "No Change"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 325,
+    "title": "test(e2e): add channel management flow tests (Issue #311)",
+    "merged_at": "2026-06-04T12:15:21Z",
+    "base": "6629637daad1be345164d79375c170a4b6bda447",
+    "target": "f83d508e133db4460b3231145b1bf01027cac762",
+    "risk": "HIGH",
+    "risk_score": 13,
+    "files_changed": 2,
+    "changed_symbols": 18,
+    "changed_functions": 16,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Console → Channel / Model Management",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-04-pr-325-f83d508e.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "No Change"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 301,
+    "title": "fix(ui): add focus-visible, active states and aria-labels to landing page buttons",
+    "merged_at": "2026-06-04T12:15:02Z",
+    "base": "374a1588ca7ae1336bdcb289f7ca4da12e3acd68",
+    "target": "6629637daad1be345164d79375c170a4b6bda447",
+    "risk": "MEDIUM",
+    "risk_score": 8,
+    "files_changed": 2,
+    "changed_symbols": 1,
+    "changed_functions": 1,
+    "flows": [
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-04-pr-301-6629637d.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 324,
+    "title": "test(e2e): add comprehensive user authentication flow tests (Issue #310)",
+    "merged_at": "2026-06-04T11:58:22Z",
+    "base": "f06a156afd7f4c49ccbe08fe6e8b4a00f4168787",
+    "target": "374a1588ca7ae1336bdcb289f7ca4da12e3acd68",
+    "risk": "HIGH",
+    "risk_score": 13,
+    "files_changed": 2,
+    "changed_symbols": 14,
+    "changed_functions": 13,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Streaming Response",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "Account Access / Authentication",
+        "truth": "STATIC CONFIRMED"
+      }
+    ],
+    "doc": "2026-06-04-pr-324-374a1588.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "No Change"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 329,
+    "title": "fix(router): failover on auth errors (401/402) and add xunfei channel type",
+    "merged_at": "2026-06-04T10:14:27Z",
+    "base": "018855c3c571e7eb42520db46e70bc8fc5ba726e",
+    "target": "f06a156afd7f4c49ccbe08fe6e8b4a00f4168787",
+    "risk": "HIGH",
+    "risk_score": 32,
+    "files_changed": 2,
+    "changed_symbols": 3,
+    "changed_functions": 3,
+    "flows": [
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+        "truth": "STATIC CONFIRMED"
+      },
+      {
+        "name": "API Requests → Chat Completion → Billing / Usage",
+        "truth": "⚠ INFERRED"
+      },
+      {
+        "name": "API Requests → Data Plane",
+        "truth": "⚠ INFERRED"
+      }
+    ],
+    "doc": "2026-06-04-pr-329-f06a156a.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "Changed"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "Changed"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  },
+  {
+    "pr_number": 308,
+    "title": "fix(ui): 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
+    "merged_at": "2026-06-01T12:54:05Z",
+    "base": "c8a2822f31029e16102807a88e826a1e040f1e98",
+    "target": "c0584e1643764c300e12bac68f7557bc609e6f0a",
+    "risk": "LOW",
+    "risk_score": 3,
+    "files_changed": 1,
+    "changed_symbols": 0,
+    "changed_functions": 0,
+    "flows": [
+      {
+        "name": "⚠ Unable to map changed code to a user-triggered flow",
+        "truth": "⚠ INFERRED / UNKNOWN"
+      }
+    ],
+    "doc": "2026-06-01-pr-308-c0584e16.md",
+    "dimensions": {
+      "Change Scope": {
+        "status": "Changed"
+      },
+      "User Flow": {
+        "status": "Changed"
+      },
+      "Runtime": {
+        "status": "Changed"
+      },
+      "Control Flow": {
+        "status": "No Change"
+      },
+      "State": {
+        "status": "No Change"
+      },
+      "API Contract": {
+        "status": "No Change"
+      },
+      "Database": {
+        "status": "No Change"
+      },
+      "External": {
+        "status": "No Change"
+      },
+      "Blast Radius": {
+        "status": "Changed"
+      },
+      "Tests": {
+        "status": "Changed"
+      }
+    }
+  }
+]

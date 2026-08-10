@@ -1,0 +1,59 @@
+{
+  "pr_number": 324,
+  "title": "test(e2e): add comprehensive user authentication flow tests (Issue #310)",
+  "merged_at": "2026-06-04T11:58:22Z",
+  "base": "f06a156afd7f4c49ccbe08fe6e8b4a00f4168787",
+  "target": "374a1588ca7ae1336bdcb289f7ca4da12e3acd68",
+  "risk": "HIGH",
+  "risk_score": 13,
+  "files_changed": 2,
+  "changed_symbols": 14,
+  "changed_functions": 13,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Account Access / Authentication",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-06-04-pr-324-374a1588.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "No Change"
+    },
+    "Control Flow": {
+      "status": "No Change"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "No Change"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

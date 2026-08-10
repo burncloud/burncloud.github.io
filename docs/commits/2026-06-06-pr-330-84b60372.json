@@ -1,0 +1,67 @@
+{
+  "pr_number": 330,
+  "title": "fix: OpenAI passthrough URL missing /v1 prefix",
+  "merged_at": "2026-06-06T12:12:19Z",
+  "base": "dacbfc245b36772a57b3571bb31d778ecbf75230",
+  "target": "84b6037202d3f30517831e02141830317552bd56",
+  "risk": "HIGH",
+  "risk_score": 23,
+  "files_changed": 6,
+  "changed_symbols": 32,
+  "changed_functions": 29,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Data Plane",
+      "truth": "⚠ INFERRED"
+    },
+    {
+      "name": "Console → User / Balance Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Account Access / Authentication",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-06-06-pr-330-84b60372.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "Changed"
+    },
+    "Control Flow": {
+      "status": "Changed"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "Changed"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

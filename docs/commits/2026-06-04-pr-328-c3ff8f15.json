@@ -1,0 +1,63 @@
+{
+  "pr_number": 328,
+  "title": "E2E 测试：用户管理和充值流程",
+  "merged_at": "2026-06-04T12:17:37Z",
+  "base": "4315cf7411f39e0c0d37b693055e79060900e100",
+  "target": "c3ff8f1573c1d0bcdaef71af2dcd4b0a9d38d360",
+  "risk": "HIGH",
+  "risk_score": 18,
+  "files_changed": 2,
+  "changed_symbols": 13,
+  "changed_functions": 12,
+  "flows": [
+    {
+      "name": "API Requests → Chat Completion → Streaming Response",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Console → User / Balance Management",
+      "truth": "STATIC CONFIRMED"
+    },
+    {
+      "name": "Account Access / Authentication",
+      "truth": "STATIC CONFIRMED"
+    }
+  ],
+  "doc": "2026-06-04-pr-328-c3ff8f15.md",
+  "dimensions": {
+    "Change Scope": {
+      "status": "Changed"
+    },
+    "User Flow": {
+      "status": "Changed"
+    },
+    "Runtime": {
+      "status": "No Change"
+    },
+    "Control Flow": {
+      "status": "No Change"
+    },
+    "State": {
+      "status": "No Change"
+    },
+    "API Contract": {
+      "status": "Changed"
+    },
+    "Database": {
+      "status": "Changed"
+    },
+    "External": {
+      "status": "No Change"
+    },
+    "Blast Radius": {
+      "status": "Changed"
+    },
+    "Tests": {
+      "status": "Changed"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "commits/2026-06-08-pr-340-1e23f149",
+  "title": "PR #340 · fix(router): Improve empty streaming response detection to check for actual content",
+  "description": "Executive Summary",
+  "source": "@site/../docs/commits/2026-06-08-pr-340-1e23f149.md",
+  "sourceDirName": "commits",
+  "slug": "/commits/2026-06-08-pr-340-1e23f149/",
+  "permalink": "/changes/commits/2026-06-08-pr-340-1e23f149/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-08-pr-340-1e23f149.md",
+  "tags": [],
+  "version": "current",
+  "lastUpdatedBy": null,
+  "lastUpdatedAt": null,
+  "sidebarPosition": 15,
+  "frontMatter": {
+    "title": "PR #340 · fix(router): Improve empty streaming response detection to check for actual content",
+    "slug": "/commits/2026-06-08-pr-340-1e23f149/",
+    "sidebar_position": 15,
+    "doc_type": "commit-change-atlas",
+    "truth": "source-diff-derived",
+    "repository": "burncloud/burncloud",
+    "pr_number": 340,
+    "base_commit": "3469d3e5650e7b9ce700ac1aa96a9a1641ad1d3f",
+    "target_commit": "1e23f1493342676226aece129710ca8c0fd30ea5",
+    "risk": "HIGH",
+    "merged_at": "2026-06-08T01:57:53.000Z"
+  },
+  "sidebar": "changesSidebar",
+  "previous": {
+    "title": "PR #341 · Fix: Consistent Empty Response Penalty with Threshold Check",
+    "permalink": "/changes/commits/2026-06-08-pr-341-53b3d290/"
+  },
+  "next": {
+    "title": "PR #338 · fix(router): use sliding window for empty response detection",
+    "permalink": "/changes/commits/2026-06-08-pr-338-3469d3e5/"
+  }
+}
