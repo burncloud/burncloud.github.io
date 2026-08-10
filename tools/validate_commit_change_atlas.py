@@ -18,7 +18,9 @@ REQUIRED = [
     "## Reviewer Checklist",
     "## Source Diff Entry Points",
 ]
-EVIDENCE_RE = re.compile(r"https://github\.com/burncloud/burncloud/blob/([0-9a-f]{40})/([^\s)#]+)#L(\d+)-L(\d+)")
+# Validate only Evidence lines emitted by this generator. Source/docs being diffed may themselves
+# contain arbitrary historical GitHub URLs; those are changed content, not Atlas evidence.
+EVIDENCE_RE = re.compile(r"^- \*\*(?:BASE|AFTER):\*\* \[`[^`]+`\]\(https://github\.com/burncloud/burncloud/blob/([0-9a-f]{40})/([^\s)#]+)#L(\d+)-L(\d+)\)$", re.M)
 FM_RE = re.compile(r"\A---\n(.*?)\n---\n", re.S)
 NODE_RE = re.compile(r"^\s*([A-Za-z][A-Za-z0-9_]*)\s*(?:\[|\{)", re.M)
 
@@ -68,7 +70,9 @@ def validate(docs: Path, repo: Path):
             n=text.count(heading)
             if n!=1: errors.append(f"{md.name}: heading {heading!r} count={n}, expected 1")
         if "AUTHOR-STATED INTENT" not in text and "⚠ INFERRED INTENT" not in text: errors.append(f"{md.name}: intent truth not marked")
-        if "blob/main/" in text: errors.append(f"{md.name}: commit evidence must never bind to main")
+        for line in text.splitlines():
+            if (line.startswith("- **BASE:") or line.startswith("- **AFTER:")) and "blob/main/" in line:
+                errors.append(f"{md.name}: generated evidence must never bind to main")
         for i in range(1,11):
             if f"| {i}." not in text: errors.append(f"{md.name}: dashboard missing dimension {i}")
         blocks=re.findall(r"```mermaid\n(.*?)```",text,re.S); mermaids += len(blocks)
