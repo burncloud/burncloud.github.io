@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-08-pr-343-fe1b8765",
   "title": "PR #343 · feat: Enhance EmptyResponseCounter with monitoring and admin capabilities",
-  "description": "Executive Summary",
+  "description": "343：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-08-pr-343-fe1b8765.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-08-pr-343-fe1b8765/",
@@ -11,20 +11,22 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-08-pr-343-fe1b8765.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 12,
   "frontMatter": {
     "title": "PR #343 · feat: Enhance EmptyResponseCounter with monitoring and admin capabilities",
     "slug": "/commits/2026-06-08-pr-343-fe1b8765/",
     "sidebar_position": 12,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 343,
     "base_commit": "1114ebcaf38441116246c28a3aadedfe297b40c0",
     "target_commit": "fe1b87655b7123cc07da06f4d78f8deef5eb9ab4",
-    "risk": "HIGH",
+    "risk": "高",
     "merged_at": "2026-06-08T11:53:54.000Z"
   },
   "sidebar": "changesSidebar",
@@ -33,7 +35,7 @@
     "permalink": "/changes/commits/2026-06-08-pr-344-3b3766f3/"
   },
   "next": {
-    "title": "PR #342 · Fix: Delay record_upstream_success for streaming responses until content confirmed",
+    "title": "PR #342 · Fix: Delay record＿upstream＿success for streaming responses until content confirmed",
     "permalink": "/changes/commits/2026-06-08-pr-342-1114ebca/"
   }
 }

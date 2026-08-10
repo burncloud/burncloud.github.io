@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-06-pr-331-a45c27e5",
-  "title": "PR #331 · fix(router): return JSON-formatted errors for API compatibility",
-  "description": "Executive Summary",
+  "title": "PR #331 · fix（router）: return JSON-formatted errors for API compatibility",
+  "description": "331：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-06-pr-331-a45c27e5.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-06-pr-331-a45c27e5/",
@@ -11,25 +11,27 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-06-pr-331-a45c27e5.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 20,
   "frontMatter": {
-    "title": "PR #331 · fix(router): return JSON-formatted errors for API compatibility",
+    "title": "PR #331 · fix（router）: return JSON-formatted errors for API compatibility",
     "slug": "/commits/2026-06-06-pr-331-a45c27e5/",
     "sidebar_position": 20,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 331,
     "base_commit": "7bf4a74fe0aa6aa68f2f487776c26074093de7b3",
     "target_commit": "a45c27e5a80c779b9127ade8b28592691cd3367e",
-    "risk": "HIGH",
+    "risk": "高",
     "merged_at": "2026-06-06T18:47:33.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #335 · feat(router): 改进 Circuit Breaker 和失败检测机制 (Issue #333)",
+    "title": "PR #335 · feat（router）: 改进 Circuit Breaker 和失败检测机制 （Issue ＃333）",
     "permalink": "/changes/commits/2026-06-07-pr-335-d2733cca/"
   },
   "next": {

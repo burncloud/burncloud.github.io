@@ -1,51 +1,66 @@
 {
+  "version": 2,
   "pr_number": 348,
   "title": "fix: HTTP error responses should return JSON format instead of plain text",
   "merged_at": "2026-06-13T16:57:28Z",
   "base": "3ff4ca580ab4294372c40ad6b4b6ce11a1bb7ee1",
   "target": "0f51207790b4e5beaf890ea378f19a80f2a0bcbc",
-  "risk": "LOW",
+  "risk": "低",
   "risk_score": 0,
   "files_changed": 0,
   "changed_symbols": 0,
   "changed_functions": 0,
-  "flows": [
+  "summary": "这次主要改了一件事：没有实际代码差异。",
+  "semantic_units": [
     {
-      "name": "⚠ Unable to map changed code to a user-triggered flow",
-      "truth": "⚠ INFERRED / UNKNOWN"
+      "key": "empty",
+      "title": "没有实际代码差异",
+      "plain": "这个 merge commit 的第一父提交和 TARGET 之间没有文件差异，所以这里明确写『没有代码变化』，不为了凑图编故事。",
+      "flow": "没有用户流程变化",
+      "files": []
     }
   ],
-  "doc": "2026-06-13-pr-348-0f512077.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": false
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": false
     },
-    "Runtime": {
-      "status": "No Change"
+    "3": {
+      "name": "运行过程",
+      "changed": false
     },
-    "Control Flow": {
-      "status": "No Change"
+    "4": {
+      "name": "控制流程",
+      "changed": false
     },
-    "State": {
-      "status": "No Change"
+    "5": {
+      "name": "状态变化",
+      "changed": false
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": false
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": false
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-13-pr-348-0f512077.md"
 }

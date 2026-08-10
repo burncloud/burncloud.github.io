@@ -1,71 +1,108 @@
 {
+  "version": 2,
   "pr_number": 336,
-  "title": "fix(router): 为流式响应添加 empty response 检测",
+  "title": "fix（router）: 为流式响应添加 empty response 检测",
   "merged_at": "2026-06-07T10:11:15Z",
   "base": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
   "target": "cdb848f6b0c9199bdd2df8879b4a5e0dd0734357",
-  "risk": "HIGH",
-  "risk_score": 55,
+  "risk": "高",
+  "risk_score": 30,
   "files_changed": 7,
   "changed_symbols": 36,
   "changed_functions": 21,
-  "flows": [
+  "summary": "这次主要改了这些事：流式返回、数据库升级和保存数据、登录和鉴权、模型请求选渠道、上游失败后换下一个渠道。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
+      "key": "streaming",
+      "title": "流式返回",
+      "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+      "flow": "用户发起流式模型请求",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-      "truth": "STATIC CONFIRMED"
+      "key": "database",
+      "title": "数据库升级和保存数据",
+      "plain": "这次改了数据库结构或升级步骤。程序启动或升级数据库时，会按新的迁移规则处理。",
+      "flow": "程序启动 / 数据库升级 / 保存数据",
+      "files": [
+        "crates/database/crates/router/src/lib.rs",
+        "crates/database/crates/router/src/log.rs",
+        "crates/database/migrations/postgres/0017_router_request_logs.sql",
+        "crates/database/migrations/sqlite/0017_router_request_logs.sql"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-      "truth": "STATIC CONFIRMED"
+      "key": "auth",
+      "title": "登录和鉴权",
+      "plain": "这次改了登录、Token 或权限检查。重点是让『拿到身份』和『后面检查身份』的代码更一致。",
+      "flow": "用户登录 / 访问受保护的 Console 接口",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Billing / Usage",
-      "truth": "⚠ INFERRED"
+      "key": "routing",
+      "title": "模型请求选渠道",
+      "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+      "flow": "模型请求选择 Channel",
+      "files": [
+        "crates/router/src/lib.rs",
+        "crates/router/src/state.rs"
+      ]
     },
     {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
-    },
-    {
-      "name": "Data Plane → Request Logging / Observability",
-      "truth": "STATIC CONFIRMED"
+      "key": "failover",
+      "title": "上游失败后换下一个渠道",
+      "plain": "上游出错以后，BurnCloud 决定『直接报错』还是『换下一个渠道再试』的规则变了。",
+      "flow": "上游失败后的重试 / Failover",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     }
   ],
-  "doc": "2026-06-07-pr-336-cdb848f6.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": true
     },
-    "State": {
-      "status": "Changed"
+    "5": {
+      "name": "状态变化",
+      "changed": true
     },
-    "API Contract": {
-      "status": "Changed"
+    "6": {
+      "name": "API 契约",
+      "changed": true
     },
-    "Database": {
-      "status": "Changed"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": true
     },
-    "External": {
-      "status": "Changed"
+    "8": {
+      "name": "外部依赖",
+      "changed": true
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": true
     }
-  }
+  },
+  "doc": "2026-06-07-pr-336-cdb848f6.md"
 }

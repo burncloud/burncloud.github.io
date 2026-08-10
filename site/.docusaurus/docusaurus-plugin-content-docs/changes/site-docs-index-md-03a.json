@@ -1,7 +1,7 @@
 {
   "id": "index",
-  "title": "Commit Change Atlas",
-  "description": "最近 30 个已合并 Pull Request changeset。每篇以 merge commit 第一父提交为 BASE、merge commit 为 TARGET。",
+  "title": "BurnCloud 最近 30 次更新",
+  "description": "这里不用一上来读几千行 Diff。每次更新先回答三个问题：改了哪几件事、以前怎么跑、现在怎么跑。",
   "source": "@site/../docs/index.md",
   "sourceDirName": ".",
   "slug": "/",
@@ -11,14 +11,14 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/index.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 1,
   "frontMatter": {
-    "title": "Commit Change Atlas",
+    "title": "BurnCloud 最近 30 次更新",
     "slug": "/",
     "sidebar_position": 1,
-    "doc_type": "commit-change-index"
+    "doc_type": "commit-change-index-v2"
   },
   "sidebar": "changesSidebar",
   "next": {

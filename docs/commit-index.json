@@ -1,1856 +1,2524 @@
 [
   {
+    "version": 2,
     "pr_number": 393,
     "title": "docs: replace legacy docs with AI agent engineering harness",
     "merged_at": "2026-08-10T12:01:39Z",
     "base": "c7107382b8479deb44f992e9e5ae8dcac5efb417",
     "target": "956041a8b54d8c6964e57fa2284f825cc322b0d2",
-    "risk": "HIGH",
-    "risk_score": 55,
+    "risk": "中",
+    "risk_score": 8,
     "files_changed": 51,
     "changed_symbols": 0,
     "changed_functions": 0,
-    "flows": [
+    "summary": "这次主要改了两件事：开发文档，还有 代码检查和自动化。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "docs",
+        "title": "开发文档",
+        "plain": "这次主要整理开发文档。它会影响程序员和 AI Agent 怎么理解项目，但不会因为文档本身就改变线上请求怎么跑。",
+        "flow": "程序员 / AI Agent 阅读工程文档",
+        "files": [
+          "README.md",
+          "crates/router/README.md",
+          "docs/BLUEPRINT.md",
+          "docs/CLAUDE.md",
+          "docs/CONSTITUTION.md",
+          "docs/CONSTITUTION_ZH.md",
+          "docs/E2E_FRAMEWORK_COMPARISON.md",
+          "docs/README.md"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
-      },
-      {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
-      },
-      {
-        "name": "Console → API Token Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Channel / Model Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Monitor / Security",
-        "truth": "STATIC CONFIRMED"
+        "key": "ci",
+        "title": "代码检查和自动化",
+        "plain": "这次改的是自动检查和发布流程。用户平时调用 BurnCloud 的运行链路通常不变，但开发者提交代码后的检查方法变了。",
+        "flow": "开发者提交代码后运行 CI",
+        "files": [
+          "crates/router/scripts/check-router-deps.sh"
+        ]
       }
     ],
-    "doc": "2026-08-10-pr-393-956041a8.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": false
       },
-      "Runtime": {
-        "status": "No Change"
+      "3": {
+        "name": "运行过程",
+        "changed": false
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": true
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-08-10-pr-393-956041a8.md"
   },
   {
+    "version": 2,
     "pr_number": 355,
-    "title": "feat(client): E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
+    "title": "feat（client）: E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
     "merged_at": "2026-07-08T05:55:51Z",
     "base": "876bf8dc06bf8874ff433bf01c8fb5582a1e2c39",
     "target": "c7107382b8479deb44f992e9e5ae8dcac5efb417",
-    "risk": "HIGH",
-    "risk_score": 55,
+    "risk": "高",
+    "risk_score": 15,
     "files_changed": 98,
     "changed_symbols": 323,
     "changed_functions": 213,
-    "flows": [
+    "summary": "这次主要改了这些事：登录和鉴权、弹窗、按钮和页面界面、其他代码整理、开发文档、调用上游模型服务。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "auth",
+        "title": "登录和鉴权",
+        "plain": "这次改了登录、Token 或权限检查。重点是让『拿到身份』和『后面检查身份』的代码更一致。",
+        "flow": "用户登录 / 访问受保护的 Console 接口",
+        "files": [
+          "crates/client/crates/client-shared/src/e2e_mock/fixtures.rs",
+          "crates/client/crates/client-shared/src/e2e_mock/mod.rs",
+          "crates/client/crates/client-shared/src/styles/18_login_register_page_50_50_split_screen.css",
+          "crates/client/src/app.rs",
+          "crates/client/src/lib.rs",
+          "crates/client/src/pages/e2e_preview.rs",
+          "crates/client/src/pages/login.rs",
+          "crates/loops/acceptance/aesthetic-optimize-acceptance.md"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
+        "key": "ui",
+        "title": "弹窗、按钮和页面界面",
+        "plain": "Console 的弹窗和页面交互被整理了。以前有些页面自己写一套弹窗，现在更多地方统一用 BCModal，关闭或保存时也把页面状态收干净。",
+        "flow": "管理员使用 Console 页面",
+        "files": [
+          "crates/client/crates/client-access/src/lib.rs",
+          "crates/client/crates/client-connect/src/lib.rs",
+          "crates/client/crates/client-dashboard/src/dashboard.rs",
+          "crates/client/crates/client-deploy/src/deploy.rs",
+          "crates/client/crates/client-finance/src/lib.rs",
+          "crates/client/crates/client-log/src/lib.rs",
+          "crates/client/crates/client-models/src/models.rs",
+          "crates/client/crates/client-playground/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
+        "key": "general",
+        "title": "其他代码整理",
+        "plain": "这部分代码有变化，但仅靠静态差异还不能安全地说它属于哪条用户流程，所以这里不硬猜。",
+        "flow": "代码内部行为；需要按源码证据继续确认入口",
+        "files": [
+          "crates/loops/acceptance/aesthetic-optimize-agent-prompt.md",
+          "crates/loops/acceptance/css-optimize-agent-prompt.md",
+          "crates/loops/src/cli.rs",
+          "crates/loops/src/lib.rs",
+          "crates/loops/src/lock.rs",
+          "crates/loops/src/log.rs",
+          "crates/loops/src/loops/css_optimize.rs",
+          "crates/loops/src/loops/mod.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "docs",
+        "title": "开发文档",
+        "plain": "这次主要整理开发文档。它会影响程序员和 AI Agent 怎么理解项目，但不会因为文档本身就改变线上请求怎么跑。",
+        "flow": "程序员 / AI Agent 阅读工程文档",
+        "files": [
+          "crates/loops/README.md",
+          "docs/CLAUDE.md",
+          "docs/issue/1.md",
+          "docs/ui/README.md",
+          "docs/ui/components.md",
+          "docs/ui/naming.md",
+          "docs/ui/system.md",
+          "docs/ui/tokens.md"
+        ]
       },
       {
-        "name": "Console → API Token Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Channel / Model Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Monitor / Security",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → User / Balance Management",
-        "truth": "STATIC CONFIRMED"
+        "key": "provider",
+        "title": "调用上游模型服务",
+        "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+        "flow": "BurnCloud 调用上游 Provider",
+        "files": [
+          "crates/loops/src/loops/jobs_aesthetic.rs",
+          "crates/loops/src/server.rs"
+        ]
       }
     ],
-    "doc": "2026-07-08-pr-355-c7107382.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-07-08-pr-355-c7107382.md"
   },
   {
+    "version": 2,
     "pr_number": 354,
-    "title": "feat(client): UI design system docs, split CSS, and BCButton migration",
+    "title": "feat（client）: UI design system docs, split CSS, and BCButton migration",
     "merged_at": "2026-07-07T04:58:42Z",
     "base": "8e8692ad01447b00b6b7c03f776d2bb36edbe7f5",
     "target": "876bf8dc06bf8874ff433bf01c8fb5582a1e2c39",
-    "risk": "HIGH",
-    "risk_score": 38,
+    "risk": "高",
+    "risk_score": 14,
     "files_changed": 57,
     "changed_symbols": 25,
     "changed_functions": 20,
-    "flows": [
+    "summary": "这次主要改了这些事：登录和鉴权、弹窗、按钮和页面界面、开发文档、代码检查和自动化、监控、日志和熔断状态。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "auth",
+        "title": "登录和鉴权",
+        "plain": "这次改了登录、Token 或权限检查。重点是让『拿到身份』和『后面检查身份』的代码更一致。",
+        "flow": "用户登录 / 访问受保护的 Console 接口",
+        "files": [
+          "crates/client/crates/client-shared/src/styles.rs",
+          "crates/client/crates/client-shared/src/styles/05_input_styles.css",
+          "crates/client/crates/client-shared/src/styles/18_login_register_page_50_50_split_screen.css",
+          "crates/client/crates/client-shared/src/styles/19_component_utility_classes_migrated_from_inline_s.css",
+          "crates/client/crates/client-shared/src/styles/24_semantic_component_classes_register_users_api_mi.css",
+          "crates/client/crates/client-shared/src/styles/mod.rs"
+        ]
       },
       {
-        "name": "Console → API Token Management",
-        "truth": "STATIC CONFIRMED"
+        "key": "ui",
+        "title": "弹窗、按钮和页面界面",
+        "plain": "Console 的弹窗和页面交互被整理了。以前有些页面自己写一套弹窗，现在更多地方统一用 BCModal，关闭或保存时也把页面状态收干净。",
+        "flow": "管理员使用 Console 页面",
+        "files": [
+          "crates/client/crates/client-access/src/lib.rs",
+          "crates/client/crates/client-connect/src/lib.rs",
+          "crates/client/crates/client-log/src/lib.rs",
+          "crates/client/crates/client-models/src/models.rs",
+          "crates/client/crates/client-playground/src/lib.rs",
+          "crates/client/crates/client-settings/src/groups.rs",
+          "crates/client/crates/client-settings/src/settings.rs",
+          "crates/client/crates/client-shared/src/components/bc_button.rs"
+        ]
       },
       {
-        "name": "Console → Channel / Model Management",
-        "truth": "STATIC CONFIRMED"
+        "key": "docs",
+        "title": "开发文档",
+        "plain": "这次主要整理开发文档。它会影响程序员和 AI Agent 怎么理解项目，但不会因为文档本身就改变线上请求怎么跑。",
+        "flow": "程序员 / AI Agent 阅读工程文档",
+        "files": [
+          "crates/client/crates/client-api/docs/06-css-design-system.md",
+          "crates/client/crates/client-shared/src/styles/README.md",
+          "docs/CLAUDE.md",
+          "docs/ui/README.md",
+          "docs/ui/components.md",
+          "docs/ui/pages.md",
+          "docs/ui/system.md",
+          "docs/ui/tokens.md"
+        ]
       },
       {
-        "name": "Console → Monitor / Security",
-        "truth": "STATIC CONFIRMED"
+        "key": "ci",
+        "title": "代码检查和自动化",
+        "plain": "这次改的是自动检查和发布流程。用户平时调用 BurnCloud 的运行链路通常不变，但开发者提交代码后的检查方法变了。",
+        "flow": "开发者提交代码后运行 CI",
+        "files": [
+          ".github/workflows/client-ui.yml",
+          "crates/client/scripts/check-ui-conventions.ps1",
+          "crates/client/scripts/check-ui-conventions.sh"
+        ]
       },
       {
-        "name": "Console → User / Balance Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Settings",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Playground",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "observability",
+        "title": "监控、日志和熔断状态",
+        "plain": "系统记录健康状态、日志、监控或熔断信息的办法变了。它主要帮助系统知道『哪个渠道好不好用』以及管理员排查问题。",
+        "flow": "管理员查看监控 / 系统记录运行状态",
+        "files": [
+          "crates/client/crates/client-monitor/src/monitor.rs",
+          "crates/client/crates/client-shared/src/styles/13_model_cards_metrics.css"
+        ]
       }
     ],
-    "doc": "2026-07-07-pr-354-876bf8dc.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-07-07-pr-354-876bf8dc.md"
   },
   {
+    "version": 2,
     "pr_number": 353,
-    "title": "refactor(client): unify design system CSS injection and console styling",
+    "title": "refactor（client）: unify design system CSS injection and console styling",
     "merged_at": "2026-07-05T16:56:52Z",
     "base": "5c0772cea399af31d96d09d040299ddf2dc37a5d",
     "target": "8e8692ad01447b00b6b7c03f776d2bb36edbe7f5",
-    "risk": "HIGH",
-    "risk_score": 37,
+    "risk": "高",
+    "risk_score": 14,
     "files_changed": 34,
     "changed_symbols": 58,
     "changed_functions": 39,
-    "flows": [
+    "summary": "这次主要改了这些事：弹窗、按钮和页面界面、登录和鉴权、监控、日志和熔断状态、Console 调后台接口。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "ui",
+        "title": "弹窗、按钮和页面界面",
+        "plain": "Console 的弹窗和页面交互被整理了。以前有些页面自己写一套弹窗，现在更多地方统一用 BCModal，关闭或保存时也把页面状态收干净。",
+        "flow": "管理员使用 Console 页面",
+        "files": [
+          "crates/client/crates/client-access/src/lib.rs",
+          "crates/client/crates/client-api/src/api.rs",
+          "crates/client/crates/client-connect/src/lib.rs",
+          "crates/client/crates/client-deploy/src/deploy.rs",
+          "crates/client/crates/client-finance/src/lib.rs",
+          "crates/client/crates/client-log/src/lib.rs",
+          "crates/client/crates/client-models/src/models.rs",
+          "crates/client/crates/client-playground/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
+        "key": "auth",
+        "title": "登录和鉴权",
+        "plain": "这次改了登录、Token 或权限检查。重点是让『拿到身份』和『后面检查身份』的代码更一致。",
+        "flow": "用户登录 / 访问受保护的 Console 接口",
+        "files": [
+          "crates/client/crates/client-api/src/api.rs",
+          "crates/client/src/components/guest_layout.rs",
+          "crates/client/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
+        "key": "observability",
+        "title": "监控、日志和熔断状态",
+        "plain": "系统记录健康状态、日志、监控或熔断信息的办法变了。它主要帮助系统知道『哪个渠道好不好用』以及管理员排查问题。",
+        "flow": "管理员查看监控 / 系统记录运行状态",
+        "files": [
+          "crates/client/crates/client-monitor/src/monitor.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
-      },
-      {
-        "name": "Console → API Token Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Channel / Model Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Monitor / Security",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → User / Balance Management",
-        "truth": "STATIC CONFIRMED"
+        "key": "console",
+        "title": "Console 调后台接口",
+        "plain": "Console 页面调用后台接口的代码变了。也就是管理员点一个操作后，前端怎么请求后台发生了变化。",
+        "flow": "管理员在 Console 页面操作",
+        "files": [
+          "crates/client/crates/client-api/src/api.rs",
+          "crates/client/crates/client-deploy/src/deploy.rs",
+          "crates/client/crates/client-playground/src/lib.rs",
+          "crates/client/crates/client-shared/src/lib.rs",
+          "crates/client/crates/client-users/src/lib.rs",
+          "crates/client/src/bin/screenshot_gen.rs",
+          "crates/client/src/lib.rs",
+          "crates/client/tailwind.config.js"
+        ]
       }
     ],
-    "doc": "2026-07-05-pr-353-8e8692ad.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-07-05-pr-353-8e8692ad.md"
   },
   {
+    "version": 2,
     "pr_number": 352,
-    "title": "fix(client,auth,db): unify JWT secret, fix modals, and polish desktop UI",
+    "title": "fix（client,auth,db）: unify JWT secret, fix modals, and polish desktop UI",
     "merged_at": "2026-07-05T15:32:47Z",
     "base": "4a1e718264db5a12482998be9c31bbcff381328c",
     "target": "5c0772cea399af31d96d09d040299ddf2dc37a5d",
-    "risk": "HIGH",
-    "risk_score": 48,
+    "risk": "高",
+    "risk_score": 13,
     "files_changed": 29,
     "changed_symbols": 85,
     "changed_functions": 70,
-    "flows": [
+    "summary": "这次主要改了这些事：弹窗、按钮和页面界面、数据库升级和保存数据、登录和鉴权、监控、日志和熔断状态、Console 调后台接口。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "ui",
+        "title": "弹窗、按钮和页面界面",
+        "plain": "Console 的弹窗和页面交互被整理了。以前有些页面自己写一套弹窗，现在更多地方统一用 BCModal，关闭或保存时也把页面状态收干净。",
+        "flow": "管理员使用 Console 页面",
+        "files": [
+          "crates/client/crates/client-api/src/api.rs",
+          "crates/client/crates/client-connect/src/lib.rs",
+          "crates/client/crates/client-models/src/models.rs",
+          "crates/client/crates/client-shared/src/components/bc_button.rs",
+          "crates/client/crates/client-shared/src/components/bc_modal.rs",
+          "crates/client/crates/client-shared/src/components/title_bar.rs",
+          "crates/client/crates/client-shared/src/styles.rs",
+          "crates/client/src/components/guest_layout.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
+        "key": "database",
+        "title": "数据库升级和保存数据",
+        "plain": "SQLite 的第 0017 次数据库升级被重做了，目的是让旧数据库升级时更稳，不要因为旧表结构不同就直接出问题。",
+        "flow": "程序启动 / 数据库升级 / 保存数据",
+        "files": [
+          "crates/database/migrations/sqlite/0017_fix_bool_columns.sql",
+          "crates/database/src/migration/mod.rs",
+          "crates/database/src/migration/sqlite_0017.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
+        "key": "auth",
+        "title": "登录和鉴权",
+        "plain": "登录后的 Token 处理被统一了。现在客户端有 Token 时会带上 Bearer 头，签发和检查 JWT 也尽量走同一套密钥。 这是作者在 PR 里明确写出的修复目标。",
+        "flow": "用户登录 / 访问受保护的 Console 接口",
+        "files": [
+          "crates/client/crates/client-shared/src/services/auth_service.rs",
+          "crates/client/crates/client-shared/src/services/channel_service.rs",
+          "crates/client/crates/client-shared/src/services/deploy_service.rs",
+          "crates/client/crates/client-shared/src/services/log_service.rs",
+          "crates/client/crates/client-shared/src/services/monitor_service.rs",
+          "crates/client/crates/client-shared/src/services/user_service.rs",
+          "crates/client/crates/client-shared/src/utils/auth_http.rs",
+          "crates/client/crates/client-shared/src/utils/mod.rs"
+        ]
       },
       {
-        "name": "Console → Channel / Model Management",
-        "truth": "STATIC CONFIRMED"
+        "key": "observability",
+        "title": "监控、日志和熔断状态",
+        "plain": "系统记录健康状态、日志、监控或熔断信息的办法变了。它主要帮助系统知道『哪个渠道好不好用』以及管理员排查问题。",
+        "flow": "管理员查看监控 / 系统记录运行状态",
+        "files": [
+          "crates/client/crates/client-monitor/src/monitor.rs",
+          "crates/client/crates/client-shared/src/services/monitor_service.rs"
+        ]
       },
       {
-        "name": "Console → Monitor / Security",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Data Plane → Request Logging / Observability",
-        "truth": "STATIC CONFIRMED"
+        "key": "console",
+        "title": "Console 调后台接口",
+        "plain": "Console 页面调用后台接口的代码变了。也就是管理员点一个操作后，前端怎么请求后台发生了变化。",
+        "flow": "管理员在 Console 页面操作",
+        "files": [
+          "crates/client/crates/client-shared/src/services/channel_service.rs",
+          "crates/client/crates/client-shared/src/services/log_service.rs",
+          "crates/client/crates/client-shared/src/services/user_service.rs"
+        ]
       }
     ],
-    "doc": "2026-07-05-pr-352-5c0772ce.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": true
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-07-05-pr-352-5c0772ce.md"
   },
   {
+    "version": 2,
     "pr_number": 351,
     "title": "feat: Peek first chunk in streaming responses to enable retry on SSE errors",
     "merged_at": "2026-06-19T10:45:48Z",
     "base": "e4d26e7b5b2f1b2977a0b02179dfe7236435da77",
     "target": "4a1e718264db5a12482998be9c31bbcff381328c",
-    "risk": "HIGH",
-    "risk_score": 43,
+    "risk": "高",
+    "risk_score": 14,
     "files_changed": 3,
     "changed_symbols": 17,
     "changed_functions": 9,
-    "flows": [
+    "summary": "这次主要改了两件事：流式返回，还有 模型请求选渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "流式回复不会一拿到连接就马上交给用户了。现在会先看第一块数据；如果第一块已经是上游错误，就还有机会换一个渠道。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs",
+          "crates/router/src/response_quality.rs",
+          "crates/router/src/stream_peek.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
-      },
-      {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-19-pr-351-4a1e7182.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "No Change"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-19-pr-351-4a1e7182.md"
   },
   {
+    "version": 2,
     "pr_number": 349,
-    "title": "fix(db): register missing migrations for router_request_logs (Issue #334)",
+    "title": "fix（db）: register missing migrations for router＿request＿logs （Issue ＃334）",
     "merged_at": "2026-06-13T20:03:36Z",
     "base": "0f51207790b4e5beaf890ea378f19a80f2a0bcbc",
     "target": "e4d26e7b5b2f1b2977a0b02179dfe7236435da77",
-    "risk": "HIGH",
-    "risk_score": 13,
+    "risk": "中",
+    "risk_score": 8,
     "files_changed": 4,
     "changed_symbols": 3,
     "changed_functions": 0,
-    "flows": [
+    "summary": "这次主要改了一件事：数据库升级和保存数据。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
-      },
-      {
-        "name": "Data Plane → Request Logging / Observability",
-        "truth": "STATIC CONFIRMED"
+        "key": "database",
+        "title": "数据库升级和保存数据",
+        "plain": "SQLite 的第 0017 次数据库升级被重做了，目的是让旧数据库升级时更稳，不要因为旧表结构不同就直接出问题。",
+        "flow": "程序启动 / 数据库升级 / 保存数据",
+        "files": [
+          "crates/database/migrations/postgres/0017_fix_bool_columns.sql",
+          "crates/database/migrations/postgres/0018_router_request_logs.sql",
+          "crates/database/migrations/sqlite/0018_router_request_logs.sql",
+          "crates/database/src/migration.rs"
+        ]
       }
     ],
-    "doc": "2026-06-13-pr-349-e4d26e7b.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": false
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": true
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-13-pr-349-e4d26e7b.md"
   },
   {
+    "version": 2,
     "pr_number": 348,
     "title": "fix: HTTP error responses should return JSON format instead of plain text",
     "merged_at": "2026-06-13T16:57:28Z",
     "base": "3ff4ca580ab4294372c40ad6b4b6ce11a1bb7ee1",
     "target": "0f51207790b4e5beaf890ea378f19a80f2a0bcbc",
-    "risk": "LOW",
+    "risk": "低",
     "risk_score": 0,
     "files_changed": 0,
     "changed_symbols": 0,
     "changed_functions": 0,
-    "flows": [
+    "summary": "这次主要改了一件事：没有实际代码差异。",
+    "semantic_units": [
       {
-        "name": "⚠ Unable to map changed code to a user-triggered flow",
-        "truth": "⚠ INFERRED / UNKNOWN"
+        "key": "empty",
+        "title": "没有实际代码差异",
+        "plain": "这个 merge commit 的第一父提交和 TARGET 之间没有文件差异，所以这里明确写『没有代码变化』，不为了凑图编故事。",
+        "flow": "没有用户流程变化",
+        "files": []
       }
     ],
-    "doc": "2026-06-13-pr-348-0f512077.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": false
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": false
       },
-      "Runtime": {
-        "status": "No Change"
+      "3": {
+        "name": "运行过程",
+        "changed": false
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": false
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-13-pr-348-0f512077.md"
   },
   {
+    "version": 2,
     "pr_number": 347,
     "title": "fix: HTTP error responses should return JSON format instead of plain text",
     "merged_at": "2026-06-13T16:55:46Z",
     "base": "66985337b455dc50ea1f8f02cef73d153d7e8739",
     "target": "3ff4ca580ab4294372c40ad6b4b6ce11a1bb7ee1",
-    "risk": "HIGH",
-    "risk_score": 16,
+    "risk": "高",
+    "risk_score": 20,
     "files_changed": 1,
     "changed_symbols": 2,
     "changed_functions": 2,
-    "flows": [
+    "summary": "这次主要改了这些事：流式返回、调用上游模型服务、模型请求选渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
+      },
+      {
+        "key": "provider",
+        "title": "调用上游模型服务",
+        "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+        "flow": "BurnCloud 调用上游 Provider",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
+      },
+      {
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-13-pr-347-3ff4ca58.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": true
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-13-pr-347-3ff4ca58.md"
   },
   {
+    "version": 2,
     "pr_number": 345,
     "title": "feat: 实现智能熔断系统",
     "merged_at": "2026-06-10T11:38:50Z",
     "base": "3b3766f3c867b39ea35173a7458b9dcaf38612d2",
     "target": "db2430e7d52833632ddd1b152d45bf69c4d33f7c",
-    "risk": "HIGH",
-    "risk_score": 50,
+    "risk": "高",
+    "risk_score": 19,
     "files_changed": 5,
     "changed_symbols": 123,
     "changed_functions": 88,
-    "flows": [
+    "summary": "这次主要改了两件事：流式返回，还有 上游失败后换下一个渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "流式回复不会一拿到连接就马上交给用户了。现在会先看第一块数据；如果第一块已经是上游错误，就还有机会换一个渠道。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/channel_health_manager.rs",
+          "crates/router/src/health_probe.rs",
+          "crates/router/src/response_quality.rs",
+          "crates/router/src/smart_circuit_breaker.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
-      },
-      {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "failover",
+        "title": "上游失败后换下一个渠道",
+        "plain": "上游出错以后，BurnCloud 决定『直接报错』还是『换下一个渠道再试』的规则变了。",
+        "flow": "上游失败后的重试 / Failover",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-10-pr-345-db2430e7.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": true
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "No Change"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-10-pr-345-db2430e7.md"
   },
   {
+    "version": 2,
     "pr_number": 344,
     "title": "Fix: Add empty response check for non-streaming passthrough path",
     "merged_at": "2026-06-08T19:47:36Z",
     "base": "f700a8ab7c0ff8ee964aa85a58e25b205e40fe77",
     "target": "3b3766f3c867b39ea35173a7458b9dcaf38612d2",
-    "risk": "HIGH",
-    "risk_score": 22,
+    "risk": "高",
+    "risk_score": 14,
     "files_changed": 1,
     "changed_symbols": 1,
     "changed_functions": 1,
-    "flows": [
+    "summary": "这次主要改了两件事：流式返回，还有 调用上游模型服务。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "provider",
+        "title": "调用上游模型服务",
+        "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+        "flow": "BurnCloud 调用上游 Provider",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-08-pr-344-3b3766f3.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-08-pr-344-3b3766f3.md"
   },
   {
+    "version": 2,
     "pr_number": 343,
     "title": "feat: Enhance EmptyResponseCounter with monitoring and admin capabilities",
     "merged_at": "2026-06-08T11:53:54Z",
     "base": "1114ebcaf38441116246c28a3aadedfe297b40c0",
     "target": "fe1b87655b7123cc07da06f4d78f8deef5eb9ab4",
-    "risk": "HIGH",
-    "risk_score": 11,
+    "risk": "高",
+    "risk_score": 10,
     "files_changed": 1,
     "changed_symbols": 5,
     "changed_functions": 5,
-    "flows": [
+    "summary": "这次主要改了一件事：模型请求选渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-08-pr-343-fe1b8765.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "No Change"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-08-pr-343-fe1b8765.md"
   },
   {
+    "version": 2,
     "pr_number": 342,
-    "title": "Fix: Delay record_upstream_success for streaming responses until content confirmed",
+    "title": "Fix: Delay record＿upstream＿success for streaming responses until content confirmed",
     "merged_at": "2026-06-08T11:53:07Z",
     "base": "508978309aa47c43bd91c0bd6a2fed9840ec8a97",
     "target": "1114ebcaf38441116246c28a3aadedfe297b40c0",
-    "risk": "HIGH",
-    "risk_score": 21,
+    "risk": "高",
+    "risk_score": 14,
     "files_changed": 1,
     "changed_symbols": 0,
     "changed_functions": 0,
-    "flows": [
+    "summary": "这次主要改了两件事：流式返回，还有 模型请求选渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-08-pr-342-1114ebca.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-08-pr-342-1114ebca.md"
   },
   {
+    "version": 2,
     "pr_number": 341,
     "title": "Fix: Consistent Empty Response Penalty with Threshold Check",
     "merged_at": "2026-06-08T05:48:02Z",
     "base": "1e23f1493342676226aece129710ca8c0fd30ea5",
     "target": "53b3d290e68ec4cf2573753f8a8f2605cf11f87d",
-    "risk": "HIGH",
-    "risk_score": 21,
+    "risk": "高",
+    "risk_score": 18,
     "files_changed": 1,
     "changed_symbols": 0,
     "changed_functions": 0,
-    "flows": [
+    "summary": "这次主要改了这些事：流式返回、调用上游模型服务、模型请求选渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
+        "key": "provider",
+        "title": "调用上游模型服务",
+        "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+        "flow": "BurnCloud 调用上游 Provider",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-08-pr-341-53b3d290.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-08-pr-341-53b3d290.md"
   },
   {
+    "version": 2,
     "pr_number": 340,
-    "title": "fix(router): Improve empty streaming response detection to check for actual content",
+    "title": "fix（router）: Improve empty streaming response detection to check for actual content",
     "merged_at": "2026-06-08T01:57:53Z",
     "base": "3469d3e5650e7b9ce700ac1aa96a9a1641ad1d3f",
     "target": "1e23f1493342676226aece129710ca8c0fd30ea5",
-    "risk": "HIGH",
+    "risk": "高",
     "risk_score": 15,
     "files_changed": 1,
     "changed_symbols": 0,
     "changed_functions": 0,
-    "flows": [
+    "summary": "这次主要改了这些事：流式返回、上游失败后换下一个渠道、模型请求选渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "流式回复不会一拿到连接就马上交给用户了。现在会先看第一块数据；如果第一块已经是上游错误，就还有机会换一个渠道。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
+        "key": "failover",
+        "title": "上游失败后换下一个渠道",
+        "plain": "上游出错以后，BurnCloud 决定『直接报错』还是『换下一个渠道再试』的规则变了。",
+        "flow": "上游失败后的重试 / Failover",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-08-pr-340-1e23f149.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-08-pr-340-1e23f149.md"
   },
   {
+    "version": 2,
     "pr_number": 338,
-    "title": "fix(router): use sliding window for empty response detection",
+    "title": "fix（router）: use sliding window for empty response detection",
     "merged_at": "2026-06-08T01:54:33Z",
     "base": "bff564470265cfeffb350f37daf22e2f96269f2f",
     "target": "3469d3e5650e7b9ce700ac1aa96a9a1641ad1d3f",
-    "risk": "HIGH",
-    "risk_score": 21,
+    "risk": "高",
+    "risk_score": 18,
     "files_changed": 2,
     "changed_symbols": 7,
     "changed_functions": 3,
-    "flows": [
+    "summary": "这次主要改了这些事：模型请求选渠道、流式返回、调用上游模型服务。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs",
+          "crates/router/src/state.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "provider",
+        "title": "调用上游模型服务",
+        "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+        "flow": "BurnCloud 调用上游 Provider",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-08-pr-338-3469d3e5.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "No Change"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-08-pr-338-3469d3e5.md"
   },
   {
+    "version": 2,
     "pr_number": 339,
-    "title": "fix(router): Prevent panic when logging bodies with multi-byte UTF-8 characters",
+    "title": "fix（router）: Prevent panic when logging bodies with multi-byte UTF-8 characters",
     "merged_at": "2026-06-08T00:28:54Z",
     "base": "cdb848f6b0c9199bdd2df8879b4a5e0dd0734357",
     "target": "bff564470265cfeffb350f37daf22e2f96269f2f",
-    "risk": "LOW",
-    "risk_score": 3,
+    "risk": "中",
+    "risk_score": 7,
     "files_changed": 1,
     "changed_symbols": 6,
     "changed_functions": 5,
-    "flows": [
+    "summary": "这次主要改了一件事：模型请求选渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-08-pr-339-bff56447.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-08-pr-339-bff56447.md"
   },
   {
+    "version": 2,
     "pr_number": 336,
-    "title": "fix(router): 为流式响应添加 empty response 检测",
+    "title": "fix（router）: 为流式响应添加 empty response 检测",
     "merged_at": "2026-06-07T10:11:15Z",
     "base": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
     "target": "cdb848f6b0c9199bdd2df8879b4a5e0dd0734357",
-    "risk": "HIGH",
-    "risk_score": 55,
+    "risk": "高",
+    "risk_score": 30,
     "files_changed": 7,
     "changed_symbols": 36,
     "changed_functions": 21,
-    "flows": [
+    "summary": "这次主要改了这些事：流式返回、数据库升级和保存数据、登录和鉴权、模型请求选渠道、上游失败后换下一个渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
+        "key": "database",
+        "title": "数据库升级和保存数据",
+        "plain": "这次改了数据库结构或升级步骤。程序启动或升级数据库时，会按新的迁移规则处理。",
+        "flow": "程序启动 / 数据库升级 / 保存数据",
+        "files": [
+          "crates/database/crates/router/src/lib.rs",
+          "crates/database/crates/router/src/log.rs",
+          "crates/database/migrations/postgres/0017_router_request_logs.sql",
+          "crates/database/migrations/sqlite/0017_router_request_logs.sql"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
+        "key": "auth",
+        "title": "登录和鉴权",
+        "plain": "这次改了登录、Token 或权限检查。重点是让『拿到身份』和『后面检查身份』的代码更一致。",
+        "flow": "用户登录 / 访问受保护的 Console 接口",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs",
+          "crates/router/src/state.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
-      },
-      {
-        "name": "Data Plane → Request Logging / Observability",
-        "truth": "STATIC CONFIRMED"
+        "key": "failover",
+        "title": "上游失败后换下一个渠道",
+        "plain": "上游出错以后，BurnCloud 决定『直接报错』还是『换下一个渠道再试』的规则变了。",
+        "flow": "上游失败后的重试 / Failover",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-07-pr-336-cdb848f6.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": true
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": true
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-06-07-pr-336-cdb848f6.md"
   },
   {
+    "version": 2,
     "pr_number": 335,
-    "title": "feat(router): 改进 Circuit Breaker 和失败检测机制 (Issue #333)",
+    "title": "feat（router）: 改进 Circuit Breaker 和失败检测机制 （Issue ＃333）",
     "merged_at": "2026-06-07T08:16:00Z",
     "base": "a45c27e5a80c779b9127ade8b28592691cd3367e",
     "target": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
-    "risk": "HIGH",
-    "risk_score": 35,
+    "risk": "高",
+    "risk_score": 18,
     "files_changed": 4,
     "changed_symbols": 16,
     "changed_functions": 12,
-    "flows": [
+    "summary": "这次主要改了这些事：流式返回、模型请求选渠道、其他代码整理、上游失败后换下一个渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "streaming",
+        "title": "流式返回",
+        "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+        "flow": "用户发起流式模型请求",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/channel_state.rs",
+          "crates/router/src/circuit_breaker.rs",
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
+        "key": "general",
+        "title": "其他代码整理",
+        "plain": "这部分代码有变化，但仅靠静态差异还不能安全地说它属于哪条用户流程，所以这里不硬猜。",
+        "flow": "代码内部行为；需要按源码证据继续确认入口",
+        "files": [
+          "crates/service/crates/billing/src/usage/providers/openai.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "failover",
+        "title": "上游失败后换下一个渠道",
+        "plain": "上游出错以后，BurnCloud 决定『直接报错』还是『换下一个渠道再试』的规则变了。",
+        "flow": "上游失败后的重试 / Failover",
+        "files": [
+          "crates/router/src/channel_state.rs",
+          "crates/router/src/circuit_breaker.rs"
+        ]
       }
     ],
-    "doc": "2026-06-07-pr-335-d2733cca.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "Changed"
+      "5": {
+        "name": "状态变化",
+        "changed": true
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-07-pr-335-d2733cca.md"
   },
   {
+    "version": 2,
     "pr_number": 331,
-    "title": "fix(router): return JSON-formatted errors for API compatibility",
+    "title": "fix（router）: return JSON-formatted errors for API compatibility",
     "merged_at": "2026-06-06T18:47:33Z",
     "base": "7bf4a74fe0aa6aa68f2f487776c26074093de7b3",
     "target": "a45c27e5a80c779b9127ade8b28592691cd3367e",
-    "risk": "HIGH",
-    "risk_score": 30,
+    "risk": "高",
+    "risk_score": 21,
     "files_changed": 1,
     "changed_symbols": 3,
     "changed_functions": 3,
-    "flows": [
+    "summary": "这次主要改了这些事：模型请求选渠道、登录和鉴权、调用上游模型服务。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "auth",
+        "title": "登录和鉴权",
+        "plain": "这次改了登录、Token 或权限检查。重点是让『拿到身份』和『后面检查身份』的代码更一致。",
+        "flow": "用户登录 / 访问受保护的 Console 接口",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
+      },
+      {
+        "key": "provider",
+        "title": "调用上游模型服务",
+        "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+        "flow": "BurnCloud 调用上游 Provider",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-06-pr-331-a45c27e5.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": true
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "No Change"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-06-pr-331-a45c27e5.md"
   },
   {
+    "version": 2,
     "pr_number": 330,
     "title": "fix: OpenAI passthrough URL missing /v1 prefix",
     "merged_at": "2026-06-06T12:12:19Z",
     "base": "dacbfc245b36772a57b3571bb31d778ecbf75230",
     "target": "84b6037202d3f30517831e02141830317552bd56",
-    "risk": "HIGH",
-    "risk_score": 23,
+    "risk": "高",
+    "risk_score": 13,
     "files_changed": 6,
     "changed_symbols": 32,
     "changed_functions": 29,
-    "flows": [
+    "summary": "这次主要改了两件事：调用上游模型服务，还有 模型请求选渠道。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
+        "key": "provider",
+        "title": "调用上游模型服务",
+        "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+        "flow": "BurnCloud 调用上游 Provider",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
-      },
-      {
-        "name": "Console → User / Balance Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       }
     ],
-    "doc": "2026-06-06-pr-330-84b60372.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": true
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "Changed"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-06-06-pr-330-84b60372.md"
   },
   {
+    "version": 2,
     "pr_number": 309,
-    "title": "fix(security): migrate public auth APIs from /console/api/auth to /api/auth (Issue #303)",
+    "title": "fix（security）: migrate public auth APIs from /console/api/auth to /api/auth （Issue ＃303）",
     "merged_at": "2026-06-04T12:17:47Z",
     "base": "c3ff8f1573c1d0bcdaef71af2dcd4b0a9d38d360",
     "target": "64514d957e728a3662a685bb583216ac1483c410",
-    "risk": "HIGH",
+    "risk": "高",
     "risk_score": 13,
     "files_changed": 1,
     "changed_symbols": 2,
     "changed_functions": 2,
-    "flows": [
+    "summary": "这次主要改了一件事：登录和鉴权。",
+    "semantic_units": [
       {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "auth",
+        "title": "登录和鉴权",
+        "plain": "这次改了登录、Token 或权限检查。重点是让『拿到身份』和『后面检查身份』的代码更一致。",
+        "flow": "用户登录 / 访问受保护的 Console 接口",
+        "files": [
+          "crates/server/src/api/auth.rs"
+        ]
       }
     ],
-    "doc": "2026-06-04-pr-309-64514d95.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": true
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-04-pr-309-64514d95.md"
   },
   {
+    "version": 2,
     "pr_number": 328,
     "title": "E2E 测试：用户管理和充值流程",
     "merged_at": "2026-06-04T12:17:37Z",
     "base": "4315cf7411f39e0c0d37b693055e79060900e100",
     "target": "c3ff8f1573c1d0bcdaef71af2dcd4b0a9d38d360",
-    "risk": "HIGH",
-    "risk_score": 18,
+    "risk": "低",
+    "risk_score": 0,
     "files_changed": 2,
     "changed_symbols": 13,
     "changed_functions": 12,
-    "flows": [
+    "summary": "这次主要改了一件事：自动测试。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → User / Balance Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "tests",
+        "title": "自动测试",
+        "plain": "这次主要改自动测试。它是在告诉我们『以后哪些行为必须继续成立』。",
+        "flow": "开发者运行测试",
+        "files": [
+          "crates/tests/tests/e2e/mod.rs",
+          "crates/tests/tests/e2e/user_flow.rs"
+        ]
       }
     ],
-    "doc": "2026-06-04-pr-328-c3ff8f15.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": false
       },
-      "Runtime": {
-        "status": "No Change"
+      "3": {
+        "name": "运行过程",
+        "changed": false
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "Changed"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-06-04-pr-328-c3ff8f15.md"
   },
   {
+    "version": 2,
     "pr_number": 327,
-    "title": "test(e2e): add security monitor/风控雷达 flow tests (Issue #313)",
+    "title": "test（e2e）: add security monitor/风控雷达 flow tests （Issue ＃313）",
     "merged_at": "2026-06-04T12:17:28Z",
     "base": "47c2869df0f822681a2d92f8ce8421a6af043853",
     "target": "4315cf7411f39e0c0d37b693055e79060900e100",
-    "risk": "HIGH",
-    "risk_score": 13,
+    "risk": "低",
+    "risk_score": 0,
     "files_changed": 2,
     "changed_symbols": 14,
     "changed_functions": 13,
-    "flows": [
+    "summary": "这次主要改了一件事：自动测试。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Monitor / Security",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "tests",
+        "title": "自动测试",
+        "plain": "这次主要改自动测试。它是在告诉我们『以后哪些行为必须继续成立』。",
+        "flow": "开发者运行测试",
+        "files": [
+          "crates/tests/tests/e2e/mod.rs",
+          "crates/tests/tests/e2e/monitor_flow.rs"
+        ]
       }
     ],
-    "doc": "2026-06-04-pr-327-4315cf74.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": false
       },
-      "Runtime": {
-        "status": "No Change"
+      "3": {
+        "name": "运行过程",
+        "changed": false
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-06-04-pr-327-4315cf74.md"
   },
   {
+    "version": 2,
     "pr_number": 326,
-    "title": "test(e2e): add API Key management flow tests (Issue #312)",
+    "title": "test（e2e）: add API Key management flow tests （Issue ＃312）",
     "merged_at": "2026-06-04T12:17:13Z",
     "base": "f83d508e133db4460b3231145b1bf01027cac762",
     "target": "47c2869df0f822681a2d92f8ce8421a6af043853",
-    "risk": "HIGH",
-    "risk_score": 13,
+    "risk": "低",
+    "risk_score": 0,
     "files_changed": 2,
     "changed_symbols": 15,
     "changed_functions": 14,
-    "flows": [
+    "summary": "这次主要改了一件事：自动测试。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "tests",
+        "title": "自动测试",
+        "plain": "这次主要改自动测试。它是在告诉我们『以后哪些行为必须继续成立』。",
+        "flow": "开发者运行测试",
+        "files": [
+          "crates/tests/tests/e2e/api_key_flow.rs",
+          "crates/tests/tests/e2e/mod.rs"
+        ]
       }
     ],
-    "doc": "2026-06-04-pr-326-47c2869d.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": false
       },
-      "Runtime": {
-        "status": "No Change"
+      "3": {
+        "name": "运行过程",
+        "changed": false
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-06-04-pr-326-47c2869d.md"
   },
   {
+    "version": 2,
     "pr_number": 325,
-    "title": "test(e2e): add channel management flow tests (Issue #311)",
+    "title": "test（e2e）: add channel management flow tests （Issue ＃311）",
     "merged_at": "2026-06-04T12:15:21Z",
     "base": "6629637daad1be345164d79375c170a4b6bda447",
     "target": "f83d508e133db4460b3231145b1bf01027cac762",
-    "risk": "HIGH",
-    "risk_score": 13,
+    "risk": "低",
+    "risk_score": 0,
     "files_changed": 2,
     "changed_symbols": 18,
     "changed_functions": 16,
-    "flows": [
+    "summary": "这次主要改了一件事：自动测试。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Console → Channel / Model Management",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "tests",
+        "title": "自动测试",
+        "plain": "这次主要改自动测试。它是在告诉我们『以后哪些行为必须继续成立』。",
+        "flow": "开发者运行测试",
+        "files": [
+          "crates/tests/tests/e2e/channel_flow.rs",
+          "crates/tests/tests/e2e/mod.rs"
+        ]
       }
     ],
-    "doc": "2026-06-04-pr-325-f83d508e.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": false
       },
-      "Runtime": {
-        "status": "No Change"
+      "3": {
+        "name": "运行过程",
+        "changed": false
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-06-04-pr-325-f83d508e.md"
   },
   {
+    "version": 2,
     "pr_number": 301,
-    "title": "fix(ui): add focus-visible, active states and aria-labels to landing page buttons",
+    "title": "fix（ui）: add focus-visible, active states and aria-labels to landing page buttons",
     "merged_at": "2026-06-04T12:15:02Z",
     "base": "374a1588ca7ae1336bdcb289f7ca4da12e3acd68",
     "target": "6629637daad1be345164d79375c170a4b6bda447",
-    "risk": "MEDIUM",
-    "risk_score": 8,
+    "risk": "低",
+    "risk_score": 3,
     "files_changed": 2,
     "changed_symbols": 1,
     "changed_functions": 1,
-    "flows": [
+    "summary": "这次主要改了一件事：弹窗、按钮和页面界面。",
+    "semantic_units": [
       {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "ui",
+        "title": "弹窗、按钮和页面界面",
+        "plain": "这次主要整理 Console 界面。用户看到的按钮、样式或页面交互发生了变化。",
+        "flow": "管理员使用 Console 页面",
+        "files": [
+          "crates/client/crates/client-shared/src/styles.rs",
+          "crates/client/src/pages/home.rs"
+        ]
       }
     ],
-    "doc": "2026-06-04-pr-301-6629637d.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-04-pr-301-6629637d.md"
   },
   {
+    "version": 2,
     "pr_number": 324,
-    "title": "test(e2e): add comprehensive user authentication flow tests (Issue #310)",
+    "title": "test（e2e）: add comprehensive user authentication flow tests （Issue ＃310）",
     "merged_at": "2026-06-04T11:58:22Z",
     "base": "f06a156afd7f4c49ccbe08fe6e8b4a00f4168787",
     "target": "374a1588ca7ae1336bdcb289f7ca4da12e3acd68",
-    "risk": "HIGH",
-    "risk_score": 13,
+    "risk": "低",
+    "risk_score": 0,
     "files_changed": 2,
     "changed_symbols": 14,
     "changed_functions": 13,
-    "flows": [
+    "summary": "这次主要改了一件事：自动测试。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Streaming Response",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
-      },
-      {
-        "name": "Account Access / Authentication",
-        "truth": "STATIC CONFIRMED"
+        "key": "tests",
+        "title": "自动测试",
+        "plain": "这次主要改自动测试。它是在告诉我们『以后哪些行为必须继续成立』。",
+        "flow": "开发者运行测试",
+        "files": [
+          "crates/tests/tests/e2e/auth_flow.rs",
+          "crates/tests/tests/e2e/mod.rs"
+        ]
       }
     ],
-    "doc": "2026-06-04-pr-324-374a1588.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": false
       },
-      "Runtime": {
-        "status": "No Change"
+      "3": {
+        "name": "运行过程",
+        "changed": false
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": true
       }
-    }
+    },
+    "doc": "2026-06-04-pr-324-374a1588.md"
   },
   {
+    "version": 2,
     "pr_number": 329,
-    "title": "fix(router): failover on auth errors (401/402) and add xunfei channel type",
+    "title": "fix（router）: failover on auth errors （401/402） and add xunfei channel type",
     "merged_at": "2026-06-04T10:14:27Z",
     "base": "018855c3c571e7eb42520db46e70bc8fc5ba726e",
     "target": "f06a156afd7f4c49ccbe08fe6e8b4a00f4168787",
-    "risk": "HIGH",
-    "risk_score": 32,
+    "risk": "高",
+    "risk_score": 20,
     "files_changed": 2,
     "changed_symbols": 3,
     "changed_functions": 3,
-    "flows": [
+    "summary": "这次主要改了这些事：上游失败后换下一个渠道、模型请求选渠道、调用上游模型服务、其他代码整理。",
+    "semantic_units": [
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-        "truth": "STATIC CONFIRMED"
+        "key": "failover",
+        "title": "上游失败后换下一个渠道",
+        "plain": "上游出错以后，BurnCloud 决定『直接报错』还是『换下一个渠道再试』的规则变了。 这次代码里还明确碰到了 429 限流处理。",
+        "flow": "上游失败后的重试 / Failover",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-        "truth": "STATIC CONFIRMED"
+        "key": "routing",
+        "title": "模型请求选渠道",
+        "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+        "flow": "模型请求选择 Channel",
+        "files": [
+          "crates/router/src/lib.rs"
+        ]
       },
       {
-        "name": "API Requests → Chat Completion → Billing / Usage",
-        "truth": "⚠ INFERRED"
+        "key": "provider",
+        "title": "调用上游模型服务",
+        "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+        "flow": "BurnCloud 调用上游 Provider",
+        "files": [
+          "src/cli/channel.rs"
+        ]
       },
       {
-        "name": "API Requests → Data Plane",
-        "truth": "⚠ INFERRED"
+        "key": "general",
+        "title": "其他代码整理",
+        "plain": "这部分代码有变化，但仅靠静态差异还不能安全地说它属于哪条用户流程，所以这里不硬猜。",
+        "flow": "代码内部行为；需要按源码证据继续确认入口",
+        "files": [
+          "src/cli/channel.rs"
+        ]
       }
     ],
-    "doc": "2026-06-04-pr-329-f06a156a.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "Changed"
+      "4": {
+        "name": "控制流程",
+        "changed": true
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "Changed"
+      "6": {
+        "name": "API 契约",
+        "changed": true
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": true
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-04-pr-329-f06a156a.md"
   },
   {
+    "version": 2,
     "pr_number": 308,
-    "title": "fix(ui): 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
+    "title": "fix（ui）: 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
     "merged_at": "2026-06-01T12:54:05Z",
     "base": "c8a2822f31029e16102807a88e826a1e040f1e98",
     "target": "c0584e1643764c300e12bac68f7557bc609e6f0a",
-    "risk": "LOW",
+    "risk": "低",
     "risk_score": 3,
     "files_changed": 1,
     "changed_symbols": 0,
     "changed_functions": 0,
-    "flows": [
+    "summary": "这次主要改了一件事：弹窗、按钮和页面界面。",
+    "semantic_units": [
       {
-        "name": "⚠ Unable to map changed code to a user-triggered flow",
-        "truth": "⚠ INFERRED / UNKNOWN"
+        "key": "ui",
+        "title": "弹窗、按钮和页面界面",
+        "plain": "这次主要整理 Console 界面。用户看到的按钮、样式或页面交互发生了变化。",
+        "flow": "管理员使用 Console 页面",
+        "files": [
+          "crates/client/crates/client-shared/src/styles.rs"
+        ]
       }
     ],
-    "doc": "2026-06-01-pr-308-c0584e16.md",
     "dimensions": {
-      "Change Scope": {
-        "status": "Changed"
+      "1": {
+        "name": "修改范围",
+        "changed": true
       },
-      "User Flow": {
-        "status": "Changed"
+      "2": {
+        "name": "用户流程",
+        "changed": true
       },
-      "Runtime": {
-        "status": "Changed"
+      "3": {
+        "name": "运行过程",
+        "changed": true
       },
-      "Control Flow": {
-        "status": "No Change"
+      "4": {
+        "name": "控制流程",
+        "changed": false
       },
-      "State": {
-        "status": "No Change"
+      "5": {
+        "name": "状态变化",
+        "changed": false
       },
-      "API Contract": {
-        "status": "No Change"
+      "6": {
+        "name": "API 契约",
+        "changed": false
       },
-      "Database": {
-        "status": "No Change"
+      "7": {
+        "name": "数据库 / 持久化",
+        "changed": false
       },
-      "External": {
-        "status": "No Change"
+      "8": {
+        "name": "外部依赖",
+        "changed": false
       },
-      "Blast Radius": {
-        "status": "Changed"
+      "9": {
+        "name": "影响范围",
+        "changed": true
       },
-      "Tests": {
-        "status": "Changed"
+      "10": {
+        "name": "测试与证据",
+        "changed": false
       }
-    }
+    },
+    "doc": "2026-06-01-pr-308-c0584e16.md"
   }
 ]

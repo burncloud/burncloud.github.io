@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-07-05-pr-352-5c0772ce",
-  "title": "PR #352 · fix(client,auth,db): unify JWT secret, fix modals, and polish desktop UI",
-  "description": "Executive Summary",
+  "title": "PR #352 · fix（client,auth,db）: unify JWT secret, fix modals, and polish desktop UI",
+  "description": "352：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-07-05-pr-352-5c0772ce.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-07-05-pr-352-5c0772ce/",
@@ -11,25 +11,27 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-07-05-pr-352-5c0772ce.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 5,
   "frontMatter": {
-    "title": "PR #352 · fix(client,auth,db): unify JWT secret, fix modals, and polish desktop UI",
+    "title": "PR #352 · fix（client,auth,db）: unify JWT secret, fix modals, and polish desktop UI",
     "slug": "/commits/2026-07-05-pr-352-5c0772ce/",
     "sidebar_position": 5,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 352,
     "base_commit": "4a1e718264db5a12482998be9c31bbcff381328c",
     "target_commit": "5c0772cea399af31d96d09d040299ddf2dc37a5d",
-    "risk": "HIGH",
+    "risk": "高",
     "merged_at": "2026-07-05T15:32:47.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #353 · refactor(client): unify design system CSS injection and console styling",
+    "title": "PR #353 · refactor（client）: unify design system CSS injection and console styling",
     "permalink": "/changes/commits/2026-07-05-pr-353-8e8692ad/"
   },
   "next": {

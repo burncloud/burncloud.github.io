@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-04-pr-328-c3ff8f15",
   "title": "PR #328 · E2E 测试：用户管理和充值流程",
-  "description": "Executive Summary",
+  "description": "328：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-04-pr-328-c3ff8f15.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-04-pr-328-c3ff8f15/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-04-pr-328-c3ff8f15.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 23,
   "frontMatter": {
     "title": "PR #328 · E2E 测试：用户管理和充值流程",
     "slug": "/commits/2026-06-04-pr-328-c3ff8f15/",
     "sidebar_position": 23,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 328,
     "base_commit": "4315cf7411f39e0c0d37b693055e79060900e100",
     "target_commit": "c3ff8f1573c1d0bcdaef71af2dcd4b0a9d38d360",
-    "risk": "HIGH",
+    "risk": "低",
     "merged_at": "2026-06-04T12:17:37.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #309 · fix(security): migrate public auth APIs from /console/api/auth to /api/auth (Issue #303)",
+    "title": "PR #309 · fix（security）: migrate public auth APIs from /console/api/auth to /api/auth （Issue ＃303）",
     "permalink": "/changes/commits/2026-06-04-pr-309-64514d95/"
   },
   "next": {
-    "title": "PR #327 · test(e2e): add security monitor/风控雷达 flow tests (Issue #313)",
+    "title": "PR #327 · test（e2e）: add security monitor/风控雷达 flow tests （Issue ＃313）",
     "permalink": "/changes/commits/2026-06-04-pr-327-4315cf74/"
   }
 }

@@ -1,51 +1,68 @@
 {
+  "version": 2,
   "pr_number": 308,
-  "title": "fix(ui): 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
+  "title": "fix（ui）: 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
   "merged_at": "2026-06-01T12:54:05Z",
   "base": "c8a2822f31029e16102807a88e826a1e040f1e98",
   "target": "c0584e1643764c300e12bac68f7557bc609e6f0a",
-  "risk": "LOW",
+  "risk": "低",
   "risk_score": 3,
   "files_changed": 1,
   "changed_symbols": 0,
   "changed_functions": 0,
-  "flows": [
+  "summary": "这次主要改了一件事：弹窗、按钮和页面界面。",
+  "semantic_units": [
     {
-      "name": "⚠ Unable to map changed code to a user-triggered flow",
-      "truth": "⚠ INFERRED / UNKNOWN"
+      "key": "ui",
+      "title": "弹窗、按钮和页面界面",
+      "plain": "这次主要整理 Console 界面。用户看到的按钮、样式或页面交互发生了变化。",
+      "flow": "管理员使用 Console 页面",
+      "files": [
+        "crates/client/crates/client-shared/src/styles.rs"
+      ]
     }
   ],
-  "doc": "2026-06-01-pr-308-c0584e16.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "No Change"
+    "4": {
+      "name": "控制流程",
+      "changed": false
     },
-    "State": {
-      "status": "No Change"
+    "5": {
+      "name": "状态变化",
+      "changed": false
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": false
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-01-pr-308-c0584e16.md"
 }

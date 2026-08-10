@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-04-pr-325-f83d508e",
-  "title": "PR #325 · test(e2e): add channel management flow tests (Issue #311)",
-  "description": "Executive Summary",
+  "title": "PR #325 · test（e2e）: add channel management flow tests （Issue ＃311）",
+  "description": "325：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-04-pr-325-f83d508e.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-04-pr-325-f83d508e/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-04-pr-325-f83d508e.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 26,
   "frontMatter": {
-    "title": "PR #325 · test(e2e): add channel management flow tests (Issue #311)",
+    "title": "PR #325 · test（e2e）: add channel management flow tests （Issue ＃311）",
     "slug": "/commits/2026-06-04-pr-325-f83d508e/",
     "sidebar_position": 26,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 325,
     "base_commit": "6629637daad1be345164d79375c170a4b6bda447",
     "target_commit": "f83d508e133db4460b3231145b1bf01027cac762",
-    "risk": "HIGH",
+    "risk": "低",
     "merged_at": "2026-06-04T12:15:21.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #326 · test(e2e): add API Key management flow tests (Issue #312)",
+    "title": "PR #326 · test（e2e）: add API Key management flow tests （Issue ＃312）",
     "permalink": "/changes/commits/2026-06-04-pr-326-47c2869d/"
   },
   "next": {
-    "title": "PR #301 · fix(ui): add focus-visible, active states and aria-labels to landing page buttons",
+    "title": "PR #301 · fix（ui）: add focus-visible, active states and aria-labels to landing page buttons",
     "permalink": "/changes/commits/2026-06-04-pr-301-6629637d/"
   }
 }

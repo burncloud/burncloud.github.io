@@ -1,63 +1,69 @@
 {
+  "version": 2,
   "pr_number": 328,
   "title": "E2E 测试：用户管理和充值流程",
   "merged_at": "2026-06-04T12:17:37Z",
   "base": "4315cf7411f39e0c0d37b693055e79060900e100",
   "target": "c3ff8f1573c1d0bcdaef71af2dcd4b0a9d38d360",
-  "risk": "HIGH",
-  "risk_score": 18,
+  "risk": "低",
+  "risk_score": 0,
   "files_changed": 2,
   "changed_symbols": 13,
   "changed_functions": 12,
-  "flows": [
+  "summary": "这次主要改了一件事：自动测试。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "Console → User / Balance Management",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "Account Access / Authentication",
-      "truth": "STATIC CONFIRMED"
+      "key": "tests",
+      "title": "自动测试",
+      "plain": "这次主要改自动测试。它是在告诉我们『以后哪些行为必须继续成立』。",
+      "flow": "开发者运行测试",
+      "files": [
+        "crates/tests/tests/e2e/mod.rs",
+        "crates/tests/tests/e2e/user_flow.rs"
+      ]
     }
   ],
-  "doc": "2026-06-04-pr-328-c3ff8f15.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": false
     },
-    "Runtime": {
-      "status": "No Change"
+    "3": {
+      "name": "运行过程",
+      "changed": false
     },
-    "Control Flow": {
-      "status": "No Change"
+    "4": {
+      "name": "控制流程",
+      "changed": false
     },
-    "State": {
-      "status": "No Change"
+    "5": {
+      "name": "状态变化",
+      "changed": false
     },
-    "API Contract": {
-      "status": "Changed"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "Changed"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": false
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": true
     }
-  }
+  },
+  "doc": "2026-06-04-pr-328-c3ff8f15.md"
 }

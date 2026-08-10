@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-08-pr-339-bff56447",
-  "title": "PR #339 · fix(router): Prevent panic when logging bodies with multi-byte UTF-8 characters",
-  "description": "Executive Summary",
+  "title": "PR #339 · fix（router）: Prevent panic when logging bodies with multi-byte UTF-8 characters",
+  "description": "339：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-08-pr-339-bff56447.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-08-pr-339-bff56447/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-08-pr-339-bff56447.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 17,
   "frontMatter": {
-    "title": "PR #339 · fix(router): Prevent panic when logging bodies with multi-byte UTF-8 characters",
+    "title": "PR #339 · fix（router）: Prevent panic when logging bodies with multi-byte UTF-8 characters",
     "slug": "/commits/2026-06-08-pr-339-bff56447/",
     "sidebar_position": 17,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 339,
     "base_commit": "cdb848f6b0c9199bdd2df8879b4a5e0dd0734357",
     "target_commit": "bff564470265cfeffb350f37daf22e2f96269f2f",
-    "risk": "LOW",
+    "risk": "中",
     "merged_at": "2026-06-08T00:28:54.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #338 · fix(router): use sliding window for empty response detection",
+    "title": "PR #338 · fix（router）: use sliding window for empty response detection",
     "permalink": "/changes/commits/2026-06-08-pr-338-3469d3e5/"
   },
   "next": {
-    "title": "PR #336 · fix(router): 为流式响应添加 empty response 检测",
+    "title": "PR #336 · fix（router）: 为流式响应添加 empty response 检测",
     "permalink": "/changes/commits/2026-06-07-pr-336-cdb848f6/"
   }
 }

@@ -1,79 +1,84 @@
 {
+  "version": 2,
   "pr_number": 393,
   "title": "docs: replace legacy docs with AI agent engineering harness",
   "merged_at": "2026-08-10T12:01:39Z",
   "base": "c7107382b8479deb44f992e9e5ae8dcac5efb417",
   "target": "956041a8b54d8c6964e57fa2284f825cc322b0d2",
-  "risk": "HIGH",
-  "risk_score": 55,
+  "risk": "中",
+  "risk_score": 8,
   "files_changed": 51,
   "changed_symbols": 0,
   "changed_functions": 0,
-  "flows": [
+  "summary": "这次主要改了两件事：开发文档，还有 代码检查和自动化。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
+      "key": "docs",
+      "title": "开发文档",
+      "plain": "这次主要整理开发文档。它会影响程序员和 AI Agent 怎么理解项目，但不会因为文档本身就改变线上请求怎么跑。",
+      "flow": "程序员 / AI Agent 阅读工程文档",
+      "files": [
+        "README.md",
+        "crates/router/README.md",
+        "docs/BLUEPRINT.md",
+        "docs/CLAUDE.md",
+        "docs/CONSTITUTION.md",
+        "docs/CONSTITUTION_ZH.md",
+        "docs/E2E_FRAMEWORK_COMPARISON.md",
+        "docs/README.md"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "API Requests → Chat Completion → Billing / Usage",
-      "truth": "⚠ INFERRED"
-    },
-    {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
-    },
-    {
-      "name": "Console → API Token Management",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "Console → Channel / Model Management",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "Console → Monitor / Security",
-      "truth": "STATIC CONFIRMED"
+      "key": "ci",
+      "title": "代码检查和自动化",
+      "plain": "这次改的是自动检查和发布流程。用户平时调用 BurnCloud 的运行链路通常不变，但开发者提交代码后的检查方法变了。",
+      "flow": "开发者提交代码后运行 CI",
+      "files": [
+        "crates/router/scripts/check-router-deps.sh"
+      ]
     }
   ],
-  "doc": "2026-08-10-pr-393-956041a8.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": false
     },
-    "Runtime": {
-      "status": "No Change"
+    "3": {
+      "name": "运行过程",
+      "changed": false
     },
-    "Control Flow": {
-      "status": "No Change"
+    "4": {
+      "name": "控制流程",
+      "changed": false
     },
-    "State": {
-      "status": "No Change"
+    "5": {
+      "name": "状态变化",
+      "changed": true
     },
-    "API Contract": {
-      "status": "Changed"
+    "6": {
+      "name": "API 契约",
+      "changed": true
     },
-    "Database": {
-      "status": "Changed"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": true
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-08-10-pr-393-956041a8.md"
 }

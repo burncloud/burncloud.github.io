@@ -1,63 +1,98 @@
 {
+  "version": 2,
   "pr_number": 335,
-  "title": "feat(router): 改进 Circuit Breaker 和失败检测机制 (Issue #333)",
+  "title": "feat（router）: 改进 Circuit Breaker 和失败检测机制 （Issue ＃333）",
   "merged_at": "2026-06-07T08:16:00Z",
   "base": "a45c27e5a80c779b9127ade8b28592691cd3367e",
   "target": "d2733ccac33fca5895c2a8da3a007642e82d1fae",
-  "risk": "HIGH",
-  "risk_score": 35,
+  "risk": "高",
+  "risk_score": 18,
   "files_changed": 4,
   "changed_symbols": 16,
   "changed_functions": 12,
-  "flows": [
+  "summary": "这次主要改了这些事：流式返回、模型请求选渠道、其他代码整理、上游失败后换下一个渠道。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
+      "key": "streaming",
+      "title": "流式返回",
+      "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+      "flow": "用户发起流式模型请求",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-      "truth": "STATIC CONFIRMED"
+      "key": "routing",
+      "title": "模型请求选渠道",
+      "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+      "flow": "模型请求选择 Channel",
+      "files": [
+        "crates/router/src/channel_state.rs",
+        "crates/router/src/circuit_breaker.rs",
+        "crates/router/src/lib.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Billing / Usage",
-      "truth": "⚠ INFERRED"
+      "key": "general",
+      "title": "其他代码整理",
+      "plain": "这部分代码有变化，但仅靠静态差异还不能安全地说它属于哪条用户流程，所以这里不硬猜。",
+      "flow": "代码内部行为；需要按源码证据继续确认入口",
+      "files": [
+        "crates/service/crates/billing/src/usage/providers/openai.rs"
+      ]
     },
     {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
+      "key": "failover",
+      "title": "上游失败后换下一个渠道",
+      "plain": "上游出错以后，BurnCloud 决定『直接报错』还是『换下一个渠道再试』的规则变了。",
+      "flow": "上游失败后的重试 / Failover",
+      "files": [
+        "crates/router/src/channel_state.rs",
+        "crates/router/src/circuit_breaker.rs"
+      ]
     }
   ],
-  "doc": "2026-06-07-pr-335-d2733cca.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": true
     },
-    "State": {
-      "status": "Changed"
+    "5": {
+      "name": "状态变化",
+      "changed": true
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": true
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-07-pr-335-d2733cca.md"
 }

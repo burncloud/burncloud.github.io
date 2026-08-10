@@ -1,51 +1,69 @@
 {
+  "version": 2,
   "pr_number": 301,
-  "title": "fix(ui): add focus-visible, active states and aria-labels to landing page buttons",
+  "title": "fix（ui）: add focus-visible, active states and aria-labels to landing page buttons",
   "merged_at": "2026-06-04T12:15:02Z",
   "base": "374a1588ca7ae1336bdcb289f7ca4da12e3acd68",
   "target": "6629637daad1be345164d79375c170a4b6bda447",
-  "risk": "MEDIUM",
-  "risk_score": 8,
+  "risk": "低",
+  "risk_score": 3,
   "files_changed": 2,
   "changed_symbols": 1,
   "changed_functions": 1,
-  "flows": [
+  "summary": "这次主要改了一件事：弹窗、按钮和页面界面。",
+  "semantic_units": [
     {
-      "name": "Account Access / Authentication",
-      "truth": "STATIC CONFIRMED"
+      "key": "ui",
+      "title": "弹窗、按钮和页面界面",
+      "plain": "这次主要整理 Console 界面。用户看到的按钮、样式或页面交互发生了变化。",
+      "flow": "管理员使用 Console 页面",
+      "files": [
+        "crates/client/crates/client-shared/src/styles.rs",
+        "crates/client/src/pages/home.rs"
+      ]
     }
   ],
-  "doc": "2026-06-04-pr-301-6629637d.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "No Change"
+    "4": {
+      "name": "控制流程",
+      "changed": false
     },
-    "State": {
-      "status": "No Change"
+    "5": {
+      "name": "状态变化",
+      "changed": false
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": false
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-04-pr-301-6629637d.md"
 }

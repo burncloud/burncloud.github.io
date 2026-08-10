@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-19-pr-351-4a1e7182",
   "title": "PR #351 · feat: Peek first chunk in streaming responses to enable retry on SSE errors",
-  "description": "Executive Summary",
+  "description": "351：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-19-pr-351-4a1e7182.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-19-pr-351-4a1e7182/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-19-pr-351-4a1e7182.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 6,
   "frontMatter": {
     "title": "PR #351 · feat: Peek first chunk in streaming responses to enable retry on SSE errors",
     "slug": "/commits/2026-06-19-pr-351-4a1e7182/",
     "sidebar_position": 6,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 351,
     "base_commit": "e4d26e7b5b2f1b2977a0b02179dfe7236435da77",
     "target_commit": "4a1e718264db5a12482998be9c31bbcff381328c",
-    "risk": "HIGH",
+    "risk": "高",
     "merged_at": "2026-06-19T10:45:48.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #352 · fix(client,auth,db): unify JWT secret, fix modals, and polish desktop UI",
+    "title": "PR #352 · fix（client,auth,db）: unify JWT secret, fix modals, and polish desktop UI",
     "permalink": "/changes/commits/2026-07-05-pr-352-5c0772ce/"
   },
   "next": {
-    "title": "PR #349 · fix(db): register missing migrations for router_request_logs (Issue #334)",
+    "title": "PR #349 · fix（db）: register missing migrations for router＿request＿logs （Issue ＃334）",
     "permalink": "/changes/commits/2026-06-13-pr-349-e4d26e7b/"
   }
 }

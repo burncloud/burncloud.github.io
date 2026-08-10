@@ -1,59 +1,87 @@
 {
+  "version": 2,
   "pr_number": 338,
-  "title": "fix(router): use sliding window for empty response detection",
+  "title": "fix（router）: use sliding window for empty response detection",
   "merged_at": "2026-06-08T01:54:33Z",
   "base": "bff564470265cfeffb350f37daf22e2f96269f2f",
   "target": "3469d3e5650e7b9ce700ac1aa96a9a1641ad1d3f",
-  "risk": "HIGH",
-  "risk_score": 21,
+  "risk": "高",
+  "risk_score": 18,
   "files_changed": 2,
   "changed_symbols": 7,
   "changed_functions": 3,
-  "flows": [
+  "summary": "这次主要改了这些事：模型请求选渠道、流式返回、调用上游模型服务。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
+      "key": "routing",
+      "title": "模型请求选渠道",
+      "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+      "flow": "模型请求选择 Channel",
+      "files": [
+        "crates/router/src/lib.rs",
+        "crates/router/src/state.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-      "truth": "STATIC CONFIRMED"
+      "key": "streaming",
+      "title": "流式返回",
+      "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+      "flow": "用户发起流式模型请求",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     },
     {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
+      "key": "provider",
+      "title": "调用上游模型服务",
+      "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+      "flow": "BurnCloud 调用上游 Provider",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     }
   ],
-  "doc": "2026-06-08-pr-338-3469d3e5.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": true
     },
-    "State": {
-      "status": "Changed"
+    "5": {
+      "name": "状态变化",
+      "changed": true
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": true
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "No Change"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-08-pr-338-3469d3e5.md"
 }

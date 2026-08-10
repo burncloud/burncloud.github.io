@@ -1,51 +1,68 @@
 {
+  "version": 2,
   "pr_number": 343,
   "title": "feat: Enhance EmptyResponseCounter with monitoring and admin capabilities",
   "merged_at": "2026-06-08T11:53:54Z",
   "base": "1114ebcaf38441116246c28a3aadedfe297b40c0",
   "target": "fe1b87655b7123cc07da06f4d78f8deef5eb9ab4",
-  "risk": "HIGH",
-  "risk_score": 11,
+  "risk": "高",
+  "risk_score": 10,
   "files_changed": 1,
   "changed_symbols": 5,
   "changed_functions": 5,
-  "flows": [
+  "summary": "这次主要改了一件事：模型请求选渠道。",
+  "semantic_units": [
     {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
+      "key": "routing",
+      "title": "模型请求选渠道",
+      "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+      "flow": "模型请求选择 Channel",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     }
   ],
-  "doc": "2026-06-08-pr-343-fe1b8765.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": true
     },
-    "State": {
-      "status": "Changed"
+    "5": {
+      "name": "状态变化",
+      "changed": true
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": false
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "No Change"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-08-pr-343-fe1b8765.md"
 }

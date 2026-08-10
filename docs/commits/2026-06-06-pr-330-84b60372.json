@@ -1,67 +1,77 @@
 {
+  "version": 2,
   "pr_number": 330,
   "title": "fix: OpenAI passthrough URL missing /v1 prefix",
   "merged_at": "2026-06-06T12:12:19Z",
   "base": "dacbfc245b36772a57b3571bb31d778ecbf75230",
   "target": "84b6037202d3f30517831e02141830317552bd56",
-  "risk": "HIGH",
-  "risk_score": 23,
+  "risk": "高",
+  "risk_score": 13,
   "files_changed": 6,
   "changed_symbols": 32,
   "changed_functions": 29,
-  "flows": [
+  "summary": "这次主要改了两件事：调用上游模型服务，还有 模型请求选渠道。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
+      "key": "provider",
+      "title": "调用上游模型服务",
+      "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+      "flow": "BurnCloud 调用上游 Provider",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
-    },
-    {
-      "name": "Console → User / Balance Management",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "Account Access / Authentication",
-      "truth": "STATIC CONFIRMED"
+      "key": "routing",
+      "title": "模型请求选渠道",
+      "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+      "flow": "模型请求选择 Channel",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     }
   ],
-  "doc": "2026-06-06-pr-330-84b60372.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": false
     },
-    "State": {
-      "status": "No Change"
+    "5": {
+      "name": "状态变化",
+      "changed": false
     },
-    "API Contract": {
-      "status": "Changed"
+    "6": {
+      "name": "API 契约",
+      "changed": true
     },
-    "Database": {
-      "status": "Changed"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "Changed"
+    "8": {
+      "name": "外部依赖",
+      "changed": true
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": true
     }
-  }
+  },
+  "doc": "2026-06-06-pr-330-84b60372.md"
 }

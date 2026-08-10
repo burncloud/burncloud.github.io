@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-07-07-pr-354-876bf8dc",
-  "title": "PR #354 · feat(client): UI design system docs, split CSS, and BCButton migration",
-  "description": "Executive Summary",
+  "title": "PR #354 · feat（client）: UI design system docs, split CSS, and BCButton migration",
+  "description": "354：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-07-07-pr-354-876bf8dc.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-07-07-pr-354-876bf8dc/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-07-07-pr-354-876bf8dc.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 3,
   "frontMatter": {
-    "title": "PR #354 · feat(client): UI design system docs, split CSS, and BCButton migration",
+    "title": "PR #354 · feat（client）: UI design system docs, split CSS, and BCButton migration",
     "slug": "/commits/2026-07-07-pr-354-876bf8dc/",
     "sidebar_position": 3,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 354,
     "base_commit": "8e8692ad01447b00b6b7c03f776d2bb36edbe7f5",
     "target_commit": "876bf8dc06bf8874ff433bf01c8fb5582a1e2c39",
-    "risk": "HIGH",
+    "risk": "高",
     "merged_at": "2026-07-07T04:58:42.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #355 · feat(client): E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
+    "title": "PR #355 · feat（client）: E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
     "permalink": "/changes/commits/2026-07-08-pr-355-c7107382/"
   },
   "next": {
-    "title": "PR #353 · refactor(client): unify design system CSS injection and console styling",
+    "title": "PR #353 · refactor（client）: unify design system CSS injection and console styling",
     "permalink": "/changes/commits/2026-07-05-pr-353-8e8692ad/"
   }
 }

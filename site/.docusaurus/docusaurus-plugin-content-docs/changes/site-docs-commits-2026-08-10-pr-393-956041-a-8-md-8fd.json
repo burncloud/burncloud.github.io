@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-08-10-pr-393-956041a8",
   "title": "PR #393 · docs: replace legacy docs with AI agent engineering harness",
-  "description": "Executive Summary",
+  "description": "393：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-08-10-pr-393-956041a8.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-08-10-pr-393-956041a8/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-08-10-pr-393-956041a8.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 1,
   "frontMatter": {
     "title": "PR #393 · docs: replace legacy docs with AI agent engineering harness",
     "slug": "/commits/2026-08-10-pr-393-956041a8/",
     "sidebar_position": 1,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 393,
     "base_commit": "c7107382b8479deb44f992e9e5ae8dcac5efb417",
     "target_commit": "956041a8b54d8c6964e57fa2284f825cc322b0d2",
-    "risk": "HIGH",
+    "risk": "中",
     "merged_at": "2026-08-10T12:01:39.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "Commit Change Atlas",
+    "title": "BurnCloud 最近 30 次更新",
     "permalink": "/changes/"
   },
   "next": {
-    "title": "PR #355 · feat(client): E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
+    "title": "PR #355 · feat（client）: E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
     "permalink": "/changes/commits/2026-07-08-pr-355-c7107382/"
   }
 }

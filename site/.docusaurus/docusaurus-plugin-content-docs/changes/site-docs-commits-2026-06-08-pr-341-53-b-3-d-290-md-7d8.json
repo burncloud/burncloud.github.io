@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-08-pr-341-53b3d290",
   "title": "PR #341 · Fix: Consistent Empty Response Penalty with Threshold Check",
-  "description": "Executive Summary",
+  "description": "341：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-08-pr-341-53b3d290.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-08-pr-341-53b3d290/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-08-pr-341-53b3d290.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 14,
   "frontMatter": {
     "title": "PR #341 · Fix: Consistent Empty Response Penalty with Threshold Check",
     "slug": "/commits/2026-06-08-pr-341-53b3d290/",
     "sidebar_position": 14,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 341,
     "base_commit": "1e23f1493342676226aece129710ca8c0fd30ea5",
     "target_commit": "53b3d290e68ec4cf2573753f8a8f2605cf11f87d",
-    "risk": "HIGH",
+    "risk": "高",
     "merged_at": "2026-06-08T05:48:02.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #342 · Fix: Delay record_upstream_success for streaming responses until content confirmed",
+    "title": "PR #342 · Fix: Delay record＿upstream＿success for streaming responses until content confirmed",
     "permalink": "/changes/commits/2026-06-08-pr-342-1114ebca/"
   },
   "next": {
-    "title": "PR #340 · fix(router): Improve empty streaming response detection to check for actual content",
+    "title": "PR #340 · fix（router）: Improve empty streaming response detection to check for actual content",
     "permalink": "/changes/commits/2026-06-08-pr-340-1e23f149/"
   }
 }

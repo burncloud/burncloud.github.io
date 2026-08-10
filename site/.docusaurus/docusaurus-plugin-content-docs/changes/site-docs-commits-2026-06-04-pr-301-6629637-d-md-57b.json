@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-04-pr-301-6629637d",
-  "title": "PR #301 · fix(ui): add focus-visible, active states and aria-labels to landing page buttons",
-  "description": "Executive Summary",
+  "title": "PR #301 · fix（ui）: add focus-visible, active states and aria-labels to landing page buttons",
+  "description": "301：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-04-pr-301-6629637d.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-04-pr-301-6629637d/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-04-pr-301-6629637d.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 27,
   "frontMatter": {
-    "title": "PR #301 · fix(ui): add focus-visible, active states and aria-labels to landing page buttons",
+    "title": "PR #301 · fix（ui）: add focus-visible, active states and aria-labels to landing page buttons",
     "slug": "/commits/2026-06-04-pr-301-6629637d/",
     "sidebar_position": 27,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 301,
     "base_commit": "374a1588ca7ae1336bdcb289f7ca4da12e3acd68",
     "target_commit": "6629637daad1be345164d79375c170a4b6bda447",
-    "risk": "MEDIUM",
+    "risk": "低",
     "merged_at": "2026-06-04T12:15:02.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #325 · test(e2e): add channel management flow tests (Issue #311)",
+    "title": "PR #325 · test（e2e）: add channel management flow tests （Issue ＃311）",
     "permalink": "/changes/commits/2026-06-04-pr-325-f83d508e/"
   },
   "next": {
-    "title": "PR #324 · test(e2e): add comprehensive user authentication flow tests (Issue #310)",
+    "title": "PR #324 · test（e2e）: add comprehensive user authentication flow tests （Issue ＃310）",
     "permalink": "/changes/commits/2026-06-04-pr-324-374a1588/"
   }
 }

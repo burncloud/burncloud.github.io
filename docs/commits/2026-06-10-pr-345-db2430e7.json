@@ -1,63 +1,80 @@
 {
+  "version": 2,
   "pr_number": 345,
   "title": "feat: 实现智能熔断系统",
   "merged_at": "2026-06-10T11:38:50Z",
   "base": "3b3766f3c867b39ea35173a7458b9dcaf38612d2",
   "target": "db2430e7d52833632ddd1b152d45bf69c4d33f7c",
-  "risk": "HIGH",
-  "risk_score": 50,
+  "risk": "高",
+  "risk_score": 19,
   "files_changed": 5,
   "changed_symbols": 123,
   "changed_functions": 88,
-  "flows": [
+  "summary": "这次主要改了两件事：流式返回，还有 上游失败后换下一个渠道。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
+      "key": "streaming",
+      "title": "流式返回",
+      "plain": "流式回复不会一拿到连接就马上交给用户了。现在会先看第一块数据；如果第一块已经是上游错误，就还有机会换一个渠道。",
+      "flow": "用户发起流式模型请求",
+      "files": [
+        "crates/router/src/channel_health_manager.rs",
+        "crates/router/src/health_probe.rs",
+        "crates/router/src/response_quality.rs",
+        "crates/router/src/smart_circuit_breaker.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "API Requests → Chat Completion → Billing / Usage",
-      "truth": "⚠ INFERRED"
-    },
-    {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
+      "key": "failover",
+      "title": "上游失败后换下一个渠道",
+      "plain": "上游出错以后，BurnCloud 决定『直接报错』还是『换下一个渠道再试』的规则变了。",
+      "flow": "上游失败后的重试 / Failover",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     }
   ],
-  "doc": "2026-06-10-pr-345-db2430e7.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": true
     },
-    "State": {
-      "status": "Changed"
+    "5": {
+      "name": "状态变化",
+      "changed": true
     },
-    "API Contract": {
-      "status": "Changed"
+    "6": {
+      "name": "API 契约",
+      "changed": true
     },
-    "Database": {
-      "status": "Changed"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "Changed"
+    "8": {
+      "name": "外部依赖",
+      "changed": true
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "No Change"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-10-pr-345-db2430e7.md"
 }

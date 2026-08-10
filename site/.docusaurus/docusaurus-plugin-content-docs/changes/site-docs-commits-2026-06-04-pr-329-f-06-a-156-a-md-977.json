@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-04-pr-329-f06a156a",
-  "title": "PR #329 · fix(router): failover on auth errors (401/402) and add xunfei channel type",
-  "description": "Executive Summary",
+  "title": "PR #329 · fix（router）: failover on auth errors （401/402） and add xunfei channel type",
+  "description": "329：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-04-pr-329-f06a156a.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-04-pr-329-f06a156a/",
@@ -11,29 +11,31 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-04-pr-329-f06a156a.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 29,
   "frontMatter": {
-    "title": "PR #329 · fix(router): failover on auth errors (401/402) and add xunfei channel type",
+    "title": "PR #329 · fix（router）: failover on auth errors （401/402） and add xunfei channel type",
     "slug": "/commits/2026-06-04-pr-329-f06a156a/",
     "sidebar_position": 29,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 329,
     "base_commit": "018855c3c571e7eb42520db46e70bc8fc5ba726e",
     "target_commit": "f06a156afd7f4c49ccbe08fe6e8b4a00f4168787",
-    "risk": "HIGH",
+    "risk": "高",
     "merged_at": "2026-06-04T10:14:27.000Z"
   },
   "sidebar": "changesSidebar",
   "previous": {
-    "title": "PR #324 · test(e2e): add comprehensive user authentication flow tests (Issue #310)",
+    "title": "PR #324 · test（e2e）: add comprehensive user authentication flow tests （Issue ＃310）",
     "permalink": "/changes/commits/2026-06-04-pr-324-374a1588/"
   },
   "next": {
-    "title": "PR #308 · fix(ui): 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
+    "title": "PR #308 · fix（ui）: 修复首页\"开始使用\"按钮文字颜色显示为白色的问题",
     "permalink": "/changes/commits/2026-06-01-pr-308-c0584e16/"
   }
 }

@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-06-04-pr-327-4315cf74",
-  "title": "PR #327 · test(e2e): add security monitor/风控雷达 flow tests (Issue #313)",
-  "description": "Executive Summary",
+  "title": "PR #327 · test（e2e）: add security monitor/风控雷达 flow tests （Issue ＃313）",
+  "description": "327：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-06-04-pr-327-4315cf74.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-06-04-pr-327-4315cf74/",
@@ -11,20 +11,22 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-06-04-pr-327-4315cf74.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 24,
   "frontMatter": {
-    "title": "PR #327 · test(e2e): add security monitor/风控雷达 flow tests (Issue #313)",
+    "title": "PR #327 · test（e2e）: add security monitor/风控雷达 flow tests （Issue ＃313）",
     "slug": "/commits/2026-06-04-pr-327-4315cf74/",
     "sidebar_position": 24,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 327,
     "base_commit": "47c2869df0f822681a2d92f8ce8421a6af043853",
     "target_commit": "4315cf7411f39e0c0d37b693055e79060900e100",
-    "risk": "HIGH",
+    "risk": "低",
     "merged_at": "2026-06-04T12:17:28.000Z"
   },
   "sidebar": "changesSidebar",
@@ -33,7 +35,7 @@
     "permalink": "/changes/commits/2026-06-04-pr-328-c3ff8f15/"
   },
   "next": {
-    "title": "PR #326 · test(e2e): add API Key management flow tests (Issue #312)",
+    "title": "PR #326 · test（e2e）: add API Key management flow tests （Issue ＃312）",
     "permalink": "/changes/commits/2026-06-04-pr-326-47c2869d/"
   }
 }

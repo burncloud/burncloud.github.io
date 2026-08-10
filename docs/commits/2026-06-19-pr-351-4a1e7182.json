@@ -1,67 +1,79 @@
 {
+  "version": 2,
   "pr_number": 351,
   "title": "feat: Peek first chunk in streaming responses to enable retry on SSE errors",
   "merged_at": "2026-06-19T10:45:48Z",
   "base": "e4d26e7b5b2f1b2977a0b02179dfe7236435da77",
   "target": "4a1e718264db5a12482998be9c31bbcff381328c",
-  "risk": "HIGH",
-  "risk_score": 43,
+  "risk": "高",
+  "risk_score": 14,
   "files_changed": 3,
   "changed_symbols": 17,
   "changed_functions": 9,
-  "flows": [
+  "summary": "这次主要改了两件事：流式返回，还有 模型请求选渠道。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
+      "key": "streaming",
+      "title": "流式返回",
+      "plain": "流式回复不会一拿到连接就马上交给用户了。现在会先看第一块数据；如果第一块已经是上游错误，就还有机会换一个渠道。",
+      "flow": "用户发起流式模型请求",
+      "files": [
+        "crates/router/src/lib.rs",
+        "crates/router/src/response_quality.rs",
+        "crates/router/src/stream_peek.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "API Requests → Chat Completion → Provider Execution → Passthrough",
-      "truth": "STATIC CONFIRMED"
-    },
-    {
-      "name": "API Requests → Chat Completion → Billing / Usage",
-      "truth": "⚠ INFERRED"
-    },
-    {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
+      "key": "routing",
+      "title": "模型请求选渠道",
+      "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+      "flow": "模型请求选择 Channel",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     }
   ],
-  "doc": "2026-06-19-pr-351-4a1e7182.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": true
     },
-    "State": {
-      "status": "Changed"
+    "5": {
+      "name": "状态变化",
+      "changed": true
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "Changed"
+    "8": {
+      "name": "外部依赖",
+      "changed": true
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "No Change"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-19-pr-351-4a1e7182.md"
 }

@@ -1,55 +1,71 @@
 {
+  "version": 2,
   "pr_number": 349,
-  "title": "fix(db): register missing migrations for router_request_logs (Issue #334)",
+  "title": "fix（db）: register missing migrations for router＿request＿logs （Issue ＃334）",
   "merged_at": "2026-06-13T20:03:36Z",
   "base": "0f51207790b4e5beaf890ea378f19a80f2a0bcbc",
   "target": "e4d26e7b5b2f1b2977a0b02179dfe7236435da77",
-  "risk": "HIGH",
-  "risk_score": 13,
+  "risk": "中",
+  "risk_score": 8,
   "files_changed": 4,
   "changed_symbols": 3,
   "changed_functions": 0,
-  "flows": [
+  "summary": "这次主要改了一件事：数据库升级和保存数据。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Billing / Usage",
-      "truth": "⚠ INFERRED"
-    },
-    {
-      "name": "Data Plane → Request Logging / Observability",
-      "truth": "STATIC CONFIRMED"
+      "key": "database",
+      "title": "数据库升级和保存数据",
+      "plain": "SQLite 的第 0017 次数据库升级被重做了，目的是让旧数据库升级时更稳，不要因为旧表结构不同就直接出问题。",
+      "flow": "程序启动 / 数据库升级 / 保存数据",
+      "files": [
+        "crates/database/migrations/postgres/0017_fix_bool_columns.sql",
+        "crates/database/migrations/postgres/0018_router_request_logs.sql",
+        "crates/database/migrations/sqlite/0018_router_request_logs.sql",
+        "crates/database/src/migration.rs"
+      ]
     }
   ],
-  "doc": "2026-06-13-pr-349-e4d26e7b.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": false
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "No Change"
+    "4": {
+      "name": "控制流程",
+      "changed": false
     },
-    "State": {
-      "status": "No Change"
+    "5": {
+      "name": "状态变化",
+      "changed": false
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "Changed"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": true
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": false
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-13-pr-349-e4d26e7b.md"
 }

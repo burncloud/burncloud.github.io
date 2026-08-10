@@ -1,7 +1,7 @@
 {
   "id": "commits/2026-07-08-pr-355-c7107382",
-  "title": "PR #355 · feat(client): E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
-  "description": "Executive Summary",
+  "title": "PR #355 · feat（client）: E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
+  "description": "355：这次到底改了什么？",
   "source": "@site/../docs/commits/2026-07-08-pr-355-c7107382.md",
   "sourceDirName": "commits",
   "slug": "/commits/2026-07-08-pr-355-c7107382/",
@@ -11,20 +11,22 @@
   "editUrl": "https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/commits/2026-07-08-pr-355-c7107382.md",
   "tags": [],
   "version": "current",
-  "lastUpdatedBy": null,
-  "lastUpdatedAt": null,
+  "lastUpdatedBy": "github-actions[bot]",
+  "lastUpdatedAt": 1786386254000,
   "sidebarPosition": 2,
   "frontMatter": {
-    "title": "PR #355 · feat(client): E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
+    "title": "PR #355 · feat（client）: E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
     "slug": "/commits/2026-07-08-pr-355-c7107382/",
     "sidebar_position": 2,
-    "doc_type": "commit-change-atlas",
+    "doc_type": "commit-change-atlas-v2",
     "truth": "source-diff-derived",
+    "language": "zh-CN",
+    "diagram_style": "plaintext",
     "repository": "burncloud/burncloud",
     "pr_number": 355,
     "base_commit": "876bf8dc06bf8874ff433bf01c8fb5582a1e2c39",
     "target_commit": "c7107382b8479deb44f992e9e5ae8dcac5efb417",
-    "risk": "HIGH",
+    "risk": "高",
     "merged_at": "2026-07-08T05:55:51.000Z"
   },
   "sidebar": "changesSidebar",
@@ -33,7 +35,7 @@
     "permalink": "/changes/commits/2026-08-10-pr-393-956041a8/"
   },
   "next": {
-    "title": "PR #354 · feat(client): UI design system docs, split CSS, and BCButton migration",
+    "title": "PR #354 · feat（client）: UI design system docs, split CSS, and BCButton migration",
     "permalink": "/changes/commits/2026-07-07-pr-354-876bf8dc/"
   }
 }

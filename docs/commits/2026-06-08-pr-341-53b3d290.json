@@ -1,59 +1,86 @@
 {
+  "version": 2,
   "pr_number": 341,
   "title": "Fix: Consistent Empty Response Penalty with Threshold Check",
   "merged_at": "2026-06-08T05:48:02Z",
   "base": "1e23f1493342676226aece129710ca8c0fd30ea5",
   "target": "53b3d290e68ec4cf2573753f8a8f2605cf11f87d",
-  "risk": "HIGH",
-  "risk_score": 21,
+  "risk": "高",
+  "risk_score": 18,
   "files_changed": 1,
   "changed_symbols": 0,
   "changed_functions": 0,
-  "flows": [
+  "summary": "这次主要改了这些事：流式返回、调用上游模型服务、模型请求选渠道。",
+  "semantic_units": [
     {
-      "name": "API Requests → Chat Completion → Streaming Response",
-      "truth": "STATIC CONFIRMED"
+      "key": "streaming",
+      "title": "流式返回",
+      "plain": "这次改了流式响应的处理顺序。重点要看数据什么时候开始交给客户端，以及出错后还能不能重试。",
+      "flow": "用户发起流式模型请求",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     },
     {
-      "name": "API Requests → Chat Completion → Provider Execution → Failure & Retry",
-      "truth": "STATIC CONFIRMED"
+      "key": "provider",
+      "title": "调用上游模型服务",
+      "plain": "BurnCloud 调上游模型服务的代码变了。可能涉及请求地址、请求头、协议转换或返回结果处理。",
+      "flow": "BurnCloud 调用上游 Provider",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     },
     {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
+      "key": "routing",
+      "title": "模型请求选渠道",
+      "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+      "flow": "模型请求选择 Channel",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     }
   ],
-  "doc": "2026-06-08-pr-341-53b3d290.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": true
     },
-    "State": {
-      "status": "Changed"
+    "5": {
+      "name": "状态变化",
+      "changed": true
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": true
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-08-pr-341-53b3d290.md"
 }

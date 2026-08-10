@@ -1,51 +1,68 @@
 {
+  "version": 2,
   "pr_number": 339,
-  "title": "fix(router): Prevent panic when logging bodies with multi-byte UTF-8 characters",
+  "title": "fix（router）: Prevent panic when logging bodies with multi-byte UTF-8 characters",
   "merged_at": "2026-06-08T00:28:54Z",
   "base": "cdb848f6b0c9199bdd2df8879b4a5e0dd0734357",
   "target": "bff564470265cfeffb350f37daf22e2f96269f2f",
-  "risk": "LOW",
-  "risk_score": 3,
+  "risk": "中",
+  "risk_score": 7,
   "files_changed": 1,
   "changed_symbols": 6,
   "changed_functions": 5,
-  "flows": [
+  "summary": "这次主要改了一件事：模型请求选渠道。",
+  "semantic_units": [
     {
-      "name": "API Requests → Data Plane",
-      "truth": "⚠ INFERRED"
+      "key": "routing",
+      "title": "模型请求选渠道",
+      "plain": "模型请求挑选 Channel 的规则变了。要关心的是：哪些渠道能进候选、怎么排序、最后先试谁。",
+      "flow": "模型请求选择 Channel",
+      "files": [
+        "crates/router/src/lib.rs"
+      ]
     }
   ],
-  "doc": "2026-06-08-pr-339-bff56447.md",
   "dimensions": {
-    "Change Scope": {
-      "status": "Changed"
+    "1": {
+      "name": "修改范围",
+      "changed": true
     },
-    "User Flow": {
-      "status": "Changed"
+    "2": {
+      "name": "用户流程",
+      "changed": true
     },
-    "Runtime": {
-      "status": "Changed"
+    "3": {
+      "name": "运行过程",
+      "changed": true
     },
-    "Control Flow": {
-      "status": "Changed"
+    "4": {
+      "name": "控制流程",
+      "changed": true
     },
-    "State": {
-      "status": "No Change"
+    "5": {
+      "name": "状态变化",
+      "changed": false
     },
-    "API Contract": {
-      "status": "No Change"
+    "6": {
+      "name": "API 契约",
+      "changed": false
     },
-    "Database": {
-      "status": "No Change"
+    "7": {
+      "name": "数据库 / 持久化",
+      "changed": false
     },
-    "External": {
-      "status": "No Change"
+    "8": {
+      "name": "外部依赖",
+      "changed": false
     },
-    "Blast Radius": {
-      "status": "Changed"
+    "9": {
+      "name": "影响范围",
+      "changed": true
     },
-    "Tests": {
-      "status": "Changed"
+    "10": {
+      "name": "测试与证据",
+      "changed": false
     }
-  }
+  },
+  "doc": "2026-06-08-pr-339-bff56447.md"
 }
