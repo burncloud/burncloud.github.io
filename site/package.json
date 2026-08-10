@@ -1,0 +1,22 @@
+{
+  "name": "burncloud-runtime-flow-icfg-atlas",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "normalize": "node scripts/normalize-doc-links.js",
+    "start": "npm run normalize && docusaurus start",
+    "build": "npm run normalize && docusaurus build",
+    "serve": "docusaurus serve"
+  },
+  "dependencies": {
+    "@docusaurus/core": "3.8.1",
+    "@docusaurus/preset-classic": "3.8.1",
+    "@docusaurus/theme-mermaid": "3.8.1",
+    "@mdx-js/react": "^3.0.0",
+    "clsx": "^2.1.1",
+    "prism-react-renderer": "^2.4.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "engines": {"node": ">=20.0"}
+}
