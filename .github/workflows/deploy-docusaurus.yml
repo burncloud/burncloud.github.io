@@ -58,11 +58,17 @@ jobs:
       - name: Deepen census-discovered flows
         run: python3 tools/fix_discovered_flows.py
 
-      - name: Remove PHASE labels and deepen source traversal
+      - name: Remove PHASE labels and deepen core source traversal
         run: python3 tools/enrich_source_traversal.py --source .source/burncloud
+
+      - name: Deepen remaining service database CLI UI and startup traversal
+        run: python3 tools/enrich_source_traversal_v3.py --source .source/burncloud
 
       - name: Census real source entrypoints and coverage
         run: python3 tools/census_entrypoints.py --source .source/burncloud
+
+      - name: Map runtime spawn sites to Background Atlas pages
+        run: python3 tools/map_spawn_coverage.py
 
       - name: Sanitize generated Markdown for MDX
         run: python3 tools/sanitize_mdx.py
@@ -76,11 +82,15 @@ jobs:
           test -f docs/http-api/ai-api-data-plane/get-v1-models.md
           test -f docs/http-api/ai-api-data-plane/post-v1-chat-completions.md
           test -f docs/http-api/channel-management/get-console-api-channel.md
-          test -f docs/http-api/token/get-console-api-tokens.md
+          test -f docs/http-api/billing-usage/get-api-billing-summary.md
+          test -f docs/http-api/monitoring-security/get-console-api-monitor.md
+          test -f docs/http-api/cache/get-console-api-cache-stats.md
+          test -f docs/cli/burncloud/price/list.md
           test -f docs/cli/workspace-binaries/aria2-test.md
           test -f docs/background/long-running-jobs/health-probe-scheduler.md
           test -f docs/background/download-background-work/aria2-daemon-monitor.md
           test -f docs/background/desktop-background-work/windows-background-server-thread.md
+          test -f docs/ui/console/console-dashboard.md
           python3 - <<'PY'
           import json,re
           from pathlib import Path
@@ -112,10 +122,23 @@ jobs:
           assert counts['http_missing_exact_matches'] == 0, census['missing_http_entries']
           assert counts['ui_missing_exact_matches'] == 0, census['missing_main_ui_routes']
           assert counts['binary_missing_source_matches'] == 0, census['missing_binary_entries']
+          assert counts['runtime_spawn_unmapped'] == 0, census['spawn_coverage']['unmapped']
+          assert counts['runtime_spawn_mapped'] == counts['runtime_spawn_sites'], counts
 
           channel=Path('docs/http-api/channel-management/get-console-api-channel.md').read_text(encoding='utf-8')
           for needle in ['FILE: crates/service/crates/channel/src/lib.rs','FILE: crates/database/crates/channel/src/channel_provider.rs','FILE: crates/database/crates/user/src/lib.rs','ChannelService::list()','ChannelProviderModel::list()']:
               assert needle in channel, needle
+
+          billing=Path('docs/http-api/billing-usage/get-api-billing-summary.md').read_text(encoding='utf-8')
+          for needle in ['FILE: crates/service/crates/router-log/src/lib.rs','FILE: crates/database/crates/router/src/log.rs','BillingService::get_billing_summary_for_user']:
+              assert needle in billing, needle
+
+          monitor=Path('docs/http-api/monitoring-security/get-console-api-monitor.md').read_text(encoding='utf-8')
+          for needle in ['FILE: crates/service/crates/monitor/src/service.rs','collectors/cpu.rs','collectors/memory.rs','collectors/disk.rs']:
+              assert needle in monitor, needle
+
+          cache=Path('docs/http-api/cache/get-console-api-cache-stats.md').read_text(encoding='utf-8')
+          assert 'FILE: crates/service/crates/cache/src/service.rs' in cache
 
           token=Path('docs/http-api/token/get-console-api-tokens.md').read_text(encoding='utf-8')
           assert 'crates/service/crates/token/src/lib.rs' in token
@@ -125,17 +148,20 @@ jobs:
           for needle in ['FILE: crates/router/src/model_router.rs','FILE: crates/service/crates/user/src/lib.rs','FILE: crates/service/crates/billing/src/calculator.rs','FILE: crates/database/crates/router/src/log.rs']:
               assert needle in chat, needle
 
+          price=Path('docs/cli/burncloud/price/list.md').read_text(encoding='utf-8')
+          assert 'FILE: crates/database/crates/billing/src/billing_price.rs' in price
+
+          dashboard=Path('docs/ui/console/console-dashboard.md').read_text(encoding='utf-8')
+          assert 'FILE: crates/client/src/pages/dashboard.rs' in dashboard
+          assert 'crates/client/crates/client-dashboard/src/lib.rs' in dashboard
+
           aria=Path('docs/cli/workspace-binaries/aria2-test.md').read_text(encoding='utf-8')
-          for needle in ['crates/download/crates/download-aria2/src/main.rs','crates/download/crates/download-aria2/src/lib.rs','quick_start()','Aria2RpcClient::add_uri()','Aria2Manager::shutdown()']:
+          for needle in ['quick_start()','Aria2RpcClient::add_uri()','Aria2Manager::shutdown()']:
               assert needle in aria, needle
 
           health=Path('docs/background/long-running-jobs/health-probe-scheduler.md').read_text(encoding='utf-8')
           assert 'ProbeScheduler::start()' in health
           assert 'NOT implemented' in health
-          daemon=Path('docs/background/download-background-work/aria2-daemon-monitor.md').read_text(encoding='utf-8')
-          assert 'Aria2Daemon::start()' in daemon and 'start_aria2_rpc' in daemon
-          win=Path('docs/background/desktop-background-work/windows-background-server-thread.md').read_text(encoding='utf-8')
-          assert 'std::thread::spawn' in win and 'start_server' in win
 
           print('pages=',pages)
           print('coverage=',json.dumps(counts,ensure_ascii=False))
@@ -161,12 +187,14 @@ jobs:
           test -f site/build/http-api/ai-api-data-plane/get-v1-models/index.html
           test -f site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           test -f site/build/http-api/channel-management/get-console-api-channel/index.html
+          test -f site/build/http-api/billing-usage/get-api-billing-summary/index.html
           test -f site/build/cli/workspace-binaries/aria2-test/index.html
           test -f site/build/background/long-running-jobs/health-probe-scheduler/index.html
+          test -f site/build/ui/console/console-dashboard/index.html
           grep -q '输入示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
-          grep -q '穿过的源码文件' site/build/http-api/channel-management/get-console-api-channel/index.html
-          grep -q 'Aria2RpcClient' site/build/cli/workspace-binaries/aria2-test/index.html
+          grep -q 'BillingService' site/build/http-api/billing-usage/get-api-billing-summary/index.html
+          grep -q 'client-dashboard' site/build/ui/console/console-dashboard/index.html
           ! grep -q 'PHASE 0' site/build/http-api/channel-management/get-console-api-channel/index.html
 
       - name: Remove audited source checkout before publishing
@@ -190,5 +218,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud source-deep Atlas with background census [skip ci]"
+          git commit -m "Publish BurnCloud full source-traversal Atlas [skip ci]"
           git push origin HEAD:main
