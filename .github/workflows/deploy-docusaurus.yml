@@ -70,6 +70,9 @@ jobs:
       - name: Enforce Execution Truth V4 call chains
         run: python3 tools/enrich_execution_truth_v4.py --source .source/burncloud
 
+      - name: Restore branch-sensitive direct runtime modes
+        run: python3 tools/enforce_direct_mode_truth.py --source .source/burncloud
+
       - name: Census real source entrypoints and coverage
         run: python3 tools/census_entrypoints.py --source .source/burncloud
 
