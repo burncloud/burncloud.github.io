@@ -1,6 +1,6 @@
 {
   "source_sha": "aa54e21393c6d46a6b09555ffd3661c1f22484f3",
-  "page_count": 200,
+  "page_count": 201,
   "pages": [
     {
       "section": "HTTP / API",
@@ -1601,6 +1601,14 @@
       "entry": "show / hide / focus",
       "slug": "/ui/desktop/show-hide-focus",
       "docid": "ui/desktop/show-hide-focus"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "Workspace Binaries",
+      "title": "aria2-test",
+      "entry": "aria2-test",
+      "slug": "/cli/workspace-binaries/aria2-test",
+      "docid": "cli/workspace-binaries/aria2-test"
     }
   ]
 }

@@ -1,47 +1,20 @@
 {
   "source_sha": "aa54e21393c6d46a6b09555ffd3661c1f22484f3",
-  "manifest_page_count": 200,
+  "manifest_page_count": 201,
   "counts": {
-    "http_route_declarations": 63,
-    "http_unique_entries": 49,
+    "http_route_declarations": 61,
+    "http_unique_entries": 47,
     "http_documented_exact_matches": 47,
-    "http_missing_exact_matches": 2,
-    "dioxus_route_attributes": 40,
+    "http_missing_exact_matches": 0,
+    "main_dioxus_unique_routes": 27,
+    "ui_documented_exact_matches": 27,
+    "ui_missing_exact_matches": 0,
     "binary_source_entries": 9,
-    "spawn_sites": 37
+    "binary_documented_source_matches": 9,
+    "binary_missing_source_matches": 0,
+    "runtime_spawn_sites": 17
   },
-  "missing_http_entries": [
-    {
-      "entry": "POST /console/api/auth/change-password",
-      "declarations": [
-        {
-          "method": "POST",
-          "path": "/console/api/auth/change-password",
-          "entry": "POST /console/api/auth/change-password",
-          "file": "crates/server/src/api/auth.rs",
-          "line": 95,
-          "handlers": [
-            "change_password"
-          ]
-        }
-      ]
-    },
-    {
-      "entry": "POST /console/api/auth/logout",
-      "declarations": [
-        {
-          "method": "POST",
-          "path": "/console/api/auth/logout",
-          "entry": "POST /console/api/auth/logout",
-          "file": "crates/server/src/api/auth.rs",
-          "line": 94,
-          "handlers": [
-            "logout"
-          ]
-        }
-      ]
-    }
-  ],
+  "missing_http_entries": [],
   "documented_http_not_seen_as_direct_axum_route": [
     "GET /",
     "GET /console",
@@ -68,16 +41,19 @@
     "POST /v1/completions",
     "POST /v1/embeddings",
     "POST /v1/messages",
-    "POST /v1/models/{model}{countTokens}",
-    "POST /v1/models/{model}{embedContent}",
-    "POST /v1/models/{model}{generateContent}",
-    "POST /v1/models/{model}{streamGenerateContent}",
+    "POST /v1/models/{model}:countTokens",
+    "POST /v1/models/{model}:embedContent",
+    "POST /v1/models/{model}:generateContent",
+    "POST /v1/models/{model}:streamGenerateContent",
     "POST /v1/video/generations",
-    "POST /v1beta/models/{model}{countTokens}",
-    "POST /v1beta/models/{model}{embedContent}",
-    "POST /v1beta/models/{model}{generateContent}",
-    "POST /v1beta/models/{model}{streamGenerateContent}"
+    "POST /v1beta/models/{model}:countTokens",
+    "POST /v1beta/models/{model}:embedContent",
+    "POST /v1beta/models/{model}:generateContent",
+    "POST /v1beta/models/{model}:streamGenerateContent"
   ],
+  "missing_main_ui_routes": [],
+  "documented_ui_not_in_main_app": [],
+  "missing_binary_entries": [],
   "http_routes": [
     {
       "method": "GET",
@@ -516,26 +492,6 @@
       ]
     },
     {
-      "method": "POST",
-      "path": "/console/api/auth/logout",
-      "entry": "POST /console/api/auth/logout",
-      "file": "crates/server/src/api/auth.rs",
-      "line": 94,
-      "handlers": [
-        "logout"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/console/api/auth/change-password",
-      "entry": "POST /console/api/auth/change-password",
-      "file": "crates/server/src/api/auth.rs",
-      "line": 95,
-      "handlers": [
-        "change_password"
-      ]
-    },
-    {
       "method": "GET",
       "path": "/console/api/logs",
       "entry": "GET /console/api/logs",
@@ -900,40 +856,49 @@
   ],
   "binaries": [
     {
+      "name": "burncloud-client-api",
       "file": "crates/client/crates/client-api/src/main.rs",
-      "kind": "crate-main"
-    },
-    {
-      "file": "crates/client/crates/client-shared/src/main.rs",
-      "kind": "crate-main"
-    },
-    {
-      "file": "crates/client/crates/client-tray/src/main.rs",
-      "kind": "crate-main"
-    },
-    {
-      "file": "crates/client/src/bin/screenshot_gen.rs",
-      "kind": "bin-source"
-    },
-    {
-      "file": "crates/client/src/main.rs",
-      "kind": "crate-main"
-    },
-    {
-      "file": "crates/download/crates/download-aria2/src/main.rs",
-      "kind": "crate-main"
-    },
-    {
-      "file": "crates/download/src/main.rs",
-      "kind": "crate-main"
-    },
-    {
-      "file": "crates/loops/src/main.rs",
-      "kind": "crate-main"
-    },
-    {
-      "file": "src/main.rs",
       "kind": "package-main"
+    },
+    {
+      "name": "burncloud-client-shared",
+      "file": "crates/client/crates/client-shared/src/main.rs",
+      "kind": "package-main"
+    },
+    {
+      "name": "burncloud-client-tray",
+      "file": "crates/client/crates/client-tray/src/main.rs",
+      "kind": "explicit-bin"
+    },
+    {
+      "name": "screenshot_gen",
+      "file": "crates/client/src/bin/screenshot_gen.rs",
+      "kind": "src-bin"
+    },
+    {
+      "name": "burncloud-client",
+      "file": "crates/client/src/main.rs",
+      "kind": "package-main"
+    },
+    {
+      "name": "aria2-test",
+      "file": "crates/download/crates/download-aria2/src/main.rs",
+      "kind": "explicit-bin"
+    },
+    {
+      "name": "burncloud-download",
+      "file": "crates/download/src/main.rs",
+      "kind": "package-main"
+    },
+    {
+      "name": "burncloud-loop",
+      "file": "crates/loops/src/main.rs",
+      "kind": "explicit-bin"
+    },
+    {
+      "name": "burncloud",
+      "file": "src/main.rs",
+      "kind": "explicit-bin"
     }
   ],
   "spawn_sites": [
@@ -941,79 +906,43 @@
       "file": "src/main.rs",
       "line": 31,
       "kind": "std::thread::spawn",
-      "context": "[_] => { // burncloud.exe (No args) #[cfg(windows)] { // Start Server in background thread std::thread::spawn(|| { let rt = tokio::runtime::Runtime::new().unwrap(); rt.block_on(async { let host = std::env::var(\"HOST\").u"
-    },
-    {
-      "file": "crates/router/tests/adaptor_tests.rs",
-      "line": 106,
-      "kind": "tokio::spawn",
-      "context": "Uses HttpBin to inspect the converted request body let (_db, pool, db_url) = setup_db().await?; // Start Mock Upstream let mock_port = 3014; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\"));"
-    },
-    {
-      "file": "crates/router/tests/auth_tests.rs",
-      "line": 123,
-      "kind": "tokio::spawn",
-      "context": "::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\")); tokio::spawn(async move { start_mock_upstream(listener).await; }); let id = \"deepseek-test\"; let name = \"DeepSeek Test\"; let base_url = format!(\"http://127.0.0.1:{}/anything\", mock_port); let"
-    },
-    {
-      "file": "crates/router/tests/auth_tests.rs",
-      "line": 196,
-      "kind": "tokio::spawn",
-      "context": "::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\")); tokio::spawn(async move { start_mock_upstream(listener).await; }); let id = \"qwen-test\"; let name = \"Qwen Test\"; let base_url = format!(\"http://127.0.0.1:{}/anything\", mock_port); let api_key"
-    },
-    {
-      "file": "crates/router/tests/common.rs",
-      "line": 352,
-      "kind": "tokio::spawn",
-      "context": "internal_app before the main app so internal routes // (e.g. /console/internal/health) are reachable in tests. let app = internal_app.merge(app); tokio::spawn(async move { let listener = TcpListener::bind(format!(\"0.0.0.0:{}\", port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind port {port}: {e}\")); axum::serve(listener,"
-    },
-    {
-      "file": "crates/router/tests/failover_tests.rs",
-      "line": 25,
-      "kind": "tokio::spawn",
-      "context": "::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\")); tokio::spawn(async move { start_mock_upstream(listener).await; }); // 1. Create Upstreams let dead_id = \"dead\"; let dead_url = \"http://dead-node.burncloud.test\"; // Should resolve to nothing or f"
-    },
-    {
-      "file": "crates/router/tests/balancer_tests.rs",
-      "line": 27,
-      "kind": "tokio::spawn",
-      "context": "::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\")); tokio::spawn(async move { start_mock_upstream(listener).await; }); // 1. Create Upstreams let u1_id = \"u1\"; let u1_url = format!(\"http://127.0.0.1:{}/anything/u1\", mock_port); let u2_id = \"u"
+      "context": "[_] => { #[cfg(windows)] { std::thread::spawn(|| { let rt = tokio::runtime::Runtime::new().unwrap(); rt.block_on(async { let host = std::env::var(\"HOST\").u"
     },
     {
       "file": "crates/router/src/lib.rs",
       "line": 786,
       "kind": "tokio::spawn",
-      "context": "_rates_from_db().await { tracing::warn!(\"Failed to load exchange rates at startup: {e}\"); } let exch_clone = exchange_rate_service.clone(); tokio::spawn(async move { exch_clone.start_sync_task(); }); // Scheduler policies for multi-channel routing let scheduler_policies = Arc::new(RwLock::new(scheduler::load_scheduler_config())); //"
+      "context": "_rates_from_db().await { tracing::warn!(\"Failed to load exchange rates at startup: {e}\"); } let exch_clone = exchange_rate_service.clone(); tokio::spawn(async move { exch_clone.start_sync_task(); }); let scheduler_policies = Arc::new(RwLock::new(scheduler::load_scheduler_config()));"
     },
     {
       "file": "crates/router/src/lib.rs",
       "line": 838,
       "kind": "tokio::spawn",
-      "context": "/D10). let (budget_update_tx, mut budget_update_rx) = mpsc::channel::<state::BudgetUpdate>(1); { let rate_budget = rate_budget.clone(); tokio::spawn(async move { tracing::info!(\"AIMD budget-update task started\"); while let Some(update) = budget_update_rx.recv().await { // Reconfigure the channel's RPM cap to the le"
+      "context": "let (budget_update_tx, mut budget_update_rx) = mpsc::channel::<state::BudgetUpdate>(1); { let rate_budget = rate_budget.clone(); tokio::spawn(async move { tracing::info!(\"AIMD budget-update task started\"); while let Some(update) = budget_update_rx.recv().await {"
     },
     {
       "file": "crates/router/src/lib.rs",
       "line": 882,
       "kind": "tokio::spawn",
-      "context": "let (log_tx, mut log_rx) = mpsc::channel::<RouterLog>(LOG_CHANNEL_BUFFER); let db_for_logger = db.clone(); // Clone Arc // Spawn Logging Task tokio::spawn(async move { tracing::info!(\"Logging task started\"); while let Some(log) = log_rx.recv().await { // Need to create a new default database or use the shared one? // Sin"
+      "context": "let (log_tx, mut log_rx) = mpsc::channel::<RouterLog>(LOG_CHANNEL_BUFFER); let db_for_logger = db.clone(); tokio::spawn(async move { tracing::info!(\"Logging task started\"); while let Some(log) = log_rx.recv().await {"
     },
     {
       "file": "crates/router/src/lib.rs",
       "line": 899,
       "kind": "tokio::spawn",
-      "context": "mut request_log_rx) = mpsc::channel::<RouterRequestLog>(LOG_CHANNEL_BUFFER); let db_for_request_logger = db.clone(); // Spawn Request Logging Task tokio::spawn(async move { tracing::info!(\"Request logging task started\"); while let Some(log) = request_log_rx.recv().await { if let Err(e) = RouterDatabase::insert_request_log(&db_for_request"
+      "context": "mut request_log_rx) = mpsc::channel::<RouterRequestLog>(LOG_CHANNEL_BUFFER); let db_for_request_logger = db.clone(); tokio::spawn(async move { tracing::info!(\"Request logging task started\"); while let Some(log) = request_log_rx.recv().await { if let Err(e) = RouterDatabase::insert_request_log(&db_for_request"
     },
     {
       "file": "crates/router/src/lib.rs",
       "line": 1402,
       "kind": "tokio::spawn",
-      "context": "// Update accessed_time non-blocking let db = state.db.clone(); let token = user_token.clone(); tokio::spawn(async move { let _ = RouterDatabase::update_token_accessed_time(&db, &token).await; }); ( info.user_id, info.group,"
+      "context": "let db = state.db.clone(); let token = user_token.clone(); tokio::spawn(async move { let _ = RouterDatabase::update_token_accessed_time(&db, &token).await; }); ( info.user_id, info.group,"
     },
     {
       "file": "crates/router/src/lib.rs",
       "line": 1421,
       "kind": "tokio::spawn",
-      "context": "e accessed_time non-blocking let db = state.db.clone(); let token = user_token.clone(); tokio::spawn(async move { let _ = RouterDatabase::update_token_accessed_time(&db, &token).await; }); ( t.user_id,"
+      "context": "let db = state.db.clone(); let token = user_token.clone(); tokio::spawn(async move { let _ = RouterDatabase::update_token_accessed_time(&db, &token).await; }); ( t.user_id,"
     },
     {
       "file": "crates/router/src/lib.rs",
@@ -1025,7 +954,7 @@
       "file": "crates/router/src/lib.rs",
       "line": 1955,
       "kind": "tokio::spawn",
-      "context": "if cost > 0 { let db = state.db.clone(); let token_for_quota = user_token.to_string(); let user_id_for_quota = user_id.clone(); tokio::spawn(async move { let _ = RouterDatabase::deduct_quota(&db, &user_id_for_quota, &token_for_quota, cost).await; }); } // Inject route-tracing headers for client-side ob"
+      "context": "if cost > 0 { let db = state.db.clone(); let token_for_quota = user_token.to_string(); let user_id_for_quota = user_id.clone(); tokio::spawn(async move { let _ = RouterDatabase::deduct_quota(&db, &user_id_for_quota, &token_for_quota, cost).await; }); }"
     },
     {
       "file": "crates/router/src/lib.rs",
@@ -1037,25 +966,19 @@
       "file": "crates/router/src/health_probe.rs",
       "line": 272,
       "kind": "tokio::spawn",
-      "context": "{ return; // Already running } let manager = Arc::clone(&self.manager); let running = Arc::clone(&self.running); tokio::spawn(async move { let mut ticker = interval(Duration::from_secs(10)); while running.load(Ordering::Relaxed) { ticker.tick().await;"
+      "context": "{ return; } let manager = Arc::clone(&self.manager); let running = Arc::clone(&self.running); tokio::spawn(async move { let mut ticker = interval(Duration::from_secs(10)); while running.load(Ordering::Relaxed) { ticker.tick().await;"
     },
     {
       "file": "crates/router/src/exchange_rate.rs",
       "line": 182,
       "kind": "tokio::spawn",
-      "context": "/// let service = Arc::new(ExchangeRateService::new(db)); /// service.start_sync_task(); /// ``` pub fn start_sync_task(self: Arc<Self>) { tokio::spawn(async move { let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(SYNC_CHECK_INTERVAL_SECS)); loop { interval.tick().await;"
+      "context": "pub fn start_sync_task(self: Arc<Self>) { tokio::spawn(async move { let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(SYNC_CHECK_INTERVAL_SECS)); loop { interval.tick().await;"
     },
     {
       "file": "crates/router/src/price_sync.rs",
       "line": 727,
       "kind": "tokio::spawn",
       "context": "price_cache: PriceCache, mut force_sync_rx: tokio::sync::mpsc::Receiver<tokio::sync::oneshot::Sender<SyncResult>>, ) -> tokio::task::JoinHandle<()> { tokio::spawn(async move { let mut service = match config { Some(cfg) => PriceSyncService::with_config(db.clone(), cfg), None => PriceSyncService::new(db.clone()), }; let mu"
-    },
-    {
-      "file": "crates/tests/tests/api/ability_routing.rs",
-      "line": 26,
-      "kind": "tokio::spawn",
-      "context": "await.unwrap(); let port = listener.local_addr().unwrap().port(); let app = Router::new().route(\"/v1/chat/completions\", post(mock_chat_handler)); tokio::spawn(async move { println!(\"MOCK: Server starting on port {}\", port); if let Err(e) = axum::serve(listener, app).await { println!(\"MOCK: Server failed: {}\", e); } });"
     },
     {
       "file": "crates/download/src/lib.rs",
@@ -1067,97 +990,19 @@
       "file": "crates/download/crates/download-aria2/src/lib.rs",
       "line": 616,
       "kind": "tokio::spawn",
-      "context": "任务 let instance = Arc::clone(&self.instance); let is_running = Arc::clone(&self.is_running); let config = self.config.clone(); tokio::spawn(async move { while is_running.load(Ordering::SeqCst) { tokio::time::sleep(Duration::from_millis(1000)).await; let need_restart = { let mut loc"
-    },
-    {
-      "file": "crates/server/tests/gateway_tests.rs",
-      "line": 17,
-      "kind": "tokio::spawn",
-      "context": "auth setup, needs rewrite\"] async fn test_unified_gateway_routing() -> anyhow::Result<()> { // Start Unified Gateway on port 3000 let port = 3000; tokio::spawn(async move { // Set env var just in case, though main.rs parses it or defaults // But here we call start_server directly which takes port arg if let Err(_e) = burncloud_server::start_"
-    },
-    {
-      "file": "crates/server/tests/group_routing_tests.rs",
-      "line": 52,
-      "kind": "tokio::spawn",
-      "context": ").unwrap(); *c += 1; Response::new(Body::from(r#\"{\"id\":\"mock-b\"}\"#)) }), ) .with_state(state); tokio::spawn(async move { let addr = SocketAddr::from(([127, 0, 0, 1], upstream_port)); let listener = tokio::net::TcpListener::bind(addr).await.unwrap(); axum::serve(listener, upstream_app).await"
-    },
-    {
-      "file": "crates/server/tests/group_routing_tests.rs",
-      "line": 60,
-      "kind": "tokio::spawn",
-      "context": "d(addr).await.unwrap(); axum::serve(listener, upstream_app).await.unwrap(); }); // 2. Start BurnCloud Gateway let gateway_port = 3006; tokio::spawn(async move { if let Err(_e) = burncloud_server::start_server(\"127.0.0.1\", gateway_port, false).await { // ignore } }); sleep(Duration::from_secs(2)).await; let client"
-    },
-    {
-      "file": "crates/server/tests/log_api_tests.rs",
-      "line": 79,
-      "kind": "tokio::spawn",
-      "context": "sing create_app with the test DB let db_arc = Arc::new(db); let app = burncloud_server::create_app(db_arc, false).await?; let port = 4002_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
-    },
-    {
-      "file": "crates/server/tests/api_tests.rs",
-      "line": 21,
-      "kind": "tokio::spawn",
-      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4000_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
-    },
-    {
-      "file": "crates/server/tests/api_tests.rs",
-      "line": 45,
-      "kind": "tokio::spawn",
-      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4001_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
-    },
-    {
-      "file": "crates/server/tests/api_tests.rs",
-      "line": 77,
-      "kind": "tokio::spawn",
-      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4002_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
-    },
-    {
-      "file": "crates/server/tests/api_tests.rs",
-      "line": 101,
-      "kind": "tokio::spawn",
-      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4003_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
-    },
-    {
-      "file": "crates/server/tests/api_tests.rs",
-      "line": 125,
-      "kind": "tokio::spawn",
-      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4004_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
+      "context": "let instance = Arc::clone(&self.instance); let is_running = Arc::clone(&self.is_running); let config = self.config.clone(); tokio::spawn(async move { while is_running.load(Ordering::SeqCst) { tokio::time::sleep(Duration::from_millis(1000)).await; let need_restart = { let mut loc"
     },
     {
       "file": "crates/service/crates/monitor/src/service.rs",
       "line": 89,
       "kind": "tokio::spawn",
-      "context": "t disk_collector = self.disk_collector.clone(); let cached_metrics = self.cached_metrics.clone(); let interval = self.update_interval; tokio::spawn(async move { let mut update_timer = tokio::time::interval(interval); loop { update_timer.tick().await; // 收集系统指标 let result = Self::c"
-    },
-    {
-      "file": "crates/database/tests/performance_tests.rs",
-      "line": 62,
-      "kind": "tokio::spawn",
-      "context": ".get_connection() .unwrap_or_else(|e| panic!(\"Database should be initialized: {e}\")) .clone(); let handle = tokio::spawn(async move { let timestamp = chrono::Utc::now().to_rfc3339(); let query = format!( \"INSERT INTO concurrent_test (thread_id, timestamp) VALUES ({}, '{}')\","
-    },
-    {
-      "file": "crates/database/tests/error_handling_tests.rs",
-      "line": 115,
-      "kind": "tokio::spawn",
-      "context": ".get_connection() .unwrap_or_else(|e| panic!(\"Database should be initialized: {e}\")) .clone(); let handle = tokio::spawn(async move { // Perform a long-running operation let result = sqlx::query(&format!(\"SELECT {} as operation_id\", i)) .execute(connection.pool())"
-    },
-    {
-      "file": "crates/database/tests/error_handling_tests.rs",
-      "line": 204,
-      "kind": "tokio::spawn",
-      "context": "nt = 10; let mut handles = vec![]; // All tasks try to initialize the same database concurrently for i in 0..num_concurrent { let handle = tokio::spawn(async move { println!(\"Task {} starting initialization\", i); let result = Database::new().await; println!(\"Task {} completed initialization\", i); result"
-    },
-    {
-      "file": "crates/database/tests/cross_platform_tests.rs",
-      "line": 185,
-      "kind": "tokio::spawn",
-      "context": "attempts to create the same directory don't cause issues let num_tasks = 5; let mut handles = vec![]; for i in 0..num_tasks { let handle = tokio::spawn(async move { println!(\"Task {} starting\", i); let result = Database::new().await; println!(\"Task {} completed\", i); result }); handles.push(han"
+      "context": "t disk_collector = self.disk_collector.clone(); let cached_metrics = self.cached_metrics.clone(); let interval = self.update_interval; tokio::spawn(async move { let mut update_timer = tokio::time::interval(interval); loop { update_timer.tick().await; let result = Self::c"
     },
     {
       "file": "crates/client/src/app.rs",
       "line": 168,
       "kind": "std::thread::spawn",
-      "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); // 启动托盘应用在后台线程 std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); // 轮询检查托盘操作 use_effect(move || { let wi"
+      "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); use_effect(move || { let wi"
     }
   ]
 }

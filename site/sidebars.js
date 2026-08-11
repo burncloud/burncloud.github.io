@@ -179,6 +179,7 @@ module.exports = {
         {type:'doc', id:"cli/workspace-binaries/client-api", label:"client-api"},
         {type:'doc', id:"cli/workspace-binaries/client-shared", label:"client-shared"},
         {type:'doc', id:"cli/workspace-binaries/client-tray", label:"client-tray"},
+        {type:'doc', id:"cli/workspace-binaries/aria2-test", label:"aria2-test"},
       ]},
     ]},
     {type:'category', label:"Background Jobs / Async Side Effects", collapsed:false, items:[
