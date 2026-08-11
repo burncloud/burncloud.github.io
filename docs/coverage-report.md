@@ -139,3 +139,27 @@ slug: /coverage-report
 | `/console/connect` | `crates/client/src/app.rs:96` |
 | `/console/playground` | `crates/client/src/app.rs:98` |
 | `/console/:..segments` | `crates/client/src/app.rs:100` |
+
+## Runtime Spawn → Background Page Coverage
+
+扫描到的 runtime spawn 共 **17** 个；已映射 **17**，未映射 **0**。
+
+| Source | Line | Background Atlas Page |
+|---|---:|---|
+| `src/main.rs` | 31 | `background/desktop-background-work/windows-background-server-thread` |
+| `crates/router/src/lib.rs` | 786 | `background/long-running-jobs/exchange-rate-sync` |
+| `crates/router/src/lib.rs` | 838 | `background/long-running-jobs/aimd-budget-feedback` |
+| `crates/router/src/lib.rs` | 882 | `background/long-running-jobs/async-router-log-writer` |
+| `crates/router/src/lib.rs` | 899 | `background/long-running-jobs/async-request-log-writer` |
+| `crates/router/src/lib.rs` | 1402 | `background/request-time-async-side-effects/token-accessed_time-update` |
+| `crates/router/src/lib.rs` | 1421 | `background/request-time-async-side-effects/token-accessed_time-update` |
+| `crates/router/src/lib.rs` | 1746 | `background/request-time-async-side-effects/video-task-mapping-save` |
+| `crates/router/src/lib.rs` | 1955 | `background/request-time-async-side-effects/quota-deduction` |
+| `crates/router/src/lib.rs` | 4013 | `background/request-time-async-side-effects/api-version-detect-update` |
+| `crates/router/src/health_probe.rs` | 272 | `background/long-running-jobs/health-probe-scheduler` |
+| `crates/router/src/exchange_rate.rs` | 182 | `background/long-running-jobs/exchange-rate-sync` |
+| `crates/router/src/price_sync.rs` | 727 | `background/long-running-jobs/price-sync` |
+| `crates/download/src/lib.rs` | 140 | `background/download-background-work/download-progress-monitor` |
+| `crates/download/crates/download-aria2/src/lib.rs` | 616 | `background/download-background-work/aria2-daemon-monitor` |
+| `crates/service/crates/monitor/src/service.rs` | 89 | `background/long-running-jobs/system-monitor-auto-update` |
+| `crates/client/src/app.rs` | 168 | `background/desktop-background-work/windows-tray-thread` |

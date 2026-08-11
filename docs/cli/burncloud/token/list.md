@@ -64,6 +64,16 @@ FILE: src/cli/token.rs
 │         ├─ NO → print/return error → END
 │         └─ YES → domain result
 │
+▼
+FILE: crates/service/crates/token/src/lib.rs
+│
+└─ TokenService operation
+│
+▼
+FILE: crates/database/crates/router/src/token.rs
+│
+└─ RouterTokenModel operation → DB result
+│
 ├─ Output formatting
 │    ├─ map result to table/text/status output
 │    └─ write stdout/stderr
@@ -95,6 +105,7 @@ production  bc_live_7d4e...example  enabled  100000000
 ```
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
@@ -102,7 +113,9 @@ production  bc_live_7d4e...example  enabled  100000000
 | 1 | `src/main.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
 | 2 | `src/cli/commands.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
 | 3 | `src/cli/token.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
+| 4 | `crates/service/crates/token/src/lib.rs` | `TokenService::*` | CLI token service | SERVICE |
+| 5 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::*` | token persistence | READ/WRITE router_tokens |
 
-> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
+> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

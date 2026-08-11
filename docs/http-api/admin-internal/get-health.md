@@ -87,12 +87,16 @@ ok
 ```
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
 | 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
+| 2 | `crates/router/src/lib.rs` | `health_status_handler() / metrics_handler()` | 内部 runtime introspection | READ router runtime |
+| 3 | `crates/router/src/circuit_breaker.rs` | `breaker snapshot` | health/metrics input | READ |
+| 4 | `crates/router/src/channel_state.rs` | `channel state snapshot` | health input | READ |
 
-> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
+> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

@@ -12,7 +12,9 @@
     "binary_source_entries": 9,
     "binary_documented_source_matches": 9,
     "binary_missing_source_matches": 0,
-    "runtime_spawn_sites": 17
+    "runtime_spawn_sites": 17,
+    "runtime_spawn_mapped": 17,
+    "runtime_spawn_unmapped": 0
   },
   "missing_http_entries": [],
   "documented_http_not_seen_as_direct_axum_route": [
@@ -1004,5 +1006,129 @@
       "kind": "std::thread::spawn",
       "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); use_effect(move || { let wi"
     }
-  ]
+  ],
+  "spawn_coverage": {
+    "mapped": [
+      {
+        "file": "src/main.rs",
+        "line": 31,
+        "kind": "std::thread::spawn",
+        "context": "[_] => { #[cfg(windows)] { std::thread::spawn(|| { let rt = tokio::runtime::Runtime::new().unwrap(); rt.block_on(async { let host = std::env::var(\"HOST\").u",
+        "docid": "background/desktop-background-work/windows-background-server-thread"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 786,
+        "kind": "tokio::spawn",
+        "context": "_rates_from_db().await { tracing::warn!(\"Failed to load exchange rates at startup: {e}\"); } let exch_clone = exchange_rate_service.clone(); tokio::spawn(async move { exch_clone.start_sync_task(); }); let scheduler_policies = Arc::new(RwLock::new(scheduler::load_scheduler_config()));",
+        "docid": "background/long-running-jobs/exchange-rate-sync"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 838,
+        "kind": "tokio::spawn",
+        "context": "let (budget_update_tx, mut budget_update_rx) = mpsc::channel::<state::BudgetUpdate>(1); { let rate_budget = rate_budget.clone(); tokio::spawn(async move { tracing::info!(\"AIMD budget-update task started\"); while let Some(update) = budget_update_rx.recv().await {",
+        "docid": "background/long-running-jobs/aimd-budget-feedback"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 882,
+        "kind": "tokio::spawn",
+        "context": "let (log_tx, mut log_rx) = mpsc::channel::<RouterLog>(LOG_CHANNEL_BUFFER); let db_for_logger = db.clone(); tokio::spawn(async move { tracing::info!(\"Logging task started\"); while let Some(log) = log_rx.recv().await {",
+        "docid": "background/long-running-jobs/async-router-log-writer"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 899,
+        "kind": "tokio::spawn",
+        "context": "mut request_log_rx) = mpsc::channel::<RouterRequestLog>(LOG_CHANNEL_BUFFER); let db_for_request_logger = db.clone(); tokio::spawn(async move { tracing::info!(\"Request logging task started\"); while let Some(log) = request_log_rx.recv().await { if let Err(e) = RouterDatabase::insert_request_log(&db_for_request",
+        "docid": "background/long-running-jobs/async-request-log-writer"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 1402,
+        "kind": "tokio::spawn",
+        "context": "let db = state.db.clone(); let token = user_token.clone(); tokio::spawn(async move { let _ = RouterDatabase::update_token_accessed_time(&db, &token).await; }); ( info.user_id, info.group,",
+        "docid": "background/request-time-async-side-effects/token-accessed_time-update"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 1421,
+        "kind": "tokio::spawn",
+        "context": "let db = state.db.clone(); let token = user_token.clone(); tokio::spawn(async move { let _ = RouterDatabase::update_token_accessed_time(&db, &token).await; }); ( t.user_id,",
+        "docid": "background/request-time-async-side-effects/token-accessed_time-update"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 1746,
+        "kind": "tokio::spawn",
+        "context": "odel: model_name.clone(), duration: seedance_duration_secs, resolution: seedance_resolution.clone(), }; tokio::spawn(async move { if let Err(e) = RouterVideoTaskModel::save(&db, &task).await { tracing::warn!(error = ?e, \"Failed to save video task mapping\"); }",
+        "docid": "background/request-time-async-side-effects/video-task-mapping-save"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 1955,
+        "kind": "tokio::spawn",
+        "context": "if cost > 0 { let db = state.db.clone(); let token_for_quota = user_token.to_string(); let user_id_for_quota = user_id.clone(); tokio::spawn(async move { let _ = RouterDatabase::deduct_quota(&db, &user_id_for_quota, &token_for_quota, cost).await; }); }",
+        "docid": "background/request-time-async-side-effects/quota-deduction"
+      },
+      {
+        "file": "crates/router/src/lib.rs",
+        "line": 4013,
+        "kind": "tokio::spawn",
+        "context": "let detector = state.api_version_detector.clone(); let error_message_for_detector = error_message.to_string(); tokio::spawn(async move { match detector .detect_and_update( channel_id_for_detector, &e",
+        "docid": "background/request-time-async-side-effects/api-version-detect-update"
+      },
+      {
+        "file": "crates/router/src/health_probe.rs",
+        "line": 272,
+        "kind": "tokio::spawn",
+        "context": "{ return; } let manager = Arc::clone(&self.manager); let running = Arc::clone(&self.running); tokio::spawn(async move { let mut ticker = interval(Duration::from_secs(10)); while running.load(Ordering::Relaxed) { ticker.tick().await;",
+        "docid": "background/long-running-jobs/health-probe-scheduler"
+      },
+      {
+        "file": "crates/router/src/exchange_rate.rs",
+        "line": 182,
+        "kind": "tokio::spawn",
+        "context": "pub fn start_sync_task(self: Arc<Self>) { tokio::spawn(async move { let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(SYNC_CHECK_INTERVAL_SECS)); loop { interval.tick().await;",
+        "docid": "background/long-running-jobs/exchange-rate-sync"
+      },
+      {
+        "file": "crates/router/src/price_sync.rs",
+        "line": 727,
+        "kind": "tokio::spawn",
+        "context": "price_cache: PriceCache, mut force_sync_rx: tokio::sync::mpsc::Receiver<tokio::sync::oneshot::Sender<SyncResult>>, ) -> tokio::task::JoinHandle<()> { tokio::spawn(async move { let mut service = match config { Some(cfg) => PriceSyncService::with_config(db.clone(), cfg), None => PriceSyncService::new(db.clone()), }; let mu",
+        "docid": "background/long-running-jobs/price-sync"
+      },
+      {
+        "file": "crates/download/src/lib.rs",
+        "line": 140,
+        "kind": "tokio::spawn",
+        "context": "ess_monitor(&self, gid: &str) { let aria2 = Arc::clone(&self.aria2); let db = Arc::clone(&self.db); let gid = gid.to_string(); tokio::spawn(async move { loop { if let Some(client) = aria2.create_rpc_client() { if let Ok(status) = client.tell_status(&gid).await { let _ = db.u",
+        "docid": "background/download-background-work/download-progress-monitor"
+      },
+      {
+        "file": "crates/download/crates/download-aria2/src/lib.rs",
+        "line": 616,
+        "kind": "tokio::spawn",
+        "context": "let instance = Arc::clone(&self.instance); let is_running = Arc::clone(&self.is_running); let config = self.config.clone(); tokio::spawn(async move { while is_running.load(Ordering::SeqCst) { tokio::time::sleep(Duration::from_millis(1000)).await; let need_restart = { let mut loc",
+        "docid": "background/download-background-work/aria2-daemon-monitor"
+      },
+      {
+        "file": "crates/service/crates/monitor/src/service.rs",
+        "line": 89,
+        "kind": "tokio::spawn",
+        "context": "t disk_collector = self.disk_collector.clone(); let cached_metrics = self.cached_metrics.clone(); let interval = self.update_interval; tokio::spawn(async move { let mut update_timer = tokio::time::interval(interval); loop { update_timer.tick().await; let result = Self::c",
+        "docid": "background/long-running-jobs/system-monitor-auto-update"
+      },
+      {
+        "file": "crates/client/src/app.rs",
+        "line": 168,
+        "kind": "std::thread::spawn",
+        "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); use_effect(move || { let wi",
+        "docid": "background/desktop-background-work/windows-tray-thread"
+      }
+    ],
+    "unmapped": []
+  }
 }

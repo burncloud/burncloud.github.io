@@ -82,12 +82,14 @@ token=bc_live_7d4e...example accessed_time=2026-08-11T14:45:16+08:00 update=succ
 ```
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
 | 1 | `crates/router/src/lib.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
+| 2 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::update_accessed_time()` | request-side async token touch | WRITE token accessed_time |
 
-> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
+> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

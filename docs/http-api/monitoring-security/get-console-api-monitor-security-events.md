@@ -103,6 +103,22 @@ FILE: crates/server/src/api/security.rs
 │    ├─ WRITE routes: persist create/update/delete/config action
 │    └─ route-specific async/internal calls execute before/around result when implemented
 │
+▼
+FILE: crates/service/crates/router-log/src/lib.rs
+│
+└─ RouterLogService::get(...) → RouterLogModel::get(...)
+│
+▼
+FILE: crates/database/crates/router/src/log.rs
+│
+└─ read router_logs
+│
+▼
+FILE: crates/server/src/api/security.rs
+│
+├─ summary: compute_security_score() + compute_sparkline()
+└─ events: filter status >= 400 → log_to_risk_event() → paginate
+│
 ├─ Response mapping
 │    ├─ domain model → DTO/JSON
 │    ├─ pagination/summary fields where applicable
@@ -151,6 +167,7 @@ Content-Type: application/json
 ```
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
@@ -159,7 +176,9 @@ Content-Type: application/json
 | 2 | `crates/server/src/api/mod.rs` | `见上方 E2E 对应函数` | 该页面现有静态调用链中的源码文件 | READ/WRITE depends on entry |
 | 3 | `crates/server/src/api/auth.rs` | `见上方 E2E 对应函数` | 该页面现有静态调用链中的源码文件 | READ/WRITE depends on entry |
 | 4 | `crates/server/src/api/security.rs` | `见上方 E2E 对应函数` | 该页面现有静态调用链中的源码文件 | READ/WRITE depends on entry |
+| 5 | `crates/service/crates/router-log/src/lib.rs` | `RouterLogService::get()` | 读取近期 RouterLog | READ logs |
+| 6 | `crates/database/crates/router/src/log.rs` | `RouterLogModel::get()` | 查询 router_logs | READ router_logs |
 
-> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
+> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

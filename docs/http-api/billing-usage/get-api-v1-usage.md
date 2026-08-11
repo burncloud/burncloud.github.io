@@ -95,6 +95,21 @@ FILE: crates/database/crates/router/src/lib.rs
 ▼
 FILE: crates/router/src/lib.rs
 │
+▼
+FILE: crates/database/crates/router/src/lib.rs
+│
+├─ get_usage_stats(...) / get_usage_stats_by_model(...)
+└─ delegate to router log aggregation
+│
+▼
+FILE: crates/database/crates/router/src/log.rs
+│
+├─ build period boundary / aggregation SQL
+├─ query router_logs for current user
+└─ DECISION: SQL succeeds?
+     ├─ NO → DatabaseError → handler error response
+     └─ YES → UsageStats / Vec<ModelUsageStats>
+│
 ├─ Response mapping
 │    ├─ map DB aggregate → API response object
 │    ├─ serialize JSON
@@ -144,6 +159,7 @@ Content-Type: application/json
 ```
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
@@ -151,7 +167,8 @@ Content-Type: application/json
 | 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
 | 2 | `crates/router/src/lib.rs` | `见上方 E2E 对应函数` | 该页面现有静态调用链中的源码文件 | READ/WRITE depends on entry |
 | 3 | `crates/database/crates/router/src/lib.rs` | `见上方 E2E 对应函数` | 该页面现有静态调用链中的源码文件 | READ/WRITE depends on entry |
+| 4 | `crates/database/crates/router/src/log.rs` | `get_usage_stats() / get_usage_stats_by_model()` | 执行时间范围与 model 聚合 SQL | READ router_logs |
 
-> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
+> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
