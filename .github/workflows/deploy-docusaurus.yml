@@ -64,6 +64,9 @@ jobs:
       - name: Deepen remaining service database CLI UI and startup traversal
         run: python3 tools/enrich_source_traversal_v3.py --source .source/burncloud
 
+      - name: Replace generic source-index labels with concrete symbols
+        run: python3 tools/refine_source_symbols.py
+
       - name: Census real source entrypoints and coverage
         run: python3 tools/census_entrypoints.py --source .source/burncloud
 
@@ -108,6 +111,7 @@ jobs:
               assert '## 穿过的源码文件（详细）' in text, f
               assert '[PHASE ' not in text, f
               assert 'DECISION:' in text, f
+              assert '见上方 E2E 对应' not in text, f
               rows=re.findall(r'\|\s*\d+\s*\|\s*`([^`]+)`\s*\|', text)
               assert rows, f
               for rel in rows:
@@ -150,6 +154,7 @@ jobs:
 
           price=Path('docs/cli/burncloud/price/list.md').read_text(encoding='utf-8')
           assert 'FILE: crates/database/crates/billing/src/billing_price.rs' in price
+          assert 'BillingPriceModel' in price
 
           dashboard=Path('docs/ui/console/console-dashboard.md').read_text(encoding='utf-8')
           assert 'FILE: crates/client/src/pages/dashboard.rs' in dashboard
