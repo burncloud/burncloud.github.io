@@ -27,10 +27,18 @@ def main():
 
         # Re-apply the manually audited branch-specific flow AFTER generic static
         # call expansion. This intentionally removes calls from non-selected
-        # match branches (e.g. run_async_cli → src/cli/commands.rs on `server`).
+        # match branches (for example the generic Clap CLI path on `server`).
         text, applied = v4.special_direct(p, src, text)
         if not applied:
             raise RuntimeError(f"direct-mode rewrite not applied: {p['entry']}")
+
+        # Keep the negative branch explanation without printing a source path that
+        # is not actually traversed. Source-path strings in the graph should mean
+        # "executed/traversed", not "explicitly not traversed".
+        text = text.replace(
+            "│    └─ 此路径不会进入 src/cli/commands.rs",
+            "│    └─ 此 direct branch 不进入 Clap CLI dispatch",
+        )
 
         text = text.replace(
             "**Execution classification: STATIC CONFIRMED**",
