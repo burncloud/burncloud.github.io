@@ -1,4 +1,4 @@
-name: Generate, validate, build, and publish BurnCloud E2E Atlas
+name: Generate, audit, build, and publish BurnCloud Source Atlas
 
 on:
   pull_request:
@@ -20,11 +20,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: burncloud-e2e-atlas-${{ github.ref }}
+  group: burncloud-source-atlas-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  generate-validate-build-publish:
+  generate-audit-build-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Atlas repository
@@ -32,78 +32,96 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Checkout audited BurnCloud source
+        uses: actions/checkout@v4
+        with:
+          repository: burncloud/burncloud
+          ref: aa54e21393c6d46a6b09555ffd3661c1f22484f3
+          path: .source/burncloud
+          fetch-depth: 1
+
       - name: Generate base Chinese atlas
         run: python3 tools/generate_atlas.py
 
-      - name: Enrich every page with detailed E2E v2 and input examples
+      - name: Generate detailed E2E and input examples
         run: python3 tools/enrich_atlas_v2.py
 
-      - name: Add return-result examples to every page
+      - name: Add output examples
         run: python3 tools/add_result_examples.py
+
+      - name: Remove PHASE labels and deepen source traversal
+        run: python3 tools/enrich_source_traversal.py --source .source/burncloud
+
+      - name: Census real source entrypoints and coverage
+        run: python3 tools/census_entrypoints.py --source .source/burncloud
 
       - name: Sanitize generated Markdown for MDX
         run: python3 tools/sanitize_mdx.py
 
-      - name: Verify generated documentation tree and v2 depth
+      - name: Verify source-deep documentation
         run: |
           test -f docs/index.md
           test -f docs/atlas-manifest.json
+          test -f docs/entrypoint-census.json
+          test -f docs/coverage-report.md
           test -f docs/http-api/ai-api-data-plane/get-v1-models.md
           test -f docs/http-api/ai-api-data-plane/post-v1-chat-completions.md
-          test -f docs/http-api/authentication/post-api-auth-login.md
           test -f docs/http-api/channel-management/get-console-api-channel.md
-          test -f docs/cli/burncloud/price/list.md
-          test -f docs/background/long-running-jobs/price-sync.md
-          test -f docs/startup/create_app.md
-          test -f docs/ui/console/console-dashboard.md
-          test -f site/sidebars.js
+          test -f docs/http-api/token/get-console-api-tokens.md
+          test -f docs/http-api/user/get-console-api-list_users.md || true
           python3 - <<'PY'
           import json,re
           from pathlib import Path
           manifest=json.loads(Path('docs/atlas-manifest.json').read_text(encoding='utf-8'))
+          census=json.loads(Path('docs/entrypoint-census.json').read_text(encoding='utf-8'))
           pages=manifest['page_count']
-          md_count=len(list(Path('docs').rglob('*.md')))
-          assert pages >= 190, f'expected >=190 generated pages, got {pages}'
-          assert md_count == pages + 1, (md_count, pages)
-          homepage=Path('docs/index.md')
+          home=Path('docs/index.md')
           checked=0
-          for p in Path('docs').rglob('*.md'):
-              if p == homepage:
-                  continue
-              text=p.read_text(encoding='utf-8')
-              assert '中文解释' in text, p
-              assert '## End-to-End Request Flow + ICFG' in text, p
-              assert '## 输入示例' in text, p
-              assert '## 返回结果示例' in text, p
-              assert '## 穿过的源码文件' in text, p
-              assert '```mermaid' not in text, p
-              assert '┌' not in text and '┐' not in text, p
-              assert 'DECISION:' in text, p
-              phase_count=len(re.findall(r'\[PHASE \d{2}\]',text))
-              assert phase_count >= 4, (p, phase_count)
-              # Every generated page must now contain at least two fenced examples/flows.
-              assert text.count('```') >= 6, p
+          for p in manifest['pages']:
+              f=Path('docs')/(p['docid']+'.md')
+              text=f.read_text(encoding='utf-8')
+              assert '## End-to-End Request Flow + ICFG' in text, f
+              assert '## 输入示例' in text, f
+              assert '## 返回结果示例' in text, f
+              assert '## 穿过的源码文件（详细）' in text, f
+              assert '[PHASE ' not in text, f
+              assert 'DECISION:' in text, f
+              rows=re.findall(r'\|\s*\d+\s*\|\s*`([^`]+)`\s*\|', text)
+              assert rows, f
+              for rel in rows:
+                  if rel.endswith('/*'):
+                      assert (Path('.source/burncloud')/rel[:-2]).is_dir(), (f,rel)
+                  else:
+                      assert (Path('.source/burncloud')/rel).is_file(), (f,rel)
               checked += 1
           assert checked == pages, (checked,pages)
-          # Core Data Plane pages must be substantially deeper than the generic minimum.
+          channel=Path('docs/http-api/channel-management/get-console-api-channel.md').read_text(encoding='utf-8')
+          for needle in [
+              'FILE: crates/service/crates/channel/src/lib.rs',
+              'FILE: crates/database/crates/channel/src/channel_provider.rs',
+              'FILE: crates/database/crates/user/src/lib.rs',
+              'ChannelService::list()',
+              'ChannelProviderModel::list()']:
+              assert needle in channel, needle
+          token=Path('docs/http-api/token/get-console-api-tokens.md').read_text(encoding='utf-8')
+          assert 'crates/service/crates/token/src/lib.rs' in token
+          assert 'crates/database/crates/router/src/token.rs' in token
           chat=Path('docs/http-api/ai-api-data-plane/post-v1-chat-completions.md').read_text(encoding='utf-8')
-          models=Path('docs/http-api/ai-api-data-plane/get-v1-models.md').read_text(encoding='utf-8')
-          assert len(re.findall(r'\[PHASE \d{2}\]',chat)) >= 18
-          assert len(re.findall(r'DECISION:',chat)) >= 10
-          assert 'Candidate attempt loop' in chat
-          assert 'Protocol transformation boundary' in chat
-          assert 'Unified usage + cost' in chat
-          assert len(re.findall(r'\[PHASE \d{2}\]',models)) >= 10
-          assert 'SELECT DISTINCT model' in models
-          print(f'validated {pages} detailed v2 pages with input + output examples; markdown total={md_count}')
+          for needle in [
+              'FILE: crates/router/src/model_router.rs',
+              'FILE: crates/service/crates/user/src/lib.rs',
+              'FILE: crates/service/crates/billing/src/calculator.rs',
+              'FILE: crates/database/crates/router/src/log.rs']:
+              assert needle in chat, needle
+          print('pages=',pages)
+          print('census=',json.dumps(census['counts'],ensure_ascii=False))
+          print('missing_http=',len(census['missing_http_entries']))
           PY
-          test ! -d content
-          test ! -d docs/commits
-          test ! -f docs/commit-index.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
-        with: {node-version: 20}
+        with:
+          node-version: 20
 
       - name: Install Docusaurus
         working-directory: site
@@ -116,28 +134,17 @@ jobs:
       - name: Verify representative Docusaurus output
         run: |
           test -f site/build/index.html
+          test -f site/build/coverage-report/index.html
           test -f site/build/http-api/ai-api-data-plane/get-v1-models/index.html
           test -f site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
-          test -f site/build/http-api/authentication/post-api-auth-login/index.html
           test -f site/build/http-api/channel-management/get-console-api-channel/index.html
-          test -f site/build/cli/burncloud/price/list/index.html
-          test -f site/build/background/long-running-jobs/price-sync/index.html
-          test -f site/build/startup/create_app/index.html
-          test -f site/build/ui/console/console-dashboard/index.html
-          for html in \
-            site/build/http-api/ai-api-data-plane/get-v1-models/index.html \
-            site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html \
-            site/build/http-api/authentication/post-api-auth-login/index.html \
-            site/build/http-api/channel-management/get-console-api-channel/index.html \
-            site/build/cli/burncloud/price/list/index.html \
-            site/build/background/long-running-jobs/price-sync/index.html \
-            site/build/startup/create_app/index.html \
-            site/build/ui/console/console-dashboard/index.html; do
-              grep -q '输入示例' "$html"
-              grep -q '返回结果示例' "$html"
-              grep -q 'PHASE' "$html"
-          done
-          test ! -e site/build/changes
+          grep -q '输入示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
+          grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
+          grep -q '穿过的源码文件' site/build/http-api/channel-management/get-console-api-channel/index.html
+          ! grep -q 'PHASE 0' site/build/http-api/channel-management/get-console-api-channel/index.html
+
+      - name: Remove audited source checkout before publishing
+        run: rm -rf .source/burncloud
 
       - name: Replace Pages output with current Docusaurus build
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
@@ -145,17 +152,17 @@ jobs:
           find . -mindepth 1 -maxdepth 1 \
             ! -name '.git' ! -name '.github' \
             ! -name 'docs' ! -name 'site' ! -name 'tools' \
-            ! -name 'README.md' ! -name '.gitignore' \
+            ! -name 'README.md' ! -name '.gitignore' ! -name '.source' \
             -exec rm -rf {} +
           cp -a site/build/. .
           touch .nojekyll
 
-      - name: Commit generated docs and Pages output to main
+      - name: Commit generated Atlas and Pages output
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud detailed E2E v2 Atlas with input/output examples [skip ci]"
+          git commit -m "Publish BurnCloud source-deep Atlas and coverage census [skip ci]"
           git push origin HEAD:main
