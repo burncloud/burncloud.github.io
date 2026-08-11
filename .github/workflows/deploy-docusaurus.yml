@@ -63,8 +63,9 @@ jobs:
           assert pages >= 190, f'expected >=190 generated pages, got {pages}'
           assert md_count == pages + 1, (md_count, pages)
           example_count=0
+          homepage=Path('docs/index.md')
           for p in Path('docs').rglob('*.md'):
-              if p.name == 'index.md':
+              if p == homepage:
                   continue
               text=p.read_text(encoding='utf-8')
               assert '中文解释' in text, p
