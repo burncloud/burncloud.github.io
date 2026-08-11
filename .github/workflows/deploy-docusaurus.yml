@@ -43,8 +43,11 @@ jobs:
       - name: Generate base Chinese atlas
         run: python3 tools/generate_atlas.py
 
-      - name: Add census-discovered entrypoints
+      - name: Add census-discovered executable entrypoints
         run: python3 tools/augment_discovered_entries.py
+
+      - name: Add census-discovered background entrypoints
+        run: python3 tools/augment_background_entries.py
 
       - name: Generate detailed E2E and input examples
         run: python3 tools/enrich_atlas_v2.py
@@ -52,7 +55,7 @@ jobs:
       - name: Add output examples
         run: python3 tools/add_result_examples.py
 
-      - name: Deepen discovered binary flows
+      - name: Deepen census-discovered flows
         run: python3 tools/fix_discovered_flows.py
 
       - name: Remove PHASE labels and deepen source traversal
@@ -75,13 +78,16 @@ jobs:
           test -f docs/http-api/channel-management/get-console-api-channel.md
           test -f docs/http-api/token/get-console-api-tokens.md
           test -f docs/cli/workspace-binaries/aria2-test.md
+          test -f docs/background/long-running-jobs/health-probe-scheduler.md
+          test -f docs/background/download-background-work/aria2-daemon-monitor.md
+          test -f docs/background/desktop-background-work/windows-background-server-thread.md
           python3 - <<'PY'
           import json,re
           from pathlib import Path
           manifest=json.loads(Path('docs/atlas-manifest.json').read_text(encoding='utf-8'))
           census=json.loads(Path('docs/entrypoint-census.json').read_text(encoding='utf-8'))
           pages=manifest['page_count']
-          assert pages >= 201, pages
+          assert pages >= 204, pages
           checked=0
           for p in manifest['pages']:
               f=Path('docs')/(p['docid']+'.md')
@@ -108,12 +114,7 @@ jobs:
           assert counts['binary_missing_source_matches'] == 0, census['missing_binary_entries']
 
           channel=Path('docs/http-api/channel-management/get-console-api-channel.md').read_text(encoding='utf-8')
-          for needle in [
-              'FILE: crates/service/crates/channel/src/lib.rs',
-              'FILE: crates/database/crates/channel/src/channel_provider.rs',
-              'FILE: crates/database/crates/user/src/lib.rs',
-              'ChannelService::list()',
-              'ChannelProviderModel::list()']:
+          for needle in ['FILE: crates/service/crates/channel/src/lib.rs','FILE: crates/database/crates/channel/src/channel_provider.rs','FILE: crates/database/crates/user/src/lib.rs','ChannelService::list()','ChannelProviderModel::list()']:
               assert needle in channel, needle
 
           token=Path('docs/http-api/token/get-console-api-tokens.md').read_text(encoding='utf-8')
@@ -121,21 +122,20 @@ jobs:
           assert 'crates/database/crates/router/src/token.rs' in token
 
           chat=Path('docs/http-api/ai-api-data-plane/post-v1-chat-completions.md').read_text(encoding='utf-8')
-          for needle in [
-              'FILE: crates/router/src/model_router.rs',
-              'FILE: crates/service/crates/user/src/lib.rs',
-              'FILE: crates/service/crates/billing/src/calculator.rs',
-              'FILE: crates/database/crates/router/src/log.rs']:
+          for needle in ['FILE: crates/router/src/model_router.rs','FILE: crates/service/crates/user/src/lib.rs','FILE: crates/service/crates/billing/src/calculator.rs','FILE: crates/database/crates/router/src/log.rs']:
               assert needle in chat, needle
 
           aria=Path('docs/cli/workspace-binaries/aria2-test.md').read_text(encoding='utf-8')
-          for needle in [
-              'crates/download/crates/download-aria2/src/main.rs',
-              'crates/download/crates/download-aria2/src/lib.rs',
-              'quick_start()',
-              'Aria2RpcClient::add_uri()',
-              'Aria2Manager::shutdown()']:
+          for needle in ['crates/download/crates/download-aria2/src/main.rs','crates/download/crates/download-aria2/src/lib.rs','quick_start()','Aria2RpcClient::add_uri()','Aria2Manager::shutdown()']:
               assert needle in aria, needle
+
+          health=Path('docs/background/long-running-jobs/health-probe-scheduler.md').read_text(encoding='utf-8')
+          assert 'ProbeScheduler::start()' in health
+          assert 'NOT implemented' in health
+          daemon=Path('docs/background/download-background-work/aria2-daemon-monitor.md').read_text(encoding='utf-8')
+          assert 'Aria2Daemon::start()' in daemon and 'start_aria2_rpc' in daemon
+          win=Path('docs/background/desktop-background-work/windows-background-server-thread.md').read_text(encoding='utf-8')
+          assert 'std::thread::spawn' in win and 'start_server' in win
 
           print('pages=',pages)
           print('coverage=',json.dumps(counts,ensure_ascii=False))
@@ -162,6 +162,7 @@ jobs:
           test -f site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           test -f site/build/http-api/channel-management/get-console-api-channel/index.html
           test -f site/build/cli/workspace-binaries/aria2-test/index.html
+          test -f site/build/background/long-running-jobs/health-probe-scheduler/index.html
           grep -q '输入示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           grep -q '穿过的源码文件' site/build/http-api/channel-management/get-console-api-channel/index.html
@@ -189,5 +190,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud source-deep Atlas with zero-gap census [skip ci]"
+          git commit -m "Publish BurnCloud source-deep Atlas with background census [skip ci]"
           git push origin HEAD:main
