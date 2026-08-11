@@ -190,6 +190,7 @@ module.exports = {
         {type:'doc', id:"background/long-running-jobs/aimd-budget-feedback", label:"AIMD Budget Feedback"},
         {type:'doc', id:"background/long-running-jobs/async-router-log-writer", label:"Async Router Log Writer"},
         {type:'doc', id:"background/long-running-jobs/async-request-log-writer", label:"Async Request Log Writer"},
+        {type:'doc', id:"background/long-running-jobs/health-probe-scheduler", label:"Health Probe Scheduler"},
       ]},
       {type:'category', label:"Request-time Async Side Effects", collapsed:true, items:[
         {type:'doc', id:"background/request-time-async-side-effects/token-accessed_time-update", label:"Token accessed_time update"},
@@ -200,10 +201,12 @@ module.exports = {
       {type:'category', label:"Download Background Work", collapsed:true, items:[
         {type:'doc', id:"background/download-background-work/download-progress-monitor", label:"Download progress monitor"},
         {type:'doc', id:"background/download-background-work/restore-incomplete-downloads", label:"Restore incomplete downloads"},
+        {type:'doc', id:"background/download-background-work/aria2-daemon-monitor", label:"Aria2 Daemon Monitor"},
       ]},
       {type:'category', label:"Desktop Background Work", collapsed:true, items:[
         {type:'doc', id:"background/desktop-background-work/windows-tray-thread", label:"Windows tray thread"},
         {type:'doc', id:"background/desktop-background-work/show-window-poll-loop", label:"Show-window poll loop"},
+        {type:'doc', id:"background/desktop-background-work/windows-background-server-thread", label:"Windows Background Server Thread"},
       ]},
     ]},
     {type:'category', label:"Startup", collapsed:false, items:[

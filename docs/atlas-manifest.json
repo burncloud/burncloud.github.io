@@ -1,6 +1,6 @@
 {
   "source_sha": "aa54e21393c6d46a6b09555ffd3661c1f22484f3",
-  "page_count": 201,
+  "page_count": 204,
   "pages": [
     {
       "section": "HTTP / API",
@@ -1609,6 +1609,30 @@
       "entry": "aria2-test",
       "slug": "/cli/workspace-binaries/aria2-test",
       "docid": "cli/workspace-binaries/aria2-test"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Long-running Jobs",
+      "title": "Health Probe Scheduler",
+      "entry": "Health Probe Scheduler",
+      "slug": "/background/long-running-jobs/health-probe-scheduler",
+      "docid": "background/long-running-jobs/health-probe-scheduler"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Download Background Work",
+      "title": "Aria2 Daemon Monitor",
+      "entry": "Aria2 Daemon Monitor",
+      "slug": "/background/download-background-work/aria2-daemon-monitor",
+      "docid": "background/download-background-work/aria2-daemon-monitor"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Desktop Background Work",
+      "title": "Windows Background Server Thread",
+      "entry": "Windows Background Server Thread",
+      "slug": "/background/desktop-background-work/windows-background-server-thread",
+      "docid": "background/desktop-background-work/windows-background-server-thread"
     }
   ]
 }

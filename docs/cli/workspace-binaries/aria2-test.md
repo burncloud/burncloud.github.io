@@ -17,8 +17,7 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ OS / Shell 启动 binary
-│    └─ aria2-test
+├─ OS / Shell 启动 binary: aria2-test
 │
 ▼
 FILE: crates/download/crates/download-aria2/src/main.rs
@@ -32,80 +31,56 @@ FILE: crates/download/crates/download-aria2/src/lib.rs
 │
 ├─ quick_start()
 │    ├─ Aria2Manager::new()
-│    ├─ manager.download_and_setup().await
-│    └─ manager.start_daemon().await
-│
-├─ Aria2Manager::download_and_setup()
-│    └─ download_aria2()
-│         ├─ determine BurnCloud local directory
-│         ├─ DECISION: aria2c.exe already exists?
-│         │    ├─ YES → reuse existing binary
-│         │    └─ NO  → download main URL
-│         │         └─ DECISION: main download succeeds?
-│         │              ├─ YES → extract ZIP
-│         │              └─ NO  → try backup URL → extract ZIP
-│         └─ DECISION: extracted aria2c.exe exists?
-│              ├─ NO → Aria2Error::DownloadError → END
-│              └─ YES → return executable path
-│
-├─ Aria2Manager::start_daemon()
-│    ├─ DECISION: daemon already exists?
-│    │    ├─ YES → Aria2Error::DaemonError → END
-│    │    └─ NO  → Aria2Daemon::new(...)
-│    └─ Aria2Daemon::start().await
-│         ├─ start_aria2_rpc(&config)
-│         ├─ persist Aria2Instance in Arc<Mutex<Option<_>>>
-│         ├─ is_running = true
-│         └─ tokio::spawn daemon monitor loop
-│              ├─ sleep 1 second
-│              ├─ DECISION: aria2 child still running?
-│              │    ├─ YES → continue monitoring
-│              │    └─ NO  → start_aria2_rpc() restart attempt
-│              └─ repeat while is_running
+│    ├─ download_and_setup()
+│    │    └─ download_aria2()
+│    │         ├─ DECISION: aria2c.exe already exists?
+│    │         │    ├─ YES → reuse
+│    │         │    └─ NO  → main download → fallback backup download
+│    │         ├─ extract_aria2()
+│    │         └─ DECISION: executable exists after extraction?
+│    │              ├─ NO → Aria2Error::DownloadError → END
+│    │              └─ YES → continue
+│    └─ start_daemon()
+│         └─ Aria2Daemon::start()
+│              ├─ start_aria2_rpc()
+│              ├─ store Aria2Instance
+│              ├─ is_running = true
+│              └─ tokio::spawn daemon monitor loop
 │
 ▼
 FILE: crates/download/crates/download-aria2/src/main.rs
 │
 ├─ manager.create_rpc_client()
-└─ DECISION: RPC client available?
-     ├─ NO  → skip RPC tests → shutdown
-     └─ YES → test_basic_operations(&client)
-│
-├─ test_basic_operations()
-│    ├─ client.get_global_stat().await
-│    │    └─ JSON-RPC aria2.getGlobalStat
-│    └─ client.tell_active().await
-│         └─ JSON-RPC aria2.tellActive
-│
-├─ test_download()
-│    ├─ construct DownloadOptions { dir: "./downloads", ... }
-│    └─ client.add_uri(test_url, options).await
+├─ DECISION: RPC client exists?
+│    ├─ NO → skip tests → cleanup
+│    └─ YES
+│         ├─ test_basic_operations()
+│         │    ├─ get_global_stat() → aria2.getGlobalStat
+│         │    └─ tell_active() → aria2.tellActive
+│         └─ test_download()
+│              └─ add_uri(test_url, DownloadOptions)
 │
 ▼
 FILE: crates/download/crates/download-aria2/src/lib.rs
 │
 ├─ Aria2RpcClient::add_uri()
-│    ├─ find_existing_task(...)
+│    ├─ find_existing_task()
 │    │    ├─ tell_active()
 │    │    ├─ tell_waiting()
 │    │    ├─ tell_stopped()
-│    │    └─ tell_status() / get_files() when checking duplicates
-│    └─ DECISION: identical task already exists?
+│    │    └─ tell_status() / get_files()
+│    └─ DECISION: identical task exists?
 │         ├─ YES → return existing gid
 │         └─ NO  → call_method("aria2.addUri", ...)
 │
 ▼
 FILE: crates/download/crates/download-aria2/src/main.rs
 │
-├─ DECISION: add_uri succeeded?
-│    ├─ NO  → print failure, continue cleanup
-│    └─ YES
-│         ├─ print GID
-│         ├─ sleep 1 second
-│         └─ client.tell_status(&gid)
-│
+├─ DECISION: add_uri success?
+│    ├─ NO → print error; continue cleanup
+│    └─ YES → print gid → sleep → tell_status(gid)
 ├─ sleep 2 seconds
-└─ manager.shutdown().await
+└─ manager.shutdown()
 │
 ▼
 FILE: crates/download/crates/download-aria2/src/lib.rs
@@ -113,14 +88,8 @@ FILE: crates/download/crates/download-aria2/src/lib.rs
 ├─ Aria2Manager::shutdown()
 │    └─ Aria2Daemon::stop()
 │         ├─ is_running = false
-│         ├─ kill aria2 child process if present
-│         └─ clear daemon instance
-│
-▼
-FILE: crates/download/crates/download-aria2/src/main.rs
-│
-├─ print "测试完成，管理器已关闭"
-└─ return Ok(())
+│         ├─ kill child process
+│         └─ clear instance
 │
 ▼
 END
@@ -147,8 +116,6 @@ aria2 守护进程启动成功！
 🔍 测试基本操作...
   - 活跃下载: 0
   - 等待下载: 0
-  - 下载速度: 0
-  - 当前活跃任务数: 0
 📥 测试下载功能...
   - 添加下载任务成功，GID: 2089b05ecca3d829
   - 任务状态: active
