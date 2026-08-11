@@ -43,11 +43,17 @@ jobs:
       - name: Generate base Chinese atlas
         run: python3 tools/generate_atlas.py
 
+      - name: Add census-discovered entrypoints
+        run: python3 tools/augment_discovered_entries.py
+
       - name: Generate detailed E2E and input examples
         run: python3 tools/enrich_atlas_v2.py
 
       - name: Add output examples
         run: python3 tools/add_result_examples.py
+
+      - name: Deepen discovered binary flows
+        run: python3 tools/fix_discovered_flows.py
 
       - name: Remove PHASE labels and deepen source traversal
         run: python3 tools/enrich_source_traversal.py --source .source/burncloud
@@ -58,7 +64,7 @@ jobs:
       - name: Sanitize generated Markdown for MDX
         run: python3 tools/sanitize_mdx.py
 
-      - name: Verify source-deep documentation
+      - name: Verify source-deep documentation and zero coverage gaps
         run: |
           test -f docs/index.md
           test -f docs/atlas-manifest.json
@@ -68,14 +74,14 @@ jobs:
           test -f docs/http-api/ai-api-data-plane/post-v1-chat-completions.md
           test -f docs/http-api/channel-management/get-console-api-channel.md
           test -f docs/http-api/token/get-console-api-tokens.md
-          test -f docs/http-api/user/get-console-api-list_users.md || true
+          test -f docs/cli/workspace-binaries/aria2-test.md
           python3 - <<'PY'
           import json,re
           from pathlib import Path
           manifest=json.loads(Path('docs/atlas-manifest.json').read_text(encoding='utf-8'))
           census=json.loads(Path('docs/entrypoint-census.json').read_text(encoding='utf-8'))
           pages=manifest['page_count']
-          home=Path('docs/index.md')
+          assert pages >= 201, pages
           checked=0
           for p in manifest['pages']:
               f=Path('docs')/(p['docid']+'.md')
@@ -95,6 +101,12 @@ jobs:
                       assert (Path('.source/burncloud')/rel).is_file(), (f,rel)
               checked += 1
           assert checked == pages, (checked,pages)
+
+          counts=census['counts']
+          assert counts['http_missing_exact_matches'] == 0, census['missing_http_entries']
+          assert counts['ui_missing_exact_matches'] == 0, census['missing_main_ui_routes']
+          assert counts['binary_missing_source_matches'] == 0, census['missing_binary_entries']
+
           channel=Path('docs/http-api/channel-management/get-console-api-channel.md').read_text(encoding='utf-8')
           for needle in [
               'FILE: crates/service/crates/channel/src/lib.rs',
@@ -103,9 +115,11 @@ jobs:
               'ChannelService::list()',
               'ChannelProviderModel::list()']:
               assert needle in channel, needle
+
           token=Path('docs/http-api/token/get-console-api-tokens.md').read_text(encoding='utf-8')
           assert 'crates/service/crates/token/src/lib.rs' in token
           assert 'crates/database/crates/router/src/token.rs' in token
+
           chat=Path('docs/http-api/ai-api-data-plane/post-v1-chat-completions.md').read_text(encoding='utf-8')
           for needle in [
               'FILE: crates/router/src/model_router.rs',
@@ -113,9 +127,18 @@ jobs:
               'FILE: crates/service/crates/billing/src/calculator.rs',
               'FILE: crates/database/crates/router/src/log.rs']:
               assert needle in chat, needle
+
+          aria=Path('docs/cli/workspace-binaries/aria2-test.md').read_text(encoding='utf-8')
+          for needle in [
+              'crates/download/crates/download-aria2/src/main.rs',
+              'crates/download/crates/download-aria2/src/lib.rs',
+              'quick_start()',
+              'Aria2RpcClient::add_uri()',
+              'Aria2Manager::shutdown()']:
+              assert needle in aria, needle
+
           print('pages=',pages)
-          print('census=',json.dumps(census['counts'],ensure_ascii=False))
-          print('missing_http=',len(census['missing_http_entries']))
+          print('coverage=',json.dumps(counts,ensure_ascii=False))
           PY
 
       - name: Setup Node.js
@@ -138,9 +161,11 @@ jobs:
           test -f site/build/http-api/ai-api-data-plane/get-v1-models/index.html
           test -f site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           test -f site/build/http-api/channel-management/get-console-api-channel/index.html
+          test -f site/build/cli/workspace-binaries/aria2-test/index.html
           grep -q '输入示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           grep -q '穿过的源码文件' site/build/http-api/channel-management/get-console-api-channel/index.html
+          grep -q 'Aria2RpcClient' site/build/cli/workspace-binaries/aria2-test/index.html
           ! grep -q 'PHASE 0' site/build/http-api/channel-management/get-console-api-channel/index.html
 
       - name: Remove audited source checkout before publishing
@@ -164,5 +189,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud source-deep Atlas and coverage census [skip ci]"
+          git commit -m "Publish BurnCloud source-deep Atlas with zero-gap census [skip ci]"
           git push origin HEAD:main
