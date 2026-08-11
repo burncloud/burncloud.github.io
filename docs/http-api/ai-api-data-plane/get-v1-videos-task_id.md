@@ -17,7 +17,7 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] 调用方与输入边界
+├─ 调用方与输入边界
 │    ├─ Actor: User / SDK / Browser / Operator
 │    ├─ Entry: GET /v1/videos/{task_id}
 │    ├─ Input sources
@@ -32,7 +32,7 @@ START
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ [PHASE 01] 统一 HTTP Server
+├─ 统一 HTTP Server
 │    ├─ start_server() 已在进程启动时完成
 │    │    ├─ database 初始化
 │    │    ├─ RouterDatabase::init()
@@ -47,7 +47,7 @@ FILE: crates/server/src/lib.rs
 │         ├─ SetRequestIdLayer
 │         └─ PropagateRequestIdLayer
 │
-├─ [PHASE 02] 顶层 Route 决策
+├─ 顶层 Route 决策
 │    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
 │         ├─ YES（其它 route）→ corresponding handler
 │         └─ NO → fallback_service(router_app)
@@ -55,19 +55,19 @@ FILE: crates/server/src/lib.rs
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ [PHASE 03] proxy_handler entry
+├─ proxy_handler entry
 │    ├─ normalize path
 │    ├─ extract supported credential
 │    ├─ validate token/user
 │    ├─ quota guard
 │    └─ local rate limiter
 │
-├─ [PHASE 04] Video polling special-case detection
+├─ Video polling special-case detection
 │    └─ DECISION: Method == GET AND Path starts with /v1/videos/ ?
 │         ├─ NO  → normal inference proxy_logic
 │         └─ YES → polling branch
 │
-├─ [PHASE 05] Task identity
+├─ Task identity
 │    ├─ task_id = URL suffix
 │    └─ DECISION: task_id non-empty/valid enough for lookup?
 │         ├─ NO  → client/not-found error → END
@@ -76,7 +76,7 @@ FILE: crates/router/src/lib.rs
 ▼
 FILE: crates/database/crates/router/src/video_task.rs
 │
-├─ [PHASE 06] Read persisted task mapping
+├─ Read persisted task mapping
 │    ├─ RouterVideoTaskModel::get_by_task_id(task_id)
 │    └─ DECISION: mapping exists?
 │         ├─ NO  → HTTP 404 task_not_found → END
@@ -85,7 +85,7 @@ FILE: crates/database/crates/router/src/video_task.rs
 ▼
 FILE: crates/database/crates/channel/src/lib.rs
 │
-├─ [PHASE 07] Load original Channel
+├─ Load original Channel
 │    ├─ ChannelProviderModel::get_by_id(channel_id)
 │    └─ DECISION: Channel record available/configured?
 │         ├─ NO  → HTTP 502 → END
@@ -94,13 +94,13 @@ FILE: crates/database/crates/channel/src/lib.rs
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ [PHASE 08] Direct upstream polling request
+├─ Direct upstream polling request
 │    ├─ construct {base_url}/v1/videos/{task_id}
 │    ├─ apply original Channel authentication
 │    ├─ IMPORTANT: no new scheduler/model selection
 │    └─ send GET through shared HTTP client
 │
-├─ [PHASE 09] Upstream polling result
+├─ Upstream polling result
 │    └─ DECISION: network/upstream request succeeds?
 │         ├─ NO  → HTTP 502 → END
 │         └─ YES
@@ -108,7 +108,7 @@ FILE: crates/router/src/lib.rs
 │              ├─ collect upstream body
 │              └─ return polling response
 │
-├─ [PHASE 10] Side effects
+├─ Side effects
 │    ├─ task mapping is read-only in this request
 │    ├─ no fresh task mapping created
 │    └─ no model scheduler selection
@@ -153,13 +153,15 @@ Content-Type: application/json
 }
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/server/src/lib.rs` |
-| 2 | `crates/router/src/lib.rs` |
-| 3 | `crates/database/crates/router/src/video_task.rs` |
-| 4 | `crates/database/crates/channel/src/lib.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
+| 2 | `crates/router/src/lib.rs` | `见上方 E2E 对应函数` | 该页面现有静态调用链中的源码文件 | READ/WRITE depends on entry |
+| 3 | `crates/database/crates/channel/src/lib.rs` | `见上方 E2E 对应函数` | 该页面现有静态调用链中的源码文件 | READ/WRITE depends on entry |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

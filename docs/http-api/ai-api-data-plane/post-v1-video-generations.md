@@ -17,7 +17,7 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] 调用方与输入边界
+├─ 调用方与输入边界
 │    ├─ Actor: User / SDK / Browser / Operator
 │    ├─ Entry: POST /v1/video/generations
 │    ├─ Input sources
@@ -32,7 +32,7 @@ START
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ [PHASE 01] 统一 HTTP Server
+├─ 统一 HTTP Server
 │    ├─ start_server() 已在进程启动时完成
 │    │    ├─ database 初始化
 │    │    ├─ RouterDatabase::init()
@@ -47,7 +47,7 @@ FILE: crates/server/src/lib.rs
 │         ├─ SetRequestIdLayer
 │         └─ PropagateRequestIdLayer
 │
-├─ [PHASE 02] 顶层 Route 决策
+├─ 顶层 Route 决策
 │    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
 │         ├─ YES（Management/Internal/LiveView 等）→ 对应 handler
 │         └─ NO → fallback_service(router_app)
@@ -55,19 +55,19 @@ FILE: crates/server/src/lib.rs
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ [PHASE 03] Data Plane route selection
+├─ Data Plane route selection
 │    ├─ explicit /v1/models or usage routes checked first
 │    └─ DECISION: explicit route matched?
 │         ├─ YES → corresponding explicit handler
 │         └─ NO  → proxy_handler()
 │
-├─ [PHASE 04] Path normalization + request identity
+├─ Path normalization + request identity
 │    ├─ normalize_doubled_path()
 │    ├─ preserve Method / URI / headers
 │    ├─ request-id already attached by server middleware
 │    └─ prepare AppState/runtime services
 │
-├─ [PHASE 05] Credential source selection
+├─ Credential source selection
 │    ├─ Candidate 1: Authorization: Bearer ...
 │    ├─ Candidate 2: x-api-key
 │    ├─ Candidate 3: x-goog-api-key
@@ -75,7 +75,7 @@ FILE: crates/router/src/lib.rs
 │         ├─ NO  → HTTP 401 → END
 │         └─ YES → token validation chain
 │
-├─ [PHASE 06] Token / user / group resolution
+├─ Token / user / group resolution
 │    ├─ RouterDatabase new-token validation
 │    ├─ DECISION: new token valid?
 │    │    ├─ YES → token metadata / user_id / group / quota / policy
@@ -87,25 +87,36 @@ FILE: crates/router/src/lib.rs
 │         ├─ NO  → authorization error → END
 │         └─ YES → continue
 │
-├─ [PHASE 07] Account / quota guard
+
+▼
+FILE: crates/database/crates/router/src/token.rs
+│
+├─ Router token persistence backing validation/quota metadata
+├─ validate current/legacy token state as invoked from RouterDatabase
+└─ return token/user/group/quota/order metadata
+│
+▼
+FILE: crates/router/src/lib.rs
+│
+├─ Account / quota guard
 │    ├─ inspect quota/order metadata
 │    └─ DECISION: quota exhausted / account cannot spend?
 │         ├─ YES → HTTP 402 Payment Required → END
 │         └─ NO  → continue
 │
-├─ [PHASE 08] Local request rate limiting
+├─ Local request rate limiting
 │    ├─ limiter key derived from authenticated request context
 │    └─ DECISION: limiter allows request?
 │         ├─ NO  → HTTP 429 Too Many Requests → END
 │         └─ YES → continue
 │
-├─ [PHASE 09] Request-body acquisition
+├─ Request-body acquisition
 │    ├─ collect Axum body bytes
 │    └─ DECISION: body read/size/parse boundary succeeds?
 │         ├─ NO  → client/request error → END
 │         └─ YES → immutable request payload for routing/adaptor
 │
-├─ [PHASE 10] Model + protocol context extraction
+├─ Model + protocol context extraction
 │    ├─ OpenAI/Anthropic: model usually from JSON body
 │    ├─ Gemini: model may come from URL path
 │    ├─ detect streaming / batch / priority hints
@@ -115,14 +126,39 @@ FILE: crates/router/src/lib.rs
 │         ├─ NO  → invalid request / model resolution error → END
 │         └─ YES → proxy_logic(...)
 │
-├─ [PHASE 11] Enter proxy_logic(...)
+├─ Enter proxy_logic(...)
 │    ├─ load scheduling policy for resolved user group
 │    ├─ resolve requested model / model mapping
 │    ├─ load candidate channel abilities
 │    ├─ apply user/order/price constraints
 │    └─ produce ordered/weighted candidate set
 │
-├─ [PHASE 12] Candidate eligibility filtering
+
+▼
+FILE: crates/service/crates/user/src/lib.rs
+│
+├─ UserService::resolve_traffic_class()
+├─ TTL cache lookup
+└─ cache miss → UserDatabase::get_user_roles()
+│
+▼
+FILE: crates/database/crates/user/src/lib.rs
+│
+├─ read user roles used for TrafficColor classification
+└─ return roles → UserService → proxy_logic
+│
+▼
+FILE: crates/router/src/model_router.rs
+│
+├─ ModelRouter::route_with_scheduler()
+├─ evaluate group/model/scheduler/request classification
+├─ consult affinity / health / pricing inputs
+└─ return ordered channel candidates（DYNAMIC result）
+│
+▼
+FILE: crates/router/src/lib.rs
+│
+├─ Candidate eligibility filtering
 │    ├─ ability enabled?
 │    ├─ channel state allows traffic?
 │    ├─ circuit breaker allows attempt?
@@ -132,7 +168,24 @@ FILE: crates/router/src/lib.rs
 │         ├─ NO  → no-upstream / routing error → END
 │         └─ YES → candidate attempt loop
 │
-├─ [PHASE 13] Candidate attempt loop
+
+▼
+FILE: crates/service/crates/billing/src/cache.rs
+│
+├─ PriceCache supplies model/region pricing used by routing/billing
+│
+▼
+FILE: crates/service/crates/billing/src/calculator.rs
+│
+├─ CostCalculator::preflight()
+└─ DECISION: strict pricing requirement satisfied?
+     ├─ NO → reject before upstream
+     └─ YES → return to candidate execution
+│
+▼
+FILE: crates/router/src/lib.rs
+│
+├─ Candidate attempt loop
 │    ├─ select next candidate
 │    ├─ acquire rate budget / shaping permission
 │    ├─ consult circuit breaker
@@ -143,7 +196,7 @@ FILE: crates/router/src/lib.rs
 ▼
 FILE: crates/router/src/passthrough.rs
 │
-├─ [PHASE 14] Protocol transformation boundary
+├─ Protocol transformation boundary
 │    ├─ inspect source protocol + target Channel protocol
 │    └─ DECISION: native passthrough possible?
 │         ├─ YES
@@ -153,7 +206,7 @@ FILE: crates/router/src/passthrough.rs
 │              └─ DynamicAdaptorFactory / adaptor conversion path
 │                   └─ DYNAMIC: exact transformation depends on Provider adaptor
 │
-├─ [PHASE 15] Upstream network I/O
+├─ Upstream network I/O
 │    ├─ send HTTP request through shared client
 │    ├─ wait for headers/body or stream
 │    └─ DECISION: upstream attempt succeeds?
@@ -162,14 +215,14 @@ FILE: crates/router/src/passthrough.rs
 │         │    ├─ update channel/circuit feedback
 │         │    ├─ optional API-version detect/update
 │         │    └─ DECISION: another eligible candidate?
-│         │         ├─ YES → back to PHASE 13
+│         │         ├─ YES → 返回 Candidate attempt loop
 │         │         └─ NO  → final upstream/routing error → END
 │         └─ YES → response handling
 │
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ [PHASE 16] Response mode split
+├─ Response mode split
 │    └─ DECISION: streaming response?
 │         ├─ YES
 │         │    ├─ stream chunks to client
@@ -179,14 +232,37 @@ FILE: crates/router/src/lib.rs
 │              ├─ collect upstream body
 │              └─ parse/derive usage metadata
 │
-├─ [PHASE 17] Unified usage + cost
+
+▼
+FILE: crates/service/crates/billing/src/usage/*
+│
+├─ provider-specific UsageParser extracts/normalizes usage
+└─ return UnifiedUsage
+│
+▼
+FILE: crates/service/crates/billing/src/calculator.rs
+│
+├─ CostCalculator::calculate()
+├─ PriceCache + RequestOptions + UnifiedUsage
+└─ return cost breakdown
+│
+▼
+FILE: crates/database/crates/router/src/log.rs
+│
+├─ persistence backing RouterLog / RequestLog aggregation/writes
+└─ async writers persist request accounting state
+│
+▼
+FILE: crates/router/src/lib.rs
+│
+├─ Unified usage + cost
 │    ├─ normalize prompt/input tokens
 │    ├─ normalize completion/output tokens
 │    ├─ endpoint-specific usage augmentation when needed
 │    ├─ PriceCache / CostCalculator lookup
 │    └─ CostCalculator::calculate()
 │
-├─ [PHASE 18] Accounting / persistence side effects
+├─ Accounting / persistence side effects
 │    ├─ enqueue RouterLog
 │    ├─ enqueue RequestLog according to storage policy
 │    ├─ send AIMD/rate-budget feedback
@@ -196,10 +272,10 @@ FILE: crates/router/src/lib.rs
 │         ├─ YES → async quota deduction
 │         └─ NO  → no quota deduction task
 │
-├─ [PHASE 19] Endpoint-specific async side effects
+├─ Endpoint-specific async side effects
 │    ├─ save video task mapping asynchronously
 │
-├─ [PHASE 20] Final response construction
+├─ Final response construction
 │    ├─ preserve/normalize upstream-compatible status + body
 │    ├─ attach resolved channel/model diagnostic headers where configured
 │    └─ return Axum Response
@@ -240,15 +316,28 @@ Content-Type: application/json
 }
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/server/src/lib.rs` |
-| 2 | `crates/router/src/lib.rs` |
-| 3 | `crates/router/src/passthrough.rs` |
-| 4 | `crates/database/crates/router/src/lib.rs` |
-| 5 | `crates/database/crates/channel/src/lib.rs` |
-| 6 | `crates/service/crates/billing/src/lib.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
+| 2 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Admission + candidate loop + response settlement | HOT PATH |
+| 3 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::*` | token/quota persistence behind RouterDatabase | READ/WRITE token state |
+| 4 | `crates/service/crates/user/src/lib.rs` | `UserService::resolve_traffic_class()` | traffic class resolution | READ cache/user roles |
+| 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::get_user_roles()` | traffic class cache miss backing query | READ roles |
+| 6 | `crates/router/src/model_router.rs` | `ModelRouter::route_with_scheduler()` | scheduler/candidate construction | DYNAMIC route decision |
+| 7 | `crates/router/src/affinity.rs` | `affinity cache/ranking symbols` | session affinity input to scheduling | READ/WRITE affinity |
+| 8 | `crates/router/src/channel_state.rs` | `channel runtime state` | candidate state input | READ runtime state |
+| 9 | `crates/router/src/circuit_breaker.rs` | `CircuitBreaker::*` | per-candidate breaker admission/feedback | READ/WRITE breaker state |
+| 10 | `crates/router/src/aimd_limiter.rs` | `AIMD/rate-budget symbols` | local shaping / feedback | READ/WRITE rate budget |
+| 11 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::*` | pricing lookup | READ price cache |
+| 12 | `crates/service/crates/billing/src/calculator.rs` | `CostCalculator::preflight(), calculate()` | billing admission and settlement | READ price / compute cost |
+| 13 | `crates/router/src/passthrough.rs` | `should_passthrough(), passthrough helpers` | native protocol/upstream boundary | NETWORK I/O |
+| 14 | `crates/router/src/adaptor/*` | `DynamicAdaptorFactory / provider adaptors` | non-native protocol conversion | DYNAMIC Provider branch |
+| 15 | `crates/service/crates/billing/src/usage/*` | `UsageParser::*` | provider usage normalization | READ response usage |
+| 16 | `crates/database/crates/router/src/log.rs` | `RouterLog/RequestLog persistence` | accounting/audit persistence | WRITE logs |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

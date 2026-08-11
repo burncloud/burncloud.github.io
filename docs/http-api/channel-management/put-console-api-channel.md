@@ -17,99 +17,107 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] 调用方与输入边界
-│    ├─ Actor: User / SDK / Browser / Operator
+├─ 调用方输入
 │    ├─ Entry: PUT /console/api/channel
-│    ├─ Input sources
-│    │    ├─ Method + URI path
-│    │    ├─ Query string（如有）
-│    │    ├─ HTTP headers
-│    │    └─ Request body（如有）
-│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
-│         ├─ NO  → 网络层失败；应用代码未执行 → END
-│         └─ YES → 进入 Axum
+│    ├─ Method / Path / Query / Headers / Body
+│    └─ DECISION: 请求到达 BurnCloud listener?
+│         ├─ NO  → 网络层结束，应用代码不执行 → END
+│         └─ YES → Axum Unified App
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ [PHASE 01] 统一 HTTP Server
-│    ├─ start_server() 已在进程启动时完成
-│    │    ├─ database 初始化
-│    │    ├─ RouterDatabase::init()
-│    │    ├─ UserDatabase::init()
-│    │    ├─ create_app(...)
-│    │    ├─ TcpListener::bind(...)
-│    │    └─ axum::serve(listener, app)
-│    ├─ 当前请求进入 Unified Axum App
-│    └─ 全局 middleware
-│         ├─ CORS
-│         ├─ TraceLayer
-│         ├─ SetRequestIdLayer
-│         └─ PropagateRequestIdLayer
+├─ start_server()（启动时）
+│    ├─ create_default_database()
+│    ├─ RouterDatabase::init()
+│    ├─ UserDatabase::init()
+│    ├─ create_app()
+│    ├─ TcpListener::bind()
+│    └─ axum::serve()
 │
-├─ [PHASE 02] 顶层 Route 决策
-│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
-│         ├─ YES → Management API / protected route candidate
-│         └─ NO  → other top-level/fallback route
+├─ create_app()
+│    ├─ merge(api::routes(...))
+│    ├─ merge(internal_app)
+│    ├─ optional merge(liveview_router)
+│    ├─ fallback_service(router_app)
+│    └─ middleware: CORS / Trace / request-id
+│
+├─ DECISION: Management API route 命中?
+│    ├─ NO  → 其它顶层路由 / fallback
+│    └─ YES → api::routes()
 │
 ▼
 FILE: crates/server/src/api/mod.rs
 │
-├─ [PHASE 03] protected_routes composition
-│    ├─ route registered under Management API
-│    └─ auth_middleware() wraps protected router
+├─ routes()
+│    ├─ merge(channel::routes()) into protected_routes
+│    └─ layer(middleware::from_fn(crate::auth_middleware))
 │
-├─ [PHASE 04] JWT authentication
-│    ├─ read Authorization header
-│    └─ DECISION: Authorization starts with Bearer?
+▼
+FILE: crates/server/src/api/auth.rs
+│
+├─ auth_middleware()
+│    ├─ read Authorization
+│    ├─ require Bearer prefix
+│    ├─ verify_jwt()
+│    └─ DECISION: JWT valid?
 │         ├─ NO  → HTTP 401 → END
-│         └─ YES → verify_jwt(...)
-│
-├─ DECISION: JWT signature/claims valid?
-│    ├─ NO  → HTTP 401 → END
-│    └─ YES
-│         ├─ Claims inserted into request extensions
-│         └─ continue to route handler
+│         └─ YES → Claims inserted into request extensions
 │
 ▼
 FILE: crates/server/src/api/channel.rs
 │
-├─ [PHASE 05] Handler
-│    └─ update_channel()
+├─ routes() matches PUT /console/api/channel
+├─ update_channel()
+│    ├─ request extraction: Json<ChannelDto> → into_channel()
+│    ├─ check_admin(&state, &claims)
+│    └─ DECISION: admin role present?
+│         ├─ NO  → err("Admin access required") → END
+│         └─ YES → continue
 │
-├─ [PHASE 06] Request extraction
-│    ├─ Path params / Query params / JSON body as required by Method
-│    ├─ authenticated Claims available from extensions
-│    └─ DECISION: extraction/required fields valid?
-│         ├─ NO  → client/error response → END
-│         └─ YES → authorization/business checks
+├─ check_admin()
+│    └─ CALL UserDatabase::get_user_roles(...)
 │
-├─ [PHASE 07] Authorization + invariants
-│    ├─ Admin role required for Channel Management
-│    ├─ validate ID/status/range/reason/etc. according to handler
-│    └─ DECISION: authorization/invariants pass?
-│         ├─ NO  → 4xx/error payload → END
-│         └─ YES → service/database call
+▼
+FILE: crates/database/crates/user/src/lib.rs
 │
-├─ [PHASE 08] Service / Database boundary
-│    ├─ operation type: write/mutate state
-│    ├─ invoke route-specific Service / Database method
-│    └─ DECISION: operation succeeds?
-│         ├─ NO  → map error → HTTP error response
-│         └─ YES → domain result
+├─ UserDatabase::get_user_roles()
+├─ DB connection / SQL role lookup
+└─ return roles → channel.rs::check_admin()
 │
-├─ [PHASE 09] State effects
-│    ├─ READ routes: no intended mutation beyond incidental telemetry
-│    ├─ WRITE routes: persist create/update/delete/config action
-│    └─ route-specific async/internal calls execute before/around result when implemented
+▼
+FILE: crates/server/src/api/channel.rs
 │
-├─ [PHASE 10] Response mapping
-│    ├─ domain model → DTO/JSON
-│    ├─ pagination/summary fields where applicable
-│    └─ serialize success payload
+├─ business invariant: DECISION: channel.id == 0? → YES: err("id is required")
+└─ CALL ChannelService::update(...)
 │
-├─ [PHASE 11] HTTP exit
-│    └─ return success or mapped error status/body
+▼
+FILE: crates/service/crates/channel/src/lib.rs
+│
+├─ ChannelService::update()
+└─ CALL ChannelProviderModel::update(...)
+│
+▼
+FILE: crates/database/crates/channel/src/channel_provider.rs
+│
+├─ ChannelProviderModel::update()
+├─ db.get_connection() / SQL execution / row mapping
+└─ DECISION: database operation successful?
+     ├─ NO  → DatabaseError → service → handler → err(...)
+     └─ YES → domain result
+│
+▼
+FILE: crates/service/crates/channel/src/lib.rs
+│
+└─ return Result to channel handler
+│
+▼
+FILE: crates/server/src/api/channel.rs
+│
+├─ DECISION: ChannelService result Ok?
+│    ├─ NO  → err(e)
+│    └─ YES → ok(domain/DTO)
+└─ IntoResponse → HTTP response
 │
 ▼
 END
@@ -152,13 +160,19 @@ Content-Type: application/json
 }
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/server/src/lib.rs` |
-| 2 | `crates/server/src/api/mod.rs` |
-| 3 | `crates/server/src/api/auth.rs` |
-| 4 | `crates/server/src/api/channel.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
+| 2 | `crates/server/src/api/mod.rs` | `routes()` | 把 channel::routes() 合并进 protected_routes | ROUTE |
+| 3 | `crates/server/src/api/auth.rs` | `auth_middleware(), verify_jwt()` | JWT 认证并注入 Claims | READ auth header |
+| 4 | `crates/server/src/api/channel.rs` | `update_channel(), check_admin()` | 参数、管理员授权、Handler 响应映射 | READ/WRITE request domain |
+| 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::get_user_roles()` | check_admin() 的角色查询 | READ user_roles |
+| 6 | `crates/service/crates/channel/src/lib.rs` | `ChannelService::update()` | Channel 业务层 | SERVICE |
+| 7 | `crates/database/crates/channel/src/channel_provider.rs` | `ChannelProviderModel::update()` | Channel 持久化 CRUD | READ/WRITE channel_providers |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

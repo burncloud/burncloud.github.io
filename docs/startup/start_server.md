@@ -17,33 +17,33 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] Process/environment input
+├─ Process/environment input
 │    ├─ startup target: start_server
 │    ├─ environment variables / dotenv
 │    ├─ CLI/platform mode
 │    └─ filesystem/database availability
 │
-├─ [PHASE 01] Enter startup function
+├─ Enter startup function
 │    └─ execute start_server
 │
-├─ [PHASE 02] Dependency initialization
+├─ Dependency initialization
 │    ├─ construct required DB/services/runtime state
 │    ├─ register routes/tasks as applicable
 │    └─ DECISION: dependency initialization succeeds?
 │         ├─ NO → propagate startup error → process/runtime not ready → END
 │         └─ YES → next dependency
 │
-├─ [PHASE 03] Runtime composition
+├─ Runtime composition
 │    ├─ wire shared Arc/State/services
 │    ├─ compose routers/middleware/background jobs
 │    └─ make dependencies reachable from runtime entrypoints
 │
-├─ [PHASE 04] Readiness boundary
+├─ Readiness boundary
 │    └─ DECISION: all required startup stages complete?
 │         ├─ NO → startup fails/returns Err
 │         └─ YES → expose listener/client/event loop/runtime
 │
-├─ [PHASE 05] Steady-state handoff
+├─ Steady-state handoff
 │    ├─ long-running loops take ownership of runtime
 │    └─ requests/events can now enter documented entrypoints
 │
@@ -78,10 +78,13 @@ listener=0.0.0.0:3000
 server=running
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/server/src/lib.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/server/src/lib.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

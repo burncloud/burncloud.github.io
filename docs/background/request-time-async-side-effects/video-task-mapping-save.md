@@ -17,31 +17,31 @@ hide_table_of_contents: true
 ```text
 START / TRIGGER
 │
-├─ [PHASE 00] Trigger source
+├─ Trigger source
 │    ├─ startup spawn / request-time tokio::spawn / manager restoration / channel message
 │    └─ task: Video task mapping save
 │
-├─ [PHASE 01] Spawn / registration
+├─ Spawn / registration
 │    ├─ parent runtime creates async task/thread/loop
 │    └─ DECISION: spawn/runtime handle available?
 │         ├─ NO → task never starts; parent may log error
 │         └─ YES → task owns/borrows required shared state
 │
-├─ [PHASE 02] Wait boundary
+├─ Wait boundary
 │    ├─ timer sleep / mpsc receive / polling interval / restored work item
 │    └─ DECISION: trigger/event available?
 │         ├─ NO → continue waiting
 │         └─ YES → one iteration begins
 │
-├─ [PHASE 03] Input snapshot
+├─ Input snapshot
 │    ├─ read latest runtime/DB/request-derived state needed by job
 │    └─ freeze iteration context
 │
-├─ [PHASE 04] Core job operation
+├─ Core job operation
 │    ├─ execute Video task mapping save
 │    └─ may call DB / HTTP / filesystem / runtime service depending on task
 │
-├─ [PHASE 05] Operation result
+├─ Operation result
 │    └─ DECISION: iteration succeeds?
 │         ├─ NO
 │         │    ├─ log/record failure
@@ -51,9 +51,9 @@ START / TRIGGER
 │              ├─ update in-memory state and/or persistent state
 │              └─ emit success telemetry/log
 │
-├─ [PHASE 06] Cancellation / lifetime
+├─ Cancellation / lifetime
 │    └─ DECISION: parent runtime still alive AND task should continue?
-│         ├─ YES → back to PHASE 02
+│         ├─ YES → 返回等待边界
 │         └─ NO → release task resources
 │
 ▼
@@ -81,10 +81,13 @@ shared_state=available
 task_id=video_task_bc_01JXYZ channel_id=12 user_id=10001 mapping_saved=true
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/router/src/lib.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/router/src/lib.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

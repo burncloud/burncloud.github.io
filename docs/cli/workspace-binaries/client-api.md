@@ -17,7 +17,7 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] OS process launch
+├─ OS process launch
 │    ├─ executable: client-api
 │    ├─ argv / cwd / environment inherited from OS
 │    └─ DECISION: executable can be loaded/launched?
@@ -27,21 +27,21 @@ START
 ▼
 FILE: crates/client/crates/client-api/src/main.rs
 │
-├─ [PHASE 01] main() initialization
+├─ main() initialization
 │    ├─ initialize executable-specific runtime/services
 │    ├─ parse any supported arguments
 │    └─ DECISION: platform/arguments/initialization valid?
 │         ├─ NO → print/return error → process exit
 │         └─ YES → continue
 │
-├─ [PHASE 02] Runtime work
+├─ Runtime work
 │    ├─ create client/download/loop/tray structures as applicable
 │    ├─ start event loop or execute one-shot job
 │    └─ DECISION: long-running executable?
 │         ├─ YES → enter event/service loop
 │         └─ NO → produce output and exit
 │
-├─ [PHASE 03] Error boundary
+├─ Error boundary
 │    └─ runtime error → log/return non-success according to executable implementation
 │
 ▼
@@ -66,10 +66,13 @@ client-api initialized
 status=running
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/client/crates/client-api/src/main.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/client/crates/client-api/src/main.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

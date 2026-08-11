@@ -1,0 +1,1163 @@
+{
+  "source_sha": "aa54e21393c6d46a6b09555ffd3661c1f22484f3",
+  "manifest_page_count": 200,
+  "counts": {
+    "http_route_declarations": 63,
+    "http_unique_entries": 49,
+    "http_documented_exact_matches": 47,
+    "http_missing_exact_matches": 2,
+    "dioxus_route_attributes": 40,
+    "binary_source_entries": 9,
+    "spawn_sites": 37
+  },
+  "missing_http_entries": [
+    {
+      "entry": "POST /console/api/auth/change-password",
+      "declarations": [
+        {
+          "method": "POST",
+          "path": "/console/api/auth/change-password",
+          "entry": "POST /console/api/auth/change-password",
+          "file": "crates/server/src/api/auth.rs",
+          "line": 95,
+          "handlers": [
+            "change_password"
+          ]
+        }
+      ]
+    },
+    {
+      "entry": "POST /console/api/auth/logout",
+      "declarations": [
+        {
+          "method": "POST",
+          "path": "/console/api/auth/logout",
+          "entry": "POST /console/api/auth/logout",
+          "file": "crates/server/src/api/auth.rs",
+          "line": 94,
+          "handlers": [
+            "logout"
+          ]
+        }
+      ]
+    }
+  ],
+  "documented_http_not_seen_as_direct_axum_route": [
+    "GET /",
+    "GET /console",
+    "GET /console/",
+    "GET /console/internal/health",
+    "GET /console/internal/metrics",
+    "GET /console/{*path}",
+    "GET /forgot-password",
+    "GET /home",
+    "GET /login",
+    "GET /preview/console",
+    "GET /preview/console/",
+    "GET /preview/console/{*path}",
+    "GET /preview/home",
+    "GET /preview/login",
+    "GET /register",
+    "GET /reset-password",
+    "GET /v1/videos/{task_id}",
+    "GET /ws",
+    "POST /chat/completions",
+    "POST /console/internal/circuit-breaker/trip-all",
+    "POST /console/internal/prices/sync",
+    "POST /v1/chat/completions",
+    "POST /v1/completions",
+    "POST /v1/embeddings",
+    "POST /v1/messages",
+    "POST /v1/models/{model}{countTokens}",
+    "POST /v1/models/{model}{embedContent}",
+    "POST /v1/models/{model}{generateContent}",
+    "POST /v1/models/{model}{streamGenerateContent}",
+    "POST /v1/video/generations",
+    "POST /v1beta/models/{model}{countTokens}",
+    "POST /v1beta/models/{model}{embedContent}",
+    "POST /v1beta/models/{model}{generateContent}",
+    "POST /v1beta/models/{model}{streamGenerateContent}"
+  ],
+  "http_routes": [
+    {
+      "method": "GET",
+      "path": "/v1/models",
+      "entry": "GET /v1/models",
+      "file": "crates/router/src/lib.rs",
+      "line": 955,
+      "handlers": [
+        "models_handler"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/usage",
+      "entry": "GET /api/v1/usage",
+      "file": "crates/router/src/lib.rs",
+      "line": 956,
+      "handlers": [
+        "usage_handler"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/usage/models",
+      "entry": "GET /api/v1/usage/models",
+      "file": "crates/router/src/lib.rs",
+      "line": 957,
+      "handlers": [
+        "usage_models_handler"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/health",
+      "entry": "GET /health",
+      "file": "crates/server/src/lib.rs",
+      "line": 66,
+      "handlers": []
+    },
+    {
+      "method": "GET",
+      "path": "/api/billing/summary",
+      "entry": "GET /api/billing/summary",
+      "file": "crates/server/src/api/billing.rs",
+      "line": 27,
+      "handlers": [
+        "billing_summary_handler"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/{*path}",
+      "entry": "GET /console/api/{*path}",
+      "file": "crates/server/src/api/mod.rs",
+      "line": 51,
+      "handlers": [
+        "api_not_found"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/user/recharges",
+      "entry": "GET /console/api/user/recharges",
+      "file": "crates/server/src/api/user.rs",
+      "line": 69,
+      "handlers": [
+        "list_recharges"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/list_users",
+      "entry": "GET /console/api/list_users",
+      "file": "crates/server/src/api/user.rs",
+      "line": 70,
+      "handlers": [
+        "list_users"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/user/register",
+      "entry": "POST /console/api/user/register",
+      "file": "crates/server/src/api/user.rs",
+      "line": 73,
+      "handlers": [
+        "register"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/user/login",
+      "entry": "POST /console/api/user/login",
+      "file": "crates/server/src/api/user.rs",
+      "line": 74,
+      "handlers": [
+        "login"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/user/topup",
+      "entry": "POST /console/api/user/topup",
+      "file": "crates/server/src/api/user.rs",
+      "line": 75,
+      "handlers": [
+        "topup"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/user/check_username",
+      "entry": "GET /console/api/user/check_username",
+      "file": "crates/server/src/api/user.rs",
+      "line": 76,
+      "handlers": [
+        "check_username"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor/security",
+      "entry": "GET /console/api/monitor/security",
+      "file": "crates/server/src/api/security.rs",
+      "line": 99,
+      "handlers": [
+        "security_summary"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor/security/events",
+      "entry": "GET /console/api/monitor/security/events",
+      "file": "crates/server/src/api/security.rs",
+      "line": 100,
+      "handlers": [
+        "security_events"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor/security/filters",
+      "entry": "GET /console/api/monitor/security/filters",
+      "file": "crates/server/src/api/security.rs",
+      "line": 101,
+      "handlers": [
+        "security_filters_get",
+        "security_filters_put"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/console/api/monitor/security/filters",
+      "entry": "PUT /console/api/monitor/security/filters",
+      "file": "crates/server/src/api/security.rs",
+      "line": 101,
+      "handlers": [
+        "security_filters_get",
+        "security_filters_put"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/monitor/security/emergency-circuit-break",
+      "entry": "POST /console/api/monitor/security/emergency-circuit-break",
+      "file": "crates/server/src/api/security.rs",
+      "line": 105,
+      "handlers": [
+        "security_emergency_circuit_break"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor/security/circuit-breaker-status",
+      "entry": "GET /console/api/monitor/security/circuit-breaker-status",
+      "file": "crates/server/src/api/security.rs",
+      "line": 109,
+      "handlers": [
+        "security_circuit_breaker_status"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api-docs/openapi.json",
+      "entry": "GET /api-docs/openapi.json",
+      "file": "crates/server/src/api/openapi.rs",
+      "line": 671,
+      "handlers": [
+        "openapi_json"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/swagger-ui",
+      "entry": "GET /swagger-ui",
+      "file": "crates/server/src/api/openapi.rs",
+      "line": 672,
+      "handlers": [
+        "swagger_ui"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/swagger-ui/",
+      "entry": "GET /swagger-ui/",
+      "file": "crates/server/src/api/openapi.rs",
+      "line": 673,
+      "handlers": [
+        "swagger_ui"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/tokens",
+      "entry": "GET /console/api/tokens",
+      "file": "crates/server/src/api/token.rs",
+      "line": 42,
+      "handlers": [
+        "create_token",
+        "list_tokens"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/tokens",
+      "entry": "POST /console/api/tokens",
+      "file": "crates/server/src/api/token.rs",
+      "line": 42,
+      "handlers": [
+        "create_token",
+        "list_tokens"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/tokens/{token}",
+      "entry": "GET /console/api/tokens/{token}",
+      "file": "crates/server/src/api/token.rs",
+      "line": 43,
+      "handlers": [
+        "delete_token",
+        "get_token",
+        "update_token"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/console/api/tokens/{token}",
+      "entry": "PUT /console/api/tokens/{token}",
+      "file": "crates/server/src/api/token.rs",
+      "line": 43,
+      "handlers": [
+        "delete_token",
+        "get_token",
+        "update_token"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/console/api/tokens/{token}",
+      "entry": "DELETE /console/api/tokens/{token}",
+      "file": "crates/server/src/api/token.rs",
+      "line": 43,
+      "handlers": [
+        "delete_token",
+        "get_token",
+        "update_token"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/tokens/{token}/rotate",
+      "entry": "POST /console/api/tokens/{token}/rotate",
+      "file": "crates/server/src/api/token.rs",
+      "line": 47,
+      "handlers": [
+        "rotate_token"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/tokens/{token}/revoke-old",
+      "entry": "POST /console/api/tokens/{token}/revoke-old",
+      "file": "crates/server/src/api/token.rs",
+      "line": 48,
+      "handlers": [
+        "revoke_old_key"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/tokens/{token}/ip-whitelist",
+      "entry": "POST /console/api/tokens/{token}/ip-whitelist",
+      "file": "crates/server/src/api/token.rs",
+      "line": 52,
+      "handlers": [
+        "set_ip_whitelist"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/channel",
+      "entry": "GET /console/api/channel",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 113,
+      "handlers": [
+        "create_channel",
+        "list_channels",
+        "update_channel"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/channel",
+      "entry": "POST /console/api/channel",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 113,
+      "handlers": [
+        "create_channel",
+        "list_channels",
+        "update_channel"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/console/api/channel",
+      "entry": "PUT /console/api/channel",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 113,
+      "handlers": [
+        "create_channel",
+        "list_channels",
+        "update_channel"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/channel/{id}",
+      "entry": "GET /console/api/channel/{id}",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 117,
+      "handlers": [
+        "delete_channel",
+        "get_channel"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/console/api/channel/{id}",
+      "entry": "DELETE /console/api/channel/{id}",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 117,
+      "handlers": [
+        "delete_channel",
+        "get_channel"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/cache/stats",
+      "entry": "GET /console/api/cache/stats",
+      "file": "crates/server/src/api/cache.rs",
+      "line": 31,
+      "handlers": [
+        "stats"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/cache/clear",
+      "entry": "POST /console/api/cache/clear",
+      "file": "crates/server/src/api/cache.rs",
+      "line": 32,
+      "handlers": [
+        "clear"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "entry": "POST /api/auth/register",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 80,
+      "handlers": [
+        "create_user"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "entry": "POST /api/auth/login",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 81,
+      "handlers": [
+        "login"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/forgot-password",
+      "entry": "POST /api/auth/forgot-password",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 82,
+      "handlers": [
+        "forgot_password"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/reset-password",
+      "entry": "POST /api/auth/reset-password",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 83,
+      "handlers": [
+        "reset_password"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/google",
+      "entry": "GET /api/auth/google",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 84,
+      "handlers": [
+        "oauth_google"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/github",
+      "entry": "GET /api/auth/github",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 85,
+      "handlers": [
+        "oauth_github"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/auth/logout",
+      "entry": "POST /console/api/auth/logout",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 94,
+      "handlers": [
+        "logout"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/auth/change-password",
+      "entry": "POST /console/api/auth/change-password",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 95,
+      "handlers": [
+        "change_password"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/logs",
+      "entry": "GET /console/api/logs",
+      "file": "crates/server/src/api/log.rs",
+      "line": 47,
+      "handlers": [
+        "list_logs"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/usage/{user_id}",
+      "entry": "GET /console/api/usage/{user_id}",
+      "file": "crates/server/src/api/log.rs",
+      "line": 48,
+      "handlers": [
+        "get_user_usage"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/internal/billing/summary",
+      "entry": "GET /console/internal/billing/summary",
+      "file": "crates/server/src/api/log.rs",
+      "line": 51,
+      "handlers": [
+        "billing_summary_handler"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor",
+      "entry": "GET /console/api/monitor",
+      "file": "crates/server/src/api/monitor.rs",
+      "line": 7,
+      "handlers": [
+        "get_system_metrics"
+      ]
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/",
+      "entry": "UNKNOWN /",
+      "file": "crates/client/src/lib.rs",
+      "line": 58,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/home",
+      "entry": "UNKNOWN /home",
+      "file": "crates/client/src/lib.rs",
+      "line": 59,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/login",
+      "entry": "UNKNOWN /login",
+      "file": "crates/client/src/lib.rs",
+      "line": 60,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/register",
+      "entry": "UNKNOWN /register",
+      "file": "crates/client/src/lib.rs",
+      "line": 61,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/forgot-password",
+      "entry": "UNKNOWN /forgot-password",
+      "file": "crates/client/src/lib.rs",
+      "line": 63,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/reset-password",
+      "entry": "UNKNOWN /reset-password",
+      "file": "crates/client/src/lib.rs",
+      "line": 64,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/console",
+      "entry": "UNKNOWN /console",
+      "file": "crates/client/src/lib.rs",
+      "line": 68,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/console/",
+      "entry": "UNKNOWN /console/",
+      "file": "crates/client/src/lib.rs",
+      "line": 69,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/console/{*path}",
+      "entry": "UNKNOWN /console/{*path}",
+      "file": "crates/client/src/lib.rs",
+      "line": 71,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/preview/home",
+      "entry": "UNKNOWN /preview/home",
+      "file": "crates/client/src/lib.rs",
+      "line": 75,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/preview/login",
+      "entry": "UNKNOWN /preview/login",
+      "file": "crates/client/src/lib.rs",
+      "line": 76,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/preview/console",
+      "entry": "UNKNOWN /preview/console",
+      "file": "crates/client/src/lib.rs",
+      "line": 77,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/preview/console/",
+      "entry": "UNKNOWN /preview/console/",
+      "file": "crates/client/src/lib.rs",
+      "line": 78,
+      "handlers": []
+    },
+    {
+      "method": "UNKNOWN",
+      "path": "/preview/console/{*path}",
+      "entry": "UNKNOWN /preview/console/{*path}",
+      "file": "crates/client/src/lib.rs",
+      "line": 79,
+      "handlers": []
+    },
+    {
+      "method": "GET",
+      "path": "/favicon.ico",
+      "entry": "GET /favicon.ico",
+      "file": "crates/client/src/lib.rs",
+      "line": 82,
+      "handlers": []
+    }
+  ],
+  "dioxus_routes": [
+    {
+      "path": "/",
+      "file": "crates/client/src/app.rs",
+      "line": 36
+    },
+    {
+      "path": "/home",
+      "file": "crates/client/src/app.rs",
+      "line": 39
+    },
+    {
+      "path": "/login",
+      "file": "crates/client/src/app.rs",
+      "line": 41
+    },
+    {
+      "path": "/register",
+      "file": "crates/client/src/app.rs",
+      "line": 43
+    },
+    {
+      "path": "/forgot-password",
+      "file": "crates/client/src/app.rs",
+      "line": 45
+    },
+    {
+      "path": "/reset-password?:token",
+      "file": "crates/client/src/app.rs",
+      "line": 47
+    },
+    {
+      "path": "/preview/home",
+      "file": "crates/client/src/app.rs",
+      "line": 51
+    },
+    {
+      "path": "/preview/login",
+      "file": "crates/client/src/app.rs",
+      "line": 54
+    },
+    {
+      "path": "/preview/console/dashboard",
+      "file": "crates/client/src/app.rs",
+      "line": 57
+    },
+    {
+      "path": "/preview/console/models",
+      "file": "crates/client/src/app.rs",
+      "line": 60
+    },
+    {
+      "path": "/preview/console/access",
+      "file": "crates/client/src/app.rs",
+      "line": 63
+    },
+    {
+      "path": "/preview/console/settings",
+      "file": "crates/client/src/app.rs",
+      "line": 66
+    },
+    {
+      "path": "/preview/console/finance",
+      "file": "crates/client/src/app.rs",
+      "line": 69
+    },
+    {
+      "path": "/preview/console/monitor",
+      "file": "crates/client/src/app.rs",
+      "line": 72
+    },
+    {
+      "path": "/preview/console/playground",
+      "file": "crates/client/src/app.rs",
+      "line": 75
+    },
+    {
+      "path": "/console/dashboard",
+      "file": "crates/client/src/app.rs",
+      "line": 78
+    },
+    {
+      "path": "/console/deploy",
+      "file": "crates/client/src/app.rs",
+      "line": 80
+    },
+    {
+      "path": "/console/monitor",
+      "file": "crates/client/src/app.rs",
+      "line": 82
+    },
+    {
+      "path": "/console/access",
+      "file": "crates/client/src/app.rs",
+      "line": 84
+    },
+    {
+      "path": "/console/models",
+      "file": "crates/client/src/app.rs",
+      "line": 86
+    },
+    {
+      "path": "/console/users",
+      "file": "crates/client/src/app.rs",
+      "line": 88
+    },
+    {
+      "path": "/console/settings",
+      "file": "crates/client/src/app.rs",
+      "line": 90
+    },
+    {
+      "path": "/console/finance",
+      "file": "crates/client/src/app.rs",
+      "line": 92
+    },
+    {
+      "path": "/console/logs",
+      "file": "crates/client/src/app.rs",
+      "line": 94
+    },
+    {
+      "path": "/console/connect",
+      "file": "crates/client/src/app.rs",
+      "line": 96
+    },
+    {
+      "path": "/console/playground",
+      "file": "crates/client/src/app.rs",
+      "line": 98
+    },
+    {
+      "path": "/console/:..segments",
+      "file": "crates/client/src/app.rs",
+      "line": 100
+    },
+    {
+      "path": "/",
+      "file": "crates/client/src/bin/screenshot_gen.rs",
+      "line": 7
+    },
+    {
+      "path": "/console/dashboard",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 18
+    },
+    {
+      "path": "/console/deploy",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 20
+    },
+    {
+      "path": "/console/monitor",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 22
+    },
+    {
+      "path": "/console/access",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 24
+    },
+    {
+      "path": "/console/models",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 26
+    },
+    {
+      "path": "/console/users",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 28
+    },
+    {
+      "path": "/console/settings",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 30
+    },
+    {
+      "path": "/console/finance",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 32
+    },
+    {
+      "path": "/console/logs",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 34
+    },
+    {
+      "path": "/console/connect",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 36
+    },
+    {
+      "path": "/console/playground",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 38
+    },
+    {
+      "path": "/console/:..segments",
+      "file": "crates/client/crates/client-shared/src/components/layout.rs",
+      "line": 40
+    }
+  ],
+  "binaries": [
+    {
+      "file": "crates/client/crates/client-api/src/main.rs",
+      "kind": "crate-main"
+    },
+    {
+      "file": "crates/client/crates/client-shared/src/main.rs",
+      "kind": "crate-main"
+    },
+    {
+      "file": "crates/client/crates/client-tray/src/main.rs",
+      "kind": "crate-main"
+    },
+    {
+      "file": "crates/client/src/bin/screenshot_gen.rs",
+      "kind": "bin-source"
+    },
+    {
+      "file": "crates/client/src/main.rs",
+      "kind": "crate-main"
+    },
+    {
+      "file": "crates/download/crates/download-aria2/src/main.rs",
+      "kind": "crate-main"
+    },
+    {
+      "file": "crates/download/src/main.rs",
+      "kind": "crate-main"
+    },
+    {
+      "file": "crates/loops/src/main.rs",
+      "kind": "crate-main"
+    },
+    {
+      "file": "src/main.rs",
+      "kind": "package-main"
+    }
+  ],
+  "spawn_sites": [
+    {
+      "file": "src/main.rs",
+      "line": 31,
+      "kind": "std::thread::spawn",
+      "context": "[_] => { // burncloud.exe (No args) #[cfg(windows)] { // Start Server in background thread std::thread::spawn(|| { let rt = tokio::runtime::Runtime::new().unwrap(); rt.block_on(async { let host = std::env::var(\"HOST\").u"
+    },
+    {
+      "file": "crates/router/tests/adaptor_tests.rs",
+      "line": 106,
+      "kind": "tokio::spawn",
+      "context": "Uses HttpBin to inspect the converted request body let (_db, pool, db_url) = setup_db().await?; // Start Mock Upstream let mock_port = 3014; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\"));"
+    },
+    {
+      "file": "crates/router/tests/auth_tests.rs",
+      "line": 123,
+      "kind": "tokio::spawn",
+      "context": "::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\")); tokio::spawn(async move { start_mock_upstream(listener).await; }); let id = \"deepseek-test\"; let name = \"DeepSeek Test\"; let base_url = format!(\"http://127.0.0.1:{}/anything\", mock_port); let"
+    },
+    {
+      "file": "crates/router/tests/auth_tests.rs",
+      "line": 196,
+      "kind": "tokio::spawn",
+      "context": "::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\")); tokio::spawn(async move { start_mock_upstream(listener).await; }); let id = \"qwen-test\"; let name = \"Qwen Test\"; let base_url = format!(\"http://127.0.0.1:{}/anything\", mock_port); let api_key"
+    },
+    {
+      "file": "crates/router/tests/common.rs",
+      "line": 352,
+      "kind": "tokio::spawn",
+      "context": "internal_app before the main app so internal routes // (e.g. /console/internal/health) are reachable in tests. let app = internal_app.merge(app); tokio::spawn(async move { let listener = TcpListener::bind(format!(\"0.0.0.0:{}\", port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind port {port}: {e}\")); axum::serve(listener,"
+    },
+    {
+      "file": "crates/router/tests/failover_tests.rs",
+      "line": 25,
+      "kind": "tokio::spawn",
+      "context": "::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\")); tokio::spawn(async move { start_mock_upstream(listener).await; }); // 1. Create Upstreams let dead_id = \"dead\"; let dead_url = \"http://dead-node.burncloud.test\"; // Should resolve to nothing or f"
+    },
+    {
+      "file": "crates/router/tests/balancer_tests.rs",
+      "line": 27,
+      "kind": "tokio::spawn",
+      "context": "::net::TcpListener::bind(format!(\"0.0.0.0:{}\", mock_port)) .await .unwrap_or_else(|e| panic!(\"Failed to bind mock port {mock_port}: {e}\")); tokio::spawn(async move { start_mock_upstream(listener).await; }); // 1. Create Upstreams let u1_id = \"u1\"; let u1_url = format!(\"http://127.0.0.1:{}/anything/u1\", mock_port); let u2_id = \"u"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 786,
+      "kind": "tokio::spawn",
+      "context": "_rates_from_db().await { tracing::warn!(\"Failed to load exchange rates at startup: {e}\"); } let exch_clone = exchange_rate_service.clone(); tokio::spawn(async move { exch_clone.start_sync_task(); }); // Scheduler policies for multi-channel routing let scheduler_policies = Arc::new(RwLock::new(scheduler::load_scheduler_config())); //"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 838,
+      "kind": "tokio::spawn",
+      "context": "/D10). let (budget_update_tx, mut budget_update_rx) = mpsc::channel::<state::BudgetUpdate>(1); { let rate_budget = rate_budget.clone(); tokio::spawn(async move { tracing::info!(\"AIMD budget-update task started\"); while let Some(update) = budget_update_rx.recv().await { // Reconfigure the channel's RPM cap to the le"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 882,
+      "kind": "tokio::spawn",
+      "context": "let (log_tx, mut log_rx) = mpsc::channel::<RouterLog>(LOG_CHANNEL_BUFFER); let db_for_logger = db.clone(); // Clone Arc // Spawn Logging Task tokio::spawn(async move { tracing::info!(\"Logging task started\"); while let Some(log) = log_rx.recv().await { // Need to create a new default database or use the shared one? // Sin"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 899,
+      "kind": "tokio::spawn",
+      "context": "mut request_log_rx) = mpsc::channel::<RouterRequestLog>(LOG_CHANNEL_BUFFER); let db_for_request_logger = db.clone(); // Spawn Request Logging Task tokio::spawn(async move { tracing::info!(\"Request logging task started\"); while let Some(log) = request_log_rx.recv().await { if let Err(e) = RouterDatabase::insert_request_log(&db_for_request"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 1402,
+      "kind": "tokio::spawn",
+      "context": "// Update accessed_time non-blocking let db = state.db.clone(); let token = user_token.clone(); tokio::spawn(async move { let _ = RouterDatabase::update_token_accessed_time(&db, &token).await; }); ( info.user_id, info.group,"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 1421,
+      "kind": "tokio::spawn",
+      "context": "e accessed_time non-blocking let db = state.db.clone(); let token = user_token.clone(); tokio::spawn(async move { let _ = RouterDatabase::update_token_accessed_time(&db, &token).await; }); ( t.user_id,"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 1746,
+      "kind": "tokio::spawn",
+      "context": "odel: model_name.clone(), duration: seedance_duration_secs, resolution: seedance_resolution.clone(), }; tokio::spawn(async move { if let Err(e) = RouterVideoTaskModel::save(&db, &task).await { tracing::warn!(error = ?e, \"Failed to save video task mapping\"); }"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 1955,
+      "kind": "tokio::spawn",
+      "context": "if cost > 0 { let db = state.db.clone(); let token_for_quota = user_token.to_string(); let user_id_for_quota = user_id.clone(); tokio::spawn(async move { let _ = RouterDatabase::deduct_quota(&db, &user_id_for_quota, &token_for_quota, cost).await; }); } // Inject route-tracing headers for client-side ob"
+    },
+    {
+      "file": "crates/router/src/lib.rs",
+      "line": 4013,
+      "kind": "tokio::spawn",
+      "context": "let detector = state.api_version_detector.clone(); let error_message_for_detector = error_message.to_string(); tokio::spawn(async move { match detector .detect_and_update( channel_id_for_detector, &e"
+    },
+    {
+      "file": "crates/router/src/health_probe.rs",
+      "line": 272,
+      "kind": "tokio::spawn",
+      "context": "{ return; // Already running } let manager = Arc::clone(&self.manager); let running = Arc::clone(&self.running); tokio::spawn(async move { let mut ticker = interval(Duration::from_secs(10)); while running.load(Ordering::Relaxed) { ticker.tick().await;"
+    },
+    {
+      "file": "crates/router/src/exchange_rate.rs",
+      "line": 182,
+      "kind": "tokio::spawn",
+      "context": "/// let service = Arc::new(ExchangeRateService::new(db)); /// service.start_sync_task(); /// ``` pub fn start_sync_task(self: Arc<Self>) { tokio::spawn(async move { let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(SYNC_CHECK_INTERVAL_SECS)); loop { interval.tick().await;"
+    },
+    {
+      "file": "crates/router/src/price_sync.rs",
+      "line": 727,
+      "kind": "tokio::spawn",
+      "context": "price_cache: PriceCache, mut force_sync_rx: tokio::sync::mpsc::Receiver<tokio::sync::oneshot::Sender<SyncResult>>, ) -> tokio::task::JoinHandle<()> { tokio::spawn(async move { let mut service = match config { Some(cfg) => PriceSyncService::with_config(db.clone(), cfg), None => PriceSyncService::new(db.clone()), }; let mu"
+    },
+    {
+      "file": "crates/tests/tests/api/ability_routing.rs",
+      "line": 26,
+      "kind": "tokio::spawn",
+      "context": "await.unwrap(); let port = listener.local_addr().unwrap().port(); let app = Router::new().route(\"/v1/chat/completions\", post(mock_chat_handler)); tokio::spawn(async move { println!(\"MOCK: Server starting on port {}\", port); if let Err(e) = axum::serve(listener, app).await { println!(\"MOCK: Server failed: {}\", e); } });"
+    },
+    {
+      "file": "crates/download/src/lib.rs",
+      "line": 140,
+      "kind": "tokio::spawn",
+      "context": "ess_monitor(&self, gid: &str) { let aria2 = Arc::clone(&self.aria2); let db = Arc::clone(&self.db); let gid = gid.to_string(); tokio::spawn(async move { loop { if let Some(client) = aria2.create_rpc_client() { if let Ok(status) = client.tell_status(&gid).await { let _ = db.u"
+    },
+    {
+      "file": "crates/download/crates/download-aria2/src/lib.rs",
+      "line": 616,
+      "kind": "tokio::spawn",
+      "context": "任务 let instance = Arc::clone(&self.instance); let is_running = Arc::clone(&self.is_running); let config = self.config.clone(); tokio::spawn(async move { while is_running.load(Ordering::SeqCst) { tokio::time::sleep(Duration::from_millis(1000)).await; let need_restart = { let mut loc"
+    },
+    {
+      "file": "crates/server/tests/gateway_tests.rs",
+      "line": 17,
+      "kind": "tokio::spawn",
+      "context": "auth setup, needs rewrite\"] async fn test_unified_gateway_routing() -> anyhow::Result<()> { // Start Unified Gateway on port 3000 let port = 3000; tokio::spawn(async move { // Set env var just in case, though main.rs parses it or defaults // But here we call start_server directly which takes port arg if let Err(_e) = burncloud_server::start_"
+    },
+    {
+      "file": "crates/server/tests/group_routing_tests.rs",
+      "line": 52,
+      "kind": "tokio::spawn",
+      "context": ").unwrap(); *c += 1; Response::new(Body::from(r#\"{\"id\":\"mock-b\"}\"#)) }), ) .with_state(state); tokio::spawn(async move { let addr = SocketAddr::from(([127, 0, 0, 1], upstream_port)); let listener = tokio::net::TcpListener::bind(addr).await.unwrap(); axum::serve(listener, upstream_app).await"
+    },
+    {
+      "file": "crates/server/tests/group_routing_tests.rs",
+      "line": 60,
+      "kind": "tokio::spawn",
+      "context": "d(addr).await.unwrap(); axum::serve(listener, upstream_app).await.unwrap(); }); // 2. Start BurnCloud Gateway let gateway_port = 3006; tokio::spawn(async move { if let Err(_e) = burncloud_server::start_server(\"127.0.0.1\", gateway_port, false).await { // ignore } }); sleep(Duration::from_secs(2)).await; let client"
+    },
+    {
+      "file": "crates/server/tests/log_api_tests.rs",
+      "line": 79,
+      "kind": "tokio::spawn",
+      "context": "sing create_app with the test DB let db_arc = Arc::new(db); let app = burncloud_server::create_app(db_arc, false).await?; let port = 4002_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
+    },
+    {
+      "file": "crates/server/tests/api_tests.rs",
+      "line": 21,
+      "kind": "tokio::spawn",
+      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4000_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
+    },
+    {
+      "file": "crates/server/tests/api_tests.rs",
+      "line": 45,
+      "kind": "tokio::spawn",
+      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4001_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
+    },
+    {
+      "file": "crates/server/tests/api_tests.rs",
+      "line": 77,
+      "kind": "tokio::spawn",
+      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4002_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
+    },
+    {
+      "file": "crates/server/tests/api_tests.rs",
+      "line": 101,
+      "kind": "tokio::spawn",
+      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4003_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
+    },
+    {
+      "file": "crates/server/tests/api_tests.rs",
+      "line": 125,
+      "kind": "tokio::spawn",
+      "context": "() -> anyhow::Result<()> { let db_arc = test_utils::make_isolated_db().await; let app = create_app(db_arc, false).await?; let port = 4004_u16; tokio::spawn(async move { let listener = tokio::net::TcpListener::bind(format!(\"127.0.0.1:{port}\")) .await .expect(\"Failed to bind test port\"); axum::serve(listener, app).await.exp"
+    },
+    {
+      "file": "crates/service/crates/monitor/src/service.rs",
+      "line": 89,
+      "kind": "tokio::spawn",
+      "context": "t disk_collector = self.disk_collector.clone(); let cached_metrics = self.cached_metrics.clone(); let interval = self.update_interval; tokio::spawn(async move { let mut update_timer = tokio::time::interval(interval); loop { update_timer.tick().await; // 收集系统指标 let result = Self::c"
+    },
+    {
+      "file": "crates/database/tests/performance_tests.rs",
+      "line": 62,
+      "kind": "tokio::spawn",
+      "context": ".get_connection() .unwrap_or_else(|e| panic!(\"Database should be initialized: {e}\")) .clone(); let handle = tokio::spawn(async move { let timestamp = chrono::Utc::now().to_rfc3339(); let query = format!( \"INSERT INTO concurrent_test (thread_id, timestamp) VALUES ({}, '{}')\","
+    },
+    {
+      "file": "crates/database/tests/error_handling_tests.rs",
+      "line": 115,
+      "kind": "tokio::spawn",
+      "context": ".get_connection() .unwrap_or_else(|e| panic!(\"Database should be initialized: {e}\")) .clone(); let handle = tokio::spawn(async move { // Perform a long-running operation let result = sqlx::query(&format!(\"SELECT {} as operation_id\", i)) .execute(connection.pool())"
+    },
+    {
+      "file": "crates/database/tests/error_handling_tests.rs",
+      "line": 204,
+      "kind": "tokio::spawn",
+      "context": "nt = 10; let mut handles = vec![]; // All tasks try to initialize the same database concurrently for i in 0..num_concurrent { let handle = tokio::spawn(async move { println!(\"Task {} starting initialization\", i); let result = Database::new().await; println!(\"Task {} completed initialization\", i); result"
+    },
+    {
+      "file": "crates/database/tests/cross_platform_tests.rs",
+      "line": 185,
+      "kind": "tokio::spawn",
+      "context": "attempts to create the same directory don't cause issues let num_tasks = 5; let mut handles = vec![]; for i in 0..num_tasks { let handle = tokio::spawn(async move { println!(\"Task {} starting\", i); let result = Database::new().await; println!(\"Task {} completed\", i); result }); handles.push(han"
+    },
+    {
+      "file": "crates/client/src/app.rs",
+      "line": 168,
+      "kind": "std::thread::spawn",
+      "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); // 启动托盘应用在后台线程 std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); // 轮询检查托盘操作 use_effect(move || { let wi"
+    }
+  ]
+}

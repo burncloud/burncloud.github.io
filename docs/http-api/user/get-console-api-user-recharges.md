@@ -17,99 +17,83 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] 调用方与输入边界
-│    ├─ Actor: User / SDK / Browser / Operator
+├─ 调用方输入
 │    ├─ Entry: GET /console/api/user/recharges
-│    ├─ Input sources
-│    │    ├─ Method + URI path
-│    │    ├─ Query string（如有）
-│    │    ├─ HTTP headers
-│    │    └─ Request body（如有）
-│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
-│         ├─ NO  → 网络层失败；应用代码未执行 → END
-│         └─ YES → 进入 Axum
+│    ├─ Method / Path / Query / Headers / Body
+│    └─ DECISION: 请求到达 BurnCloud listener?
+│         ├─ NO  → 网络层结束，应用代码不执行 → END
+│         └─ YES → Axum Unified App
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ [PHASE 01] 统一 HTTP Server
-│    ├─ start_server() 已在进程启动时完成
-│    │    ├─ database 初始化
-│    │    ├─ RouterDatabase::init()
-│    │    ├─ UserDatabase::init()
-│    │    ├─ create_app(...)
-│    │    ├─ TcpListener::bind(...)
-│    │    └─ axum::serve(listener, app)
-│    ├─ 当前请求进入 Unified Axum App
-│    └─ 全局 middleware
-│         ├─ CORS
-│         ├─ TraceLayer
-│         ├─ SetRequestIdLayer
-│         └─ PropagateRequestIdLayer
+├─ start_server()（启动时）
+│    ├─ create_default_database()
+│    ├─ RouterDatabase::init()
+│    ├─ UserDatabase::init()
+│    ├─ create_app()
+│    ├─ TcpListener::bind()
+│    └─ axum::serve()
 │
-├─ [PHASE 02] 顶层 Route 决策
-│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
-│         ├─ YES → Management API / protected route candidate
-│         └─ NO  → other top-level/fallback route
+├─ create_app()
+│    ├─ merge(api::routes(...))
+│    ├─ merge(internal_app)
+│    ├─ optional merge(liveview_router)
+│    ├─ fallback_service(router_app)
+│    └─ middleware: CORS / Trace / request-id
+│
+├─ DECISION: protected User route 命中?
+│    ├─ NO → other route
+│    └─ YES → protected_routes
 │
 ▼
 FILE: crates/server/src/api/mod.rs
 │
-├─ [PHASE 03] protected_routes composition
-│    ├─ route registered under Management API
-│    └─ auth_middleware() wraps protected router
+├─ merge(user::routes())
+└─ auth_middleware wraps protected router
 │
-├─ [PHASE 04] JWT authentication
-│    ├─ read Authorization header
-│    └─ DECISION: Authorization starts with Bearer?
-│         ├─ NO  → HTTP 401 → END
-│         └─ YES → verify_jwt(...)
+▼
+FILE: crates/server/src/api/auth.rs
 │
-├─ DECISION: JWT signature/claims valid?
-│    ├─ NO  → HTTP 401 → END
-│    └─ YES
-│         ├─ Claims inserted into request extensions
-│         └─ continue to route handler
+├─ auth_middleware() → verify_jwt()
+└─ DECISION: JWT valid?
+     ├─ NO → HTTP 401 → END
+     └─ YES → Claims inserted
 │
 ▼
 FILE: crates/server/src/api/user.rs
 │
-├─ [PHASE 05] Handler
-│    └─ list_recharges()
+├─ routes() matches GET /console/api/user/recharges
+├─ list_recharges()
+├─ Path/Query/Json/Claims extraction
+└─ CALL UserService::list_recharges(...)
 │
-├─ [PHASE 06] Request extraction
-│    ├─ Path params / Query params / JSON body as required by Method
-│    ├─ authenticated Claims available from extensions
-│    └─ DECISION: extraction/required fields valid?
-│         ├─ NO  → client/error response → END
-│         └─ YES → authorization/business checks
+▼
+FILE: crates/service/crates/user/src/lib.rs
 │
-├─ [PHASE 07] Authorization + invariants
-│    ├─ Route uses authenticated Claims/user context as implemented
-│    ├─ validate ID/status/range/reason/etc. according to handler
-│    └─ DECISION: authorization/invariants pass?
-│         ├─ NO  → 4xx/error payload → END
-│         └─ YES → service/database call
+├─ UserService::list_recharges()
+├─ password/JWT/balance/recharge logic as applicable
+└─ DB calls: UserDatabase::list_recharges
 │
-├─ [PHASE 08] Service / Database boundary
-│    ├─ operation type: read/query state
-│    ├─ invoke route-specific Service / Database method
-│    └─ DECISION: operation succeeds?
-│         ├─ NO  → map error → HTTP error response
-│         └─ YES → domain result
+▼
+FILE: crates/database/crates/user/src/lib.rs
 │
-├─ [PHASE 09] State effects
-│    ├─ READ routes: no intended mutation beyond incidental telemetry
-│    ├─ WRITE routes: persist create/update/delete/config action
-│    └─ route-specific async/internal calls execute before/around result when implemented
+├─ UserDatabase read/write
+├─ db.get_connection() / SQL execution / row mapping
+└─ DECISION: persistence operation successful?
+     ├─ NO → DatabaseError → UserServiceError
+     └─ YES → user/balance/roles/recharge result
 │
-├─ [PHASE 10] Response mapping
-│    ├─ domain model → DTO/JSON
-│    ├─ pagination/summary fields where applicable
-│    └─ serialize success payload
+▼
+FILE: crates/service/crates/user/src/lib.rs
 │
-├─ [PHASE 11] HTTP exit
-│    └─ return success or mapped error status/body
+└─ return domain result
+│
+▼
+FILE: crates/server/src/api/user.rs
+│
+├─ map domain result to API response
+└─ return HTTP JSON
 │
 ▼
 END
@@ -148,13 +132,18 @@ Content-Type: application/json
 }
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/server/src/lib.rs` |
-| 2 | `crates/server/src/api/mod.rs` |
-| 3 | `crates/server/src/api/auth.rs` |
-| 4 | `crates/server/src/api/user.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
+| 2 | `crates/server/src/api/mod.rs` | `routes()` | protected route composition | ROUTE |
+| 3 | `crates/server/src/api/auth.rs` | `auth_middleware(), verify_jwt()` | JWT authentication | READ auth |
+| 4 | `crates/server/src/api/user.rs` | `list_recharges()` | User Handler / Claims / DTO | READ/WRITE request |
+| 5 | `crates/service/crates/user/src/lib.rs` | `UserService::list_recharges()` | User business logic | SERVICE |
+| 6 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | user/role/balance/recharge persistence | READ/WRITE users |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

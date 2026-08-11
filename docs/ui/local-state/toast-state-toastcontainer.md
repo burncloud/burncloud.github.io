@@ -17,28 +17,28 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] App root initialization
+├─ App root initialization
 │    └─ state/context: Toast state / ToastContainer
 │
 ▼
 FILE: crates/client/src/app.rs
 │
-├─ [PHASE 01] Create initial state
+├─ Create initial state
 │    ├─ derive default/configured value
 │    └─ store in Dioxus signal/context
 │
-├─ [PHASE 02] Provide context
+├─ Provide context
 │    ├─ descendant components can read/subscribe
 │    └─ current render reads latest value
 │
-├─ [PHASE 03] Update path
+├─ Update path
 │    └─ DECISION: UI event changes this state?
 │         ├─ NO → keep current value
 │         └─ YES
 │              ├─ mutate signal/context
 │              └─ mark dependent subtree dirty
 │
-├─ [PHASE 04] Re-render
+├─ Re-render
 │    └─ Dioxus reconciles affected component tree
 │
 ▼
@@ -70,10 +70,13 @@ END / UI EVENT LOOP CONTINUES
 }
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/client/src/app.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/client/src/app.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

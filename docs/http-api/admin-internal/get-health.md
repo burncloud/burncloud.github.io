@@ -17,7 +17,7 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] 调用方与输入边界
+├─ 调用方与输入边界
 │    ├─ Actor: User / SDK / Browser / Operator
 │    ├─ Entry: GET /health
 │    ├─ Input sources
@@ -32,7 +32,7 @@ START
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ [PHASE 01] 统一 HTTP Server
+├─ 统一 HTTP Server
 │    ├─ start_server() 已在进程启动时完成
 │    │    ├─ database 初始化
 │    │    ├─ RouterDatabase::init()
@@ -47,18 +47,18 @@ FILE: crates/server/src/lib.rs
 │         ├─ SetRequestIdLayer
 │         └─ PropagateRequestIdLayer
 │
-├─ [PHASE 02] 顶层 Route 决策
+├─ 顶层 Route 决策
 │    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
 │         ├─ YES → explicit GET /health handler
 │         └─ NO  → continue route matching
 │
-├─ [PHASE 03] Liveness handler
+├─ Liveness handler
 │    ├─ no JWT middleware
 │    ├─ no DB query in handler
 │    ├─ no Router/Provider call
 │    └─ return literal "ok"
 │
-├─ [PHASE 04] Response
+├─ Response
 │    └─ HTTP 200 text/plain-ish body
 │
 ▼
@@ -86,10 +86,13 @@ Content-Type: text/plain; charset=utf-8
 ok
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/server/src/lib.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

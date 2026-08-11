@@ -17,7 +17,7 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] Navigation input
+├─ Navigation input
 │    ├─ browser/client route: /preview/console/finance
 │    ├─ current Auth context
 │    ├─ current Theme/i18n/Toast context
@@ -26,34 +26,34 @@ START
 ▼
 FILE: crates/client/src/app.rs
 │
-├─ [PHASE 01] Dioxus Router match
+├─ Dioxus Router match
 │    └─ DECISION: Route enum/path matches?
 │         ├─ NO → NotFound route/component
 │         └─ YES → select mapped page component
 │
-├─ [PHASE 02] Route guards / context read
+├─ Route guards / context read
 │    ├─ component can read Auth context
 │    ├─ component can read Theme/i18n state
 │    └─ DECISION: page requires authenticated state and context satisfies it?
 │         ├─ NO → login/guard behavior as implemented by component/router
 │         └─ YES → render page
 │
-├─ [PHASE 03] Component construction
+├─ Component construction
 │    ├─ initialize local signals/state
 │    ├─ render initial VDOM
 │    └─ register click/input/effect handlers
 │
-├─ [PHASE 04] Data boundary
+├─ Data boundary
 │    └─ DECISION: component action/effect needs server data?
 │         ├─ NO → remain local UI-only path
 │         └─ YES → issue separate HTTP/API request
 │              └─ that request is documented under HTTP / API, not hidden in this flow
 │
-├─ [PHASE 05] User-visible result
+├─ User-visible result
 │    ├─ Dioxus reconciles VDOM
 │    └─ page/render state becomes visible
 │
-├─ [PHASE 06] Event loop
+├─ Event loop
 │    └─ wait for next UI event/navigation/state update
 │
 ▼
@@ -84,10 +84,13 @@ locale=zh-CN
 theme=system
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/client/src/app.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/client/src/app.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

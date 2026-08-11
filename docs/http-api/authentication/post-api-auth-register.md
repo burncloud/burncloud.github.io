@@ -17,91 +17,75 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] 调用方与输入边界
-│    ├─ Actor: User / SDK / Browser / Operator
+├─ 调用方输入
 │    ├─ Entry: POST /api/auth/register
-│    ├─ Input sources
-│    │    ├─ Method + URI path
-│    │    ├─ Query string（如有）
-│    │    ├─ HTTP headers
-│    │    └─ Request body（如有）
-│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
-│         ├─ NO  → 网络层失败；应用代码未执行 → END
-│         └─ YES → 进入 Axum
+│    ├─ Method / Path / Query / Headers / Body
+│    └─ DECISION: 请求到达 BurnCloud listener?
+│         ├─ NO  → 网络层结束，应用代码不执行 → END
+│         └─ YES → Axum Unified App
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ [PHASE 01] 统一 HTTP Server
-│    ├─ start_server() 已在进程启动时完成
-│    │    ├─ database 初始化
-│    │    ├─ RouterDatabase::init()
-│    │    ├─ UserDatabase::init()
-│    │    ├─ create_app(...)
-│    │    ├─ TcpListener::bind(...)
-│    │    └─ axum::serve(listener, app)
-│    ├─ 当前请求进入 Unified Axum App
-│    └─ 全局 middleware
-│         ├─ CORS
-│         ├─ TraceLayer
-│         ├─ SetRequestIdLayer
-│         └─ PropagateRequestIdLayer
+├─ start_server()（启动时）
+│    ├─ create_default_database()
+│    ├─ RouterDatabase::init()
+│    ├─ UserDatabase::init()
+│    ├─ create_app()
+│    ├─ TcpListener::bind()
+│    └─ axum::serve()
 │
-├─ [PHASE 02] 顶层 Route 决策
-│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
-│         ├─ YES → matched top-level/public route path
-│         └─ NO  → other route composition
+├─ create_app()
+│    ├─ merge(api::routes(...))
+│    ├─ merge(internal_app)
+│    ├─ optional merge(liveview_router)
+│    ├─ fallback_service(router_app)
+│    └─ middleware: CORS / Trace / request-id
+│
+├─ DECISION: public Authentication route 命中?
+│    ├─ NO → protected/other route
+│    └─ YES → public_routes（不经过 JWT middleware）
 │
 ▼
 FILE: crates/server/src/api/mod.rs
 │
-├─ [PHASE 03] Management API composition
-│    ├─ public auth routes are mounted outside protected JWT layer
-│    └─ DECISION: current path matches public Authentication route?
-│         ├─ NO  → protected router / other API
-│         └─ YES → no pre-handler JWT requirement
+├─ public_routes = auth::public_routes()
+└─ merge public + protected routers
 │
 ▼
 FILE: crates/server/src/api/auth.rs
 │
-├─ [PHASE 04] Handler entry
-│    └─ create_user()
-│
-├─ [PHASE 05] Input extraction
-│    ├─ Axum Query/Json extractor parses request fields
-│    └─ DECISION: syntactic extraction succeeds?
-│         ├─ NO  → Axum/client error response → END
-│         └─ YES → handler validation
-│
-├─ [PHASE 06] Business validation
-│    ├─ validate required username/email/password/token/provider inputs as applicable
-│    └─ DECISION: required business input acceptable?
-│         ├─ NO  → err(...) response → END
-│         └─ YES → service call
+├─ public_routes() matches POST /api/auth/register
+├─ create_user()
+├─ Axum Json/State extraction
+└─ CALL UserService::register_user → get_user_roles → generate_token
 │
 ▼
 FILE: crates/service/crates/user/src/lib.rs
 │
-├─ [PHASE 07] UserService / OAuth operation
-│    └─ CALL register_user → get_user_roles → generate_token
+├─ UserService operation: register_user → get_user_roles → generate_token
+├─ password hash/verify, JWT, OAuth/config logic as applicable
+└─ persistence calls: UserDatabase::get_user_by_username / count_users / create_user / assign_role / get_user_roles
 │
-├─ [PHASE 08] Persistence / identity branch
-│    ├─ register/login/reset paths may read/write user state
-│    ├─ OAuth URL path is read/config construction only
-│    └─ DECISION: service operation succeeds?
-│         ├─ NO  → map service error → API error response
-│         └─ YES → service result
+▼
+FILE: crates/database/crates/user/src/lib.rs
+│
+├─ user/password-reset state read/write when this path needs persistence
+└─ return database result
+│
+▼
+FILE: crates/service/crates/user/src/lib.rs
+│
+├─ combine DB result with password/JWT/business rules
+└─ DECISION: UserService operation successful?
+     ├─ NO → typed UserServiceError
+     └─ YES → user/token/reset/OAuth result
 │
 ▼
 FILE: crates/server/src/api/auth.rs
 │
-├─ [PHASE 09] Security-sensitive response shaping
-│    ├─ login/register success may include JWT + user roles
-│    ├─ forgot-password intentionally avoids revealing account existence
-│    └─ OAuth endpoints return authorization URL rather than callback completion
-│
-├─ [PHASE 10] Serialize / return
-│    └─ ok(...) / err(...) → HTTP JSON response
+├─ map success/error via ok(...) / err(...)
+└─ return HTTP response
 │
 ▼
 END
@@ -143,13 +127,17 @@ Content-Type: application/json
 }
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/server/src/lib.rs` |
-| 2 | `crates/server/src/api/mod.rs` |
-| 3 | `crates/server/src/api/auth.rs` |
-| 4 | `crates/service/crates/user/src/lib.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
+| 2 | `crates/server/src/api/mod.rs` | `routes()` | public auth routes outside JWT middleware | ROUTE |
+| 3 | `crates/server/src/api/auth.rs` | `create_user()` | Auth DTO / Handler / response policy | REQUEST/RESPONSE |
+| 4 | `crates/service/crates/user/src/lib.rs` | `UserService::register_user → get_user_roles → generate_token` | password/JWT/OAuth/user business logic | SERVICE |
+| 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | user/role persistence when applicable | READ/WRITE users |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

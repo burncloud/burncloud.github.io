@@ -17,28 +17,28 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ [PHASE 00] Desktop event/state input
+├─ Desktop event/state input
 │    └─ action: show / hide / focus
 │
 ▼
 FILE: crates/client/src/app.rs
 │
-├─ [PHASE 01] Platform branch
+├─ Platform branch
 │    └─ DECISION: current platform/runtime supports desktop action?
 │         ├─ NO → skip/unsupported branch → END
 │         └─ YES → obtain desktop window/tray handle
 │
-├─ [PHASE 02] Current UI state
+├─ Current UI state
 │    ├─ read visibility/focus/maximized/tray state as needed
 │    └─ decide desired state
 │
-├─ [PHASE 03] Apply desktop side effect
+├─ Apply desktop side effect
 │    ├─ maximize / show / hide / focus / tray startup
 │    └─ DECISION: OS/window operation succeeds?
 │         ├─ NO → log/ignore according to UI path
 │         └─ YES → state visible to user
 │
-├─ [PHASE 04] Event loop handoff
+├─ Event loop handoff
 │    └─ return control to Dioxus/desktop event loop
 │
 ▼
@@ -66,10 +66,13 @@ window.visible=true
 window.focused=true
 ```
 
-## 穿过的源码文件
 
-| 顺序 | 文件 |
-|---|---|
-| 1 | `crates/client/src/app.rs` |
+## 穿过的源码文件（详细）
+
+| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
+|---:|---|---|---|---|
+| 1 | `crates/client/src/app.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
+
+> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
