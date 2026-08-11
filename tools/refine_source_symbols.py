@@ -2,7 +2,7 @@ from pathlib import Path
 import json,re
 
 MANIFEST=Path('docs/atlas-manifest.json')
-DETAIL_RE=re.compile(r'(## 穿过的源码文件（详细）\n\n\| 顺序 \| 源码文件 \| 关键函数 / 符号 \| 为什么会经过 \| 状态 / 副作用 \|\n\|---:|---|---|---|---\|\n)(.*?)(?=\n\n> Source Traversal)',re.S)
+DETAIL_RE=re.compile(r'\n## 穿过的源码文件（详细）\n\n.*?(?=\n\*\*Execution classification:)',re.S)
 ROW_RE=re.compile(r'^\|\s*(\d+)\s*\|\s*`([^`]+)`\s*\|\s*`([^`]*)`\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|$')
 
 BASE={
@@ -55,8 +55,7 @@ def defaults(file,old_s,old_w,old_st):
     if file.startswith('crates/router/src/adaptor/'):
         return ('DynamicAdaptorFactory / provider adaptor','Cross-protocol request/response transformation','DYNAMIC Provider transform')
     if file.startswith('crates/router/src/'):
-        name=Path(file).stem
-        return (name,'Router runtime subsystem used by E2E path','READ/WRITE runtime state')
+        return (Path(file).stem,'Router runtime subsystem used by E2E path','READ/WRITE runtime state')
     if file.startswith('crates/download/'):
         return ('download / aria2 runtime symbols','Download manager / RPC execution','NETWORK/filesystem/process state')
     if file.startswith('crates/client/src/components/'):
@@ -66,22 +65,31 @@ def defaults(file,old_s,old_w,old_st):
     return old_s,old_w,old_st
 
 
+def rebuild(rows):
+    lines=['','## 穿过的源码文件（详细）','',
+           '| 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |',
+           '|---:|---|---|---|---|']
+    for i,(f,s,w,st) in enumerate(rows,1):
+        s=s.replace('|','/');w=w.replace('|','/');st=st.replace('|','/')
+        lines.append(f'| {i} | `{f}` | `{s}` | {w} | {st} |')
+    lines += ['', '> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。','']
+    return '\n'.join(lines)
+
+
 def main():
-    manifest=json.loads(MANIFEST.read_text(encoding='utf-8')); changed=0; generic_left=[]
+    manifest=json.loads(MANIFEST.read_text(encoding='utf-8'));changed=0;generic_left=[]
     for p in manifest['pages']:
-        path=Path('docs')/(p['docid']+'.md'); text=path.read_text(encoding='utf-8'); m=DETAIL_RE.search(text)
+        path=Path('docs')/(p['docid']+'.md');text=path.read_text(encoding='utf-8');m=DETAIL_RE.search(text)
         if not m: raise RuntimeError(f'missing detailed source table: {path}')
-        out=[]
-        for line in m.group(2).splitlines():
+        rows=[]
+        for line in m.group(0).splitlines():
             mm=ROW_RE.match(line)
-            if not mm:
-                if line.strip(): out.append(line)
-                continue
-            n,f,s,w,st=mm.groups(); ns,nw,nst=defaults(f,s,w,st)
-            out.append(f'| {n} | `{f}` | `{ns}` | {nw} | {nst} |')
+            if not mm: continue
+            _,f,s,w,st=mm.groups();ns,nw,nst=defaults(f,s,w,st);rows.append((f,ns,nw,nst))
             if ns.startswith('见上方'): generic_left.append((str(path),f))
-        new=m.group(1)+'\n'.join(out)
-        text=text[:m.start()]+new+text[m.end():];path.write_text(text,encoding='utf-8');changed+=1
+        if not rows: raise RuntimeError(f'no source rows parsed: {path}')
+        text=text[:m.start()]+'\n'+rebuild(rows).rstrip()+'\n'+text[m.end():]
+        path.write_text(text,encoding='utf-8');changed+=1
     print(f'Refined source symbols on {changed} pages; unresolved_generic={len(generic_left)}')
 
 if __name__=='__main__': main()
