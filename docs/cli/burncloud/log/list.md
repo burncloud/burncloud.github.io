@@ -81,6 +81,31 @@ FILE: crates/database/crates/router/src/log.rs
 ├─ Process exit
 │    └─ success returns to shell; long-running command may remain active
 │
+│
+├─ 源码函数展开（静态扫描确认）
+│    ├─ FILE: src/cli/log.rs
+│    │    ├─ handle_log_command()
+│    │    │    └─ CALL → cmd_log_list() @ src/cli/log.rs
+│    │    │    └─ CALL → cmd_log_usage() @ src/cli/log.rs
+│    │    ├─ cmd_log_list()
+│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
+│    │    │    └─ CALL → RouterDatabase::get_logs_filtered() @ crates/database/crates/router/src/lib.rs
+│    │    ├─ cmd_log_usage()
+│    │    │    └─ CALL → get_usage_stats_by_token() @ crates/database/crates/router/src/lib.rs
+│    │    │    └─ CALL → get_usage_stats() @ crates/database/crates/router/src/log.rs
+│    │    │    └─ CALL → get_usd_to_cny_rate() @ src/cli/log.rs
+│    │    ├─ get_usd_to_cny_rate()
+│    ├─ FILE: crates/server/src/api/response.rs
+│    │    ├─ ok()
+│    ├─ FILE: crates/database/crates/router/src/lib.rs
+│    │    ├─ RouterDatabase::get_logs_filtered()
+│    │    ├─ get_usage_stats_by_token()
+│    └─ FILE: crates/database/crates/router/src/log.rs
+│    │    ├─ get_usage_stats()
+│
+├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
+│
+
 ▼
 END
 ```
@@ -106,6 +131,7 @@ $ burncloud log list
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
@@ -115,7 +141,9 @@ $ burncloud log list
 | 3 | `src/cli/log.rs` | `handle_log_command()` | Log/usage CLI implementation | CLI → RouterLogService |
 | 4 | `crates/service/crates/router-log/src/lib.rs` | `RouterLogService::*, BillingService::*` | Router log / usage / billing summary service | SERVICE |
 | 5 | `crates/database/crates/router/src/log.rs` | `RouterLogModel::* / usage & billing queries` | Request accounting / usage / billing persistence | READ/WRITE router_logs |
+| 6 | `crates/server/src/api/response.rs` | `ok()` | 由 cmd_log_list() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/database/crates/router/src/lib.rs` | `RouterDatabase::get_logs_filtered(), get_usage_stats_by_token()` | 由 cmd_log_list() 直接调用；由 cmd_log_usage() 直接调用 | CALL / runtime-specific |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
+**Execution classification: STATIC CONFIRMED + CONSERVATIVE STATIC CALL EXPANSION** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

@@ -77,6 +77,49 @@ FILE: crates/database/src/lib.rs
 ├─ Process exit
 │    └─ success returns to shell; long-running command may remain active
 │
+│
+├─ 源码函数展开（静态扫描确认）
+│    ├─ FILE: src/cli/currency.rs
+│    │    ├─ handle_currency_command()
+│    │    │    └─ CALL → cmd_list_rates() @ src/cli/currency.rs
+│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
+│    │    │    └─ CALL → cmd_set_rate() @ src/cli/currency.rs
+│    │    │    └─ CALL → cmd_refresh_rates() @ src/cli/currency.rs
+│    │    │    └─ CALL → cmd_convert() @ src/cli/currency.rs
+│    │    ├─ cmd_list_rates()
+│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    │    │    └─ CALL → scaled_to_rate() @ crates/common/src/price_u64.rs
+│    │    ├─ cmd_set_rate()
+│    │    │    └─ CALL → rate_to_scaled() @ crates/common/src/price_u64.rs
+│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
+│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
+│    │    │    └─ CALL → Currency::code() @ crates/common/src/types.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    │    ├─ cmd_refresh_rates()
+│    │    ├─ cmd_convert()
+│    │    │    └─ CALL → Currency::code() @ crates/common/src/types.rs
+│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    │    │    └─ CALL → Currency::symbol() @ crates/common/src/types.rs
+│    ├─ FILE: crates/server/src/api/response.rs
+│    │    ├─ ok()
+│    ├─ FILE: crates/database/src/database.rs
+│    │    ├─ Database::fetch_all()
+│    │    ├─ DatabaseConnection::pool()
+│    │    ├─ Database::kind()
+│    │    ├─ Database::query()
+│    │    ├─ Database::fetch_optional()
+│    ├─ FILE: crates/common/src/price_u64.rs
+│    │    ├─ scaled_to_rate()
+│    │    ├─ rate_to_scaled()
+│    └─ FILE: crates/common/src/types.rs
+│    │    ├─ Currency::code()
+│    │    ├─ Currency::symbol()
+│
+├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
+│
+
 ▼
 END
 ```
@@ -102,6 +145,7 @@ Exchange rate saved successfully
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
@@ -110,7 +154,11 @@ Exchange rate saved successfully
 | 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
 | 3 | `src/cli/currency.rs` | `handle_currency_command()` | Exchange-rate CLI; includes direct SQL | READ/WRITE billing_exchange_rates |
 | 4 | `crates/database/src/lib.rs` | `Database::get_connection(), query/execute helpers` | Core database abstraction | SQL boundary |
+| 5 | `crates/server/src/api/response.rs` | `ok()` | 由 handle_currency_command() 直接调用 | CALL / runtime-specific |
+| 6 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::fetch_optional(), Database::kind(), Database::query(), DatabaseConnection::pool()` | 由 cmd_convert() 直接调用；由 cmd_list_rates() 直接调用；由 cmd_set_rate() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/common/src/price_u64.rs` | `rate_to_scaled(), scaled_to_rate()` | 由 cmd_list_rates() 直接调用；由 cmd_set_rate() 直接调用 | CALL / runtime-specific |
+| 8 | `crates/common/src/types.rs` | `Currency::code(), Currency::symbol()` | 由 cmd_convert() 直接调用；由 cmd_set_rate() 直接调用 | CALL / runtime-specific |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
+**Execution classification: STATIC CONFIRMED + CONSERVATIVE STATIC CALL EXPANSION** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

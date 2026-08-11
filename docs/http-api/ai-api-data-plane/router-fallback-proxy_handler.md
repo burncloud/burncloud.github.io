@@ -280,6 +280,107 @@ FILE: crates/router/src/lib.rs
 │    ├─ attach resolved channel/model diagnostic headers where configured
 │    └─ return Axum Response
 │
+│
+├─ 源码函数展开（静态扫描确认）
+│    ├─ FILE: crates/router/src/lib.rs
+│    │    ├─ proxy_handler()
+│    │    │    └─ CALL → normalize_doubled_path() @ crates/router/src/lib.rs
+│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
+│    │    │    └─ CALL → build_response_with_header() @ crates/router/src/lib.rs
+│    │    │    └─ CALL → RouterDatabase::validate_token_and_get_info() @ crates/database/crates/router/src/lib.rs
+│    │    │    └─ CALL → RouterDatabase::update_token_accessed_time() @ crates/database/crates/router/src/lib.rs
+│    │    │    └─ CALL → RouterDatabase::validate_token_detailed() @ crates/database/crates/router/src/lib.rs
+│    │    │    └─ CALL → extract_model_from_gemini_path() @ crates/router/src/passthrough.rs
+│    │    │    └─ CALL → RouterVideoTaskModel::get_by_task_id() @ crates/database/crates/router/src/router_video_task.rs
+│    │    │    └─ CALL → ChannelProviderModel::get_by_id() @ crates/database/crates/channel/src/channel_provider.rs
+│    │    │    └─ CALL → UnifiedTokenCounter::new() @ crates/service/crates/billing/src/counter.rs
+│    │    ├─ normalize_doubled_path()
+│    │    ├─ proxy_logic()
+│    │    │    └─ CALL → sanitize_request_body() @ crates/router/src/lib.rs
+│    │    │    └─ CALL → sanitize_request_headers() @ crates/router/src/lib.rs
+│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
+│    │    │    └─ CALL → extract_model_from_gemini_path() @ crates/router/src/passthrough.rs
+│    │    │    └─ CALL → UserService::resolve_traffic_class() @ crates/service/crates/user/src/lib.rs
+│    │    │    └─ CALL → OrderType::from_db_row() @ crates/router/src/order_type.rs
+│    │    │    └─ CALL → RoutingDecision::route_with_scheduler() @ crates/router/src/model_router.rs
+│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
+│    │    │    └─ CALL → build_response_with_header() @ crates/router/src/lib.rs
+│    │    │    └─ CALL → CostCalculator::preflight() @ crates/service/crates/billing/src/calculator.rs
+│    │    ├─ build_response_with_header()
+│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
+│    │    ├─ inject_video_tokens_if_empty()
+│    │    ├─ sanitize_request_body()
+│    │    │    └─ CALL → redact_sensitive_fields() @ crates/router/src/lib.rs
+│    │    │    └─ CALL → safe_cut() @ crates/router/src/lib.rs
+│    │    ├─ sanitize_request_headers()
+│    │    ├─ record_failover_attempt()
+│    ├─ FILE: crates/service/crates/user/src/lib.rs
+│    │    ├─ UserService::resolve_traffic_class()
+│    │    │    └─ CALL → UserDatabase::get_user_roles() @ crates/database/crates/user/src/lib.rs
+│    │    ├─ UserService::get_user_roles()
+│    ├─ FILE: crates/router/src/model_router.rs
+│    │    ├─ RoutingDecision::route_with_scheduler()
+│    │    │    └─ CALL → RoutingDecision::get_candidates() @ crates/router/src/model_router.rs
+│    │    │    └─ CALL → UnifiedUsage::saturating_add() @ crates/service/crates/billing/src/types.rs
+│    │    │    └─ CALL → ExchangeRateService::convert() @ crates/router/src/exchange_rate.rs
+│    │    │    └─ CALL → OrderType::filter_candidates() @ crates/router/src/order_type.rs
+│    │    │    └─ CALL → SchedulingRequest::affinity_key() @ crates/router/src/scheduler/mod.rs
+│    │    │    └─ CALL → AffinityCache::lookup() @ crates/router/src/affinity.rs
+│    │    │    └─ CALL → pick_hrw() @ crates/router/src/affinity.rs
+│    │    │    └─ CALL → CombinedScheduler::new() @ crates/router/src/scheduler/combined.rs
+│    │    │    └─ CALL → build_context() @ crates/router/src/scheduler/mod.rs
+│    │    │    └─ CALL → rank_candidates() @ crates/router/src/scheduler/mod.rs
+│    │    ├─ RoutingDecision::to_label()
+│    ├─ FILE: crates/service/crates/billing/src/calculator.rs
+│    │    ├─ CostCalculator::preflight()
+│    │    ├─ CostCalculator::calculate()
+│    │    │    └─ CALL → CostCalculator::calculate_with_voice() @ crates/service/crates/billing/src/calculator.rs
+│    ├─ FILE: crates/server/src/api/response.rs
+│    │    ├─ ok()
+│    ├─ FILE: crates/database/crates/router/src/lib.rs
+│    │    ├─ RouterDatabase::validate_token_and_get_info()
+│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
+│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    │    ├─ RouterDatabase::update_token_accessed_time()
+│    │    │    └─ CALL → RouterTokenModel::update_accessed_time() @ crates/database/crates/router/src/token.rs
+│    │    ├─ RouterDatabase::validate_token_detailed()
+│    │    │    └─ CALL → RouterTokenModel::validate_detailed() @ crates/database/crates/router/src/token.rs
+│    │    ├─ RouterDatabase::deduct_quota()
+│    ├─ FILE: crates/router/src/passthrough.rs
+│    │    ├─ extract_model_from_gemini_path()
+│    ├─ FILE: crates/database/crates/router/src/router_video_task.rs
+│    │    ├─ RouterVideoTaskModel::get_by_task_id()
+│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
+│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
+│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    │    ├─ RouterVideoTaskModel::save()
+│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
+│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    ├─ FILE: crates/database/crates/channel/src/channel_provider.rs
+│    │    ├─ ChannelProviderModel::get_by_id()
+│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
+│    │    │    └─ CALL → ph() @ crates/database/src/placeholder.rs
+│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    ├─ FILE: crates/service/crates/billing/src/counter.rs
+│    │    ├─ UnifiedTokenCounter::new()
+│    ├─ FILE: crates/common/src/types.rs
+│    │    ├─ fmt::as_char()
+│    ├─ FILE: crates/router/src/order_type.rs
+│    │    ├─ OrderType::from_db_row()
+│    ├─ FILE: crates/service/crates/billing/src/cache.rs
+│    │    ├─ PriceCache::empty()
+│    └─ FILE: crates/database/src/database.rs
+│    │    ├─ Database::query()
+│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│
+├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
+│
+
 ▼
 END
      └─ Client receives successful upstream-compatible response OR a terminal error from an earlier branch
@@ -326,6 +427,7 @@ Content-Type: application/json
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
@@ -346,7 +448,15 @@ Content-Type: application/json
 | 14 | `crates/router/src/adaptor/*` | `DynamicAdaptorFactory / provider adaptor` | Cross-protocol request/response transformation | DYNAMIC Provider transform |
 | 15 | `crates/service/crates/billing/src/usage/*` | `UsageParser::*` | Provider response usage normalization | READ response body/stream |
 | 16 | `crates/database/crates/router/src/log.rs` | `RouterLogModel::* / usage & billing queries` | Request accounting / usage / billing persistence | READ/WRITE router_logs |
+| 17 | `crates/server/src/api/response.rs` | `ok()` | 由 proxy_handler() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
+| 18 | `crates/database/crates/router/src/lib.rs` | `RouterDatabase::deduct_quota(), RouterDatabase::update_token_accessed_time(), RouterDatabase::validate_token_and_get_info(), RouterDatabase::validate_token_detailed()` | 由 proxy_handler() 直接调用 | CALL / runtime-specific |
+| 19 | `crates/database/crates/router/src/router_video_task.rs` | `RouterVideoTaskModel::get_by_task_id(), RouterVideoTaskModel::save()` | 由 proxy_handler() 直接调用 | CALL / runtime-specific |
+| 20 | `crates/database/crates/channel/src/channel_provider.rs` | `ChannelProviderModel::get_by_id()` | 由 proxy_handler() 直接调用 | CALL / runtime-specific |
+| 21 | `crates/service/crates/billing/src/counter.rs` | `UnifiedTokenCounter::accumulate(), UnifiedTokenCounter::new(), UnifiedTokenCounter::set_from_usage()` | 由 proxy_handler() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
+| 22 | `crates/common/src/types.rs` | `fmt::as_char()` | 由 proxy_handler() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
+| 23 | `crates/router/src/order_type.rs` | `OrderType::filter_candidates(), OrderType::from_db_row()` | 由 RoutingDecision::route_with_scheduler() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
+| 24 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::fetch_optional(), Database::kind(), Database::query(), DatabaseConnection::pool()` | 由 ChannelProviderModel::get_by_id() 直接调用；由 Database::query() 直接调用；由 RouterDatabase::validate_token_and_get_info() 直接调用 | CALL / runtime-specific |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
+**Execution classification: STATIC CONFIRMED + CONSERVATIVE STATIC CALL EXPANSION** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

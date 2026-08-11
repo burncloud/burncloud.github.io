@@ -17,62 +17,54 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ Shell input
-│    ├─ command: burncloud client
-│    ├─ argv tokenization done by shell
-│    └─ process environment / cwd available
+├─ Shell: burncloud client
 │
 ▼
 FILE: src/main.rs
 │
-├─ Process bootstrap
-│    ├─ dotenv load
-│    ├─ ensure/generate MASTER_KEY
-│    ├─ initialize logging
-│    └─ inspect argv
+├─ main()
+│    ├─ dotenvy::dotenv()
+│    ├─ ensure_master_key()
+│    ├─ init_logging()
+│    └─ match subcommand == "client"
 │
-├─ Top-level dispatch
-│    └─ DECISION: default/server/router/client direct runtime mode?
-│         ├─ YES → launch corresponding runtime
-│         └─ NO → CLI parser path
-│
-▼
-FILE: src/cli/commands.rs
-│
-├─ Clap parse
-│    ├─ parse command/subcommand/options/positionals
-│    └─ DECISION: syntax + required args valid?
-│         ├─ NO → Clap help/error + exit code → END
-│         └─ YES → typed command enum
-│
-├─ Command dispatch
-│    ├─ match typed command variant
-│    └─ call implementation module
+├─ DECISION: target_os == windows?
+│    ├─ YES → burncloud_client::launch_gui_with_tray()
+│    └─ NO
+│         ├─ println("Desktop GUI is only available on Windows.")
+│         ├─ println("On Linux, use 'burncloud server' ...")
+│         └─ return Ok(()) → END
 │
 ▼
-FILE: src/main.rs
+FILE: crates/client/src/app.rs
 │
-├─ Command-specific input validation
-│    ├─ validate IDs/files/model names/ranges/options as required
-│    └─ DECISION: semantic input valid?
-│         ├─ NO → error output → END
-│         └─ YES → perform operation
+├─ launch_gui_with_tray()
+│    ├─ WindowBuilder::new()
+│    ├─ configure title / size / resizable / decorations
+│    ├─ load Windows icon when available
+│    ├─ temp_dir()/burncloud_webview_data
+│    ├─ Config::new().with_window(...).with_data_directory(...)
+│    └─ LaunchBuilder::desktop().with_cfg(config).launch(AppWithTray)
 │
-├─ External/state I/O
-│    ├─ DB / filesystem / HTTP / service operation depending on command
-│    └─ DECISION: operation succeeds?
-│         ├─ NO → print/return error → END
-│         └─ YES → domain result
+├─ AppWithTray()
+│    ├─ use_context_provider(DesktopMode)
+│    ├─ use_window()
+│    ├─ use_effect → set_maximized(true)
+│    ├─ std::thread::spawn → start_tray()
+│    ├─ use_effect → spawn async 100ms show-window poll
+│    │    └─ should_show_window() → set_visible / set_focus
+│    └─ rsx! { App {} }
 │
-├─ Output formatting
-│    ├─ map result to table/text/status output
-│    └─ write stdout/stderr
-│
-├─ Process exit
-│    └─ success returns to shell; long-running command may remain active
+├─ App()
+│    ├─ use_init_i18n()
+│    ├─ use_init_toast()
+│    ├─ use_init_auth()
+│    ├─ use_init_theme()
+│    ├─ ToastContainer
+│    └─ Router<Route>
 │
 ▼
-END
+END / DESKTOP EVENT LOOP
 ```
 
 
@@ -96,13 +88,17 @@ status=running
 
 
 
+
+
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `src/main.rs` | `main()` | BurnCloud process bootstrap / top-level dispatch | PROCESS |
-| 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
+| 1 | `src/main.rs` | `main()` | client direct branch；非 Windows 直接打印提示并结束 | PROCESS/platform branch |
+| 2 | `crates/server/src/logging.rs` | `init_logging()` | direct branch 前日志初始化 | INIT logs |
+| 3 | `crates/client/src/app.rs` | `launch_gui_with_tray(), AppWithTray(), App()` | Windows Desktop Dioxus event loop | UI/SPAWN |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
+**Execution classification: STATIC CONFIRMED + BRANCH-SENSITIVE DIRECT MODE** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

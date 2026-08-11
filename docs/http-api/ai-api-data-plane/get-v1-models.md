@@ -150,6 +150,87 @@ FILE: crates/router/src/lib.rs
 │    ├─ Billing
 │    └─ Provider / upstream
 │
+│
+├─ 源码函数展开（静态扫描确认）
+│    ├─ FILE: crates/router/src/lib.rs
+│    │    ├─ create_router_app()
+│    │    │    └─ CALL → RoundRobinBalancer::new() @ crates/router/src/balancer/mod.rs
+│    │    │    └─ CALL → RateLimiter::new() @ crates/router/src/limiter.rs
+│    │    │    └─ CALL → CircuitBreaker::new() @ crates/router/src/circuit_breaker.rs
+│    │    │    └─ CALL → ChannelStateTracker::new() @ crates/router/src/channel_state.rs
+│    │    │    └─ CALL → ApiVersionDetector::new() @ crates/router/src/adaptor/detector.rs
+│    │    │    └─ CALL → PriceCache::load() @ crates/service/crates/billing/src/cache.rs
+│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
+│    │    │    └─ CALL → CostCalculator::new() @ crates/service/crates/billing/src/calculator.rs
+│    │    │    └─ CALL → ExchangeRateService::new() @ crates/router/src/exchange_rate.rs
+│    │    │    └─ CALL → ExchangeRateService::load_rates_from_db() @ crates/router/src/exchange_rate.rs
+│    │    ├─ models_handler()
+│    │    │    └─ CALL → ChannelAbilityModel::list_distinct_models() @ crates/database/crates/channel/src/channel_ability.rs
+│    │    │    └─ CALL → build_response_with_header() @ crates/router/src/lib.rs
+│    │    ├─ build_response_with_header()
+│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
+│    │    ├─ EmptyResponseCounter::new()
+│    │    ├─ configure_rate_budget_from_db()
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
+│    │    │    └─ CALL → BudgetGuard::configure() @ crates/router/src/rate_budget.rs
+│    ├─ FILE: crates/router/src/balancer/mod.rs
+│    │    ├─ RoundRobinBalancer::new()
+│    ├─ FILE: crates/router/src/limiter.rs
+│    │    ├─ RateLimiter::new()
+│    ├─ FILE: crates/router/src/circuit_breaker.rs
+│    │    ├─ CircuitBreaker::new()
+│    ├─ FILE: crates/router/src/channel_state.rs
+│    │    ├─ ChannelStateTracker::new()
+│    ├─ FILE: crates/router/src/adaptor/detector.rs
+│    │    ├─ ApiVersionDetector::new()
+│    ├─ FILE: crates/service/crates/billing/src/cache.rs
+│    │    ├─ PriceCache::load()
+│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
+│    │    │    └─ CALL → PriceCache::refresh() @ crates/service/crates/billing/src/cache.rs
+│    │    ├─ PriceCache::empty()
+│    │    ├─ PriceCache::refresh()
+│    ├─ FILE: crates/service/crates/billing/src/calculator.rs
+│    │    ├─ CostCalculator::new()
+│    ├─ FILE: crates/router/src/exchange_rate.rs
+│    │    ├─ ExchangeRateService::new()
+│    │    ├─ ExchangeRateService::load_rates_from_db()
+│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    │    ├─ ExchangeRateService::start_sync_task()
+│    │    │    └─ CALL → ExchangeRateService::load_rates_from_db() @ crates/router/src/exchange_rate.rs
+│    ├─ FILE: crates/router/src/scheduler/mod.rs
+│    │    ├─ load_scheduler_config()
+│    ├─ FILE: crates/router/src/rate_budget.rs
+│    │    ├─ BudgetGuard::configure()
+│    │    │    └─ CALL → ConsumeOutcome::is_valid() @ crates/router/src/rate_budget.rs
+│    │    │    └─ CALL → ChannelBuckets::new() @ crates/router/src/rate_budget.rs
+│    │    ├─ ConsumeOutcome::is_valid()
+│    ├─ FILE: crates/server/src/api/response.rs
+│    │    ├─ ok()
+│    ├─ FILE: crates/router/src/price_sync.rs
+│    │    ├─ start_price_sync_task()
+│    │    │    └─ CALL → PriceSyncService::with_config() @ crates/router/src/price_sync.rs
+│    │    │    └─ CALL → PriceSyncService::new() @ crates/router/src/price_sync.rs
+│    │    │    └─ CALL → PriceSyncService::sync_all() @ crates/router/src/price_sync.rs
+│    │    │    └─ CALL → PriceCache::refresh() @ crates/service/crates/billing/src/cache.rs
+│    ├─ FILE: crates/database/crates/router/src/lib.rs
+│    │    ├─ RouterDatabase::insert_log()
+│    │    │    └─ CALL → RouterLogModel::insert() @ crates/database/crates/router/src/log.rs
+│    │    ├─ RouterDatabase::insert_request_log()
+│    ├─ FILE: crates/router/src/channel_health_manager.rs
+│    │    ├─ ChannelHealthManager::new()
+│    ├─ FILE: crates/database/crates/channel/src/channel_ability.rs
+│    │    ├─ ChannelAbilityModel::list_distinct_models()
+│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
+│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
+│    └─ FILE: crates/database/src/database.rs
+│    │    ├─ Database::fetch_all()
+│    │    ├─ DatabaseConnection::pool()
+│
+├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
+│
+
 ▼
 END
      └─ Client receives model-list response
@@ -202,6 +283,7 @@ Content-Type: application/json
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
@@ -209,7 +291,22 @@ Content-Type: application/json
 | 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 HTTP Server / App composition / fallback | INIT + request routing |
 | 2 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Data Plane 主控制流或 Router internal handler | READ/WRITE router runtime |
 | 3 | `crates/database/crates/channel/src/channel_ability.rs` | `ChannelAbilityModel::*` | Model/group/channel ability persistence | READ/WRITE channel_abilities |
+| 4 | `crates/router/src/balancer/mod.rs` | `RoundRobinBalancer::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 5 | `crates/router/src/limiter.rs` | `RateLimiter::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 6 | `crates/router/src/circuit_breaker.rs` | `CircuitBreaker::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/router/src/channel_state.rs` | `ChannelStateTracker::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 8 | `crates/router/src/adaptor/detector.rs` | `ApiVersionDetector::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 9 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::empty(), PriceCache::load(), PriceCache::refresh()` | 由 PriceCache::load() 直接调用；由 build_response_with_header() 直接调用；由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 10 | `crates/service/crates/billing/src/calculator.rs` | `CostCalculator::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 11 | `crates/router/src/exchange_rate.rs` | `ExchangeRateService::load_rates_from_db(), ExchangeRateService::new(), ExchangeRateService::start_sync_task()` | 由 ExchangeRateService::start_sync_task() 直接调用；由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 12 | `crates/router/src/scheduler/mod.rs` | `load_scheduler_config()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 13 | `crates/router/src/rate_budget.rs` | `BudgetGuard::configure(), ChannelBuckets::new(), ConsumeOutcome::is_valid()` | 由 BudgetGuard::configure() 直接调用；由 configure_rate_budget_from_db() 直接调用；由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 14 | `crates/server/src/api/response.rs` | `ok()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 15 | `crates/router/src/price_sync.rs` | `PriceSyncService::new(), PriceSyncService::sync_all(), PriceSyncService::with_config(), start_price_sync_task()` | 由 create_router_app() 直接调用；由 start_price_sync_task() 直接调用 | CALL / runtime-specific |
+| 16 | `crates/database/crates/router/src/lib.rs` | `RouterDatabase::insert_log(), RouterDatabase::insert_request_log()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 17 | `crates/router/src/channel_health_manager.rs` | `ChannelHealthManager::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 18 | `crates/database/src/database.rs` | `Database::fetch_all(), DatabaseConnection::pool()` | 由 ChannelAbilityModel::list_distinct_models() 直接调用；由 ExchangeRateService::load_rates_from_db() 直接调用；由 configure_rate_budget_from_db() 直接调用 | CALL / runtime-specific |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
+**Execution classification: STATIC CONFIRMED + CONSERVATIVE STATIC CALL EXPANSION** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

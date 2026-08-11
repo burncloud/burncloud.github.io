@@ -44,6 +44,15 @@ FILE: crates/router/src/health_probe.rs
 ├─ Stop path
 │    └─ ProbeScheduler::stop() → running = false
 │
+│
+├─ 源码函数展开（静态扫描确认）
+│    └─ FILE: crates/router/src/health_probe.rs
+│    │    ├─ ProbeScheduler::start()
+│    │    ├─ ProbeScheduler::stop()
+│
+├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
+│
+
 ▼
 END / NEXT TICK
 ```
@@ -71,12 +80,13 @@ status=success
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
 | 1 | `crates/router/src/health_probe.rs` | `health_probe` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页来自运行时代码中的真实 background/thread 入口。
+**Execution classification: STATIC CONFIRMED + CONSERVATIVE STATIC CALL EXPANSION** — 本页来自运行时代码中的真实 background/thread 入口。

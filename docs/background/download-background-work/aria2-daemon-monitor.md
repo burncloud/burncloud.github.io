@@ -49,6 +49,27 @@ FILE: crates/download/crates/download-aria2/src/lib.rs
 │         ├─ kill existing child
 │         └─ instance = None
 │
+│
+├─ 源码函数展开（静态扫描确认）
+│    └─ FILE: crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ std::start()
+│    │    │    └─ CALL → std::start_aria2_rpc() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ std::start_aria2_rpc()
+│    │    │    └─ CALL → std::kill_existing_aria2() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    │    └─ CALL → std::find_available_port() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    │    └─ CALL → std::wait_for_rpc_ready() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ std::stop()
+│    │    │    └─ CALL → std::kill() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ std::kill_existing_aria2()
+│    │    ├─ std::find_available_port()
+│    │    │    └─ CALL → std::check_port_available() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ std::wait_for_rpc_ready()
+│    │    ├─ std::kill()
+│    │    ├─ std::check_port_available()
+│
+├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
+│
+
 ▼
 END / NEXT ITERATION
 ```
@@ -76,12 +97,13 @@ status=success
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
 | 1 | `crates/download/crates/download-aria2/src/lib.rs` | `download / aria2 runtime symbols` | Download manager / RPC execution | NETWORK/filesystem/process state |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页来自运行时代码中的真实 background/thread 入口。
+**Execution classification: STATIC CONFIRMED + CONSERVATIVE STATIC CALL EXPANSION** — 本页来自运行时代码中的真实 background/thread 入口。

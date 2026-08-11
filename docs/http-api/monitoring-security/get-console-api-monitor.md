@@ -141,6 +141,48 @@ FILE: crates/service/crates/monitor/src/service.rs
 ├─ HTTP exit
 │    └─ return success or mapped error status/body
 │
+│
+├─ 源码函数展开（静态扫描确认）
+│    ├─ FILE: crates/server/src/api/monitor.rs
+│    │    ├─ get_system_metrics()
+│    │    │    └─ CALL → SystemMonitorService::get_metrics() @ crates/service/crates/monitor/src/service.rs
+│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
+│    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
+│    ├─ FILE: crates/service/crates/monitor/src/service.rs
+│    │    ├─ SystemMonitorService::get_metrics()
+│    │    │    └─ CALL → SystemMonitorService::collect_fresh_metrics() @ crates/service/crates/monitor/src/service.rs
+│    │    ├─ SystemMonitorService::collect_fresh_metrics()
+│    │    │    └─ CALL → SystemMonitorService::collect_metrics_internal() @ crates/service/crates/monitor/src/service.rs
+│    │    ├─ SystemMonitorService::collect_metrics_internal()
+│    │    │    └─ CALL → DiskCollector::collect_all() @ crates/service/crates/monitor/src/collectors/disk.rs
+│    │    │    └─ CALL → SystemMetrics::new() @ crates/service/crates/monitor/src/types.rs
+│    ├─ FILE: crates/service/crates/monitor/src/collectors/cpu.rs
+│    │    ├─ CpuCollector::collect()
+│    ├─ FILE: crates/service/crates/monitor/src/collectors/memory.rs
+│    │    ├─ MemoryCollector::collect()
+│    ├─ FILE: crates/service/crates/monitor/src/collectors/disk.rs
+│    │    ├─ DiskCollector::collect_all()
+│    │    │    └─ CALL → DiskCollector::collect_all_windows() @ crates/service/crates/monitor/src/collectors/disk.rs
+│    │    │    └─ CALL → DiskCollector::collect_all_unix() @ crates/service/crates/monitor/src/collectors/disk.rs
+│    │    ├─ DiskCollector::collect_all_windows()
+│    │    │    └─ CALL → DiskCollector::get_disk_info_windows() @ crates/service/crates/monitor/src/collectors/disk.rs
+│    │    ├─ DiskCollector::collect_all_unix()
+│    │    │    └─ CALL → DiskCollector::is_local_filesystem() @ crates/service/crates/monitor/src/collectors/disk.rs
+│    │    │    └─ CALL → DiskCollector::is_valid_mount_point() @ crates/service/crates/monitor/src/collectors/disk.rs
+│    │    │    └─ CALL → DiskCollector::get_disk_info_unix() @ crates/service/crates/monitor/src/collectors/disk.rs
+│    │    ├─ DiskCollector::get_disk_info_windows()
+│    │    ├─ DiskCollector::is_local_filesystem()
+│    │    ├─ DiskCollector::is_valid_mount_point()
+│    │    ├─ DiskCollector::get_disk_info_unix()
+│    ├─ FILE: crates/server/src/api/response.rs
+│    │    ├─ ok()
+│    │    ├─ err()
+│    └─ FILE: crates/service/crates/monitor/src/types.rs
+│    │    ├─ SystemMetrics::new()
+│
+├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
+│
+
 ▼
 END
 ```
@@ -176,6 +218,7 @@ Content-Type: application/json
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
@@ -188,7 +231,9 @@ Content-Type: application/json
 | 6 | `crates/service/crates/monitor/src/collectors/cpu.rs` | `Collector::collect*()` | OS metric collector | READ operating-system metrics |
 | 7 | `crates/service/crates/monitor/src/collectors/memory.rs` | `Collector::collect*()` | OS metric collector | READ operating-system metrics |
 | 8 | `crates/service/crates/monitor/src/collectors/disk.rs` | `Collector::collect*()` | OS metric collector | READ operating-system metrics |
+| 9 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 get_system_metrics() 直接调用 | CALL / runtime-specific |
+| 10 | `crates/service/crates/monitor/src/types.rs` | `SystemMetrics::new()` | 由 SystemMonitorService::collect_metrics_internal() 直接调用 | CALL / runtime-specific |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
+**Execution classification: STATIC CONFIRMED + CONSERVATIVE STATIC CALL EXPANSION** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

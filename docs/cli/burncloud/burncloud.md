@@ -17,62 +17,58 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ Shell input
-│    ├─ command: burncloud
-│    ├─ argv tokenization done by shell
-│    └─ process environment / cwd available
+├─ Shell / OS: burncloud（无参数）
 │
 ▼
 FILE: src/main.rs
 │
-├─ Process bootstrap
-│    ├─ dotenv load
-│    ├─ ensure/generate MASTER_KEY
-│    ├─ initialize logging
-│    └─ inspect argv
+├─ main()
+│    ├─ dotenvy::dotenv()
+│    ├─ ensure_master_key()
+│    ├─ init_logging()
+│    └─ match args == [binary]
 │
-├─ Top-level dispatch
-│    └─ DECISION: default/server/router/client direct runtime mode?
-│         ├─ YES → launch corresponding runtime
-│         └─ NO → CLI parser path
+├─ DECISION: target_os == windows?
+│    ├─ YES
+│    │    ├─ std::thread::spawn(background server thread)
+│    │    │    ├─ tokio::runtime::Runtime::new()
+│    │    │    ├─ HOST / PORT
+│    │    │    └─ burncloud_server::start_server(host, port, false)
+│    │    │         └─ enable_liveview=false：后台 Server 不挂 LiveView Router
+│    │    └─ main thread → burncloud_client::launch_gui_with_tray()
+│    │
+│    └─ NO（Linux/macOS 等）
+│         ├─ print Headless Mode startup line
+│         └─ run_async_server()
+│              └─ burncloud_server::start_server(host, port, true)
 │
-▼
-FILE: src/cli/commands.rs
-│
-├─ Clap parse
-│    ├─ parse command/subcommand/options/positionals
-│    └─ DECISION: syntax + required args valid?
-│         ├─ NO → Clap help/error + exit code → END
-│         └─ YES → typed command enum
-│
-├─ Command dispatch
-│    ├─ match typed command variant
-│    └─ call implementation module
-│
-▼
-FILE: src/main.rs
-│
-├─ Command-specific input validation
-│    ├─ validate IDs/files/model names/ranges/options as required
-│    └─ DECISION: semantic input valid?
-│         ├─ NO → error output → END
-│         └─ YES → perform operation
-│
-├─ External/state I/O
-│    ├─ DB / filesystem / HTTP / service operation depending on command
-│    └─ DECISION: operation succeeds?
-│         ├─ NO → print/return error → END
-│         └─ YES → domain result
-│
-├─ Output formatting
-│    ├─ map result to table/text/status output
-│    └─ write stdout/stderr
-│
-├─ Process exit
-│    └─ success returns to shell; long-running command may remain active
+├─ Windows server thread 后续主链与 `burncloud server` 的 start_server/create_app/create_router_app 相同
+├─ Non-Windows 后续主链与 `burncloud server` 完全相同
 │
 ▼
-END
+FILE: crates/client/src/app.rs
+│
+├─ Windows GUI branch: launch_gui_with_tray()
+│    ├─ WindowBuilder
+│    ├─ Config::new().with_window(...).with_data_directory(...)
+│    └─ LaunchBuilder::desktop().launch(AppWithTray)
+│
+├─ AppWithTray()
+│    ├─ DesktopMode context
+│    ├─ maximize window
+│    ├─ std::thread::spawn(start_tray)
+│    ├─ spawn async show-window poll loop
+│    └─ render App()
+│
+└─ App()
+     ├─ use_init_i18n()
+     ├─ use_init_toast()
+     ├─ use_init_auth()
+     ├─ use_init_theme()
+     └─ Router<Route>
+│
+▼
+END / LONG-RUNNING SERVER + UI LOOPS
 ```
 
 
@@ -98,13 +94,18 @@ listening=http://0.0.0.0:3000
 
 
 
+
+
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `src/main.rs` | `main()` | BurnCloud process bootstrap / top-level dispatch | PROCESS |
-| 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
+| 1 | `src/main.rs` | `main(), ensure_master_key(), run_async_server()` | 无参数平台分支：Windows server thread + GUI；非 Windows headless server | PROCESS/SPAWN |
+| 2 | `crates/server/src/logging.rs` | `init_logging()` | main() 初始化日志 | INIT logs |
+| 3 | `crates/server/src/lib.rs` | `start_server(), create_app()` | Windows background server 或 non-Windows server 主链 | LONG-RUNNING server |
+| 4 | `crates/client/src/app.rs` | `launch_gui_with_tray(), AppWithTray(), App()` | Windows main thread 桌面 GUI/tray | UI/SPAWN |
 
-> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
+> Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 
-**Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
+**Execution classification: STATIC CONFIRMED + BRANCH-SENSITIVE DIRECT MODE** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
