@@ -1,33 +1,28 @@
-name: Validate, generate, build, and publish BurnCloud Atlas
+name: Validate, build, and publish BurnCloud Entry Point Atlas
+
 on:
   pull_request:
     paths:
-      - 'content/**'
       - 'docs/**'
       - 'site/**'
-      - 'tools/**'
       - '.github/workflows/deploy-docusaurus.yml'
   push:
     branches: [main]
     paths:
-      - 'content/**'
       - 'docs/**'
       - 'site/**'
-      - 'tools/**'
       - '.github/workflows/deploy-docusaurus.yml'
   workflow_dispatch:
-  schedule:
-    - cron: '17 */6 * * *'
 
 permissions:
   contents: write
 
 concurrency:
-  group: burncloud-atlas-${{ github.ref }}
+  group: burncloud-entrypoint-atlas-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  validate-generate-build-publish:
+  validate-build-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Atlas repository
@@ -35,30 +30,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Checkout full BurnCloud source history
-        uses: actions/checkout@v4
-        with:
-          repository: burncloud/burncloud
-          ref: main
-          path: .source/burncloud
-          fetch-depth: 0
-
-      - name: Generate latest 30 merged Commit Change Atlases
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: python3 tools/generate_commit_change_atlas.py .source/burncloud docs --limit 30
-
-      - name: Validate 30 commits × 10 Change Dimensions and historical evidence
-        run: python3 tools/validate_commit_change_atlas.py docs .source/burncloud
-
-      - name: Normalize legacy Runtime Atlas links
-        run: node site/scripts/normalize-doc-links.js
-
-      - name: Validate Runtime Flow tree, drill-down links, Mermaid size, and dynamic boundaries
-        run: python3 tools/validate_runtime_icfg_atlas.py
-
-      - name: Validate Runtime Atlas Source Evidence against current BurnCloud main
-        run: python3 tools/validate_source_evidence.py .source/burncloud
+      - name: Verify single-page source invariant
+        run: |
+          test -f docs/index.md
+          test "$(find docs -type f -name '*.md' | wc -l)" -eq 1
+          test ! -d content
+          test ! -d docs/commits
+          test ! -f docs/commit-index.json
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -68,38 +46,36 @@ jobs:
         working-directory: site
         run: npm install --no-audit --no-fund
 
-      - name: Build Docusaurus with Mermaid
+      - name: Build single-page Docusaurus site
         working-directory: site
         run: npm run build
 
-      - name: Verify Runtime and Commit Change Atlas output
+      - name: Verify single content page output
         run: |
           test -f site/build/index.html
-          test -f site/build/api-requests/chat-completion/index.html
-          test -f site/build/api-requests/chat-completion/channel-selection/index.html
-          test -f site/build/api-requests/chat-completion/provider-execution/index.html
-          test -f site/build/changes/index.html
-          test "$(find docs/commits -maxdepth 1 -name '*.md' | wc -l)" -eq 30
-          test "$(find site/build/changes/commits -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 30
+          test ! -e site/build/changes
+          test ! -e site/build/api-requests
+          test ! -e site/build/account
+          test ! -e site/build/console
+          test ! -e site/build/operator
 
-      - name: Replace Pages output with current Docusaurus build
+      - name: Replace Pages output with single-page build
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           find . -mindepth 1 -maxdepth 1 \
-            ! -name '.git' ! -name '.github' ! -name '.source' \
-            ! -name 'content' ! -name 'docs' ! -name 'site' ! -name 'tools' \
+            ! -name '.git' ! -name '.github' \
+            ! -name 'docs' ! -name 'site' \
             ! -name 'README.md' ! -name '.gitignore' \
             -exec rm -rf {} +
           cp -a site/build/. .
           touch .nojekyll
-          rm -rf .source
 
-      - name: Commit generated docs and Pages output to main
+      - name: Commit Pages output to main
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish Runtime + 30-Commit Change Atlas [skip ci]"
+          git commit -m "Publish single-page BurnCloud Entry Point Atlas [skip ci]"
           git push origin HEAD:main

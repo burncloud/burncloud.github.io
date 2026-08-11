@@ -1,16 +1,13 @@
-# BurnCloud Runtime & Commit Change Atlas
+# burncloud.github.io
 
-This GitHub Pages repository is rendered by **Docusaurus** and has two evidence-first views:
+BurnCloud 的单页 **Entry Point Atlas**。
 
-1. **Runtime Flow & ICFG Atlas** — user action → runtime execution → ICFG → source evidence.
-2. **Commit Change Atlas** — the latest 30 merged changesets, each generated across 10 fixed change dimensions from the merge commit's first-parent BASE → TARGET source diff.
+文档不再按旧的 Runtime Atlas / Commit Atlas 拆成大量页面。当前站点只有一个文档源：
 
-## Source trees
+- `docs/index.md` — 从可执行入口理解整个 BurnCloud：HTTP/API、CLI、Background Jobs、Startup、UI-only Actions。
 
-- `content/` — Runtime Flow Markdown.
-- `docs/` — generated latest-30 Commit Change Atlas Markdown + machine-readable JSON.
-- `site/` — Docusaurus renderer and sidebars.
-- `tools/generate_commit_change_atlas.py` — deterministic BASE→TARGET change analyzer.
-- `tools/validate_commit_change_atlas.py` — strict 30 × 10 dimension and historical-evidence validator.
+站点使用 Docusaurus 构建，`docs/index.md` 映射到站点根路径 `/`。
 
-Generated commit evidence always binds to immutable historical SHAs; it never uses `blob/main/...` links.
+## Truth source
+
+页面内容以 `burncloud/burncloud` 当前源码为依据。文档内记录审计时使用的源码 commit；源码行为发生变化后，应重新核对入口表，而不是沿用旧描述。
