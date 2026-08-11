@@ -32,8 +32,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Generate full Chinese E2E atlas
+      - name: Generate base Chinese atlas
         run: python3 tools/generate_atlas.py
+
+      - name: Enrich every page with detailed E2E v2 and input examples
+        run: python3 tools/enrich_atlas_v2.py
 
       - name: Add return-result examples to every page
         run: python3 tools/add_result_examples.py
@@ -41,7 +44,7 @@ jobs:
       - name: Sanitize generated Markdown for MDX
         run: python3 tools/sanitize_mdx.py
 
-      - name: Verify generated documentation tree
+      - name: Verify generated documentation tree and v2 depth
         run: |
           test -f docs/index.md
           test -f docs/atlas-manifest.json
@@ -55,29 +58,44 @@ jobs:
           test -f docs/ui/console/console-dashboard.md
           test -f site/sidebars.js
           python3 - <<'PY'
-          import json
+          import json,re
           from pathlib import Path
           manifest=json.loads(Path('docs/atlas-manifest.json').read_text(encoding='utf-8'))
           pages=manifest['page_count']
           md_count=len(list(Path('docs').rglob('*.md')))
           assert pages >= 190, f'expected >=190 generated pages, got {pages}'
           assert md_count == pages + 1, (md_count, pages)
-          example_count=0
           homepage=Path('docs/index.md')
+          checked=0
           for p in Path('docs').rglob('*.md'):
               if p == homepage:
                   continue
               text=p.read_text(encoding='utf-8')
               assert '中文解释' in text, p
-              assert '```text' in text, p
-              assert 'DECISION:' in text or '/v1/models' in str(p), p
+              assert '## End-to-End Request Flow + ICFG' in text, p
+              assert '## 输入示例' in text, p
               assert '## 返回结果示例' in text, p
-              assert '```http' in text or '```json' in text or text.count('```text') >= 2, p
+              assert '## 穿过的源码文件' in text, p
               assert '```mermaid' not in text, p
               assert '┌' not in text and '┐' not in text, p
-              example_count += 1
-          assert example_count == pages, (example_count, pages)
-          print(f'validated {pages} generated pages with return-result examples; markdown total={md_count}')
+              assert 'DECISION:' in text, p
+              phase_count=len(re.findall(r'\[PHASE \d{2}\]',text))
+              assert phase_count >= 4, (p, phase_count)
+              # Every generated page must now contain at least two fenced examples/flows.
+              assert text.count('```') >= 6, p
+              checked += 1
+          assert checked == pages, (checked,pages)
+          # Core Data Plane pages must be substantially deeper than the generic minimum.
+          chat=Path('docs/http-api/ai-api-data-plane/post-v1-chat-completions.md').read_text(encoding='utf-8')
+          models=Path('docs/http-api/ai-api-data-plane/get-v1-models.md').read_text(encoding='utf-8')
+          assert len(re.findall(r'\[PHASE \d{2}\]',chat)) >= 18
+          assert len(re.findall(r'DECISION:',chat)) >= 10
+          assert 'Candidate attempt loop' in chat
+          assert 'Protocol transformation boundary' in chat
+          assert 'Unified usage + cost' in chat
+          assert len(re.findall(r'\[PHASE \d{2}\]',models)) >= 10
+          assert 'SELECT DISTINCT model' in models
+          print(f'validated {pages} detailed v2 pages with input + output examples; markdown total={md_count}')
           PY
           test ! -d content
           test ! -d docs/commits
@@ -106,12 +124,19 @@ jobs:
           test -f site/build/background/long-running-jobs/price-sync/index.html
           test -f site/build/startup/create_app/index.html
           test -f site/build/ui/console/console-dashboard/index.html
-          grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/get-v1-models/index.html
-          grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
-          grep -q '返回结果示例' site/build/cli/burncloud/price/list/index.html
-          grep -q '返回结果示例' site/build/background/long-running-jobs/price-sync/index.html
-          grep -q '返回结果示例' site/build/startup/create_app/index.html
-          grep -q '返回结果示例' site/build/ui/console/console-dashboard/index.html
+          for html in \
+            site/build/http-api/ai-api-data-plane/get-v1-models/index.html \
+            site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html \
+            site/build/http-api/authentication/post-api-auth-login/index.html \
+            site/build/http-api/channel-management/get-console-api-channel/index.html \
+            site/build/cli/burncloud/price/list/index.html \
+            site/build/background/long-running-jobs/price-sync/index.html \
+            site/build/startup/create_app/index.html \
+            site/build/ui/console/console-dashboard/index.html; do
+              grep -q '输入示例' "$html"
+              grep -q '返回结果示例' "$html"
+              grep -q 'PHASE' "$html"
+          done
           test ! -e site/build/changes
 
       - name: Replace Pages output with current Docusaurus build
@@ -132,5 +157,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud Atlas with return-result examples [skip ci]"
+          git commit -m "Publish BurnCloud detailed E2E v2 Atlas with input/output examples [skip ci]"
           git push origin HEAD:main
