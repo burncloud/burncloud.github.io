@@ -17,73 +17,154 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ GET /v1/models
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: GET /v1/models
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ DECISION: 顶层 Unified App 命中 /v1/models ?
-│    └─ NO → fallback_service(router_app)
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES（其它顶层 route）→ 进入对应 handler；本页路径结束
+│         └─ NO（/v1/models）→ fallback_service(router_app)
 │
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ DECISION: 显式 Data Plane route == GET /v1/models ?
-│    ├─ YES → models_handler()
-│    └─ NO  → proxy_handler fallback
+├─ [PHASE 03] Data Plane route match
+│    ├─ create_router_app() 已注册显式 GET /v1/models
+│    └─ DECISION: Method == GET AND Path == /v1/models ?
+│         ├─ NO  → 其它显式 usage route 或 proxy_handler fallback
+│         └─ YES → models_handler(State<AppState>)
 │
-├─ models_handler()
+├─ [PHASE 04] Authentication / authorization boundary
+│    ├─ 当前 handler 不读取 Authorization
+│    ├─ 不调用 Token/JWT validation
+│    ├─ 不解析 user_id / group
+│    └─ 因此没有当前用户维度的模型可见性过滤
+│
+├─ [PHASE 05] Handler local state
 │    ├─ model_entries = []
-│    ├─ current_time = UNIX seconds
-│    └─ CALL ChannelAbilityModel::list_distinct_models(&state.db)
+│    ├─ SystemTime::now()
+│    ├─ duration_since(UNIX_EPOCH)
+│    └─ DECISION: system time conversion OK?
+│         ├─ YES → current_time = duration.as_secs()
+│         └─ NO  → unwrap_or_default() → current_time = 0
+│
+├─ CALL → ChannelAbilityModel::list_distinct_models(&state.db)
 │
 ▼
 FILE: crates/database/crates/channel/src/channel_ability.rs
 │
-├─ db.get_connection()
-├─ DECISION: DB connection OK?
-│    ├─ NO  → Err
-│    └─ YES → SQL
+├─ [PHASE 06] Database connection
+│    ├─ db.get_connection()
+│    └─ DECISION: connection acquired?
+│         ├─ NO  → return Err → 回到 handler
+│         └─ YES → conn.pool()
 │
-├─ SELECT DISTINCT model
-│    FROM channel_abilities
-│    WHERE enabled = 1
-│    ORDER BY model
+├─ [PHASE 07] SQL / state read
+│    ├─ SELECT DISTINCT model
+│    ├─ FROM channel_abilities
+│    ├─ WHERE enabled = 1
+│    └─ ORDER BY model
 │
-├─ DECISION: SQL OK?
-│    ├─ NO  → Err
-│    └─ YES → Ok(Vec<String>)
+├─ sqlx::query_as(sql).fetch_all(pool).await
+│    └─ DECISION: SQL success?
+│         ├─ NO  → return Err
+│         └─ YES → Vec<(String,)> → map → Ok(Vec<String>)
+│
+├─ [PHASE 08] Visibility semantics
+│    ├─ INCLUDE only ability.enabled = 1
+│    ├─ DISTINCT by model
+│    ├─ NO user/group filter
+│    ├─ NO channel_providers.status join
+│    ├─ NO health/circuit/capacity check
+│    └─ NO quota/price/billing check
 │
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ DECISION: list_distinct_models returned Ok?
-│    ├─ NO  → error 被 if let Ok(...) 吞掉；data=[]
-│    └─ YES → FOR EACH model
-│         └─ build {id, object, created, owned_by, permission, root, parent}
+├─ [PHASE 09] Handler branch merge
+│    └─ DECISION: list_distinct_models returned Ok?
+│         ├─ NO / Err
+│         │    ├─ if let Ok(...) body skipped
+│         │    └─ model_entries stays []
+│         └─ YES
+│              └─ FOR EACH model
+│                   ├─ id = model
+│                   ├─ object = "model"
+│                   ├─ created = current_time
+│                   ├─ owned_by = "burncloud"
+│                   ├─ permission = []
+│                   ├─ root = model
+│                   ├─ parent = null
+│                   └─ push → model_entries
 │
-├─ serialize response_json
-├─ DECISION: serialization OK?
-│    ├─ YES → normal JSON
-│    └─ NO  → {"object":"list","data":[]}
+├─ [PHASE 10] Serialization
+│    ├─ response_json = {object:"list", data:model_entries}
+│    ├─ serde_json::to_string(...)
+│    └─ DECISION: serialization success?
+│         ├─ YES → normal JSON body
+│         └─ NO  → literal fallback {"object":"list","data":[]}
 │
-└─ HTTP 200 application/json
-
+├─ [PHASE 11] HTTP response construction
+│    ├─ build_response_with_header(StatusCode::OK, content-type, application/json, body)
+│    ├─ Response::builder().status(200).header(...).body(...)
+│    └─ DECISION: response builder success?
+│         ├─ YES → HTTP 200 + JSON body
+│         └─ NO  → retry status 200 + empty body
+│              └─ DECISION: retry success?
+│                   ├─ YES → HTTP 200 + empty body
+│                   └─ NO  → Response::new(Body::empty())
+│
+├─ [PHASE 12] Explicitly NOT executed
+│    ├─ proxy_handler
+│    ├─ Token/JWT auth
+│    ├─ Quota / rate limiter
+│    ├─ ModelRouter / Scheduler
+│    ├─ Circuit Breaker
+│    ├─ Billing
+│    └─ Provider / upstream
+│
 ▼
 END
-     └─ User / SDK receives models list
+     └─ Client receives model-list response
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+GET /v1/models HTTP/1.1
+Host: api.burncloud.example
+Accept: application/json
+```
 
 ## 返回结果示例
 

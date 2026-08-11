@@ -17,46 +17,108 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ POST /api/auth/login
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: POST /api/auth/login
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ create_app() → api::routes()
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES → matched top-level/public route path
+│         └─ NO  → other route composition
 │
 ▼
 FILE: crates/server/src/api/mod.rs
 │
-├─ DECISION: public auth route?
-│    ├─ YES → bypass JWT middleware
-│    └─ NO  → protected router
+├─ [PHASE 03] Management API composition
+│    ├─ public auth routes are mounted outside protected JWT layer
+│    └─ DECISION: current path matches public Authentication route?
+│         ├─ NO  → protected router / other API
+│         └─ YES → no pre-handler JWT requirement
 │
 ▼
 FILE: crates/server/src/api/auth.rs
 │
-├─ Route match → login()
-├─ Parse Query / JSON input if required
-├─ Execute UserService / OAuth logic
-├─ DECISION: service call successful?
-│    ├─ NO  → err(...) response
-│    └─ YES → ok(...) response
+├─ [PHASE 04] Handler entry
+│    └─ login()
 │
-└─ HTTP response returned
-
+├─ [PHASE 05] Input extraction
+│    ├─ Axum Query/Json extractor parses request fields
+│    └─ DECISION: syntactic extraction succeeds?
+│         ├─ NO  → Axum/client error response → END
+│         └─ YES → handler validation
+│
+├─ [PHASE 06] Business validation
+│    ├─ validate required username/email/password/token/provider inputs as applicable
+│    └─ DECISION: required business input acceptable?
+│         ├─ NO  → err(...) response → END
+│         └─ YES → service call
+│
+▼
+FILE: crates/service/crates/user/src/lib.rs
+│
+├─ [PHASE 07] UserService / OAuth operation
+│    └─ CALL login_user → get_user_roles → generate_token/response
+│
+├─ [PHASE 08] Persistence / identity branch
+│    ├─ register/login/reset paths may read/write user state
+│    ├─ OAuth URL path is read/config construction only
+│    └─ DECISION: service operation succeeds?
+│         ├─ NO  → map service error → API error response
+│         └─ YES → service result
+│
+▼
+FILE: crates/server/src/api/auth.rs
+│
+├─ [PHASE 09] Security-sensitive response shaping
+│    ├─ login/register success may include JWT + user roles
+│    ├─ forgot-password intentionally avoids revealing account existence
+│    └─ OAuth endpoints return authorization URL rather than callback completion
+│
+├─ [PHASE 10] Serialize / return
+│    └─ ok(...) / err(...) → HTTP JSON response
+│
 ▼
 END
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+POST /api/auth/login HTTP/1.1
+Host: api.burncloud.example
+Content-Type: application/json
+
+{"username":"demo_user","password":"Example-Password-123!"}
+```
 
 ## 返回结果示例
 

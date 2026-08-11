@@ -17,19 +17,44 @@ hide_table_of_contents: true
 ```text
 START
 │
+├─ [PHASE 00] Desktop event/state input
+│    └─ action: Windows tray startup
+│
 ▼
 FILE: crates/client/src/app.rs
 │
-├─ Desktop platform branch
-├─ 执行：Windows 平台启动 tray thread。
-├─ DECISION: platform/state allows action?
-│    ├─ NO  → skip / unsupported branch
-│    └─ YES → apply window/tray state
+├─ [PHASE 01] Platform branch
+│    └─ DECISION: current platform/runtime supports desktop action?
+│         ├─ NO → skip/unsupported branch → END
+│         └─ YES → obtain desktop window/tray handle
+│
+├─ [PHASE 02] Current UI state
+│    ├─ read visibility/focus/maximized/tray state as needed
+│    └─ decide desired state
+│
+├─ [PHASE 03] Apply desktop side effect
+│    ├─ maximize / show / hide / focus / tray startup
+│    └─ DECISION: OS/window operation succeeds?
+│         ├─ NO → log/ignore according to UI path
+│         └─ YES → state visible to user
+│
+├─ [PHASE 04] Event loop handoff
+│    └─ return control to Dioxus/desktop event loop
 │
 ▼
-END / DESKTOP LOOP CONTINUES
+END / LOOP CONTINUES
 ```
 
+
+## 输入示例
+
+> UI 页面/动作的输入是导航、用户事件和当前客户端上下文；真正的网络请求会进入独立 HTTP/API E2E 页面。
+
+```text
+event=Windows tray startup
+platform=desktop
+window_state=available
+```
 
 ## 返回结果示例
 

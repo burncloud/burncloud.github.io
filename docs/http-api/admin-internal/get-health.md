@@ -17,31 +17,63 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ GET /health
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: GET /health
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ create_app() has explicit GET /health
-├─ DECISION: path == /health?
-│    ├─ NO  → continue router matching
-│    └─ YES → inline handler returns "ok"
-└─ No JWT required
-
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES → explicit GET /health handler
+│         └─ NO  → continue route matching
+│
+├─ [PHASE 03] Liveness handler
+│    ├─ no JWT middleware
+│    ├─ no DB query in handler
+│    ├─ no Router/Provider call
+│    └─ return literal "ok"
+│
+├─ [PHASE 04] Response
+│    └─ HTTP 200 text/plain-ish body
+│
 ▼
 END
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+GET /health HTTP/1.1
+Host: api.burncloud.example
+```
 
 ## 返回结果示例
 

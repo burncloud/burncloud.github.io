@@ -17,41 +17,82 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ GET /console/{*path}
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: GET /console/{*path}
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ DECISION: enable_liveview == true?
-│    ├─ NO  → route may fall to data-plane fallback
-│    └─ YES → merged LiveView Router
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES → merged LiveView/static route candidate
+│         └─ NO → other route/fallback
+│
+├─ [PHASE 03] LiveView feature gate
+│    └─ DECISION: enable_liveview == true?
+│         ├─ NO → LiveView route unavailable; routing continues/falls back
+│         └─ YES → match LiveView Router
 │
 ▼
 FILE: crates/client/src/lib.rs
 │
-├─ Match shell/static route
-├─ Return Dioxus LiveView HTML shell / favicon response
+├─ [PHASE 04] HTTP shell/static handler
+│    ├─ route shell / preview / favicon according to path
+│    └─ DECISION: requested LiveView/static route recognized?
+│         ├─ NO → route miss
+│         └─ YES → construct HTML/static response
 │
 ▼
 FILE: crates/client/src/app.rs
 │
-├─ Browser loads Dioxus route tree
-└─ Subsequent interactive state is driven by LiveView/WebSocket
-
+├─ [PHASE 05] Client route model
+│    ├─ Dioxus Route enum represents browser-side view
+│    ├─ App contexts: auth/theme/i18n/toast
+│    └─ page-specific component selected after client session establishes
+│
+├─ [PHASE 06] Follow-up interactive transport
+│    ├─ initial HTTP response delivers shell
+│    └─ interactive events move to /ws LiveView session
+│
 ▼
 END
+     └─ Browser receives HTML/static shell; UI lifecycle continues separately
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+GET /console/dashboard HTTP/1.1
+Host: api.burncloud.example
+Accept: text/html
+```
 
 ## 返回结果示例
 

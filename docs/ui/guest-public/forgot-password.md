@@ -17,28 +17,60 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ User navigation / router state
-│    └─ /forgot-password
+├─ [PHASE 00] Navigation input
+│    ├─ browser/client route: /forgot-password
+│    ├─ current Auth context
+│    ├─ current Theme/i18n/Toast context
+│    └─ optional route params/query
 │
 ▼
 FILE: crates/client/src/app.rs
 │
-├─ Dioxus Route enum/router matches path
-├─ DECISION: route exists?
-│    ├─ NO  → NotFound branch
-│    └─ YES → mount mapped page component
-├─ Component reads local contexts as needed
-│    ├─ Auth context
-│    ├─ Theme
-│    ├─ i18n
-│    └─ Toast
-├─ Network calls, if any, are separate HTTP flows
+├─ [PHASE 01] Dioxus Router match
+│    └─ DECISION: Route enum/path matches?
+│         ├─ NO → NotFound route/component
+│         └─ YES → select mapped page component
+│
+├─ [PHASE 02] Route guards / context read
+│    ├─ component can read Auth context
+│    ├─ component can read Theme/i18n state
+│    └─ DECISION: page requires authenticated state and context satisfies it?
+│         ├─ NO → login/guard behavior as implemented by component/router
+│         └─ YES → render page
+│
+├─ [PHASE 03] Component construction
+│    ├─ initialize local signals/state
+│    ├─ render initial VDOM
+│    └─ register click/input/effect handlers
+│
+├─ [PHASE 04] Data boundary
+│    └─ DECISION: component action/effect needs server data?
+│         ├─ NO → remain local UI-only path
+│         └─ YES → issue separate HTTP/API request
+│              └─ that request is documented under HTTP / API, not hidden in this flow
+│
+├─ [PHASE 05] User-visible result
+│    ├─ Dioxus reconciles VDOM
+│    └─ page/render state becomes visible
+│
+├─ [PHASE 06] Event loop
+│    └─ wait for next UI event/navigation/state update
 │
 ▼
-END
-     └─ page rendered / UI event loop continues
+END / UI LOOP CONTINUES
 ```
 
+
+## 输入示例
+
+> UI 页面/动作的输入是导航、用户事件和当前客户端上下文；真正的网络请求会进入独立 HTTP/API E2E 页面。
+
+```text
+navigate_to=/forgot-password
+authenticated=true
+locale=zh-CN
+theme=system
+```
 
 ## 返回结果示例
 

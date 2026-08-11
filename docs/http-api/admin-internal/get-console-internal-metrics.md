@@ -17,37 +17,82 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ GET /console/internal/metrics
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: GET /console/internal/metrics
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ create_app() merges internal_app before LiveView
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES → merged Router Internal route
+│         └─ NO  → continue to other routes/fallback
 │
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ explicit internal route → metrics_handler()
-├─ IMPORTANT: current internal_app itself has no JWT middleware
-├─ Execute internal runtime operation
-├─ DECISION: operation succeeds?
-│    ├─ NO  → route-specific 5xx/timeout response
-│    └─ YES → JSON response
+├─ [PHASE 03] Internal route match
+│    └─ metrics_handler()
+│
+├─ [PHASE 04] Authentication boundary
+│    ├─ Router internal_app itself is not wrapped by Management JWT middleware
+│    └─ network exposure therefore depends on server deployment/binding/firewall
+│
+├─ [PHASE 05] Runtime-state operation
+│    ├─ read/mutate in-memory Router runtime services
+│    └─ DECISION: required runtime service/channel available?
+│         ├─ NO  → route-specific 5xx/timeout/error response
+│         └─ YES → perform operation
+│
+├─ [PHASE 06] Route-specific state
+│    ├─ health: scheduler/circuit/channel/rate-budget snapshot
+│    ├─ price sync: force_sync_tx + oneshot result
+│    ├─ trip-all: circuit_breaker.trip_all()
+│    └─ metrics: Router runtime counters
+│
+├─ [PHASE 07] Serialize result
+│    └─ DECISION: operation/result successful?
+│         ├─ NO  → error HTTP response
+│         └─ YES → JSON success response
 │
 ▼
 END
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+GET /console/internal/metrics HTTP/1.1
+Host: api.burncloud.example
+Accept: application/json
+```
 
 ## 返回结果示例
 

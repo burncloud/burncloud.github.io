@@ -17,19 +17,46 @@ hide_table_of_contents: true
 ```text
 START
 │
+├─ [PHASE 00] App root initialization
+│    └─ state/context: Auth context
+│
 ▼
 FILE: crates/client/src/app.rs
 │
-├─ App root initializes Auth context
-├─ Provide state/context to descendant components
-├─ DECISION: component updates state?
-│    ├─ YES → Dioxus re-render affected subtree
-│    └─ NO  → keep current state
+├─ [PHASE 01] Create initial state
+│    ├─ derive default/configured value
+│    └─ store in Dioxus signal/context
+│
+├─ [PHASE 02] Provide context
+│    ├─ descendant components can read/subscribe
+│    └─ current render reads latest value
+│
+├─ [PHASE 03] Update path
+│    └─ DECISION: UI event changes this state?
+│         ├─ NO → keep current value
+│         └─ YES
+│              ├─ mutate signal/context
+│              └─ mark dependent subtree dirty
+│
+├─ [PHASE 04] Re-render
+│    └─ Dioxus reconciles affected component tree
 │
 ▼
-END / UI LOOP CONTINUES
+END / UI EVENT LOOP CONTINUES
 ```
 
+
+## 输入示例
+
+> UI 页面/动作的输入是导航、用户事件和当前客户端上下文；真正的网络请求会进入独立 HTTP/API E2E 页面。
+
+```json
+{
+  "context": "Auth context",
+  "event": "component render/update",
+  "current_state": "example"
+}
+```
 
 ## 返回结果示例
 

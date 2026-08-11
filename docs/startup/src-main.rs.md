@@ -17,24 +17,54 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ Process startup
-│    └─ src/main.rs
+├─ [PHASE 00] Process/environment input
+│    ├─ startup target: src/main.rs
+│    ├─ environment variables / dotenv
+│    ├─ CLI/platform mode
+│    └─ filesystem/database availability
 │
-▼
-FILE: src/main.rs
+├─ [PHASE 01] Enter startup function
+│    └─ execute src/main.rs
 │
-├─ 进程入口：dotenv → MASTER_KEY → logging → 平台/argv 分发；无参数按平台启动 GUI/LiveView，显式参数进入 server/router/client/CLI。
-├─ DECISION: initialization step fails?
-│    ├─ YES → propagate error / process startup fails
-│    └─ NO  → continue next initialization stage
+├─ [PHASE 02] Dependency initialization
+│    ├─ construct required DB/services/runtime state
+│    ├─ register routes/tasks as applicable
+│    └─ DECISION: dependency initialization succeeds?
+│         ├─ NO → propagate startup error → process/runtime not ready → END
+│         └─ YES → next dependency
 │
-├─ Runtime objects / routes / tasks become available
+├─ [PHASE 03] Runtime composition
+│    ├─ wire shared Arc/State/services
+│    ├─ compose routers/middleware/background jobs
+│    └─ make dependencies reachable from runtime entrypoints
+│
+├─ [PHASE 04] Readiness boundary
+│    └─ DECISION: all required startup stages complete?
+│         ├─ NO → startup fails/returns Err
+│         └─ YES → expose listener/client/event loop/runtime
+│
+├─ [PHASE 05] Steady-state handoff
+│    ├─ long-running loops take ownership of runtime
+│    └─ requests/events can now enter documented entrypoints
 │
 ▼
 END
-     └─ server/client/runtime enters steady state
+     └─ component is READY / RUNNING
 ```
 
+
+## 输入示例
+
+> Startup 的输入是进程模式、环境变量、配置和外部资源可用性，而不是 API Request。
+
+```text
+process_target=src/main.rs
+BURNCLOUD_MASTER_KEY=<configured-or-generated>
+RUST_LOG=info
+database_path=<runtime database>
+enable_liveview=true
+# 真实环境变量/参数以部署配置为准。
+```
 
 ## 返回结果示例
 

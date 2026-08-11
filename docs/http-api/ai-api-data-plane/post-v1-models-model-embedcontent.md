@@ -17,97 +17,211 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ POST /v1/models/{model}:embedContent
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: POST /v1/models/{model}:embedContent
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ 顶层未命中 → fallback_service(router_app)
-│
-▼
-FILE: crates/router/src/lib.rs
-│
-├─ router_app 未命中显式 models / usage route
-│    └─ proxy_handler()
-│
-├─ normalize_doubled_path()
-├─ Credential Source
-│    ├─ Authorization: Bearer ...
-│    ├─ x-api-key
-│    └─ x-goog-api-key
-│
-├─ DECISION: credential exists?
-│    ├─ NO  → HTTP 401
-│    └─ YES → RouterDatabase validate
-│
-├─ DECISION: token valid?
-│    ├─ YES → user_id / group / quota / order_type / price_cap
-│    └─ NO
-│         ├─ legacy token validation
-│         └─ JWT fallback
-│
-├─ DECISION: quota exhausted?
-│    ├─ YES → HTTP 402
-│    └─ NO  → continue
-│
-├─ DECISION: local rate limiter allows?
-│    ├─ NO  → HTTP 429
-│    └─ YES → collect request body
-│
-├─ Extract request context
-│    ├─ model from JSON body or Gemini URL
-│    ├─ batch / priority flags
-│    └─ video duration/resolution when applicable
-│
-├─ proxy_logic(...)
-│    ├─ load scheduler policy for user group
-│    ├─ resolve model / candidate channels
-│    ├─ filter availability / order constraints
-│    ├─ billing preflight
-│    └─ candidate attempt loop
-│         ├─ rate budget / shaper
-│         ├─ circuit breaker
-│         ├─ protocol decision
-│         └─ upstream request
-│
-▼
-FILE: crates/router/src/passthrough.rs + Dynamic Adaptor Boundary
-│
-├─ DECISION: native passthrough supported?
-│    ├─ YES → preserve OpenAI / Anthropic / Gemini native protocol
-│    └─ NO  → adaptor conversion path（DYNAMIC by Provider）
-│
-├─ Send HTTP request to selected upstream
-├─ DECISION: upstream attempt succeeds?
-│    ├─ NO  → record failure → next candidate / final error
-│    └─ YES → response / stream handling
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES（Management/Internal/LiveView 等）→ 对应 handler
+│         └─ NO → fallback_service(router_app)
 │
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ collect UnifiedUsage
-├─ video token injection when applicable
-├─ CostCalculator::calculate()
-├─ enqueue RouterLog / RequestLog
-├─ async quota deduction when cost > 0
-├─ attach resolved channel/model headers
-└─ return upstream-compatible HTTP response
-
+├─ [PHASE 03] Data Plane route selection
+│    ├─ explicit /v1/models or usage routes checked first
+│    └─ DECISION: explicit route matched?
+│         ├─ YES → corresponding explicit handler
+│         └─ NO  → proxy_handler()
+│
+├─ [PHASE 04] Path normalization + request identity
+│    ├─ normalize_doubled_path()
+│    ├─ preserve Method / URI / headers
+│    ├─ request-id already attached by server middleware
+│    └─ prepare AppState/runtime services
+│
+├─ [PHASE 05] Credential source selection
+│    ├─ Candidate 1: Authorization: Bearer ...
+│    ├─ Candidate 2: x-api-key
+│    ├─ Candidate 3: x-goog-api-key
+│    └─ DECISION: any supported credential exists?
+│         ├─ NO  → HTTP 401 → END
+│         └─ YES → token validation chain
+│
+├─ [PHASE 06] Token / user / group resolution
+│    ├─ RouterDatabase new-token validation
+│    ├─ DECISION: new token valid?
+│    │    ├─ YES → token metadata / user_id / group / quota / policy
+│    │    └─ NO  → legacy token validation
+│    ├─ DECISION: legacy token valid?
+│    │    ├─ YES → legacy metadata / user_id
+│    │    └─ NO  → JWT fallback where supported
+│    └─ DECISION: identity ultimately valid?
+│         ├─ NO  → authorization error → END
+│         └─ YES → continue
+│
+├─ [PHASE 07] Account / quota guard
+│    ├─ inspect quota/order metadata
+│    └─ DECISION: quota exhausted / account cannot spend?
+│         ├─ YES → HTTP 402 Payment Required → END
+│         └─ NO  → continue
+│
+├─ [PHASE 08] Local request rate limiting
+│    ├─ limiter key derived from authenticated request context
+│    └─ DECISION: limiter allows request?
+│         ├─ NO  → HTTP 429 Too Many Requests → END
+│         └─ YES → continue
+│
+├─ [PHASE 09] Request-body acquisition
+│    ├─ collect Axum body bytes
+│    └─ DECISION: body read/size/parse boundary succeeds?
+│         ├─ NO  → client/request error → END
+│         └─ YES → immutable request payload for routing/adaptor
+│
+├─ [PHASE 10] Model + protocol context extraction
+│    ├─ OpenAI/Anthropic: model usually from JSON body
+│    ├─ Gemini: model may come from URL path
+│    ├─ detect streaming / batch / priority hints
+│    ├─ detect API protocol family
+│    ├─ model 可能从 Gemini URL path 提取，而不是 JSON body
+│    └─ DECISION: required model/context resolved?
+│         ├─ NO  → invalid request / model resolution error → END
+│         └─ YES → proxy_logic(...)
+│
+├─ [PHASE 11] Enter proxy_logic(...)
+│    ├─ load scheduling policy for resolved user group
+│    ├─ resolve requested model / model mapping
+│    ├─ load candidate channel abilities
+│    ├─ apply user/order/price constraints
+│    └─ produce ordered/weighted candidate set
+│
+├─ [PHASE 12] Candidate eligibility filtering
+│    ├─ ability enabled?
+│    ├─ channel state allows traffic?
+│    ├─ circuit breaker allows attempt?
+│    ├─ rate budget / shaper allows attempt?
+│    ├─ price/order constraints satisfied?
+│    └─ DECISION: any candidate remains?
+│         ├─ NO  → no-upstream / routing error → END
+│         └─ YES → candidate attempt loop
+│
+├─ [PHASE 13] Candidate attempt loop
+│    ├─ select next candidate
+│    ├─ acquire rate budget / shaping permission
+│    ├─ consult circuit breaker
+│    ├─ resolve protocol / API version
+│    ├─ construct upstream URL + headers + credentials
+│    └─ hand request to passthrough/adaptor boundary
+│
+▼
+FILE: crates/router/src/passthrough.rs
+│
+├─ [PHASE 14] Protocol transformation boundary
+│    ├─ inspect source protocol + target Channel protocol
+│    └─ DECISION: native passthrough possible?
+│         ├─ YES
+│         │    ├─ preserve compatible body/headers semantics
+│         │    └─ avoid unnecessary transform
+│         └─ NO
+│              └─ DynamicAdaptorFactory / adaptor conversion path
+│                   └─ DYNAMIC: exact transformation depends on Provider adaptor
+│
+├─ [PHASE 15] Upstream network I/O
+│    ├─ send HTTP request through shared client
+│    ├─ wait for headers/body or stream
+│    └─ DECISION: upstream attempt succeeds?
+│         ├─ NO
+│         │    ├─ classify failure
+│         │    ├─ update channel/circuit feedback
+│         │    ├─ optional API-version detect/update
+│         │    └─ DECISION: another eligible candidate?
+│         │         ├─ YES → back to PHASE 13
+│         │         └─ NO  → final upstream/routing error → END
+│         └─ YES → response handling
+│
+▼
+FILE: crates/router/src/lib.rs
+│
+├─ [PHASE 16] Response mode split
+│    └─ DECISION: streaming response?
+│         ├─ YES
+│         │    ├─ stream chunks to client
+│         │    ├─ collect/derive usage while stream progresses
+│         │    └─ handle stream completion/disconnect
+│         └─ NO
+│              ├─ collect upstream body
+│              └─ parse/derive usage metadata
+│
+├─ [PHASE 17] Unified usage + cost
+│    ├─ normalize prompt/input tokens
+│    ├─ normalize completion/output tokens
+│    ├─ endpoint-specific usage augmentation when needed
+│    ├─ PriceCache / CostCalculator lookup
+│    └─ CostCalculator::calculate()
+│
+├─ [PHASE 18] Accounting / persistence side effects
+│    ├─ enqueue RouterLog
+│    ├─ enqueue RequestLog according to storage policy
+│    ├─ send AIMD/rate-budget feedback
+│    ├─ update circuit/channel state feedback
+│    ├─ async token accessed_time update where applicable
+│    └─ DECISION: calculated cost > 0?
+│         ├─ YES → async quota deduction
+│         └─ NO  → no quota deduction task
+│
+├─ [PHASE 19] Endpoint-specific async side effects
+│    ├─ none beyond common request side effects
+│
+├─ [PHASE 20] Final response construction
+│    ├─ preserve/normalize upstream-compatible status + body
+│    ├─ attach resolved channel/model diagnostic headers where configured
+│    └─ return Axum Response
+│
 ▼
 END
-     └─ User / SDK receives response
+     └─ Client receives successful upstream-compatible response OR a terminal error from an earlier branch
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+POST /v1/models/gemini-embedding-example:embedContent HTTP/1.1
+Host: api.burncloud.example
+x-goog-api-key: bc_live_7d4e...example
+Content-Type: application/json
+
+{"content":{"parts":[{"text":"BurnCloud embedding"}]}}
+```
 
 ## 返回结果示例
 

@@ -17,51 +17,113 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ GET /api/v1/usage/models
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: GET /api/v1/usage/models
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ 顶层未命中 → fallback_service(router_app)
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES（其它顶层 route）→ 对应 handler
+│         └─ NO → fallback_service(router_app)
 │
 ▼
 FILE: crates/router/src/lib.rs
 │
-├─ 显式 route → usage_models_handler()
-├─ extract_token_user()
-│    ├─ DECISION: Authorization Bearer 存在?
-│    │    ├─ NO  → HTTP 401
-│    │    └─ YES → validate token
-│    ├─ validate_token_and_get_info
-│    ├─ fallback: validate_token_detailed
-│    └─ fallback: JWT decode
+├─ [PHASE 03] Explicit Data Plane route
+│    ├─ Route match: GET /api/v1/usage/models
+│    └─ handler = usage_models_handler()
 │
-├─ DECISION: token/user 可解析?
-│    ├─ NO  → 401 / 503
-│    └─ YES → user_id
+├─ [PHASE 04] Credential extraction
+│    ├─ read Authorization header
+│    ├─ require Bearer token
+│    └─ DECISION: Bearer credential present?
+│         ├─ NO  → HTTP 401 → END
+│         └─ YES → extract_token_user(...)
 │
-├─ DB CALL: get_usage_stats_by_model(user_id, "month")
-├─ DECISION: query OK?
-│    ├─ NO  → HTTP 500
-│    └─ YES → serialize usage JSON
+├─ [PHASE 05] Multi-generation identity resolution
+│    ├─ Try new Router token table
+│    │    └─ validate_token_and_get_info(...)
+│    ├─ DECISION: new token valid?
+│    │    ├─ YES → resolve user_id
+│    │    └─ NO  → legacy validation
+│    ├─ validate_token_detailed(...)
+│    ├─ DECISION: legacy token valid?
+│    │    ├─ YES → resolve user_id
+│    │    └─ NO  → JWT fallback
+│    ├─ JWT decode / Claims.sub
+│    └─ DECISION: any identity path resolved?
+│         ├─ NO  → 401 / service-unavailable error branch → END
+│         └─ YES → user_id
 │
-└─ HTTP 200 application/json
-
+▼
+FILE: crates/database/crates/router/src/lib.rs
+│
+├─ [PHASE 06] Usage aggregation query
+│    ├─ CALL get_usage_stats_by_model(user_id, "month")
+│    ├─ period = month
+│    ├─ scope = resolved user_id
+│    └─ DECISION: DB aggregation success?
+│         ├─ NO  → HTTP 500 → END
+│         └─ YES → usage rows / aggregate
+│
+▼
+FILE: crates/router/src/lib.rs
+│
+├─ [PHASE 07] Response mapping
+│    ├─ map DB aggregate → API response object
+│    ├─ serialize JSON
+│    └─ DECISION: serialization/build success?
+│         ├─ NO  → internal response error branch
+│         └─ YES → HTTP 200 application/json
+│
+├─ [PHASE 08] Side effects
+│    ├─ no Provider call
+│    ├─ no Scheduler
+│    ├─ no inference billing deduction
+│    └─ read-only usage query
+│
 ▼
 END
-     └─ 返回当前 token holder 的月度用量
+     └─ Client receives 按模型聚合的月度 usage
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+GET /api/v1/usage/models HTTP/1.1
+Host: api.burncloud.example
+Authorization: Bearer bc_live_7d4e...example
+Accept: application/json
+```
 
 ## 返回结果示例
 

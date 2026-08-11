@@ -17,22 +17,45 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ OS launches executable
-│    └─ screenshot_gen
+├─ [PHASE 00] OS process launch
+│    ├─ executable: screenshot_gen
+│    ├─ argv / cwd / environment inherited from OS
+│    └─ DECISION: executable can be loaded/launched?
+│         ├─ NO → OS-level error → END
+│         └─ YES → main()
 │
 ▼
 FILE: crates/client/src/bin/screenshot_gen.rs
 │
-├─ main()
-├─ initialize executable-specific runtime
-├─ DECISION: platform / arguments / initialization valid?
-│    ├─ NO  → error / unsupported branch
-│    └─ YES → run binary purpose
+├─ [PHASE 01] main() initialization
+│    ├─ initialize executable-specific runtime/services
+│    ├─ parse any supported arguments
+│    └─ DECISION: platform/arguments/initialization valid?
+│         ├─ NO → print/return error → process exit
+│         └─ YES → continue
+│
+├─ [PHASE 02] Runtime work
+│    ├─ create client/download/loop/tray structures as applicable
+│    ├─ start event loop or execute one-shot job
+│    └─ DECISION: long-running executable?
+│         ├─ YES → enter event/service loop
+│         └─ NO → produce output and exit
+│
+├─ [PHASE 03] Error boundary
+│    └─ runtime error → log/return non-success according to executable implementation
 │
 ▼
-END
+END / RUNNING LOOP
 ```
 
+
+## 输入示例
+
+> CLI 的输入就是进程参数/子命令；下面给出与本页入口对应的典型终端调用。
+
+```text
+$ screenshot_gen
+```
 
 ## 返回结果示例
 

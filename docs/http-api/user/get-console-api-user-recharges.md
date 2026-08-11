@@ -17,49 +17,115 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ GET /console/api/user/recharges
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: GET /console/api/user/recharges
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ create_app() → api::routes()
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES → Management API / protected route candidate
+│         └─ NO  → other top-level/fallback route
 │
 ▼
 FILE: crates/server/src/api/mod.rs
 │
-├─ protected_routes
-├─ auth_middleware()
-│    ├─ DECISION: Authorization starts with Bearer?
-│    │    ├─ NO  → HTTP 401
-│    │    └─ YES → verify_jwt()
-│    └─ valid Claims inserted into request extensions
+├─ [PHASE 03] protected_routes composition
+│    ├─ route registered under Management API
+│    └─ auth_middleware() wraps protected router
+│
+├─ [PHASE 04] JWT authentication
+│    ├─ read Authorization header
+│    └─ DECISION: Authorization starts with Bearer?
+│         ├─ NO  → HTTP 401 → END
+│         └─ YES → verify_jwt(...)
+│
+├─ DECISION: JWT signature/claims valid?
+│    ├─ NO  → HTTP 401 → END
+│    └─ YES
+│         ├─ Claims inserted into request extensions
+│         └─ continue to route handler
 │
 ▼
 FILE: crates/server/src/api/user.rs
 │
-├─ Route match → list_recharges()
+├─ [PHASE 05] Handler
+│    └─ list_recharges()
 │
-├─ Execute service/database operation
-├─ DECISION: operation successful?
-│    ├─ NO  → error response
-│    └─ YES → serialize success payload
+├─ [PHASE 06] Request extraction
+│    ├─ Path params / Query params / JSON body as required by Method
+│    ├─ authenticated Claims available from extensions
+│    └─ DECISION: extraction/required fields valid?
+│         ├─ NO  → client/error response → END
+│         └─ YES → authorization/business checks
 │
-└─ return HTTP response
-
+├─ [PHASE 07] Authorization + invariants
+│    ├─ Route uses authenticated Claims/user context as implemented
+│    ├─ validate ID/status/range/reason/etc. according to handler
+│    └─ DECISION: authorization/invariants pass?
+│         ├─ NO  → 4xx/error payload → END
+│         └─ YES → service/database call
+│
+├─ [PHASE 08] Service / Database boundary
+│    ├─ operation type: read/query state
+│    ├─ invoke route-specific Service / Database method
+│    └─ DECISION: operation succeeds?
+│         ├─ NO  → map error → HTTP error response
+│         └─ YES → domain result
+│
+├─ [PHASE 09] State effects
+│    ├─ READ routes: no intended mutation beyond incidental telemetry
+│    ├─ WRITE routes: persist create/update/delete/config action
+│    └─ route-specific async/internal calls execute before/around result when implemented
+│
+├─ [PHASE 10] Response mapping
+│    ├─ domain model → DTO/JSON
+│    ├─ pagination/summary fields where applicable
+│    └─ serialize success payload
+│
+├─ [PHASE 11] HTTP exit
+│    └─ return success or mapped error status/body
+│
 ▼
 END
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+GET /console/api/user/recharges HTTP/1.1
+Host: api.burncloud.example
+Authorization: Bearer eyJhbGciOi...admin-jwt
+Accept: application/json
+```
 
 ## 返回结果示例
 

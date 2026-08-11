@@ -17,40 +17,72 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ Shell / Terminal
-│    └─ burncloud currency refresh
+├─ [PHASE 00] Shell input
+│    ├─ command: burncloud currency refresh
+│    ├─ argv tokenization done by shell
+│    └─ process environment / cwd available
 │
 ▼
 FILE: src/main.rs
 │
-├─ dotenv
-├─ ensure / generate MASTER_KEY
-├─ init_logging
-├─ parse argv
-├─ DECISION: direct server/router/client/default mode?
-│    ├─ YES → corresponding runtime entry
-│    └─ NO  → Clap CLI dispatch
+├─ [PHASE 01] Process bootstrap
+│    ├─ dotenv load
+│    ├─ ensure/generate MASTER_KEY
+│    ├─ initialize logging
+│    └─ inspect argv
+│
+├─ [PHASE 02] Top-level dispatch
+│    └─ DECISION: default/server/router/client direct runtime mode?
+│         ├─ YES → launch corresponding runtime
+│         └─ NO → CLI parser path
 │
 ▼
 FILE: src/cli/commands.rs
 │
-├─ Match command / subcommand
-├─ DECISION: parameters valid?
-│    ├─ NO  → Clap/command error → END
-│    └─ YES → dispatch implementation
+├─ [PHASE 03] Clap parse
+│    ├─ parse command/subcommand/options/positionals
+│    └─ DECISION: syntax + required args valid?
+│         ├─ NO → Clap help/error + exit code → END
+│         └─ YES → typed command enum
+│
+├─ [PHASE 04] Command dispatch
+│    ├─ match typed command variant
+│    └─ call implementation module
 │
 ▼
 FILE: src/cli/currency.rs
 │
-├─ Execute command-specific DB / service / filesystem / HTTP logic
-├─ DECISION: operation successful?
-│    ├─ NO  → print/return error
-│    └─ YES → print result / start requested runtime
+├─ [PHASE 05] Command-specific input validation
+│    ├─ validate IDs/files/model names/ranges/options as required
+│    └─ DECISION: semantic input valid?
+│         ├─ NO → error output → END
+│         └─ YES → perform operation
+│
+├─ [PHASE 06] External/state I/O
+│    ├─ DB / filesystem / HTTP / service operation depending on command
+│    └─ DECISION: operation succeeds?
+│         ├─ NO → print/return error → END
+│         └─ YES → domain result
+│
+├─ [PHASE 07] Output formatting
+│    ├─ map result to table/text/status output
+│    └─ write stdout/stderr
+│
+├─ [PHASE 08] Process exit
+│    └─ success returns to shell; long-running command may remain active
 │
 ▼
 END
 ```
 
+
+## 输入示例
+
+> CLI 的输入就是进程参数/子命令；下面给出与本页入口对应的典型终端调用。
+
+```text
+$ burncloud currency refresh
+```
 
 ## 返回结果示例
 

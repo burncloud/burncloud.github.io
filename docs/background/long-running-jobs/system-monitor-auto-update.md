@@ -15,27 +15,63 @@ hide_table_of_contents: true
 ## End-to-End Request Flow + ICFG
 
 ```text
-START
+START / TRIGGER
 │
-├─ Trigger
-│    └─ Server/Router/Manager startup or request-side spawn
+├─ [PHASE 00] Trigger source
+│    ├─ startup spawn / request-time tokio::spawn / manager restoration / channel message
+│    └─ task: System Monitor Auto Update
 │
-▼
-FILE: crates/server/src/lib.rs
+├─ [PHASE 01] Spawn / registration
+│    ├─ parent runtime creates async task/thread/loop
+│    └─ DECISION: spawn/runtime handle available?
+│         ├─ NO → task never starts; parent may log error
+│         └─ YES → task owns/borrows required shared state
 │
-├─ Register / spawn background work
-├─ 执行：create_app() 启动 start_auto_update；周期采集 CPU、内存、磁盘并刷新内存缓存。
-├─ DECISION: should continue?
-│    ├─ YES → sleep / await event / receive message → next iteration
-│    └─ NO  → stop task
-├─ DECISION: iteration failed?
-│    ├─ YES → log / fail-open according to task semantics
-│    └─ NO  → update state / persistence
+├─ [PHASE 02] Wait boundary
+│    ├─ timer sleep / mpsc receive / polling interval / restored work item
+│    └─ DECISION: trigger/event available?
+│         ├─ NO → continue waiting
+│         └─ YES → one iteration begins
+│
+├─ [PHASE 03] Input snapshot
+│    ├─ read latest runtime/DB/request-derived state needed by job
+│    └─ freeze iteration context
+│
+├─ [PHASE 04] Core job operation
+│    ├─ execute System Monitor Auto Update
+│    └─ may call DB / HTTP / filesystem / runtime service depending on task
+│
+├─ [PHASE 05] Operation result
+│    └─ DECISION: iteration succeeds?
+│         ├─ NO
+│         │    ├─ log/record failure
+│         │    ├─ preserve parent request availability when task is fail-open
+│         │    └─ decide retry on next event/interval
+│         └─ YES
+│              ├─ update in-memory state and/or persistent state
+│              └─ emit success telemetry/log
+│
+├─ [PHASE 06] Cancellation / lifetime
+│    └─ DECISION: parent runtime still alive AND task should continue?
+│         ├─ YES → back to PHASE 02
+│         └─ NO → release task resources
 │
 ▼
 END / NEXT ITERATION
 ```
 
+
+## 输入示例
+
+> 后台任务通常没有 HTTP 请求体；这里把触发事件、队列/定时器和共享状态视为它的输入。
+
+```text
+trigger=Long-running Jobs
+job=System Monitor Auto Update
+runtime=running
+shared_state=available
+# 该类页面的“输入”不是 HTTP body，而是启动事件、定时器、队列消息或请求侧异步事件。
+```
 
 ## 返回结果示例
 

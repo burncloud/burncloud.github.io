@@ -17,33 +17,75 @@ hide_table_of_contents: true
 ```text
 START
 │
-├─ 发起者
-│    └─ User / SDK / Browser / Operator
-│
-├─ 入口
-│    └─ GET /console/api/{*path} → protected 404 catch-all
+├─ [PHASE 00] 调用方与输入边界
+│    ├─ Actor: User / SDK / Browser / Operator
+│    ├─ Entry: GET /console/api/{*path} → protected 404 catch-all
+│    ├─ Input sources
+│    │    ├─ Method + URI path
+│    │    ├─ Query string（如有）
+│    │    ├─ HTTP headers
+│    │    └─ Request body（如有）
+│    └─ DECISION: TCP/HTTP 请求能否到达 BurnCloud listener?
+│         ├─ NO  → 网络层失败；应用代码未执行 → END
+│         └─ YES → 进入 Axum
 │
 ▼
 FILE: crates/server/src/lib.rs
 │
-├─ axum::serve(listener, app)
-├─ 全局 Middleware
-│    ├─ CORS
-│    ├─ TraceLayer
-│    └─ x-request-id
+├─ [PHASE 01] 统一 HTTP Server
+│    ├─ start_server() 已在进程启动时完成
+│    │    ├─ database 初始化
+│    │    ├─ RouterDatabase::init()
+│    │    ├─ UserDatabase::init()
+│    │    ├─ create_app(...)
+│    │    ├─ TcpListener::bind(...)
+│    │    └─ axum::serve(listener, app)
+│    ├─ 当前请求进入 Unified Axum App
+│    └─ 全局 middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
 │
-├─ api::routes() protected router
-├─ auth_middleware()
-├─ DECISION: JWT valid?
-│    ├─ NO  → HTTP 401
-│    └─ YES → continue
-├─ No concrete /console/api/* route matched
-└─ api_not_found() → HTTP 404 "API endpoint not found"
-
+├─ [PHASE 02] 顶层 Route 决策
+│    └─ DECISION: Unified App 是否已有显式/合并路由命中当前 Method + Path?
+│         ├─ YES → Management API protected router
+│         └─ NO → other router
+│
+▼
+FILE: crates/server/src/api/mod.rs
+│
+├─ [PHASE 03] JWT middleware executes before protected catch-all
+│    ├─ DECISION: Bearer JWT valid?
+│    │    ├─ NO → HTTP 401 → END
+│    │    └─ YES → Claims inserted
+│    └─ continue route matching
+│
+├─ [PHASE 04] Concrete /console/api/* routes checked
+│    └─ DECISION: any concrete protected route matched?
+│         ├─ YES → that handler executes
+│         └─ NO → api_not_found()
+│
+├─ [PHASE 05] Catch-all purpose
+│    ├─ prevents unknown API path from being served as LiveView HTML
+│    └─ returns explicit API 404
+│
 ▼
 END
+     └─ HTTP 404 "API endpoint not found"
 ```
 
+
+## 输入示例
+
+> 以下为构造的典型请求输入，用于对应上面的入口、鉴权、参数解析和分支；Host、Token、ID、模型及业务字段均为示例。
+
+```http
+GET /console/api/unknown → protected 404 catch-all HTTP/1.1
+Host: api.burncloud.example
+Authorization: Bearer eyJhbGciOi...admin-jwt
+Accept: application/json
+```
 
 ## 返回结果示例
 
