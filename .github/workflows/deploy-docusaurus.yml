@@ -35,6 +35,9 @@ jobs:
       - name: Generate full Chinese E2E atlas
         run: python3 tools/generate_atlas.py
 
+      - name: Sanitize generated Markdown for MDX
+        run: python3 tools/sanitize_mdx.py
+
       - name: Verify generated documentation tree
         run: |
           test -f docs/index.md
