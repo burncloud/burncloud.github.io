@@ -1,0 +1,1606 @@
+{
+  "source_sha": "aa54e21393c6d46a6b09555ffd3661c1f22484f3",
+  "page_count": 200,
+  "pages": [
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "GET /v1/models",
+      "entry": "GET /v1/models",
+      "slug": "/http-api/ai-api-data-plane/get-v1-models",
+      "docid": "http-api/ai-api-data-plane/get-v1-models"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "GET /api/v1/usage",
+      "entry": "GET /api/v1/usage",
+      "slug": "/http-api/ai-api-data-plane/get-api-v1-usage",
+      "docid": "http-api/ai-api-data-plane/get-api-v1-usage"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "GET /api/v1/usage/models",
+      "entry": "GET /api/v1/usage/models",
+      "slug": "/http-api/ai-api-data-plane/get-api-v1-usage-models",
+      "docid": "http-api/ai-api-data-plane/get-api-v1-usage-models"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/chat/completions",
+      "entry": "POST /v1/chat/completions",
+      "slug": "/http-api/ai-api-data-plane/post-v1-chat-completions",
+      "docid": "http-api/ai-api-data-plane/post-v1-chat-completions"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /chat/completions",
+      "entry": "POST /chat/completions",
+      "slug": "/http-api/ai-api-data-plane/post-chat-completions",
+      "docid": "http-api/ai-api-data-plane/post-chat-completions"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/completions",
+      "entry": "POST /v1/completions",
+      "slug": "/http-api/ai-api-data-plane/post-v1-completions",
+      "docid": "http-api/ai-api-data-plane/post-v1-completions"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/embeddings",
+      "entry": "POST /v1/embeddings",
+      "slug": "/http-api/ai-api-data-plane/post-v1-embeddings",
+      "docid": "http-api/ai-api-data-plane/post-v1-embeddings"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/messages",
+      "entry": "POST /v1/messages",
+      "slug": "/http-api/ai-api-data-plane/post-v1-messages",
+      "docid": "http-api/ai-api-data-plane/post-v1-messages"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/video/generations",
+      "entry": "POST /v1/video/generations",
+      "slug": "/http-api/ai-api-data-plane/post-v1-video-generations",
+      "docid": "http-api/ai-api-data-plane/post-v1-video-generations"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1beta/models/{model}:generateContent",
+      "entry": "POST /v1beta/models/{model}:generateContent",
+      "slug": "/http-api/ai-api-data-plane/post-v1beta-models-model-generatecontent",
+      "docid": "http-api/ai-api-data-plane/post-v1beta-models-model-generatecontent"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1beta/models/{model}:streamGenerateContent",
+      "entry": "POST /v1beta/models/{model}:streamGenerateContent",
+      "slug": "/http-api/ai-api-data-plane/post-v1beta-models-model-streamgeneratecontent",
+      "docid": "http-api/ai-api-data-plane/post-v1beta-models-model-streamgeneratecontent"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1beta/models/{model}:countTokens",
+      "entry": "POST /v1beta/models/{model}:countTokens",
+      "slug": "/http-api/ai-api-data-plane/post-v1beta-models-model-counttokens",
+      "docid": "http-api/ai-api-data-plane/post-v1beta-models-model-counttokens"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1beta/models/{model}:embedContent",
+      "entry": "POST /v1beta/models/{model}:embedContent",
+      "slug": "/http-api/ai-api-data-plane/post-v1beta-models-model-embedcontent",
+      "docid": "http-api/ai-api-data-plane/post-v1beta-models-model-embedcontent"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/models/{model}:generateContent",
+      "entry": "POST /v1/models/{model}:generateContent",
+      "slug": "/http-api/ai-api-data-plane/post-v1-models-model-generatecontent",
+      "docid": "http-api/ai-api-data-plane/post-v1-models-model-generatecontent"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/models/{model}:streamGenerateContent",
+      "entry": "POST /v1/models/{model}:streamGenerateContent",
+      "slug": "/http-api/ai-api-data-plane/post-v1-models-model-streamgeneratecontent",
+      "docid": "http-api/ai-api-data-plane/post-v1-models-model-streamgeneratecontent"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/models/{model}:countTokens",
+      "entry": "POST /v1/models/{model}:countTokens",
+      "slug": "/http-api/ai-api-data-plane/post-v1-models-model-counttokens",
+      "docid": "http-api/ai-api-data-plane/post-v1-models-model-counttokens"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "POST /v1/models/{model}:embedContent",
+      "entry": "POST /v1/models/{model}:embedContent",
+      "slug": "/http-api/ai-api-data-plane/post-v1-models-model-embedcontent",
+      "docid": "http-api/ai-api-data-plane/post-v1-models-model-embedcontent"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "GET /v1/videos/{task_id}",
+      "entry": "GET /v1/videos/{task_id}",
+      "slug": "/http-api/ai-api-data-plane/get-v1-videos-task_id",
+      "docid": "http-api/ai-api-data-plane/get-v1-videos-task_id"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "AI API / Data Plane",
+      "title": "Router fallback → proxy_handler",
+      "entry": "任意未被显式 Router 捕获的数据面路径",
+      "slug": "/http-api/ai-api-data-plane/router-fallback-proxy_handler",
+      "docid": "http-api/ai-api-data-plane/router-fallback-proxy_handler"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Authentication",
+      "title": "POST /api/auth/register",
+      "entry": "POST /api/auth/register",
+      "slug": "/http-api/authentication/post-api-auth-register",
+      "docid": "http-api/authentication/post-api-auth-register"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Authentication",
+      "title": "POST /api/auth/login",
+      "entry": "POST /api/auth/login",
+      "slug": "/http-api/authentication/post-api-auth-login",
+      "docid": "http-api/authentication/post-api-auth-login"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Authentication",
+      "title": "POST /api/auth/forgot-password",
+      "entry": "POST /api/auth/forgot-password",
+      "slug": "/http-api/authentication/post-api-auth-forgot-password",
+      "docid": "http-api/authentication/post-api-auth-forgot-password"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Authentication",
+      "title": "POST /api/auth/reset-password",
+      "entry": "POST /api/auth/reset-password",
+      "slug": "/http-api/authentication/post-api-auth-reset-password",
+      "docid": "http-api/authentication/post-api-auth-reset-password"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Authentication",
+      "title": "GET /api/auth/google",
+      "entry": "GET /api/auth/google",
+      "slug": "/http-api/authentication/get-api-auth-google",
+      "docid": "http-api/authentication/get-api-auth-google"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Authentication",
+      "title": "GET /api/auth/github",
+      "entry": "GET /api/auth/github",
+      "slug": "/http-api/authentication/get-api-auth-github",
+      "docid": "http-api/authentication/get-api-auth-github"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Channel Management",
+      "title": "GET /console/api/channel",
+      "entry": "GET /console/api/channel",
+      "slug": "/http-api/channel-management/get-console-api-channel",
+      "docid": "http-api/channel-management/get-console-api-channel"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Channel Management",
+      "title": "POST /console/api/channel",
+      "entry": "POST /console/api/channel",
+      "slug": "/http-api/channel-management/post-console-api-channel",
+      "docid": "http-api/channel-management/post-console-api-channel"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Channel Management",
+      "title": "PUT /console/api/channel",
+      "entry": "PUT /console/api/channel",
+      "slug": "/http-api/channel-management/put-console-api-channel",
+      "docid": "http-api/channel-management/put-console-api-channel"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Channel Management",
+      "title": "GET /console/api/channel/{id}",
+      "entry": "GET /console/api/channel/{id}",
+      "slug": "/http-api/channel-management/get-console-api-channel-id",
+      "docid": "http-api/channel-management/get-console-api-channel-id"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Channel Management",
+      "title": "DELETE /console/api/channel/{id}",
+      "entry": "DELETE /console/api/channel/{id}",
+      "slug": "/http-api/channel-management/delete-console-api-channel-id",
+      "docid": "http-api/channel-management/delete-console-api-channel-id"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Token",
+      "title": "GET /console/api/tokens",
+      "entry": "GET /console/api/tokens",
+      "slug": "/http-api/token/get-console-api-tokens",
+      "docid": "http-api/token/get-console-api-tokens"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Token",
+      "title": "POST /console/api/tokens",
+      "entry": "POST /console/api/tokens",
+      "slug": "/http-api/token/post-console-api-tokens",
+      "docid": "http-api/token/post-console-api-tokens"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Token",
+      "title": "GET /console/api/tokens/{token}",
+      "entry": "GET /console/api/tokens/{token}",
+      "slug": "/http-api/token/get-console-api-tokens-token",
+      "docid": "http-api/token/get-console-api-tokens-token"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Token",
+      "title": "PUT /console/api/tokens/{token}",
+      "entry": "PUT /console/api/tokens/{token}",
+      "slug": "/http-api/token/put-console-api-tokens-token",
+      "docid": "http-api/token/put-console-api-tokens-token"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Token",
+      "title": "DELETE /console/api/tokens/{token}",
+      "entry": "DELETE /console/api/tokens/{token}",
+      "slug": "/http-api/token/delete-console-api-tokens-token",
+      "docid": "http-api/token/delete-console-api-tokens-token"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Token",
+      "title": "POST /console/api/tokens/{token}/rotate",
+      "entry": "POST /console/api/tokens/{token}/rotate",
+      "slug": "/http-api/token/post-console-api-tokens-token-rotate",
+      "docid": "http-api/token/post-console-api-tokens-token-rotate"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Token",
+      "title": "POST /console/api/tokens/{token}/revoke-old",
+      "entry": "POST /console/api/tokens/{token}/revoke-old",
+      "slug": "/http-api/token/post-console-api-tokens-token-revoke-old",
+      "docid": "http-api/token/post-console-api-tokens-token-revoke-old"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Token",
+      "title": "POST /console/api/tokens/{token}/ip-whitelist",
+      "entry": "POST /console/api/tokens/{token}/ip-whitelist",
+      "slug": "/http-api/token/post-console-api-tokens-token-ip-whitelist",
+      "docid": "http-api/token/post-console-api-tokens-token-ip-whitelist"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "User",
+      "title": "POST /console/api/user/register",
+      "entry": "POST /console/api/user/register",
+      "slug": "/http-api/user/post-console-api-user-register",
+      "docid": "http-api/user/post-console-api-user-register"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "User",
+      "title": "POST /console/api/user/login",
+      "entry": "POST /console/api/user/login",
+      "slug": "/http-api/user/post-console-api-user-login",
+      "docid": "http-api/user/post-console-api-user-login"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "User",
+      "title": "POST /console/api/user/topup",
+      "entry": "POST /console/api/user/topup",
+      "slug": "/http-api/user/post-console-api-user-topup",
+      "docid": "http-api/user/post-console-api-user-topup"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "User",
+      "title": "GET /console/api/user/check_username",
+      "entry": "GET /console/api/user/check_username",
+      "slug": "/http-api/user/get-console-api-user-check_username",
+      "docid": "http-api/user/get-console-api-user-check_username"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "User",
+      "title": "GET /console/api/user/recharges",
+      "entry": "GET /console/api/user/recharges",
+      "slug": "/http-api/user/get-console-api-user-recharges",
+      "docid": "http-api/user/get-console-api-user-recharges"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "User",
+      "title": "GET /console/api/list_users",
+      "entry": "GET /console/api/list_users",
+      "slug": "/http-api/user/get-console-api-list_users",
+      "docid": "http-api/user/get-console-api-list_users"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Billing / Usage",
+      "title": "GET /api/billing/summary",
+      "entry": "GET /api/billing/summary",
+      "slug": "/http-api/billing-usage/get-api-billing-summary",
+      "docid": "http-api/billing-usage/get-api-billing-summary"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Logs",
+      "title": "GET /console/api/logs",
+      "entry": "GET /console/api/logs",
+      "slug": "/http-api/logs/get-console-api-logs",
+      "docid": "http-api/logs/get-console-api-logs"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Logs",
+      "title": "GET /console/api/usage/{user_id}",
+      "entry": "GET /console/api/usage/{user_id}",
+      "slug": "/http-api/logs/get-console-api-usage-user_id",
+      "docid": "http-api/logs/get-console-api-usage-user_id"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Billing / Usage",
+      "title": "GET /console/internal/billing/summary",
+      "entry": "GET /console/internal/billing/summary",
+      "slug": "/http-api/billing-usage/get-console-internal-billing-summary",
+      "docid": "http-api/billing-usage/get-console-internal-billing-summary"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Monitoring / Security",
+      "title": "GET /console/api/monitor",
+      "entry": "GET /console/api/monitor",
+      "slug": "/http-api/monitoring-security/get-console-api-monitor",
+      "docid": "http-api/monitoring-security/get-console-api-monitor"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Monitoring / Security",
+      "title": "GET /console/api/monitor/security",
+      "entry": "GET /console/api/monitor/security",
+      "slug": "/http-api/monitoring-security/get-console-api-monitor-security",
+      "docid": "http-api/monitoring-security/get-console-api-monitor-security"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Monitoring / Security",
+      "title": "GET /console/api/monitor/security/events",
+      "entry": "GET /console/api/monitor/security/events",
+      "slug": "/http-api/monitoring-security/get-console-api-monitor-security-events",
+      "docid": "http-api/monitoring-security/get-console-api-monitor-security-events"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Monitoring / Security",
+      "title": "GET /console/api/monitor/security/filters",
+      "entry": "GET /console/api/monitor/security/filters",
+      "slug": "/http-api/monitoring-security/get-console-api-monitor-security-filters",
+      "docid": "http-api/monitoring-security/get-console-api-monitor-security-filters"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Monitoring / Security",
+      "title": "PUT /console/api/monitor/security/filters",
+      "entry": "PUT /console/api/monitor/security/filters",
+      "slug": "/http-api/monitoring-security/put-console-api-monitor-security-filters",
+      "docid": "http-api/monitoring-security/put-console-api-monitor-security-filters"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Monitoring / Security",
+      "title": "POST /console/api/monitor/security/emergency-circuit-break",
+      "entry": "POST /console/api/monitor/security/emergency-circuit-break",
+      "slug": "/http-api/monitoring-security/post-console-api-monitor-security-emergency-circuit-break",
+      "docid": "http-api/monitoring-security/post-console-api-monitor-security-emergency-circuit-break"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Monitoring / Security",
+      "title": "GET /console/api/monitor/security/circuit-breaker-status",
+      "entry": "GET /console/api/monitor/security/circuit-breaker-status",
+      "slug": "/http-api/monitoring-security/get-console-api-monitor-security-circuit-breaker-status",
+      "docid": "http-api/monitoring-security/get-console-api-monitor-security-circuit-breaker-status"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Cache",
+      "title": "GET /console/api/cache/stats",
+      "entry": "GET /console/api/cache/stats",
+      "slug": "/http-api/cache/get-console-api-cache-stats",
+      "docid": "http-api/cache/get-console-api-cache-stats"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Cache",
+      "title": "POST /console/api/cache/clear",
+      "entry": "POST /console/api/cache/clear",
+      "slug": "/http-api/cache/post-console-api-cache-clear",
+      "docid": "http-api/cache/post-console-api-cache-clear"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Billing / Usage",
+      "title": "GET /api/v1/usage",
+      "entry": "GET /api/v1/usage",
+      "slug": "/http-api/billing-usage/get-api-v1-usage",
+      "docid": "http-api/billing-usage/get-api-v1-usage"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Billing / Usage",
+      "title": "GET /api/v1/usage/models",
+      "entry": "GET /api/v1/usage/models",
+      "slug": "/http-api/billing-usage/get-api-v1-usage-models",
+      "docid": "http-api/billing-usage/get-api-v1-usage-models"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Billing / Usage",
+      "title": "GET /console/api/usage/{user_id}",
+      "entry": "GET /console/api/usage/{user_id}",
+      "slug": "/http-api/billing-usage/get-console-api-usage-user_id",
+      "docid": "http-api/billing-usage/get-console-api-usage-user_id"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Admin / Internal",
+      "title": "GET /health",
+      "entry": "GET /health",
+      "slug": "/http-api/admin-internal/get-health",
+      "docid": "http-api/admin-internal/get-health"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Admin / Internal",
+      "title": "GET /console/internal/health",
+      "entry": "GET /console/internal/health",
+      "slug": "/http-api/admin-internal/get-console-internal-health",
+      "docid": "http-api/admin-internal/get-console-internal-health"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Admin / Internal",
+      "title": "POST /console/internal/prices/sync",
+      "entry": "POST /console/internal/prices/sync",
+      "slug": "/http-api/admin-internal/post-console-internal-prices-sync",
+      "docid": "http-api/admin-internal/post-console-internal-prices-sync"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Admin / Internal",
+      "title": "POST /console/internal/circuit-breaker/trip-all",
+      "entry": "POST /console/internal/circuit-breaker/trip-all",
+      "slug": "/http-api/admin-internal/post-console-internal-circuit-breaker-trip-all",
+      "docid": "http-api/admin-internal/post-console-internal-circuit-breaker-trip-all"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Admin / Internal",
+      "title": "GET /console/internal/metrics",
+      "entry": "GET /console/internal/metrics",
+      "slug": "/http-api/admin-internal/get-console-internal-metrics",
+      "docid": "http-api/admin-internal/get-console-internal-metrics"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Admin / Internal",
+      "title": "GET /console/api/{*path} → protected 404 catch-all",
+      "entry": "GET /console/api/{*path} → protected 404 catch-all",
+      "slug": "/http-api/admin-internal/get-console-api-path-protected-404-catch-all",
+      "docid": "http-api/admin-internal/get-console-api-path-protected-404-catch-all"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "OpenAPI / Swagger",
+      "title": "GET /api-docs/openapi.json",
+      "entry": "GET /api-docs/openapi.json",
+      "slug": "/http-api/openapi-swagger/get-api-docs-openapi.json",
+      "docid": "http-api/openapi-swagger/get-api-docs-openapi.json"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "OpenAPI / Swagger",
+      "title": "GET /swagger-ui",
+      "entry": "GET /swagger-ui",
+      "slug": "/http-api/openapi-swagger/get-swagger-ui",
+      "docid": "http-api/openapi-swagger/get-swagger-ui"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "OpenAPI / Swagger",
+      "title": "GET /swagger-ui/",
+      "entry": "GET /swagger-ui/",
+      "slug": "/http-api/openapi-swagger/get-swagger-ui-slash",
+      "docid": "http-api/openapi-swagger/get-swagger-ui-slash"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /",
+      "entry": "GET /",
+      "slug": "/http-api/web-ui-liveview-websocket/get",
+      "docid": "http-api/web-ui-liveview-websocket/get"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /home",
+      "entry": "GET /home",
+      "slug": "/http-api/web-ui-liveview-websocket/get-home",
+      "docid": "http-api/web-ui-liveview-websocket/get-home"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /login",
+      "entry": "GET /login",
+      "slug": "/http-api/web-ui-liveview-websocket/get-login",
+      "docid": "http-api/web-ui-liveview-websocket/get-login"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /register",
+      "entry": "GET /register",
+      "slug": "/http-api/web-ui-liveview-websocket/get-register",
+      "docid": "http-api/web-ui-liveview-websocket/get-register"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /forgot-password",
+      "entry": "GET /forgot-password",
+      "slug": "/http-api/web-ui-liveview-websocket/get-forgot-password",
+      "docid": "http-api/web-ui-liveview-websocket/get-forgot-password"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /reset-password",
+      "entry": "GET /reset-password",
+      "slug": "/http-api/web-ui-liveview-websocket/get-reset-password",
+      "docid": "http-api/web-ui-liveview-websocket/get-reset-password"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /console",
+      "entry": "GET /console",
+      "slug": "/http-api/web-ui-liveview-websocket/get-console",
+      "docid": "http-api/web-ui-liveview-websocket/get-console"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /console/",
+      "entry": "GET /console/",
+      "slug": "/http-api/web-ui-liveview-websocket/get-console-slash",
+      "docid": "http-api/web-ui-liveview-websocket/get-console-slash"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /console/{*path}",
+      "entry": "GET /console/{*path}",
+      "slug": "/http-api/web-ui-liveview-websocket/get-console-path",
+      "docid": "http-api/web-ui-liveview-websocket/get-console-path"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /favicon.ico",
+      "entry": "GET /favicon.ico",
+      "slug": "/http-api/web-ui-liveview-websocket/get-favicon.ico",
+      "docid": "http-api/web-ui-liveview-websocket/get-favicon.ico"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /preview/home",
+      "entry": "GET /preview/home",
+      "slug": "/http-api/web-ui-liveview-websocket/get-preview-home",
+      "docid": "http-api/web-ui-liveview-websocket/get-preview-home"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /preview/login",
+      "entry": "GET /preview/login",
+      "slug": "/http-api/web-ui-liveview-websocket/get-preview-login",
+      "docid": "http-api/web-ui-liveview-websocket/get-preview-login"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /preview/console",
+      "entry": "GET /preview/console",
+      "slug": "/http-api/web-ui-liveview-websocket/get-preview-console",
+      "docid": "http-api/web-ui-liveview-websocket/get-preview-console"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /preview/console/",
+      "entry": "GET /preview/console/",
+      "slug": "/http-api/web-ui-liveview-websocket/get-preview-console-slash",
+      "docid": "http-api/web-ui-liveview-websocket/get-preview-console-slash"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /preview/console/{*path}",
+      "entry": "GET /preview/console/{*path}",
+      "slug": "/http-api/web-ui-liveview-websocket/get-preview-console-path",
+      "docid": "http-api/web-ui-liveview-websocket/get-preview-console-path"
+    },
+    {
+      "section": "HTTP / API",
+      "group": "Web UI / LiveView / WebSocket",
+      "title": "GET /ws",
+      "entry": "GET /ws",
+      "slug": "/http-api/web-ui-liveview-websocket/get-ws",
+      "docid": "http-api/web-ui-liveview-websocket/get-ws"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud",
+      "entry": "burncloud",
+      "slug": "/cli/burncloud/burncloud",
+      "docid": "cli/burncloud/burncloud"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "server",
+      "entry": "burncloud server",
+      "slug": "/cli/burncloud/server",
+      "docid": "cli/burncloud/server"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "router",
+      "entry": "burncloud router",
+      "slug": "/cli/burncloud/router",
+      "docid": "cli/burncloud/router"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "client",
+      "entry": "burncloud client",
+      "slug": "/cli/burncloud/client",
+      "docid": "cli/burncloud/client"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud update --check-only",
+      "entry": "burncloud update --check-only",
+      "slug": "/cli/burncloud/update/check-only",
+      "docid": "cli/burncloud/update/check-only"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud install [software]",
+      "entry": "burncloud install [software]",
+      "slug": "/cli/burncloud/install/software",
+      "docid": "cli/burncloud/install/software"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud install --list",
+      "entry": "burncloud install --list",
+      "slug": "/cli/burncloud/install/list",
+      "docid": "cli/burncloud/install/list"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud install --status",
+      "entry": "burncloud install --status",
+      "slug": "/cli/burncloud/install/status",
+      "docid": "cli/burncloud/install/status"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud install --auto-deps",
+      "entry": "burncloud install --auto-deps",
+      "slug": "/cli/burncloud/install/auto-deps",
+      "docid": "cli/burncloud/install/auto-deps"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud install --local PATH",
+      "entry": "burncloud install --local PATH",
+      "slug": "/cli/burncloud/install/local-path",
+      "docid": "cli/burncloud/install/local-path"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud install --bundle DIR",
+      "entry": "burncloud install --bundle DIR",
+      "slug": "/cli/burncloud/install/bundle-dir",
+      "docid": "cli/burncloud/install/bundle-dir"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud bundle create <software> -o DIR",
+      "entry": "burncloud bundle create <software> -o DIR",
+      "slug": "/cli/burncloud/bundle/create-software-o-dir",
+      "docid": "cli/burncloud/bundle/create-software-o-dir"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud bundle verify <bundle-dir>",
+      "entry": "burncloud bundle verify <bundle-dir>",
+      "slug": "/cli/burncloud/bundle/verify-bundle-dir",
+      "docid": "cli/burncloud/bundle/verify-bundle-dir"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud channel add",
+      "entry": "burncloud channel add",
+      "slug": "/cli/burncloud/channel/add",
+      "docid": "cli/burncloud/channel/add"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud channel list",
+      "entry": "burncloud channel list",
+      "slug": "/cli/burncloud/channel/list",
+      "docid": "cli/burncloud/channel/list"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud channel delete <id>",
+      "entry": "burncloud channel delete <id>",
+      "slug": "/cli/burncloud/channel/delete-id",
+      "docid": "cli/burncloud/channel/delete-id"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud channel show <id>",
+      "entry": "burncloud channel show <id>",
+      "slug": "/cli/burncloud/channel/show-id",
+      "docid": "cli/burncloud/channel/show-id"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud channel update <id>",
+      "entry": "burncloud channel update <id>",
+      "slug": "/cli/burncloud/channel/update-id",
+      "docid": "cli/burncloud/channel/update-id"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price list",
+      "entry": "burncloud price list",
+      "slug": "/cli/burncloud/price/list",
+      "docid": "cli/burncloud/price/list"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price set <model>",
+      "entry": "burncloud price set <model>",
+      "slug": "/cli/burncloud/price/set-model",
+      "docid": "cli/burncloud/price/set-model"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price get <model>",
+      "entry": "burncloud price get <model>",
+      "slug": "/cli/burncloud/price/get-model",
+      "docid": "cli/burncloud/price/get-model"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price show <model>",
+      "entry": "burncloud price show <model>",
+      "slug": "/cli/burncloud/price/show-model",
+      "docid": "cli/burncloud/price/show-model"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price delete <model>",
+      "entry": "burncloud price delete <model>",
+      "slug": "/cli/burncloud/price/delete-model",
+      "docid": "cli/burncloud/price/delete-model"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price sync-status",
+      "entry": "burncloud price sync-status",
+      "slug": "/cli/burncloud/price/sync-status",
+      "docid": "cli/burncloud/price/sync-status"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price import <file>",
+      "entry": "burncloud price import <file>",
+      "slug": "/cli/burncloud/price/import-file",
+      "docid": "cli/burncloud/price/import-file"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price export <file>",
+      "entry": "burncloud price export <file>",
+      "slug": "/cli/burncloud/price/export-file",
+      "docid": "cli/burncloud/price/export-file"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price validate <file>",
+      "entry": "burncloud price validate <file>",
+      "slug": "/cli/burncloud/price/validate-file",
+      "docid": "cli/burncloud/price/validate-file"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud price sync",
+      "entry": "burncloud price sync",
+      "slug": "/cli/burncloud/price/sync",
+      "docid": "cli/burncloud/price/sync"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud tiered list-tiers <model>",
+      "entry": "burncloud tiered list-tiers <model>",
+      "slug": "/cli/burncloud/tiered/list-tiers-model",
+      "docid": "cli/burncloud/tiered/list-tiers-model"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud tiered add-tier <model>",
+      "entry": "burncloud tiered add-tier <model>",
+      "slug": "/cli/burncloud/tiered/add-tier-model",
+      "docid": "cli/burncloud/tiered/add-tier-model"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud tiered import-tiered <file>",
+      "entry": "burncloud tiered import-tiered <file>",
+      "slug": "/cli/burncloud/tiered/import-tiered-file",
+      "docid": "cli/burncloud/tiered/import-tiered-file"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud tiered delete-tiers <model>",
+      "entry": "burncloud tiered delete-tiers <model>",
+      "slug": "/cli/burncloud/tiered/delete-tiers-model",
+      "docid": "cli/burncloud/tiered/delete-tiers-model"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud tiered check-tiered <model>",
+      "entry": "burncloud tiered check-tiered <model>",
+      "slug": "/cli/burncloud/tiered/check-tiered-model",
+      "docid": "cli/burncloud/tiered/check-tiered-model"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud token list",
+      "entry": "burncloud token list",
+      "slug": "/cli/burncloud/token/list",
+      "docid": "cli/burncloud/token/list"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud token create",
+      "entry": "burncloud token create",
+      "slug": "/cli/burncloud/token/create",
+      "docid": "cli/burncloud/token/create"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud token update <key>",
+      "entry": "burncloud token update <key>",
+      "slug": "/cli/burncloud/token/update-key",
+      "docid": "cli/burncloud/token/update-key"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud token delete <key>",
+      "entry": "burncloud token delete <key>",
+      "slug": "/cli/burncloud/token/delete-key",
+      "docid": "cli/burncloud/token/delete-key"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud protocol list",
+      "entry": "burncloud protocol list",
+      "slug": "/cli/burncloud/protocol/list",
+      "docid": "cli/burncloud/protocol/list"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud protocol add",
+      "entry": "burncloud protocol add",
+      "slug": "/cli/burncloud/protocol/add",
+      "docid": "cli/burncloud/protocol/add"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud protocol delete <id>",
+      "entry": "burncloud protocol delete <id>",
+      "slug": "/cli/burncloud/protocol/delete-id",
+      "docid": "cli/burncloud/protocol/delete-id"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud protocol show <id>",
+      "entry": "burncloud protocol show <id>",
+      "slug": "/cli/burncloud/protocol/show-id",
+      "docid": "cli/burncloud/protocol/show-id"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud protocol test --channel-id <id>",
+      "entry": "burncloud protocol test --channel-id <id>",
+      "slug": "/cli/burncloud/protocol/test-channel-id-id",
+      "docid": "cli/burncloud/protocol/test-channel-id-id"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud currency list-rates",
+      "entry": "burncloud currency list-rates",
+      "slug": "/cli/burncloud/currency/list-rates",
+      "docid": "cli/burncloud/currency/list-rates"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud currency set-rate",
+      "entry": "burncloud currency set-rate",
+      "slug": "/cli/burncloud/currency/set-rate",
+      "docid": "cli/burncloud/currency/set-rate"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud currency refresh",
+      "entry": "burncloud currency refresh",
+      "slug": "/cli/burncloud/currency/refresh",
+      "docid": "cli/burncloud/currency/refresh"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud currency convert <amount>",
+      "entry": "burncloud currency convert <amount>",
+      "slug": "/cli/burncloud/currency/convert-amount",
+      "docid": "cli/burncloud/currency/convert-amount"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud user register",
+      "entry": "burncloud user register",
+      "slug": "/cli/burncloud/user/register",
+      "docid": "cli/burncloud/user/register"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud user login",
+      "entry": "burncloud user login",
+      "slug": "/cli/burncloud/user/login",
+      "docid": "cli/burncloud/user/login"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud user list",
+      "entry": "burncloud user list",
+      "slug": "/cli/burncloud/user/list",
+      "docid": "cli/burncloud/user/list"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud user topup",
+      "entry": "burncloud user topup",
+      "slug": "/cli/burncloud/user/topup",
+      "docid": "cli/burncloud/user/topup"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud user recharges",
+      "entry": "burncloud user recharges",
+      "slug": "/cli/burncloud/user/recharges",
+      "docid": "cli/burncloud/user/recharges"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud user check-username",
+      "entry": "burncloud user check-username",
+      "slug": "/cli/burncloud/user/check-username",
+      "docid": "cli/burncloud/user/check-username"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud log list",
+      "entry": "burncloud log list",
+      "slug": "/cli/burncloud/log/list",
+      "docid": "cli/burncloud/log/list"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud log usage",
+      "entry": "burncloud log usage",
+      "slug": "/cli/burncloud/log/usage",
+      "docid": "cli/burncloud/log/usage"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud monitor status",
+      "entry": "burncloud monitor status",
+      "slug": "/cli/burncloud/monitor/status",
+      "docid": "cli/burncloud/monitor/status"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "burncloud",
+      "title": "burncloud monitor server",
+      "entry": "burncloud monitor server",
+      "slug": "/cli/burncloud/monitor/server",
+      "docid": "cli/burncloud/monitor/server"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "Workspace Binaries",
+      "title": "burncloud-client",
+      "entry": "burncloud-client",
+      "slug": "/cli/workspace-binaries/burncloud-client",
+      "docid": "cli/workspace-binaries/burncloud-client"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "Workspace Binaries",
+      "title": "screenshot_gen",
+      "entry": "screenshot_gen",
+      "slug": "/cli/workspace-binaries/screenshot_gen",
+      "docid": "cli/workspace-binaries/screenshot_gen"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "Workspace Binaries",
+      "title": "burncloud-download",
+      "entry": "burncloud-download",
+      "slug": "/cli/workspace-binaries/burncloud-download",
+      "docid": "cli/workspace-binaries/burncloud-download"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "Workspace Binaries",
+      "title": "burncloud-loop",
+      "entry": "burncloud-loop",
+      "slug": "/cli/workspace-binaries/burncloud-loop",
+      "docid": "cli/workspace-binaries/burncloud-loop"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "Workspace Binaries",
+      "title": "client-api",
+      "entry": "client-api",
+      "slug": "/cli/workspace-binaries/client-api",
+      "docid": "cli/workspace-binaries/client-api"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "Workspace Binaries",
+      "title": "client-shared",
+      "entry": "client-shared",
+      "slug": "/cli/workspace-binaries/client-shared",
+      "docid": "cli/workspace-binaries/client-shared"
+    },
+    {
+      "section": "CLI / Executables",
+      "group": "Workspace Binaries",
+      "title": "client-tray",
+      "entry": "client-tray",
+      "slug": "/cli/workspace-binaries/client-tray",
+      "docid": "cli/workspace-binaries/client-tray"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Long-running Jobs",
+      "title": "System Monitor Auto Update",
+      "entry": "System Monitor Auto Update",
+      "slug": "/background/long-running-jobs/system-monitor-auto-update",
+      "docid": "background/long-running-jobs/system-monitor-auto-update"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Long-running Jobs",
+      "title": "Price Sync",
+      "entry": "Price Sync",
+      "slug": "/background/long-running-jobs/price-sync",
+      "docid": "background/long-running-jobs/price-sync"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Long-running Jobs",
+      "title": "Exchange Rate Sync",
+      "entry": "Exchange Rate Sync",
+      "slug": "/background/long-running-jobs/exchange-rate-sync",
+      "docid": "background/long-running-jobs/exchange-rate-sync"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Long-running Jobs",
+      "title": "AIMD Budget Feedback",
+      "entry": "AIMD Budget Feedback",
+      "slug": "/background/long-running-jobs/aimd-budget-feedback",
+      "docid": "background/long-running-jobs/aimd-budget-feedback"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Long-running Jobs",
+      "title": "Async Router Log Writer",
+      "entry": "Async Router Log Writer",
+      "slug": "/background/long-running-jobs/async-router-log-writer",
+      "docid": "background/long-running-jobs/async-router-log-writer"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Long-running Jobs",
+      "title": "Async Request Log Writer",
+      "entry": "Async Request Log Writer",
+      "slug": "/background/long-running-jobs/async-request-log-writer",
+      "docid": "background/long-running-jobs/async-request-log-writer"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Request-time Async Side Effects",
+      "title": "Token accessed_time update",
+      "entry": "Token accessed_time update",
+      "slug": "/background/request-time-async-side-effects/token-accessed_time-update",
+      "docid": "background/request-time-async-side-effects/token-accessed_time-update"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Request-time Async Side Effects",
+      "title": "Quota deduction",
+      "entry": "Quota deduction",
+      "slug": "/background/request-time-async-side-effects/quota-deduction",
+      "docid": "background/request-time-async-side-effects/quota-deduction"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Request-time Async Side Effects",
+      "title": "Video task mapping save",
+      "entry": "Video task mapping save",
+      "slug": "/background/request-time-async-side-effects/video-task-mapping-save",
+      "docid": "background/request-time-async-side-effects/video-task-mapping-save"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Request-time Async Side Effects",
+      "title": "API version detect / update",
+      "entry": "API version detect / update",
+      "slug": "/background/request-time-async-side-effects/api-version-detect-update",
+      "docid": "background/request-time-async-side-effects/api-version-detect-update"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Download Background Work",
+      "title": "Download progress monitor",
+      "entry": "Download progress monitor",
+      "slug": "/background/download-background-work/download-progress-monitor",
+      "docid": "background/download-background-work/download-progress-monitor"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Download Background Work",
+      "title": "Restore incomplete downloads",
+      "entry": "Restore incomplete downloads",
+      "slug": "/background/download-background-work/restore-incomplete-downloads",
+      "docid": "background/download-background-work/restore-incomplete-downloads"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Desktop Background Work",
+      "title": "Windows tray thread",
+      "entry": "Windows tray thread",
+      "slug": "/background/desktop-background-work/windows-tray-thread",
+      "docid": "background/desktop-background-work/windows-tray-thread"
+    },
+    {
+      "section": "Background Jobs / Async Side Effects",
+      "group": "Desktop Background Work",
+      "title": "Show-window poll loop",
+      "entry": "Show-window poll loop",
+      "slug": "/background/desktop-background-work/show-window-poll-loop",
+      "docid": "background/desktop-background-work/show-window-poll-loop"
+    },
+    {
+      "section": "Startup",
+      "group": "Startup Chain",
+      "title": "src/main.rs",
+      "entry": "src/main.rs",
+      "slug": "/startup/src-main.rs",
+      "docid": "startup/src-main.rs"
+    },
+    {
+      "section": "Startup",
+      "group": "Startup Chain",
+      "title": "start_server",
+      "entry": "start_server",
+      "slug": "/startup/start_server",
+      "docid": "startup/start_server"
+    },
+    {
+      "section": "Startup",
+      "group": "Startup Chain",
+      "title": "create_app",
+      "entry": "create_app",
+      "slug": "/startup/create_app",
+      "docid": "startup/create_app"
+    },
+    {
+      "section": "Startup",
+      "group": "Startup Chain",
+      "title": "create_router_app",
+      "entry": "create_router_app",
+      "slug": "/startup/create_router_app",
+      "docid": "startup/create_router_app"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Guest / Public",
+      "title": "/",
+      "entry": "/",
+      "slug": "/ui/guest-public/index",
+      "docid": "ui/guest-public/index"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Guest / Public",
+      "title": "/home",
+      "entry": "/home",
+      "slug": "/ui/guest-public/home",
+      "docid": "ui/guest-public/home"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Guest / Public",
+      "title": "/login",
+      "entry": "/login",
+      "slug": "/ui/guest-public/login",
+      "docid": "ui/guest-public/login"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Guest / Public",
+      "title": "/register",
+      "entry": "/register",
+      "slug": "/ui/guest-public/register",
+      "docid": "ui/guest-public/register"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Guest / Public",
+      "title": "/forgot-password",
+      "entry": "/forgot-password",
+      "slug": "/ui/guest-public/forgot-password",
+      "docid": "ui/guest-public/forgot-password"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Guest / Public",
+      "title": "/reset-password?:token",
+      "entry": "/reset-password?:token",
+      "slug": "/ui/guest-public/reset-password-token",
+      "docid": "ui/guest-public/reset-password-token"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/dashboard",
+      "entry": "/console/dashboard",
+      "slug": "/ui/console/console-dashboard",
+      "docid": "ui/console/console-dashboard"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/deploy",
+      "entry": "/console/deploy",
+      "slug": "/ui/console/console-deploy",
+      "docid": "ui/console/console-deploy"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/monitor",
+      "entry": "/console/monitor",
+      "slug": "/ui/console/console-monitor",
+      "docid": "ui/console/console-monitor"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/access",
+      "entry": "/console/access",
+      "slug": "/ui/console/console-access",
+      "docid": "ui/console/console-access"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/models",
+      "entry": "/console/models",
+      "slug": "/ui/console/console-models",
+      "docid": "ui/console/console-models"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/users",
+      "entry": "/console/users",
+      "slug": "/ui/console/console-users",
+      "docid": "ui/console/console-users"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/settings",
+      "entry": "/console/settings",
+      "slug": "/ui/console/console-settings",
+      "docid": "ui/console/console-settings"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/finance",
+      "entry": "/console/finance",
+      "slug": "/ui/console/console-finance",
+      "docid": "ui/console/console-finance"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/logs",
+      "entry": "/console/logs",
+      "slug": "/ui/console/console-logs",
+      "docid": "ui/console/console-logs"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/connect",
+      "entry": "/console/connect",
+      "slug": "/ui/console/console-connect",
+      "docid": "ui/console/console-connect"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/playground",
+      "entry": "/console/playground",
+      "slug": "/ui/console/console-playground",
+      "docid": "ui/console/console-playground"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Console",
+      "title": "/console/:..segments → NotFound",
+      "entry": "/console/:..segments → NotFound",
+      "slug": "/ui/console/console-..segments-notfound",
+      "docid": "ui/console/console-..segments-notfound"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/home",
+      "entry": "/preview/home",
+      "slug": "/ui/debug-e2e-preview/preview-home",
+      "docid": "ui/debug-e2e-preview/preview-home"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/login",
+      "entry": "/preview/login",
+      "slug": "/ui/debug-e2e-preview/preview-login",
+      "docid": "ui/debug-e2e-preview/preview-login"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/console/dashboard",
+      "entry": "/preview/console/dashboard",
+      "slug": "/ui/debug-e2e-preview/preview-console-dashboard",
+      "docid": "ui/debug-e2e-preview/preview-console-dashboard"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/console/models",
+      "entry": "/preview/console/models",
+      "slug": "/ui/debug-e2e-preview/preview-console-models",
+      "docid": "ui/debug-e2e-preview/preview-console-models"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/console/access",
+      "entry": "/preview/console/access",
+      "slug": "/ui/debug-e2e-preview/preview-console-access",
+      "docid": "ui/debug-e2e-preview/preview-console-access"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/console/settings",
+      "entry": "/preview/console/settings",
+      "slug": "/ui/debug-e2e-preview/preview-console-settings",
+      "docid": "ui/debug-e2e-preview/preview-console-settings"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/console/finance",
+      "entry": "/preview/console/finance",
+      "slug": "/ui/debug-e2e-preview/preview-console-finance",
+      "docid": "ui/debug-e2e-preview/preview-console-finance"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/console/monitor",
+      "entry": "/preview/console/monitor",
+      "slug": "/ui/debug-e2e-preview/preview-console-monitor",
+      "docid": "ui/debug-e2e-preview/preview-console-monitor"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Debug / e2e-preview",
+      "title": "/preview/console/playground",
+      "entry": "/preview/console/playground",
+      "slug": "/ui/debug-e2e-preview/preview-console-playground",
+      "docid": "ui/debug-e2e-preview/preview-console-playground"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Local UI State",
+      "title": "i18n context",
+      "entry": "i18n context",
+      "slug": "/ui/local-state/i18n-context",
+      "docid": "ui/local-state/i18n-context"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Local UI State",
+      "title": "Toast state / ToastContainer",
+      "entry": "Toast state / ToastContainer",
+      "slug": "/ui/local-state/toast-state-toastcontainer",
+      "docid": "ui/local-state/toast-state-toastcontainer"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Local UI State",
+      "title": "Auth context",
+      "entry": "Auth context",
+      "slug": "/ui/local-state/auth-context",
+      "docid": "ui/local-state/auth-context"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Local UI State",
+      "title": "Theme state",
+      "entry": "Theme state",
+      "slug": "/ui/local-state/theme-state",
+      "docid": "ui/local-state/theme-state"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Desktop UI",
+      "title": "window maximize",
+      "entry": "window maximize",
+      "slug": "/ui/desktop/window-maximize",
+      "docid": "ui/desktop/window-maximize"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Desktop UI",
+      "title": "Windows tray startup",
+      "entry": "Windows tray startup",
+      "slug": "/ui/desktop/windows-tray-startup",
+      "docid": "ui/desktop/windows-tray-startup"
+    },
+    {
+      "section": "UI-only Actions",
+      "group": "Desktop UI",
+      "title": "show / hide / focus",
+      "entry": "show / hide / focus",
+      "slug": "/ui/desktop/show-hide-focus",
+      "docid": "ui/desktop/show-hide-focus"
+    }
+  ]
+}
