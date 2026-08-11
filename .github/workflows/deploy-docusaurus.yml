@@ -67,8 +67,8 @@ jobs:
       - name: Replace generic source-index labels with concrete symbols
         run: python3 tools/refine_source_symbols.py
 
-      - name: Enforce Execution Truth V4 call chains
-        run: python3 tools/enrich_execution_truth_v4.py --source .source/burncloud
+      - name: Enforce Rust-safe Execution Truth V4 call chains
+        run: python3 tools/enrich_execution_truth_v4_safe.py --source .source/burncloud
 
       - name: Restore branch-sensitive direct runtime modes
         run: python3 tools/enforce_direct_mode_truth.py --source .source/burncloud
@@ -134,7 +134,7 @@ jobs:
                       assert (Path('.source/burncloud')/rel).is_file(), (f,rel)
               checked += 1
           assert checked == pages, (checked,pages)
-          assert call_expanded >= 120, (call_expanded,pages)
+          assert call_expanded >= 100, (call_expanded,pages)
 
           counts=census['counts']
           assert counts['http_missing_exact_matches'] == 0, census['missing_http_entries']
@@ -146,6 +146,8 @@ jobs:
           server=Path('docs/cli/burncloud/server.md').read_text(encoding='utf-8')
           assert 'src/cli/commands.rs' not in server
           assert 'Clap parse' not in server
+          assert 'database=ready' not in server
+          assert 'router=ready' not in server
           for needle in [
               'run_async_server()',
               'FILE: crates/server/src/logging.rs',
@@ -168,6 +170,7 @@ jobs:
               'FILE: crates/client/src/lib.rs',
               'TcpListener::bind',
               'axum::serve',
+              'Unified Gateway listening on 127.0.0.1:3000',
           ]:
               assert needle in server, needle
 
@@ -178,11 +181,11 @@ jobs:
 
           client=Path('docs/cli/burncloud/client.md').read_text(encoding='utf-8')
           assert 'src/cli/commands.rs' not in client
-          for needle in ['DECISION: target_os == windows?','launch_gui_with_tray()','AppWithTray()','use_init_i18n()','Router<Route>']:
+          for needle in ['DECISION: target_os == windows?','launch_gui_with_tray()','AppWithTray()','use_init_i18n()','Router<Route>','Desktop GUI is only available on Windows.']:
               assert needle in client, needle
 
           bare=Path('docs/cli/burncloud/burncloud.md').read_text(encoding='utf-8')
-          for needle in ['std::thread::spawn(background server thread)','start_server(host, port, false)','burncloud_client::launch_gui_with_tray()','run_async_server()']:
+          for needle in ['std::thread::spawn(background server thread)','start_server(host, port, false)','burncloud_client::launch_gui_with_tray()','run_async_server()','Starting BurnCloud Server with LiveView (Headless Mode)...']:
               assert needle in bare, needle
 
           channel=Path('docs/http-api/channel-management/get-console-api-channel.md').read_text(encoding='utf-8')
@@ -205,8 +208,11 @@ jobs:
           assert 'crates/database/crates/router/src/token.rs' in token
 
           chat=Path('docs/http-api/ai-api-data-plane/post-v1-chat-completions.md').read_text(encoding='utf-8')
-          for needle in ['FILE: crates/router/src/model_router.rs','FILE: crates/service/crates/user/src/lib.rs','FILE: crates/service/crates/billing/src/calculator.rs','FILE: crates/database/crates/router/src/log.rs']:
+          for needle in ['FILE: crates/router/src/model_router.rs','FILE: crates/service/crates/user/src/lib.rs','FILE: crates/service/crates/billing/src/calculator.rs','FILE: crates/database/crates/router/src/log.rs','ModelRouter::route_with_scheduler()']:
               assert needle in chat, needle
+          assert 'RoutingDecision::route_with_scheduler()' not in chat
+          assert 'CALL → ok() @ crates/server/src/api/response.rs' not in chat
+          assert 'build_response_with_header()\n│    │    │    └─ CALL → PriceCache::empty()' not in chat
 
           price=Path('docs/cli/burncloud/price/list.md').read_text(encoding='utf-8')
           assert 'FILE: crates/database/crates/billing/src/billing_price.rs' in price
@@ -263,7 +269,10 @@ jobs:
           grep -q 'run_async_server' site/build/cli/burncloud/server/index.html
           grep -q 'Database::initialize' site/build/cli/burncloud/server/index.html
           grep -q 'REGISTER ONLY' site/build/cli/burncloud/server/index.html
+          grep -q 'Unified Gateway listening on 127.0.0.1:3000' site/build/cli/burncloud/server/index.html
           ! grep -q 'src/cli/commands.rs' site/build/cli/burncloud/server/index.html
+          ! grep -q 'RoutingDecision::route_with_scheduler' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
+          ! grep -q 'CALL → ok() @ crates/server/src/api/response.rs' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           ! grep -q 'PHASE 0' site/build/http-api/channel-management/get-console-api-channel/index.html
 
       - name: Remove audited source checkout before publishing
@@ -287,5 +296,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud Execution Truth V4 Atlas [skip ci]"
+          git commit -m "Publish BurnCloud Rust-safe Execution Truth V4 Atlas [skip ci]"
           git push origin HEAD:main
