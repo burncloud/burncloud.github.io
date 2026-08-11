@@ -1,16 +1,18 @@
-name: Validate, build, and publish BurnCloud Entry Point Atlas
+name: Generate, validate, build, and publish BurnCloud E2E Atlas
 
 on:
   pull_request:
     paths:
       - 'docs/**'
       - 'site/**'
+      - 'tools/**'
       - '.github/workflows/deploy-docusaurus.yml'
   push:
     branches: [main]
     paths:
       - 'docs/**'
       - 'site/**'
+      - 'tools/**'
       - '.github/workflows/deploy-docusaurus.yml'
   workflow_dispatch:
 
@@ -18,11 +20,11 @@ permissions:
   contents: write
 
 concurrency:
-  group: burncloud-entrypoint-atlas-${{ github.ref }}
+  group: burncloud-e2e-atlas-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  validate-build-publish:
+  generate-validate-build-publish:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Atlas repository
@@ -30,12 +32,41 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify focused documentation tree
+      - name: Generate full Chinese E2E atlas
+        run: python3 tools/generate_atlas.py
+
+      - name: Verify generated documentation tree
         run: |
           test -f docs/index.md
+          test -f docs/atlas-manifest.json
           test -f docs/http-api/ai-api-data-plane/get-v1-models.md
+          test -f docs/http-api/ai-api-data-plane/post-v1-chat-completions.md
+          test -f docs/http-api/authentication/post-api-auth-login.md
+          test -f docs/http-api/channel-management/get-console-api-channel.md
+          test -f docs/cli/burncloud/price/list.md
+          test -f docs/background/long-running-jobs/price-sync.md
+          test -f docs/startup/create_app.md
+          test -f docs/ui/console/console-dashboard.md
           test -f site/sidebars.js
-          test "$(find docs -type f -name '*.md' | wc -l)" -eq 2
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          manifest=json.loads(Path('docs/atlas-manifest.json').read_text(encoding='utf-8'))
+          pages=manifest['page_count']
+          md_count=len(list(Path('docs').rglob('*.md')))
+          assert pages >= 190, f'expected >=190 generated pages, got {pages}'
+          assert md_count == pages + 1, (md_count, pages)
+          for p in Path('docs').rglob('*.md'):
+              if p.name == 'index.md':
+                  continue
+              text=p.read_text(encoding='utf-8')
+              assert '中文解释' in text, p
+              assert '```text' in text, p
+              assert 'DECISION:' in text or '/v1/models' in str(p), p
+              assert '```mermaid' not in text, p
+              assert '┌' not in text and '┐' not in text, p
+          print(f'validated {pages} generated pages; markdown total={md_count}')
+          PY
           test ! -d content
           test ! -d docs/commits
           test ! -f docs/commit-index.json
@@ -48,37 +79,40 @@ jobs:
         working-directory: site
         run: npm install --no-audit --no-fund
 
-      - name: Build Docusaurus site
+      - name: Build Docusaurus
         working-directory: site
         run: npm run build
 
-      - name: Verify focused output
+      - name: Verify representative Docusaurus output
         run: |
           test -f site/build/index.html
           test -f site/build/http-api/ai-api-data-plane/get-v1-models/index.html
+          test -f site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
+          test -f site/build/http-api/authentication/post-api-auth-login/index.html
+          test -f site/build/http-api/channel-management/get-console-api-channel/index.html
+          test -f site/build/cli/burncloud/price/list/index.html
+          test -f site/build/background/long-running-jobs/price-sync/index.html
+          test -f site/build/startup/create_app/index.html
+          test -f site/build/ui/console/console-dashboard/index.html
           test ! -e site/build/changes
-          test ! -e site/build/api-requests
-          test ! -e site/build/account
-          test ! -e site/build/console
-          test ! -e site/build/operator
 
-      - name: Replace Pages output with current build
+      - name: Replace Pages output with current Docusaurus build
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           find . -mindepth 1 -maxdepth 1 \
             ! -name '.git' ! -name '.github' \
-            ! -name 'docs' ! -name 'site' \
+            ! -name 'docs' ! -name 'site' ! -name 'tools' \
             ! -name 'README.md' ! -name '.gitignore' \
             -exec rm -rf {} +
           cp -a site/build/. .
           touch .nojekyll
 
-      - name: Commit Pages output to main
+      - name: Commit generated docs and Pages output to main
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud GET /v1/models E2E Atlas [skip ci]"
+          git commit -m "Publish full BurnCloud Chinese E2E Atlas [skip ci]"
           git push origin HEAD:main
