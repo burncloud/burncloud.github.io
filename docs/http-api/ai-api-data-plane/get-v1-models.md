@@ -8,388 +8,292 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → AI API / Data Plane → GET /v1/models`
 
-> 本页只保留一张总的**文本流程图**。从请求发起开始，一直穿透到 HTTP Response 返回，包含经过的文件、函数、Route 判断、数据库判断、异常分支和最终业务结果。
+> 单页只保留一张完整文本 E2E 图。排版只依赖左侧 `│ / ├─ / └─ / ▼`，不依赖中文宽度、右侧边框或空格对齐。
 >
 > **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
-## 完整 End-to-End Request Flow + ICFG
+## End-to-End Request Flow + ICFG
 
 ```text
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ START                                                                        │
-│ 用户 / OpenAI SDK / curl / AI Client                                        │
-└──────────────────────────────────────────────────────────────────────────────┘
-                                      │
-                                      │ HTTP
-                                      ▼
-                         GET /v1/models
-                                      │
-                                      ▼
-════════════════════════════════════════════════════════════════════════════════
-① HTTP SERVER
-文件：crates/server/src/lib.rs
-════════════════════════════════════════════════════════════════════════════════
-                                      │
-                                      ▼
-                            start_server()
-                                      │
-                    ┌─────────────────┴─────────────────┐
-                    │ Server 启动阶段已完成：           │
-                    │ Database::new                     │
-                    │ RouterDatabase::init              │
-                    │ UserDatabase::init                │
-                    │ create_app()                      │
-                    │ TcpListener::bind                 │
-                    │ axum::serve                       │
-                    └─────────────────┬─────────────────┘
-                                      │
-                                      ▼
-                            Unified Axum App
-                                      │
-                                      ▼
-                    ┌───────────────────────────────────┐
-                    │ Global Middleware                 │
-                    │                                   │
-                    │ CORS                              │
-                    │ TraceLayer                        │
-                    │ SetRequestIdLayer                 │
-                    │ PropagateRequestIdLayer           │
-                    └─────────────────┬─────────────────┘
-                                      │
-                                      ▼
-                  ┌─────────────────────────────────────┐
-                  │ 判断 A：Unified App 是否已有        │
-                  │ 更高优先级 Route 命中？             │
-                  │                                     │
-                  │ - /health                           │
-                  │ - Management API                    │
-                  │ - Router Internal API               │
-                  │ - LiveView                          │
-                  └──────────────┬──────────────────────┘
-                                 │
-                  ┌──────────────┴──────────────┐
-                  │ YES                         │ NO
-                  ▼                             ▼
-        进入其它 Handler                GET /v1/models 没有命中
-        与本页无关                     上述顶层 Route
-                                                │
-                                                ▼
-                                  fallback_service(router_app)
-                                                │
-                                                ▼
-════════════════════════════════════════════════════════════════════════════════
-② DATA PLANE ROUTER
-文件：crates/router/src/lib.rs
-════════════════════════════════════════════════════════════════════════════════
-                                                │
-                                                ▼
-                                      router_app
-                         （由 create_router_app() 构建）
-                                                │
-                                                ▼
-                 ┌────────────────────────────────────────────┐
-                 │ 判断 B：显式 Data Plane Route 是否匹配？   │
-                 │                                            │
-                 │ Method = GET                               │
-                 │ Path   = /v1/models                        │
-                 └───────────────┬────────────────────────────┘
-                                 │
-                   ┌─────────────┼─────────────────────┐
-                   │ YES         │ 其它显式 Route      │ NO
-                   ▼             ▼                     ▼
-          models_handler()   usage_handler 等      proxy_handler
-                   │
-                   │
-                   │ 关键逻辑：因为已经命中显式 GET /v1/models
-                   │ 所以这条请求不会进入 proxy_handler
-                   │
-                   ├──────────────────────────────────────────────────────────┐
-                   │                                                          │
-                   │ 本 Endpoint 当前也没有以下步骤：                         │
-                   │                                                          │
-                   │ ✕ Authorization Header 读取                              │
-                   │ ✕ API Token Validation                                   │
-                   │ ✕ JWT Validation                                         │
-                   │ ✕ User / Group 解析                                      │
-                   │ ✕ Quota Check                                            │
-                   │ ✕ Local Rate Limiter                                     │
-                   │ ✕ ModelRouter                                             │
-                   │ ✕ Scheduler / Affinity                                    │
-                   │ ✕ Rate Budget / Shaper                                   │
-                   │ ✕ Circuit Breaker                                         │
-                   │ ✕ Billing Preflight                                       │
-                   │ ✕ Provider Adaptor                                        │
-                   │ ✕ Upstream AI Provider                                    │
-                   │                                                          │
-                   └──────────────────────────────────────────────────────────┘
-                   │
-                   ▼
-════════════════════════════════════════════════════════════════════════════════
-③ MODELS HANDLER — 前半段
-文件：crates/router/src/lib.rs
-函数：models_handler(State<AppState>)
-════════════════════════════════════════════════════════════════════════════════
-                   │
-                   ▼
-          model_entries = []
-                   │
-                   ▼
-          SystemTime::now()
-                   │
-                   ▼
-          duration_since(UNIX_EPOCH)
-                   │
-                   ▼
-       ┌────────────────────────────┐
-       │ 判断 C：系统时间转换成功？ │
-       └────────────┬───────────────┘
-                    │
-          ┌─────────┴─────────┐
-          │ YES               │ NO
-          ▼                   ▼
- current_time = seconds   unwrap_or_default()
-                              │
-                              ▼
-                       current_time = 0
-          │                   │
-          └─────────┬─────────┘
-                    │
-                    ▼
- ChannelAbilityModel::list_distinct_models(&state.db)
-                    │
-                    ▼
-════════════════════════════════════════════════════════════════════════════════
-④ DATABASE QUERY
-文件：crates/database/crates/channel/src/channel_ability.rs
-函数：ChannelAbilityModel::list_distinct_models()
-════════════════════════════════════════════════════════════════════════════════
-                    │
-                    ▼
-            db.get_connection()
-                    │
-                    ▼
-       ┌───────────────────────────┐
-       │ 判断 D：获取 DB 连接成功？│
-       └────────────┬──────────────┘
-                    │
-          ┌─────────┴─────────┐
-          │ YES               │ NO
-          ▼                   ▼
-      conn.pool()          返回 Err
-          │                   │
-          ▼                   │
- ┌──────────────────────────────────────────────────────────────────────────┐
- │ SQL                                                                      │
- │                                                                          │
- │ SELECT DISTINCT model                                                   │
- │ FROM channel_abilities                                                  │
- │ WHERE enabled = 1                                                       │
- │ ORDER BY model;                                                         │
- └───────────────────────────┬──────────────────────────────────────────────┘
-                             │
-                             ▼
-                  sqlx::query_as(sql)
-                             │
-                             ▼
-                  fetch_all(conn.pool())
-                             │
-                             ▼
-                  ┌───────────────────────┐
-                  │ 判断 E：SQL 查询成功？│
-                  └──────────┬────────────┘
-                             │
-                   ┌─────────┴─────────┐
-                   │ YES               │ NO
-                   ▼                   ▼
-           Vec<(String,)>           返回 Err
-                   │                   │
-                   ▼                   │
-          map tuple → model            │
-                   │                   │
-                   ▼                   │
-          Ok(Vec<String>)              │
-                   │                   │
-                   └─────────┬─────────┘
-                             │
-                             ▼
-════════════════════════════════════════════════════════════════════════════════
-⑤ MODELS HANDLER — 返回数据逻辑
-文件：crates/router/src/lib.rs
-════════════════════════════════════════════════════════════════════════════════
-                             │
-                             ▼
-              ┌───────────────────────────────┐
-              │ 判断 F：list_distinct_models │
-              │ 是否返回 Ok？                │
-              └──────────────┬────────────────┘
-                             │
-                   ┌─────────┴─────────┐
-                   │ YES               │ NO / Err
-                   ▼                   ▼
-            得到 models           DB 错误被
-                   │              if let Ok(...)
-                   │              直接吞掉
-                   │                   │
-                   │                   ▼
-                   │            model_entries = []
-                   │                   │
-                   ▼                   │
-        ┌─────────────────────┐        │
-        │ 判断 G：models 为空？│        │
-        └──────────┬──────────┘        │
-                   │                   │
-          ┌────────┴────────┐          │
-          │ YES             │ NO       │
-          ▼                 ▼          │
- model_entries = []      for model     │
-                            │           │
-                            ▼           │
-                 构造每个 Model JSON   │
-                            │           │
-                 ┌──────────┴──────────┐│
-                 │ id         = model  ││
-                 │ object     = model  ││
-                 │ created    = 当前请求时间
-                 │ owned_by   = burncloud
-                 │ permission = []     ││
-                 │ root       = model  ││
-                 │ parent     = null   ││
-                 └──────────┬──────────┘│
-                            │           │
-                            ▼           │
-                 push(model_entries)    │
-                            │           │
-                            ▼           │
-                 ┌───────────────────┐  │
-                 │ 判断 H：还有 model？│  │
-                 └─────────┬─────────┘  │
-                           │            │
-                    YES ───┘            │
-                           │ NO         │
-                           ▼            │
-                   循环结束             │
-                           │            │
-          ┌────────────────┴────────────┘
-          │
-          ▼
-构造 response_json
+START
+│
+├─ Actor
+│    └─ User / OpenAI SDK / curl / AI Client
+│
+├─ HTTP Request
+│    ├─ Method: GET
+│    └─ Path: /v1/models
+│
+▼
+FILE: crates/server/src/lib.rs
+│
+├─ start_server()
+│    ├─ create_default_database()
+│    ├─ RouterDatabase::init()
+│    ├─ UserDatabase::init()
+│    ├─ create_app(db, enable_liveview)
+│    ├─ TcpListener::bind(host:port)
+│    └─ axum::serve(listener, app)
+│
+├─ create_app()
+│    │
+│    ├─ Server startup state
+│    │    ├─ SystemMonitorService::new()
+│    │    ├─ start_auto_update()
+│    │    ├─ CacheService::new()
+│    │    └─ create_router_app(db)
+│    │
+│    ├─ Build Unified Axum App
+│    │    ├─ GET /health
+│    │    ├─ merge Management API
+│    │    ├─ merge Router Internal API
+│    │    ├─ merge LiveView Router (optional)
+│    │    └─ fallback_service(router_app)
+│    │
+│    └─ Global middleware
+│         ├─ CORS
+│         ├─ TraceLayer
+│         ├─ SetRequestIdLayer
+│         └─ PropagateRequestIdLayer
+│
+├─ DECISION: Unified App already has a higher-priority route match?
+│    │
+│    ├─ YES
+│    │    └─ Enter matched /health / Management / Internal / LiveView handler
+│    │         └─ END for that other request path
+│    │
+│    └─ NO
+│         └─ GET /v1/models falls through to fallback_service(router_app)
+│
+▼
+FILE: crates/router/src/lib.rs
+│
+├─ create_router_app()
+│    │
+│    └─ Data Plane routes
+│         ├─ GET /v1/models
+│         │    └─ models_handler
+│         ├─ GET /api/v1/usage
+│         ├─ GET /api/v1/usage/models
+│         └─ fallback
+│              └─ proxy_handler
+│
+├─ DECISION: Method + Path == GET /v1/models ?
+│    │
+│    ├─ YES
+│    │    └─ models_handler(State<AppState>)
+│    │
+│    └─ NO
+│         ├─ Match another explicit Data Plane route
+│         └─ Or enter proxy_handler fallback
+│
+├─ IMPORTANT: this request does NOT enter proxy_handler
+│
+├─ NOT EXECUTED on this endpoint
+│    ├─ Authorization Header parsing
+│    ├─ API Token validation
+│    ├─ JWT validation
+│    ├─ User resolution
+│    ├─ Group resolution
+│    ├─ Quota check
+│    ├─ Local rate limiter
+│    ├─ ModelRouter
+│    ├─ Scheduler
+│    ├─ Affinity
+│    ├─ Rate Budget / Shaper
+│    ├─ Circuit Breaker
+│    ├─ Billing preflight
+│    ├─ Provider adaptor
+│    └─ Upstream AI Provider
+│
+├─ models_handler()
+│    │
+│    ├─ model_entries = []
+│    │
+│    ├─ current_time
+│    │    ├─ SystemTime::now()
+│    │    └─ duration_since(UNIX_EPOCH)
+│    │
+│    ├─ DECISION: UNIX time conversion successful?
+│    │    │
+│    │    ├─ YES
+│    │    │    └─ current_time = duration.as_secs()
+│    │    │
+│    │    └─ NO
+│    │         └─ unwrap_or_default()
+│    │              └─ current_time = 0
+│    │
+│    └─ CALL
+│         └─ ChannelAbilityModel::list_distinct_models(&state.db)
+│
+▼
+FILE: crates/database/crates/channel/src/channel_ability.rs
+│
+├─ ChannelAbilityModel::list_distinct_models(db)
+│    │
+│    ├─ db.get_connection()
+│    │
+│    ├─ DECISION: database connection acquired?
+│    │    │
+│    │    ├─ NO
+│    │    │    └─ return Err
+│    │    │
+│    │    └─ YES
+│    │         └─ conn.pool()
+│    │
+│    ├─ SQL
+│    │
+│    │    SELECT DISTINCT model
+│    │    FROM channel_abilities
+│    │    WHERE enabled = 1
+│    │    ORDER BY model;
+│    │
+│    ├─ sqlx::query_as(sql)
+│    │    └─ fetch_all(pool).await
+│    │
+│    ├─ DECISION: SQL query successful?
+│    │    │
+│    │    ├─ NO
+│    │    │    └─ return Err
+│    │    │
+│    │    └─ YES
+│    │         ├─ receive Vec<(String,)>
+│    │         ├─ map tuple → model String
+│    │         └─ return Ok(Vec<String>)
+│    │
+│    └─ CURRENT MODEL VISIBILITY LOGIC
+│         ├─ checks: enabled = 1
+│         ├─ applies: DISTINCT model
+│         ├─ applies: ORDER BY model
+│         ├─ does NOT filter current user
+│         ├─ does NOT filter current group
+│         ├─ does NOT JOIN channel_providers
+│         ├─ does NOT check channel status
+│         ├─ does NOT check channel health
+│         ├─ does NOT check circuit breaker
+│         ├─ does NOT check RPM / TPM capacity
+│         ├─ does NOT check quota
+│         └─ does NOT check price / price cap
+│
+▼
+FILE: crates/router/src/lib.rs
+│
+├─ Back to models_handler()
+│
+├─ DECISION: list_distinct_models() returned Ok?
+│    │
+│    ├─ NO / Err
+│    │    ├─ error is not returned to HTTP layer
+│    │    ├─ if let Ok(...) body is skipped
+│    │    └─ model_entries remains []
+│    │
+│    └─ YES
+│         └─ models = Vec<String>
+│
+├─ DECISION: models is empty?
+│    │
+│    ├─ YES
+│    │    └─ model_entries remains []
+│    │
+│    └─ NO
+│         └─ FOR EACH model
+│              │
+│              ├─ Build model JSON object
+│              │    ├─ id         = model
+│              │    ├─ object     = "model"
+│              │    ├─ created    = current_time
+│              │    ├─ owned_by   = "burncloud"
+│              │    ├─ permission = []
+│              │    ├─ root       = model
+│              │    └─ parent     = null
+│              │
+│              ├─ push into model_entries
+│              │
+│              └─ DECISION: another model remains?
+│                   ├─ YES → continue loop
+│                   └─ NO  → exit loop
+│
+├─ Build response_json
+│
+│    {
+│      "object": "list",
+│      "data": model_entries
+│    }
+│
+├─ serde_json::to_string(response_json)
+│
+├─ DECISION: JSON serialization successful?
+│    │
+│    ├─ YES
+│    │    └─ use serialized JSON body
+│    │
+│    └─ NO
+│         └─ fallback body
+│
+│              {"object":"list","data":[]}
+│
+├─ build_response_with_header()
+│    ├─ StatusCode::OK
+│    ├─ content-type = application/json
+│    └─ Body::from(json)
+│
+├─ Response::builder()
+│    ├─ status(200)
+│    ├─ header(content-type)
+│    └─ body(body)
+│
+├─ DECISION: first Response builder successful?
+│    │
+│    ├─ YES
+│    │    └─ return HTTP 200 + JSON body
+│    │
+│    └─ NO
+│         └─ retry Response::builder()
+│              ├─ status(200)
+│              └─ empty body
+│
+├─ DECISION: second Response builder successful?
+│    │
+│    ├─ YES
+│    │    └─ return HTTP 200 + empty body
+│    │
+│    └─ NO
+│         └─ Response::new(Body::empty())
+│
+▼
+END
+│
+├─ HTTP Response returned to User / SDK
+│
+└─ Final business meaning
+     │
+     ├─ Normal case
+     │    └─ Return DISTINCT model names from channel_abilities
+     │         where enabled = 1
+     │
+     ├─ Important semantic limitation
+     │    └─ "enabled ability exists"
+     │         ├─ does NOT mean current user can use it
+     │         ├─ does NOT mean provider is healthy
+     │         └─ does NOT mean routing will succeed now
+     │
+     └─ Important failure behavior
+          ├─ database connection failure
+          ├─ SQL query failure
+          └─ truly no enabled models
+               │
+               └─ may all appear to client as
 
-{
-  "object": "list",
-  "data": model_entries
-}
-          │
-          ▼
-serde_json::to_string(response_json)
-          │
-          ▼
-┌────────────────────────────┐
-│ 判断 I：JSON 序列化成功？   │
-└────────────┬───────────────┘
-             │
-      ┌──────┴──────┐
-      │ YES         │ NO
-      ▼             ▼
-正常 JSON Body   fallback Body
-                {"object":"list","data":[]}
-      │             │
-      └──────┬──────┘
-             │
-             ▼
-════════════════════════════════════════════════════════════════════════════════
-⑥ HTTP RESPONSE BUILDER
-文件：crates/router/src/lib.rs
-函数：build_response_with_header()
-════════════════════════════════════════════════════════════════════════════════
-             │
-             ▼
- build_response_with_header(
-     StatusCode::OK,
-     "content-type",
-     "application/json",
-     Body::from(json)
- )
-             │
-             ▼
- Response::builder()
-    .status(200)
-    .header(content-type, application/json)
-    .body(body)
-             │
-             ▼
-┌──────────────────────────────┐
-│ 判断 J：Response 构造成功？   │
-└─────────────┬────────────────┘
-              │
-       ┌──────┴───────────┐
-       │ YES              │ NO
-       ▼                  ▼
-HTTP 200              再构造一次
-JSON Body             status(200)
-       │              empty body
-       │                  │
-       │                  ▼
-       │        ┌──────────────────────┐
-       │        │ 判断 K：第二次成功？ │
-       │        └──────────┬───────────┘
-       │                   │
-       │            ┌──────┴──────┐
-       │            │ YES         │ NO
-       │            ▼             ▼
-       │        HTTP 200      Response::new(
-       │        empty body    Body::empty()
-       │            │             │
-       └────────────┴──────┬──────┘
-                           │
-                           ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ END                                                                          │
-│ HTTP Response 返回 用户 / SDK                                               │
-└──────────────────────────────────────────────────────────────────────────────┘
-                           │
-                           ▼
-┌──────────────────────────────────────────────────────────────────────────────┐
-│ 最终业务语义                                                                 │
-│                                                                              │
-│ 返回 channel_abilities 中：                                                 │
-│                                                                              │
-│     enabled = 1                                                             │
-│                                                                              │
-│ 的 DISTINCT model，并按 model 排序。                                         │
-│                                                                              │
-│ 当前 SQL 没有判断：                                                          │
-│                                                                              │
-│ - 当前用户是谁                                                               │
-│ - 用户属于哪个 group                                                         │
-│ - channel_providers.status                                                   │
-│ - Channel Health                                                             │
-│ - Circuit Breaker                                                            │
-│ - RPM / TPM Capacity                                                         │
-│ - Quota                                                                      │
-│ - Price / Price Cap                                                          │
-│                                                                              │
-│ 因此：                                                                       │
-│                                                                              │
-│ enabled ability 存在                                                         │
-│     ≠ 当前用户一定可用                                                       │
-│     ≠ Provider 当前一定健康                                                  │
-│     ≠ 此刻一定可以成功路由                                                   │
-│                                                                              │
-│ 另外：                                                                       │
-│ DB 连接失败 / SQL 查询失败 / 真正没有模型                                    │
-│ 当前都可能最终表现为：                                                       │
-│                                                                              │
-│ HTTP 200                                                                     │
-│ { "object": "list", "data": [] }                                         │
-└──────────────────────────────────────────────────────────────────────────────┘
+                    HTTP 200
+                    {"object":"list","data":[]}
 ```
 
 ## 穿过的源码文件
 
-| 顺序 | 文件 | 关键函数 / 逻辑 |
+| 顺序 | 文件 | 关键执行点 |
 |---|---|---|
 | 1 | `crates/server/src/lib.rs` | `start_server()` → `create_app()` → `fallback_service(router_app)` |
 | 2 | `crates/router/src/lib.rs` | `create_router_app()` → `GET /v1/models` → `models_handler()` → `build_response_with_header()` |
-| 3 | `crates/database/crates/channel/src/channel_ability.rs` | `ChannelAbilityModel::list_distinct_models()` → `channel_abilities` SQL |
+| 3 | `crates/database/crates/channel/src/channel_ability.rs` | `ChannelAbilityModel::list_distinct_models()` → SQL → `channel_abilities` |
 
-**Execution classification: STATIC CONFIRMED** — 上图中的执行路径、判断、SQL 和文件位置均由当前 BurnCloud 源码直接确认。
+**Execution classification: STATIC CONFIRMED** — 上面的入口、文件、函数、SQL 和判断均由当前 BurnCloud 源码直接确认。
