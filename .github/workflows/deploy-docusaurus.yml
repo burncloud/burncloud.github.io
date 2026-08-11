@@ -67,6 +67,9 @@ jobs:
       - name: Replace generic source-index labels with concrete symbols
         run: python3 tools/refine_source_symbols.py
 
+      - name: Enforce Execution Truth V4 call chains
+        run: python3 tools/enrich_execution_truth_v4.py --source .source/burncloud
+
       - name: Census real source entrypoints and coverage
         run: python3 tools/census_entrypoints.py --source .source/burncloud
 
@@ -88,6 +91,9 @@ jobs:
           test -f docs/http-api/billing-usage/get-api-billing-summary.md
           test -f docs/http-api/monitoring-security/get-console-api-monitor.md
           test -f docs/http-api/cache/get-console-api-cache-stats.md
+          test -f docs/cli/burncloud/server.md
+          test -f docs/cli/burncloud/router.md
+          test -f docs/cli/burncloud/client.md
           test -f docs/cli/burncloud/price/list.md
           test -f docs/cli/workspace-binaries/aria2-test.md
           test -f docs/background/long-running-jobs/health-probe-scheduler.md
@@ -102,6 +108,7 @@ jobs:
           pages=manifest['page_count']
           assert pages >= 204, pages
           checked=0
+          call_expanded=0
           for p in manifest['pages']:
               f=Path('docs')/(p['docid']+'.md')
               text=f.read_text(encoding='utf-8')
@@ -112,6 +119,9 @@ jobs:
               assert '[PHASE ' not in text, f
               assert 'DECISION:' in text, f
               assert '见上方 E2E 对应' not in text, f
+              assert 'Source Traversal V4' in text, f
+              if '源码函数展开（静态扫描确认）' in text:
+                  call_expanded += 1
               rows=re.findall(r'\|\s*\d+\s*\|\s*`([^`]+)`\s*\|', text)
               assert rows, f
               for rel in rows:
@@ -121,6 +131,7 @@ jobs:
                       assert (Path('.source/burncloud')/rel).is_file(), (f,rel)
               checked += 1
           assert checked == pages, (checked,pages)
+          assert call_expanded >= 120, (call_expanded,pages)
 
           counts=census['counts']
           assert counts['http_missing_exact_matches'] == 0, census['missing_http_entries']
@@ -128,6 +139,48 @@ jobs:
           assert counts['binary_missing_source_matches'] == 0, census['missing_binary_entries']
           assert counts['runtime_spawn_unmapped'] == 0, census['spawn_coverage']['unmapped']
           assert counts['runtime_spawn_mapped'] == counts['runtime_spawn_sites'], counts
+
+          server=Path('docs/cli/burncloud/server.md').read_text(encoding='utf-8')
+          assert 'src/cli/commands.rs' not in server
+          assert 'Clap parse' not in server
+          for needle in [
+              'run_async_server()',
+              'FILE: crates/server/src/logging.rs',
+              'FILE: crates/server/src/lib.rs',
+              'FILE: crates/database/src/database.rs',
+              'Database::initialize()',
+              'FILE: crates/database/src/migration/mod.rs',
+              'MigrationRunner::run()',
+              'FILE: crates/database/src/schema/mod.rs',
+              'Schema::init()',
+              'FILE: crates/database/crates/router/src/lib.rs',
+              'FILE: crates/database/crates/user/src/lib.rs',
+              'FILE: crates/service/crates/monitor/src/service.rs',
+              'FILE: crates/service/crates/cache/src/service.rs',
+              'FILE: crates/router/src/lib.rs',
+              'create_router_app(db)',
+              'start_price_sync_task',
+              'FILE: crates/server/src/api/mod.rs',
+              '[REGISTER ONLY]',
+              'FILE: crates/client/src/lib.rs',
+              'TcpListener::bind',
+              'axum::serve',
+          ]:
+              assert needle in server, needle
+
+          router=Path('docs/cli/burncloud/router.md').read_text(encoding='utf-8')
+          assert 'src/cli/commands.rs' not in router
+          for needle in ['run_async_server()','start_server(host, port, enable_liveview=true)','create_router_app(db)','当前源码中 `server` 与 `router` 都走同一个 run_async_server()']:
+              assert needle in router, needle
+
+          client=Path('docs/cli/burncloud/client.md').read_text(encoding='utf-8')
+          assert 'src/cli/commands.rs' not in client
+          for needle in ['DECISION: target_os == windows?','launch_gui_with_tray()','AppWithTray()','use_init_i18n()','Router<Route>']:
+              assert needle in client, needle
+
+          bare=Path('docs/cli/burncloud/burncloud.md').read_text(encoding='utf-8')
+          for needle in ['std::thread::spawn(background server thread)','start_server(host, port, false)','burncloud_client::launch_gui_with_tray()','run_async_server()']:
+              assert needle in bare, needle
 
           channel=Path('docs/http-api/channel-management/get-console-api-channel.md').read_text(encoding='utf-8')
           for needle in ['FILE: crates/service/crates/channel/src/lib.rs','FILE: crates/database/crates/channel/src/channel_provider.rs','FILE: crates/database/crates/user/src/lib.rs','ChannelService::list()','ChannelProviderModel::list()']:
@@ -169,6 +222,7 @@ jobs:
           assert 'NOT implemented' in health
 
           print('pages=',pages)
+          print('function_call_expanded_pages=',call_expanded)
           print('coverage=',json.dumps(counts,ensure_ascii=False))
           PY
 
@@ -193,6 +247,9 @@ jobs:
           test -f site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           test -f site/build/http-api/channel-management/get-console-api-channel/index.html
           test -f site/build/http-api/billing-usage/get-api-billing-summary/index.html
+          test -f site/build/cli/burncloud/server/index.html
+          test -f site/build/cli/burncloud/router/index.html
+          test -f site/build/cli/burncloud/client/index.html
           test -f site/build/cli/workspace-binaries/aria2-test/index.html
           test -f site/build/background/long-running-jobs/health-probe-scheduler/index.html
           test -f site/build/ui/console/console-dashboard/index.html
@@ -200,6 +257,10 @@ jobs:
           grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           grep -q 'BillingService' site/build/http-api/billing-usage/get-api-billing-summary/index.html
           grep -q 'client-dashboard' site/build/ui/console/console-dashboard/index.html
+          grep -q 'run_async_server' site/build/cli/burncloud/server/index.html
+          grep -q 'Database::initialize' site/build/cli/burncloud/server/index.html
+          grep -q 'REGISTER ONLY' site/build/cli/burncloud/server/index.html
+          ! grep -q 'src/cli/commands.rs' site/build/cli/burncloud/server/index.html
           ! grep -q 'PHASE 0' site/build/http-api/channel-management/get-console-api-channel/index.html
 
       - name: Remove audited source checkout before publishing
@@ -223,5 +284,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud full source-traversal Atlas [skip ci]"
+          git commit -m "Publish BurnCloud Execution Truth V4 Atlas [skip ci]"
           git push origin HEAD:main
