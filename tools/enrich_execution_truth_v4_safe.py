@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+from pathlib import PurePosixPath
 
 import enrich_execution_truth_v4 as v4
 
@@ -139,6 +140,47 @@ def safe_match_brace(text: str, open_pos: int) -> int:
     return len(text) - 1
 
 
+def module_matches_path(module: str, path: str) -> bool:
+    """Conservative module-name check for calls like `scheduler::foo()`.
+
+    A module token may correspond to `foo.rs` or `foo/mod.rs`. This deliberately
+    does not try to understand crate re-exports: unresolved is better than wrong.
+    """
+    p = PurePosixPath(path)
+    if p.name == f"{module}.rs":
+        return True
+    if p.name == "mod.rs" and p.parent.name == module:
+        return True
+    return False
+
+
+def resolve_explicit_call(self: v4.RustIndex, call: str):
+    parts = call.split("::")
+    if len(parts) < 2:
+        return None
+    qualifier = parts[-2]
+    method = parts[-1]
+
+    # Associated call Type::method(): require an exact parsed impl owner match.
+    exact = self.by_qual.get(f"{qualifier}::{method}", [])
+    if len(exact) == 1:
+        return exact[0]
+    if len(exact) > 1:
+        return None
+
+    # Module function module::function(): only accept a unique free function
+    # whose source path itself matches the module token. Never fall back to
+    # global method-name uniqueness (e.g. Body::empty must NOT become
+    # PriceCache::empty merely because `empty` is unique inside BurnCloud).
+    free = [
+        d for d in self.by_name.get(method, [])
+        if d.qual is None and module_matches_path(qualifier, d.path)
+    ]
+    if len(free) == 1:
+        return free[0]
+    return None
+
+
 def safe_internal_calls(self: v4.RustIndex, d: v4.FnDef):
     code = mask_non_code(d.body)
     raw = [m.group(1) for m in v4.CALL_NAME_RE.finditer(code)]
@@ -157,8 +199,7 @@ def safe_internal_calls(self: v4.RustIndex, d: v4.FnDef):
             if len(xs) == 1:
                 target = xs[0]
         elif "::" in c:
-            # Explicit associated/module call: Type::method() / module::function().
-            target = self.resolve(c)
+            target = resolve_explicit_call(self, c)
         else:
             # Bare helper call: prefer a unique function in the same source file.
             local = [x for x in self.by_file.get(d.path, []) if x.name == last]
