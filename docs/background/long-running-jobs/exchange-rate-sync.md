@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → Background Jobs / Async Side Effects → Long-running Jobs → Exchange Rate Sync`
 
-&gt; **中文解释：** 周期检查汇率是否过期，刷新/重载数据库中的 exchange rates。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 周期检查汇率是否过期，刷新/重载数据库中的 exchange rates。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

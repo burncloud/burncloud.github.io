@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Monitoring / Security → GET /console/api/monitor/security`
 
-&gt; **中文解释：** 读取最近 router_logs，按 4xx/5xx 比例计算 score、blocked_count、threat sources 和 7 日 sparkline。 核心调用：RouterLogService::get。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 读取最近 router_logs，按 4xx/5xx 比例计算 score、blocked_count、threat sources 和 7 日 sparkline。 核心调用：RouterLogService::get。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

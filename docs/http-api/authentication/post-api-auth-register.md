@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Authentication → POST /api/auth/register`
 
-&gt; **中文解释：** 注册用户；用户名冲突返回错误，注册成功后生成 JWT。 核心调用：register_user → get_user_roles → generate_token。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 注册用户；用户名冲突返回错误，注册成功后生成 JWT。 核心调用：register_user → get_user_roles → generate_token。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

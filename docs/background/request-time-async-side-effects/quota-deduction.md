@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → Background Jobs / Async Side Effects → Request-time Async Side Effects → Quota deduction`
 
-&gt; **中文解释：** 请求完成并计算 cost 后异步扣减 quota；属于请求结束后的副作用。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 请求完成并计算 cost 后异步扣减 quota；属于请求结束后的副作用。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

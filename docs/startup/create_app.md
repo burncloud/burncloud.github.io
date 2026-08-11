@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → Startup → Startup Chain → create_app`
 
-&gt; **中文解释：** 初始化 monitor/cache/data-plane router，组合 Management/Internal/LiveView，并挂载全局 middleware 和 data-plane fallback。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 初始化 monitor/cache/data-plane router，组合 Management/Internal/LiveView，并挂载全局 middleware 和 data-plane fallback。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

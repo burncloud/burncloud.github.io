@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Channel Management → GET /console/api/channel`
 
-&gt; **中文解释：** 管理员分页列出 Channel；limit 被限制在 1..100，offset 不小于 0。 核心调用：ChannelService::list。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 管理员分页列出 Channel；limit 被限制在 1..100，offset 不小于 0。 核心调用：ChannelService::list。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

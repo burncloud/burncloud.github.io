@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Admin / Internal → POST /console/internal/prices/sync`
 
-&gt; **中文解释：** 通过 force_sync_tx 触发价格同步任务，并最多等待 60 秒 oneshot 回应。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 通过 force_sync_tx 触发价格同步任务，并最多等待 60 秒 oneshot 回应。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

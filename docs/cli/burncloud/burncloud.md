@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → CLI / Executables → burncloud → burncloud`
 
-&gt; **中文解释：** 无参数时按平台启动：Windows 为后台 Server + 桌面 GUI/tray；非 Windows 为 Server + LiveView。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 无参数时按平台启动：Windows 为后台 Server + 桌面 GUI/tray；非 Windows 为 Server + LiveView。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

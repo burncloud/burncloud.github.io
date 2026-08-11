@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → AI API / Data Plane → POST /v1/embeddings`
 
-&gt; **中文解释：** Embeddings；统一鉴权、调度、Provider 转发和用量结算。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** Embeddings；统一鉴权、调度、Provider 转发和用量结算。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → AI API / Data Plane → GET /v1/videos/{task_id}`
 
-&gt; **中文解释：** 先鉴权，再从 task_id 查原始 channel_id；按该 Channel 的 base_url/key 直接轮询上游，不重新走模型调度。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 先鉴权，再从 task_id 查原始 channel_id；按该 Channel 的 base_url/key 直接轮询上游，不重新走模型调度。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

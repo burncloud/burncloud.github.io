@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Token → POST /console/api/tokens`
 
-&gt; **中文解释：** 生成 bc_live_&lt;uuid&gt;，构造 RouterToken 后写入数据库。 核心调用：TokenService::create。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 生成 bc_live_&lt;uuid&gt;，构造 RouterToken 后写入数据库。 核心调用：TokenService::create。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

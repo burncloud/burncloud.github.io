@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → Background Jobs / Async Side Effects → Download Background Work → Restore incomplete downloads`
 
-&gt; **中文解释：** DownloadManager 初始化时恢复 active 且未完成的下载并重新启动 monitor。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** DownloadManager 初始化时恢复 active 且未完成的下载并重新启动 monitor。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

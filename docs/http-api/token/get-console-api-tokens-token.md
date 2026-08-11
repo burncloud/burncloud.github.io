@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Token → GET /console/api/tokens/{token}`
 
-&gt; **中文解释：** 按 token 查询并返回 token 详情；不存在则报错。 核心调用：TokenService::validate。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 按 token 查询并返回 token 详情；不存在则报错。 核心调用：TokenService::validate。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

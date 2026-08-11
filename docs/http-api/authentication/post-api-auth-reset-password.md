@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Authentication → POST /api/auth/reset-password`
 
-&gt; **中文解释：** 校验 reset token 并修改密码；无效/过期 token 返回错误。 核心调用：reset_password。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 校验 reset token 并修改密码；无效/过期 token 返回错误。 核心调用：reset_password。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Authentication → GET /api/auth/github`
 
-&gt; **中文解释：** 生成 GitHub OAuth URL；当前只返回 URL。 核心调用：UserService::oauth_url("github")。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 生成 GitHub OAuth URL；当前只返回 URL。 核心调用：UserService::oauth_url("github")。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

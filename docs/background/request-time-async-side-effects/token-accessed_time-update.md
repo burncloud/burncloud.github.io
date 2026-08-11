@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → Background Jobs / Async Side Effects → Request-time Async Side Effects → Token accessed_time update`
 
-&gt; **中文解释：** Token 鉴权成功后 tokio::spawn 异步更新 accessed_time；失败不阻断主请求。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** Token 鉴权成功后 tokio::spawn 异步更新 accessed_time；失败不阻断主请求。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

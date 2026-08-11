@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Monitoring / Security → GET /console/api/monitor/security/circuit-breaker-status`
 
-&gt; **中文解释：** 通过 localhost 调用 /console/internal/health 获取 circuit breaker 状态。 核心调用：call_router_internal。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 通过 localhost 调用 /console/internal/health 获取 circuit breaker 状态。 核心调用：call_router_internal。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

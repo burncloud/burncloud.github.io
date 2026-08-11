@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Monitoring / Security → PUT /console/api/monitor/security/filters`
 
-&gt; **中文解释：** 序列化 FilterConfig，INSERT OR REPLACE 到 sys_settings。 核心调用：Database::execute_query_with_params。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 序列化 FilterConfig，INSERT OR REPLACE 到 sys_settings。 核心调用：Database::execute_query_with_params。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

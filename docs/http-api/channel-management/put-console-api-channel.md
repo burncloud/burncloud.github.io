@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Channel Management → PUT /console/api/channel`
 
-&gt; **中文解释：** 管理员更新 Channel；id = 0 时直接拒绝。 核心调用：ChannelService::update。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 管理员更新 Channel；id = 0 时直接拒绝。 核心调用：ChannelService::update。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

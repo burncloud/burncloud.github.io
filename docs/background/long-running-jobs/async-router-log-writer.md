@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → Background Jobs / Async Side Effects → Long-running Jobs → Async Router Log Writer`
 
-&gt; **中文解释：** 后台消费 RouterLog 队列并持久化，避免主请求同步阻塞。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 后台消费 RouterLog 队列并持久化，避免主请求同步阻塞。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → Startup → Startup Chain → start_server`
 
-&gt; **中文解释：** 创建默认数据库 → RouterDatabase::init → UserDatabase::init → create_app → bind → axum::serve。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 创建默认数据库 → RouterDatabase::init → UserDatabase::init → create_app → bind → axum::serve。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

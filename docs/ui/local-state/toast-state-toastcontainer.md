@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → UI-only Actions → Local UI State → Toast state / ToastContainer`
 
-&gt; **中文解释：** App 初始化 Toast state，并在根组件挂载 ToastContainer。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** App 初始化 Toast state，并在根组件挂载 ToastContainer。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

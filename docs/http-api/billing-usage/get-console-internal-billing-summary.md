@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Billing / Usage → GET /console/internal/billing/summary`
 
-&gt; **中文解释：** 该 route 当前仍被外层 JWT middleware 包住；若设置 BURNCLOUD_INTERNAL_SECRET，还额外校验 x-internal-secret。 核心调用：BillingService::get_billing_summary。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 该 route 当前仍被外层 JWT middleware 包住；若设置 BURNCLOUD_INTERNAL_SECRET，还额外校验 x-internal-secret。 核心调用：BillingService::get_billing_summary。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

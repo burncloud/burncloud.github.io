@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → OpenAPI / Swagger → GET /swagger-ui`
 
-&gt; **中文解释：** 返回内嵌 Swagger UI HTML，浏览器再从 CDN 加载 swagger-ui assets。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 返回内嵌 Swagger UI HTML，浏览器再从 CDN 加载 swagger-ui assets。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

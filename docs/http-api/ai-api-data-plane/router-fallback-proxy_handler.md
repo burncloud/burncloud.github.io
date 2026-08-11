@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → AI API / Data Plane → Router fallback → proxy_handler`
 
-&gt; **中文解释：** Unified Server 将未命中的数据面请求交给 router_app；router_app 未命中显式 route 后进入 proxy_handler。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** Unified Server 将未命中的数据面请求交给 router_app；router_app 未命中显式 route 后进入 proxy_handler。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

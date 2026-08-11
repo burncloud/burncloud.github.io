@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Cache → GET /console/api/cache/stats`
 
-&gt; **中文解释：** 读取缓存统计；Redis 未启用/失败由 CacheService 返回结果或错误。 核心调用：CacheService::stats。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 读取缓存统计；Redis 未启用/失败由 CacheService 返回结果或错误。 核心调用：CacheService::stats。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

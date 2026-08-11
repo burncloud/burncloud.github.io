@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → User → POST /console/api/user/login`
 
-&gt; **中文解释：** 当前位于 protected router；成功登录后还把 username/token 写入 ~/.burncloud/client_state.json。 核心调用：UserService::login_user。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 当前位于 protected router；成功登录后还把 username/token 写入 ~/.burncloud/client_state.json。 核心调用：UserService::login_user。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Billing / Usage → GET /api/v1/usage`
 
-&gt; **中文解释：** 复用 Data Plane usage_handler：按 token holder 聚合月度总用量。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 复用 Data Plane usage_handler：按 token holder 聚合月度总用量。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

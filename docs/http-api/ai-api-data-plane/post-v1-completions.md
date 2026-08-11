@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → AI API / Data Plane → POST /v1/completions`
 
-&gt; **中文解释：** OpenAI Legacy Completions；通过统一代理链选择 Channel 并请求上游。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** OpenAI Legacy Completions；通过统一代理链选择 Channel 并请求上游。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

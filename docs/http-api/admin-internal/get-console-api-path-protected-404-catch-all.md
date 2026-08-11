@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Admin / Internal → GET /console/api/{*path} → protected 404 catch-all`
 
-&gt; **中文解释：** Management API 未匹配的 /console/api/* 在 JWT 后进入 404，避免被 LiveView 返回 HTML。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** Management API 未匹配的 /console/api/* 在 JWT 后进入 404，避免被 LiveView 返回 HTML。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

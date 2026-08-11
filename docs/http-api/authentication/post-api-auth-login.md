@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Authentication → POST /api/auth/login`
 
-&gt; **中文解释：** 校验用户名密码；成功后返回 JWT 与角色。 核心调用：login_user → get_user_roles。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 校验用户名密码；成功后返回 JWT 与角色。 核心调用：login_user → get_user_roles。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

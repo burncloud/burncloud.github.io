@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → Channel Management → GET /console/api/channel/{id}`
 
-&gt; **中文解释：** 管理员按 ID 查询；不存在时返回 channel not found。 核心调用：ChannelService::get_by_id。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 管理员按 ID 查询；不存在时返回 channel not found。 核心调用：ChannelService::get_by_id。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

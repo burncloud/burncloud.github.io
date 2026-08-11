@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → HTTP / API → AI API / Data Plane → POST /v1/video/generations`
 
-&gt; **中文解释：** 视频生成；除通用代理链外，还提取 duration/resolution，并在成功后保存 task_id → channel_id 映射。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** 视频生成；除通用代理链外，还提取 duration/resolution，并在成功后保存 task_id → channel_id 映射。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 

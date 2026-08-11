@@ -8,9 +8,9 @@ hide_table_of_contents: true
 
 **树路径：** `BurnCloud → Background Jobs / Async Side Effects → Long-running Jobs → Price Sync`
 
-&gt; **中文解释：** Router 启动 price sync task；启动快路径读取现有价格，随后周期同步，也接受 force-sync channel。
-&gt;
-&gt; **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
+> **中文解释：** Router 启动 price sync task；启动快路径读取现有价格，随后周期同步，也接受 force-sync channel。
+>
+> **源码基线：** `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`
 
 ## End-to-End Request Flow + ICFG
 
