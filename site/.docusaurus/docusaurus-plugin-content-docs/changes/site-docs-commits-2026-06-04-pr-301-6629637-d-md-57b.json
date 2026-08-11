@@ -12,7 +12,7 @@
   "tags": [],
   "version": "current",
   "lastUpdatedBy": "github-actions[bot]",
-  "lastUpdatedAt": 1786386254000,
+  "lastUpdatedAt": 1786389751000,
   "sidebarPosition": 27,
   "frontMatter": {
     "title": "PR #301 · fix（ui）: add focus-visible, active states and aria-labels to landing page buttons",

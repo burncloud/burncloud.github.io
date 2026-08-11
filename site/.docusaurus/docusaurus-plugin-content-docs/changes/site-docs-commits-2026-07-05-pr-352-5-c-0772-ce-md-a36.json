@@ -12,7 +12,7 @@
   "tags": [],
   "version": "current",
   "lastUpdatedBy": "github-actions[bot]",
-  "lastUpdatedAt": 1786386254000,
+  "lastUpdatedAt": 1786389751000,
   "sidebarPosition": 5,
   "frontMatter": {
     "title": "PR #352 · fix（client,auth,db）: unify JWT secret, fix modals, and polish desktop UI",

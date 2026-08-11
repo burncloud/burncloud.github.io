@@ -12,7 +12,7 @@
   "tags": [],
   "version": "current",
   "lastUpdatedBy": "github-actions[bot]",
-  "lastUpdatedAt": 1786386254000,
+  "lastUpdatedAt": 1786389751000,
   "sidebarPosition": 20,
   "frontMatter": {
     "title": "PR #331 · fix（router）: return JSON-formatted errors for API compatibility",

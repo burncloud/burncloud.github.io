@@ -12,7 +12,7 @@
   "tags": [],
   "version": "current",
   "lastUpdatedBy": "github-actions[bot]",
-  "lastUpdatedAt": 1786386254000,
+  "lastUpdatedAt": 1786389751000,
   "sidebarPosition": 22,
   "frontMatter": {
     "title": "PR #309 · fix（security）: migrate public auth APIs from /console/api/auth to /api/auth （Issue ＃303）",
