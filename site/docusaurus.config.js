@@ -18,7 +18,7 @@ module.exports = {
       docs: {
         path: '../docs',
         routeBasePath: '/',
-        sidebarPath: false,
+        sidebarPath: require.resolve('./sidebars.js'),
         editUrl: 'https://github.com/burncloud/burncloud.github.io/edit/main/docs/',
         showLastUpdateAuthor: true,
         showLastUpdateTime: true,
@@ -31,11 +31,13 @@ module.exports = {
     navbar: {
       title: 'BurnCloud Entry Point Atlas',
       items: [
+        {type: 'docSidebar', sidebarId: 'docsSidebar', position: 'left', label: 'BurnCloud'},
         {href: 'https://github.com/burncloud/burncloud', label: 'BurnCloud Source', position: 'right'},
       ],
     },
+    docs: {sidebar: {hideable: true, autoCollapseCategories: false}},
     mermaid: {options: {securityLevel: 'loose'}},
-    prism: {theme: lightCodeTheme, darkTheme: darkCodeTheme, additionalLanguages: ['rust', 'bash']},
+    prism: {theme: lightCodeTheme, darkTheme: darkCodeTheme, additionalLanguages: ['rust', 'bash', 'sql']},
     footer: {
       style: 'dark',
       copyright: 'BurnCloud Entry Point Atlas · Source-derived, entrypoint-first documentation',

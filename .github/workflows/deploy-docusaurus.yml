@@ -30,10 +30,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Verify single-page source invariant
+      - name: Verify focused documentation tree
         run: |
           test -f docs/index.md
-          test "$(find docs -type f -name '*.md' | wc -l)" -eq 1
+          test -f docs/http-api/ai-api-data-plane/get-v1-models.md
+          test -f site/sidebars.js
+          test "$(find docs -type f -name '*.md' | wc -l)" -eq 2
           test ! -d content
           test ! -d docs/commits
           test ! -f docs/commit-index.json
@@ -46,20 +48,21 @@ jobs:
         working-directory: site
         run: npm install --no-audit --no-fund
 
-      - name: Build single-page Docusaurus site
+      - name: Build Docusaurus site
         working-directory: site
         run: npm run build
 
-      - name: Verify single content page output
+      - name: Verify focused output
         run: |
           test -f site/build/index.html
+          test -f site/build/http-api/ai-api-data-plane/get-v1-models/index.html
           test ! -e site/build/changes
           test ! -e site/build/api-requests
           test ! -e site/build/account
           test ! -e site/build/console
           test ! -e site/build/operator
 
-      - name: Replace Pages output with single-page build
+      - name: Replace Pages output with current build
         if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
         run: |
           find . -mindepth 1 -maxdepth 1 \
@@ -77,5 +80,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish single-page BurnCloud Entry Point Atlas [skip ci]"
+          git commit -m "Publish BurnCloud GET /v1/models E2E Atlas [skip ci]"
           git push origin HEAD:main
