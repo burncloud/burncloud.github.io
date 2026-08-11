@@ -31,6 +31,18 @@ END / UI LOOP CONTINUES
 ```
 
 
+## 返回结果示例
+
+> UI-only 页面没有独立 REST response；这里用构造的页面渲染或本地状态结果表示用户最终看到/客户端最终持有的结果。
+
+```json
+{
+  "visible": true,
+  "level": "success",
+  "message": "操作成功"
+}
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

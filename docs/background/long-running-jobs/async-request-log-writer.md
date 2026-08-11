@@ -37,6 +37,14 @@ END / NEXT ITERATION
 ```
 
 
+## 返回结果示例
+
+> 后台任务通常不会直接向 HTTP 调用方返回 JSON；这里用一条构造的状态/日志结果表示一次成功执行后的可观测结果。
+
+```text
+2026-08-11T14:45:15+08:00 request_log_writer persisted=64 queue_remaining=0 status=ok
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

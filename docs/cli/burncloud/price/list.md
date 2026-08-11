@@ -52,6 +52,17 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的典型终端输出示例；真实 ID、路径、金额、模型、版本与状态以实际 CLI 执行为准。
+
+```text
+$ burncloud price list
+MODEL              INPUT / 1M   OUTPUT / 1M   CURRENCY
+gpt-5.4            2.5000       15.0000       USD
+claude-sonnet-4-5  3.0000       15.0000       USD
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

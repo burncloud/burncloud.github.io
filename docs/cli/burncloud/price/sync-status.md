@@ -52,6 +52,17 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的典型终端输出示例；真实 ID、路径、金额、模型、版本与状态以实际 CLI 执行为准。
+
+```text
+$ burncloud price sync-status
+last_sync=2026-08-11T14:45:00+08:00
+models=46
+status=healthy
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

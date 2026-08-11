@@ -109,6 +109,33 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的成功结果示例，用于快速理解该入口最终会向调用方、终端或运行时呈现什么；动态 ID、时间、模型、金额、Provider 与统计值以实际运行结果为准。
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "id": "msg_bc_01JXYZ",
+  "type": "message",
+  "role": "assistant",
+  "model": "claude-sonnet-4-5",
+  "content": [
+    {
+      "type": "text",
+      "text": "这是通过 BurnCloud 转发后的 Anthropic 原生响应示例。"
+    }
+  ],
+  "stop_reason": "end_turn",
+  "usage": {
+    "input_tokens": 22,
+    "output_tokens": 18
+  }
+}
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

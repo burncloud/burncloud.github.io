@@ -52,6 +52,18 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的典型终端输出示例；真实 ID、路径、金额、模型、版本与状态以实际 CLI 执行为准。
+
+```text
+BurnCloud starting...
+mode=server+liveview
+database=ready
+router=ready
+listening=http://0.0.0.0:3000
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

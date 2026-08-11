@@ -37,6 +37,14 @@ END / NEXT ITERATION
 ```
 
 
+## 返回结果示例
+
+> 后台任务通常不会直接向 HTTP 调用方返回 JSON；这里用一条构造的状态/日志结果表示一次成功执行后的可观测结果。
+
+```text
+gid=2089b05ecca3d829 progress=64.8% speed=42.1MB/s status=active
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

@@ -52,6 +52,19 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的典型终端输出示例；真实 ID、路径、金额、模型、版本与状态以实际 CLI 执行为准。
+
+```text
+$ burncloud channel show <id>
+id: 12
+name: openai-primary
+type: openai
+status: enabled
+priority: 100
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

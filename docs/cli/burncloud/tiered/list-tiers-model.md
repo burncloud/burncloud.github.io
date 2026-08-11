@@ -52,6 +52,18 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的典型终端输出示例；真实 ID、路径、金额、模型、版本与状态以实际 CLI 执行为准。
+
+```text
+$ burncloud tiered list-tiers <model>
+MODEL: gpt-5.4
+0 - 10M tokens      rate=1.00
+10M - 100M tokens  rate=0.95
+100M+ tokens        rate=0.90
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

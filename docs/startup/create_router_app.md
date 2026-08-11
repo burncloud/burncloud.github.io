@@ -36,6 +36,20 @@ END
 ```
 
 
+## 返回结果示例
+
+> Startup 页面没有传统 API response；这里用构造的启动结果/运行态日志表示该阶段成功完成后系统应进入的状态。
+
+```text
+http_client=ready
+model_router=ready
+circuit_breaker=ready
+price_cache=ready
+exchange_rates=ready
+background_writers=running
+router=ready
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

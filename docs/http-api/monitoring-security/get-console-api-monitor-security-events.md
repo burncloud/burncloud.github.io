@@ -61,6 +61,29 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的成功结果示例，用于快速理解该入口最终会向调用方、终端或运行时呈现什么；动态 ID、时间、模型、金额、Provider 与统计值以实际运行结果为准。
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "data": [
+    {
+      "id": "risk_50123",
+      "type": "upstream_error",
+      "severity": "medium",
+      "status": 502,
+      "source": "203.0.113.20",
+      "created_at": "2026-08-11T14:42:31+08:00"
+    }
+  ],
+  "total": 1
+}
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

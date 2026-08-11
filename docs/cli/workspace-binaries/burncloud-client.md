@@ -34,6 +34,17 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的典型进程/终端结果示例；真实日志、端口、平台与数据会随运行环境变化。
+
+```text
+BurnCloud Client
+ui=initialized
+route=/
+status=running
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

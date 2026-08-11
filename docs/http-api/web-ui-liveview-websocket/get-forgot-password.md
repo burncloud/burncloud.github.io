@@ -53,6 +53,21 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的成功结果示例，用于快速理解该入口最终会向调用方、终端或运行时呈现什么；动态 ID、时间、模型、金额、Provider 与统计值以实际运行结果为准。
+
+```http
+HTTP/1.1 200 OK
+Content-Type: text/html; charset=utf-8
+
+<!doctype html>
+<html lang="zh-CN">
+  <head><meta charset="utf-8"><title>BurnCloud</title></head>
+  <body><div id="main">Dioxus LiveView shell</div></body>
+</html>
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

@@ -61,6 +61,31 @@ END
 ```
 
 
+## 返回结果示例
+
+> 以下为构造的成功结果示例，用于快速理解该入口最终会向调用方、终端或运行时呈现什么；动态 ID、时间、模型、金额、Provider 与统计值以实际运行结果为准。
+
+```http
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "score": 96,
+  "blocked_count": 14,
+  "threat_sources": 3,
+  "error_rate": 0.012,
+  "sparkline_7d": [
+    98,
+    97,
+    97,
+    96,
+    96,
+    95,
+    96
+  ]
+}
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |

@@ -36,6 +36,19 @@ END
 ```
 
 
+## 返回结果示例
+
+> Startup 页面没有传统 API response；这里用构造的启动结果/运行态日志表示该阶段成功完成后系统应进入的状态。
+
+```text
+monitor=started
+cache=ready
+management_routes=mounted
+internal_routes=mounted
+liveview=enabled
+data_plane_fallback=mounted
+```
+
 ## 穿过的源码文件
 
 | 顺序 | 文件 |
