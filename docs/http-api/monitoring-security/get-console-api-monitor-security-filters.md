@@ -167,7 +167,7 @@ Content-Type: application/json
 | 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 HTTP Server / App composition / fallback | INIT + request routing |
 | 2 | `crates/server/src/api/mod.rs` | `routes()` | Public/Protected Management route composition | ROUTE composition |
 | 3 | `crates/server/src/api/auth.rs` | `auth_middleware(), verify_jwt(), public_routes()` | JWT middleware 与 public authentication routes | READ Authorization / Claims |
-| 4 | `crates/server/src/api/security.rs` | `entry-specific function(s) shown in E2E` | 当前入口在该文件执行的直接调用点 | runtime-specific |
+| 4 | `crates/server/src/api/security.rs` | `security_filters_get()` | 读取 sys_settings.security_filters | READ sys_settings |
 | 5 | `crates/database/src/lib.rs` | `Database::get_connection(), query/execute helpers` | Core database abstraction | SQL boundary |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。

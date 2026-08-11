@@ -109,7 +109,7 @@ Protocol saved successfully
 | 1 | `src/main.rs` | `main()` | BurnCloud process bootstrap / top-level dispatch | PROCESS |
 | 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
 | 3 | `src/cli/protocol.rs` | `handle_protocol_command()` | Protocol config CLI implementation | CLI → channel protocol DB |
-| 4 | `crates/database/crates/channel/src/channel_protocol_config.rs` | `ChannelProtocolConfigModel::*` | Protocol configuration persistence | READ/WRITE protocol config |
+| 4 | `crates/database/crates/channel/src/channel_protocol_config.rs` | `ChannelProtocolConfigModel::*` | Protocol configuration persistence | READ/WRITE channel protocol configs |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 

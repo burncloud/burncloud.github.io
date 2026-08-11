@@ -163,7 +163,7 @@ Content-Type: application/json
 | 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 HTTP Server / App composition / fallback | INIT + request routing |
 | 2 | `crates/server/src/api/mod.rs` | `routes()` | Public/Protected Management route composition | ROUTE composition |
 | 3 | `crates/server/src/api/auth.rs` | `auth_middleware(), verify_jwt(), public_routes()` | JWT middleware 与 public authentication routes | READ Authorization / Claims |
-| 4 | `crates/server/src/api/cache.rs` | `entry-specific function(s) shown in E2E` | 当前入口在该文件执行的直接调用点 | runtime-specific |
+| 4 | `crates/server/src/api/cache.rs` | `clear()` | 调用 CacheService::clear_all() | WRITE Redis/cache state |
 | 5 | `crates/service/crates/cache/src/service.rs` | `CacheService::*` | Redis-backed cache implementation | READ/WRITE Redis |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。

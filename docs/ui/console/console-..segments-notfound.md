@@ -101,7 +101,7 @@ rendered=true
 |---:|---|---|---|---|
 | 1 | `crates/client/src/app.rs` | `App(), Route, launch_gui_with_tray()` | Dioxus root/router/desktop runtime | UI state |
 | 2 | `crates/client/src/components/layout.rs` | `layout/component` | Dioxus layout/component wrapper | UI state |
-| 3 | `crates/client/crates/client-shared/src/components/layout.rs` | `page/service component implementation` | Feature-specific client crate reached from page wrapper | UI effects/state |
+| 3 | `crates/client/crates/client-shared/src/components/layout.rs` | `Layout / shared navigation helpers` | Console shared layout implementation | UI layout/navigation state |
 | 4 | `crates/client/src/pages/not_found.rs` | `page component / re-export` | Dioxus Route selected page module | UI component |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
