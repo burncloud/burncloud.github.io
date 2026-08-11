@@ -83,16 +83,17 @@ shared_state=available
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `crates/server/src/lib.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 2 | `crates/service/crates/monitor/src/lib.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 3 | `crates/service/crates/monitor/src/service.rs` | `SystemMonitorService::start_auto_update(), collect_metrics_internal()` | 1s ticker + metrics cache update | WRITE cached_metrics |
-| 4 | `crates/service/crates/monitor/src/collectors/cpu.rs` | `CpuCollector::collect()` | CPU collection | READ OS |
-| 5 | `crates/service/crates/monitor/src/collectors/memory.rs` | `MemoryCollector::collect()` | memory collection | READ OS |
-| 6 | `crates/service/crates/monitor/src/collectors/disk.rs` | `DiskCollector::collect_all()` | disk collection | READ OS |
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 HTTP Server / App composition / fallback | INIT + request routing |
+| 2 | `crates/service/crates/monitor/src/lib.rs` | `entry-specific function(s) shown in E2E` | 当前入口在该文件执行的直接调用点 | runtime-specific |
+| 3 | `crates/service/crates/monitor/src/service.rs` | `SystemMonitorService::*` | metrics cache + collector coordination | READ OS / WRITE memory cache |
+| 4 | `crates/service/crates/monitor/src/collectors/cpu.rs` | `Collector::collect*()` | OS metric collector | READ operating-system metrics |
+| 5 | `crates/service/crates/monitor/src/collectors/memory.rs` | `Collector::collect*()` | OS metric collector | READ operating-system metrics |
+| 6 | `crates/service/crates/monitor/src/collectors/disk.rs` | `Collector::collect*()` | OS metric collector | READ operating-system metrics |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 

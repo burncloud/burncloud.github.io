@@ -83,12 +83,13 @@ gid=2089b05ecca3d829 progress=64.8% speed=42.1MB/s status=active
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `crates/download/src/lib.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 2 | `crates/download/crates/download-aria2/src/lib.rs` | `Aria2RpcClient::tell_status()` | poll aria2 task status | NETWORK localhost RPC |
+| 1 | `crates/download/src/lib.rs` | `download / aria2 runtime symbols` | Download manager / RPC execution | NETWORK/filesystem/process state |
+| 2 | `crates/download/crates/download-aria2/src/lib.rs` | `download / aria2 runtime symbols` | Download manager / RPC execution | NETWORK/filesystem/process state |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 

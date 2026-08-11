@@ -119,16 +119,17 @@ Content-Type: application/json
 ```
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
-| 2 | `crates/server/src/api/mod.rs` | `routes()` | public auth routes outside JWT middleware | ROUTE |
-| 3 | `crates/server/src/api/auth.rs` | `oauth_github()` | Auth DTO / Handler / response policy | REQUEST/RESPONSE |
-| 4 | `crates/service/crates/user/src/lib.rs` | `UserService::oauth_url("github")` | password/JWT/OAuth/user business logic | SERVICE |
-| 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | user/role persistence when applicable | READ/WRITE users |
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 HTTP Server / App composition / fallback | INIT + request routing |
+| 2 | `crates/server/src/api/mod.rs` | `routes()` | Public/Protected Management route composition | ROUTE composition |
+| 3 | `crates/server/src/api/auth.rs` | `auth_middleware(), verify_jwt(), public_routes()` | JWT middleware 与 public authentication routes | READ Authorization / Claims |
+| 4 | `crates/service/crates/user/src/lib.rs` | `UserService::*` | User/auth business service | SERVICE |
+| 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | User/role/recharge persistence | READ/WRITE user state |
 
-> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
+> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。

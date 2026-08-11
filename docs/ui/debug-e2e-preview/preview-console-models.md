@@ -91,12 +91,13 @@ theme=system
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `crates/client/src/app.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 2 | `crates/client/src/pages/e2e_preview.rs` | `Preview*Page components` | debug/e2e-preview route component implementation | UI render |
+| 1 | `crates/client/src/app.rs` | `App(), Route, launch_gui_with_tray()` | Dioxus root/router/desktop runtime | UI state |
+| 2 | `crates/client/src/pages/e2e_preview.rs` | `page component / re-export` | Dioxus Route selected page module | UI component |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 

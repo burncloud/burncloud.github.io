@@ -101,15 +101,16 @@ theme=system
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `crates/client/src/app.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 2 | `crates/client/src/components/layout.rs` | `Layout` | console Route layout wrapper | UI layout/auth/navigation |
-| 3 | `crates/client/crates/client-shared/src/components/layout.rs` | `shared Layout/navigation helpers` | shared console layout behavior | UI state |
-| 4 | `crates/client/src/pages/deploy.rs` | `DeployConfig re-export` | Route enum 选择的页面模块/重导出 | UI component |
-| 5 | `crates/client/crates/client-deploy/src/lib.rs` | `DeployConfig` | 实际页面组件 crate | UI component/effects |
+| 1 | `crates/client/src/app.rs` | `App(), Route, launch_gui_with_tray()` | Dioxus root/router/desktop runtime | UI state |
+| 2 | `crates/client/src/components/layout.rs` | `layout/component` | Dioxus layout/component wrapper | UI state |
+| 3 | `crates/client/crates/client-shared/src/components/layout.rs` | `page/service component implementation` | Feature-specific client crate reached from page wrapper | UI effects/state |
+| 4 | `crates/client/src/pages/deploy.rs` | `page component / re-export` | Dioxus Route selected page module | UI component |
+| 5 | `crates/client/crates/client-deploy/src/lib.rs` | `page/service component implementation` | Feature-specific client crate reached from page wrapper | UI effects/state |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 

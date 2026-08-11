@@ -82,18 +82,19 @@ router=ready
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `crates/router/src/lib.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 2 | `crates/router/src/model_router.rs` | `ModelRouter::*` | scheduler/model route engine | INIT routing |
-| 3 | `crates/router/src/circuit_breaker.rs` | `CircuitBreaker::*` | breaker state | INIT runtime state |
-| 4 | `crates/router/src/affinity.rs` | `affinity cache` | session/channel affinity | INIT cache |
-| 5 | `crates/router/src/channel_state.rs` | `channel state` | channel runtime state | INIT state |
-| 6 | `crates/router/src/aimd_limiter.rs` | `AIMD limiter` | rate budget state | INIT state |
-| 7 | `crates/router/src/price_sync.rs` | `start_price_sync_task()` | price sync background task | SPAWN |
-| 8 | `crates/router/src/exchange_rate.rs` | `start_sync_task()` | exchange-rate background task | SPAWN |
+| 1 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Data Plane 主控制流或 Router internal handler | READ/WRITE router runtime |
+| 2 | `crates/router/src/model_router.rs` | `model_router` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 3 | `crates/router/src/circuit_breaker.rs` | `circuit_breaker` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 4 | `crates/router/src/affinity.rs` | `affinity` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 5 | `crates/router/src/channel_state.rs` | `channel_state` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 6 | `crates/router/src/aimd_limiter.rs` | `aimd_limiter` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 7 | `crates/router/src/price_sync.rs` | `price_sync` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 8 | `crates/router/src/exchange_rate.rs` | `exchange_rate` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
 | 9 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::*` | pricing cache | INIT/read |
 | 10 | `crates/service/crates/billing/src/calculator.rs` | `CostCalculator::*` | billing calculation engine | INIT/use |
 

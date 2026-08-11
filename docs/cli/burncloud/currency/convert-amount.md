@@ -101,14 +101,15 @@ $ burncloud currency convert <amount>
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `src/main.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 2 | `src/cli/commands.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 3 | `src/cli/currency.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 4 | `crates/database/src/lib.rs` | `Database::get_connection()` | currency CLI uses direct sqlx queries | READ/WRITE billing_exchange_rates |
+| 1 | `src/main.rs` | `main()` | BurnCloud process bootstrap / top-level dispatch | PROCESS |
+| 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
+| 3 | `src/cli/currency.rs` | `handle_currency_command()` | Exchange-rate CLI; includes direct SQL | READ/WRITE billing_exchange_rates |
+| 4 | `crates/database/src/lib.rs` | `Database::get_connection(), query/execute helpers` | Core database abstraction | SQL boundary |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 

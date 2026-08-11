@@ -100,14 +100,15 @@ Tiered pricing rules deleted
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `src/main.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 2 | `src/cli/commands.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 3 | `src/cli/price.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 4 | `crates/database/crates/billing/src/billing_tiered_price.rs` | `BillingTieredPriceModel::*` | tiered pricing CRUD | READ/WRITE billing tiered prices |
+| 1 | `src/main.rs` | `main()` | BurnCloud process bootstrap / top-level dispatch | PROCESS |
+| 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
+| 3 | `src/cli/price.rs` | `handle_price_command() / tiered pricing branches` | Price and tiered-pricing CLI implementation | CLI → billing DB |
+| 4 | `crates/database/crates/billing/src/billing_tiered_price.rs` | `BillingTieredPriceModel::*` | Tiered price persistence | READ/WRITE tiered prices |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 

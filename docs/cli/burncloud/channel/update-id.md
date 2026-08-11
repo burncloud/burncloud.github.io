@@ -107,15 +107,16 @@ status=enabled
 
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `src/main.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 2 | `src/cli/commands.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 3 | `src/cli/channel.rs` | `见上方 E2E 对应函数/入口` | 该 CLI/UI/Background/Startup 页面真实执行文件 | runtime-specific |
-| 4 | `crates/service/crates/channel/src/lib.rs` | `ChannelService::*` | CLI channel business service | SERVICE |
-| 5 | `crates/database/crates/channel/src/channel_provider.rs` | `ChannelProviderModel::*` | channel persistence | READ/WRITE channel_providers |
+| 1 | `src/main.rs` | `main()` | BurnCloud process bootstrap / top-level dispatch | PROCESS |
+| 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
+| 3 | `src/cli/channel.rs` | `handle_channel_command()` | Channel CLI implementation | CLI → service/DB |
+| 4 | `crates/service/crates/channel/src/lib.rs` | `ChannelService::*` | Channel service boundary | SERVICE |
+| 5 | `crates/database/crates/channel/src/channel_provider.rs` | `ChannelProviderModel::*` | Channel provider persistence | READ/WRITE channel_providers |
 
 > Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 

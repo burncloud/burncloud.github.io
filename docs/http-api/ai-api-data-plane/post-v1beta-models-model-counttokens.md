@@ -313,27 +313,28 @@ Content-Type: application/json
 ```
 
 
+
 ## 穿过的源码文件（详细）
 
 | 顺序 | 源码文件 | 关键函数 / 符号 | 为什么会经过 | 状态 / 副作用 |
 |---:|---|---|---|---|
-| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 Server、Router 合并、Middleware、fallback 入口 | READ runtime composition |
-| 2 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Admission + candidate loop + response settlement | HOT PATH |
-| 3 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::*` | token/quota persistence behind RouterDatabase | READ/WRITE token state |
-| 4 | `crates/service/crates/user/src/lib.rs` | `UserService::resolve_traffic_class()` | traffic class resolution | READ cache/user roles |
-| 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::get_user_roles()` | traffic class cache miss backing query | READ roles |
-| 6 | `crates/router/src/model_router.rs` | `ModelRouter::route_with_scheduler()` | scheduler/candidate construction | DYNAMIC route decision |
-| 7 | `crates/router/src/affinity.rs` | `affinity cache/ranking symbols` | session affinity input to scheduling | READ/WRITE affinity |
-| 8 | `crates/router/src/channel_state.rs` | `channel runtime state` | candidate state input | READ runtime state |
-| 9 | `crates/router/src/circuit_breaker.rs` | `CircuitBreaker::*` | per-candidate breaker admission/feedback | READ/WRITE breaker state |
-| 10 | `crates/router/src/aimd_limiter.rs` | `AIMD/rate-budget symbols` | local shaping / feedback | READ/WRITE rate budget |
+| 1 | `crates/server/src/lib.rs` | `start_server(), create_app()` | 统一 HTTP Server / App composition / fallback | INIT + request routing |
+| 2 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Data Plane 主控制流或 Router internal handler | READ/WRITE router runtime |
+| 3 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::*` | Router token/quota/key persistence | READ/WRITE router token state |
+| 4 | `crates/service/crates/user/src/lib.rs` | `UserService::*` | User/auth business service | SERVICE |
+| 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | User/role/recharge persistence | READ/WRITE user state |
+| 6 | `crates/router/src/model_router.rs` | `model_router` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 7 | `crates/router/src/affinity.rs` | `affinity` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 8 | `crates/router/src/channel_state.rs` | `channel_state` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 9 | `crates/router/src/circuit_breaker.rs` | `circuit_breaker` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 10 | `crates/router/src/aimd_limiter.rs` | `aimd_limiter` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
 | 11 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::*` | pricing lookup | READ price cache |
 | 12 | `crates/service/crates/billing/src/calculator.rs` | `CostCalculator::preflight(), calculate()` | billing admission and settlement | READ price / compute cost |
-| 13 | `crates/router/src/passthrough.rs` | `should_passthrough(), passthrough helpers` | native protocol/upstream boundary | NETWORK I/O |
-| 14 | `crates/router/src/adaptor/*` | `DynamicAdaptorFactory / provider adaptors` | non-native protocol conversion | DYNAMIC Provider branch |
-| 15 | `crates/service/crates/billing/src/usage/*` | `UsageParser::*` | provider usage normalization | READ response usage |
-| 16 | `crates/database/crates/router/src/log.rs` | `RouterLog/RequestLog persistence` | accounting/audit persistence | WRITE logs |
+| 13 | `crates/router/src/passthrough.rs` | `passthrough` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
+| 14 | `crates/router/src/adaptor/*` | `DynamicAdaptorFactory / provider adaptor` | Cross-protocol request/response transformation | DYNAMIC Provider transform |
+| 15 | `crates/service/crates/billing/src/usage/*` | `UsageParser::*` | Provider response usage normalization | READ response body/stream |
+| 16 | `crates/database/crates/router/src/log.rs` | `RouterLogModel::* / usage & billing queries` | Request accounting / usage / billing persistence | READ/WRITE router_logs |
 
-> 这个索引只列入当前执行链中有源码依据的文件；类型定义文件但不执行逻辑的，不为了凑数量加入。
+> Source Traversal 只记录真实执行/调用链；单纯类型定义、未调用模块或“可能会经过”的文件不加入。
 
 **Execution classification: STATIC CONFIRMED** — 本页只描述当前源码可以直接确认的入口、分支与调用；动态 Provider/运行时状态会明确标为动态边界。
