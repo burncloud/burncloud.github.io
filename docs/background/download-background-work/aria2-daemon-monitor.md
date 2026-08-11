@@ -52,20 +52,18 @@ FILE: crates/download/crates/download-aria2/src/lib.rs
 │
 ├─ 源码函数展开（静态扫描确认）
 │    └─ FILE: crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::start()
-│    │    │    └─ CALL → std::start_aria2_rpc() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::start_aria2_rpc()
-│    │    │    └─ CALL → std::kill_existing_aria2() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::find_available_port() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::wait_for_rpc_ready() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::stop()
-│    │    │    └─ CALL → std::kill() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::kill_existing_aria2()
-│    │    ├─ std::find_available_port()
-│    │    │    └─ CALL → std::check_port_available() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::wait_for_rpc_ready()
-│    │    ├─ std::kill()
-│    │    ├─ std::check_port_available()
+│    │    ├─ Aria2Daemon::start()
+│    │    │    └─ CALL → start_aria2_rpc() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ start_aria2_rpc()
+│    │    │    └─ CALL → kill_existing_aria2() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    │    └─ CALL → find_available_port() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    │    └─ CALL → wait_for_rpc_ready() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ Aria2Daemon::stop()
+│    │    ├─ kill_existing_aria2()
+│    │    ├─ find_available_port()
+│    │    │    └─ CALL → check_port_available() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ wait_for_rpc_ready()
+│    │    ├─ check_port_available()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │

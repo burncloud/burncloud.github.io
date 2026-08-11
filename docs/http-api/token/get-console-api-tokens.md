@@ -99,7 +99,6 @@ FILE: crates/server/src/api/token.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/auth.rs
 │    │    ├─ auth_middleware()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → verify_jwt() @ crates/server/src/api/auth.rs
 │    │    ├─ verify_jwt()
 │    │    │    └─ CALL → get_jwt_secret() @ crates/server/src/api/auth.rs
@@ -113,15 +112,9 @@ FILE: crates/server/src/api/token.rs
 │    │    ├─ TokenService::list()
 │    ├─ FILE: crates/database/crates/router/src/token.rs
 │    │    ├─ RouterTokenModel::list()
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    ├─ FILE: crates/server/src/api/response.rs
 │    │    ├─ ok()
 │    │    ├─ err()
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::fetch_all()
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    ├─ DatabaseConnection::pool()
 │    └─ FILE: crates/common/src/constants.rs
 │    │    ├─ jwt_secret()
 │
@@ -182,9 +175,8 @@ Content-Type: application/json
 | 4 | `crates/server/src/api/token.rs` | `list_tokens()` | Token Handler / request validation / response mapping | READ/WRITE token request |
 | 5 | `crates/service/crates/token/src/lib.rs` | `TokenService::*` | Token service boundary | SERVICE |
 | 6 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::*` | Router token/quota/key persistence | READ/WRITE router token state |
-| 7 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 auth_middleware() 直接调用；由 list_tokens() 直接调用 | CALL / runtime-specific |
-| 8 | `crates/database/src/database.rs` | `Database::fetch_all(), DatabaseConnection::pool()` | 由 Database::fetch_all() 直接调用；由 RouterTokenModel::list() 直接调用 | CALL / runtime-specific |
-| 9 | `crates/common/src/constants.rs` | `jwt_secret()` | 由 get_jwt_secret() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 list_tokens() 直接调用 | CALL / runtime-specific |
+| 8 | `crates/common/src/constants.rs` | `jwt_secret()` | 由 get_jwt_secret() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

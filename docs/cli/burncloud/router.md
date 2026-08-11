@@ -331,19 +331,15 @@ $ burncloud router
 
 ## 返回结果示例
 
-> 以下为构造的典型终端输出示例；真实 ID、路径、金额、模型、版本与状态以实际 CLI 执行为准。
+> 以下采用源码真实 tracing 文案；示例按未设置 HOST/PORT 时的默认值 `127.0.0.1:3000` 展示。时间戳、日志级别和 target 由 tracing formatter 决定。
 
 ```text
-BurnCloud router initialized
-channels=19
-price_cache=ready
-rate_budget=enabled
-status=running
+Unified Gateway listening on 127.0.0.1:3000
+- Dashboard: http://127.0.0.1:3000/
+- LLM API:   http://127.0.0.1:3000/v1/...
+
+# 随后 axum::serve 持续运行，命令不会立即返回到 Shell。
 ```
-
-
-
-
 
 
 ## 穿过的源码文件（详细）

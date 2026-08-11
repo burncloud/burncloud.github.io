@@ -123,7 +123,6 @@ FILE: crates/server/src/api/channel.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/auth.rs
 │    │    ├─ auth_middleware()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → verify_jwt() @ crates/server/src/api/auth.rs
 │    │    ├─ verify_jwt()
 │    │    │    └─ CALL → get_jwt_secret() @ crates/server/src/api/auth.rs
@@ -132,7 +131,6 @@ FILE: crates/server/src/api/channel.rs
 │    ├─ FILE: crates/server/src/api/channel.rs
 │    │    ├─ create_channel()
 │    │    │    └─ CALL → check_admin() @ crates/server/src/api/channel.rs
-│    │    │    └─ CALL → ChannelDto::into_channel() @ crates/server/src/api/channel.rs
 │    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
 │    │    ├─ ChannelDto::into_channel()
@@ -141,37 +139,20 @@ FILE: crates/server/src/api/channel.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
 │    ├─ FILE: crates/database/crates/user/src/lib.rs
 │    │    ├─ UserDatabase::get_user_roles()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    ├─ FILE: crates/service/crates/channel/src/lib.rs
 │    │    ├─ ChannelService::create()
 │    ├─ FILE: crates/database/crates/channel/src/channel_provider.rs
 │    │    ├─ ChannelProviderModel::create()
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → phs() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_one() @ crates/database/src/database.rs
-│    │    │    └─ CALL → BudgetGuard::commit() @ crates/router/src/rate_budget.rs
+│    │    │    └─ CALL → ChannelProviderModel::sync_abilities() @ crates/database/crates/channel/src/channel_provider.rs
+│    │    ├─ ChannelProviderModel::sync_abilities()
+│    │    │    └─ CALL → adapt_sql() @ crates/database/src/placeholder.rs
 │    ├─ FILE: crates/server/src/api/response.rs
 │    │    ├─ ok()
 │    │    ├─ err()
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::query()
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    ├─ Database::fetch_all()
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    ├─ DatabaseConnection::pool()
-│    │    ├─ Database::fetch_one()
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    ├─ FILE: crates/database/src/placeholder.rs
 │    │    ├─ phs()
-│    ├─ FILE: crates/router/src/rate_budget.rs
-│    │    ├─ BudgetGuard::commit()
+│    │    ├─ adapt_sql()
 │    └─ FILE: crates/common/src/constants.rs
 │    │    ├─ jwt_secret()
 │
@@ -233,11 +214,9 @@ Content-Type: application/json
 | 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | User/role/recharge persistence | READ/WRITE user state |
 | 6 | `crates/service/crates/channel/src/lib.rs` | `ChannelService::*` | Channel service boundary | SERVICE |
 | 7 | `crates/database/crates/channel/src/channel_provider.rs` | `ChannelProviderModel::*` | Channel provider persistence | READ/WRITE channel_providers |
-| 8 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 auth_middleware() 直接调用；由 check_admin() 直接调用；由 create_channel() 直接调用 | CALL / runtime-specific |
-| 9 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::fetch_one(), Database::kind(), Database::query(), DatabaseConnection::pool()` | 由 ChannelProviderModel::create() 直接调用；由 Database::fetch_all() 直接调用；由 Database::fetch_one() 直接调用 | CALL / runtime-specific |
-| 10 | `crates/database/src/placeholder.rs` | `phs()` | 由 ChannelProviderModel::create() 直接调用 | CALL / runtime-specific |
-| 11 | `crates/router/src/rate_budget.rs` | `BudgetGuard::commit()` | 由 ChannelProviderModel::create() 直接调用 | CALL / runtime-specific |
-| 12 | `crates/common/src/constants.rs` | `jwt_secret()` | 由 get_jwt_secret() 直接调用 | CALL / runtime-specific |
+| 8 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 check_admin() 直接调用；由 create_channel() 直接调用 | CALL / runtime-specific |
+| 9 | `crates/database/src/placeholder.rs` | `adapt_sql(), phs()` | 由 ChannelProviderModel::create() 直接调用；由 ChannelProviderModel::sync_abilities() 直接调用 | CALL / runtime-specific |
+| 10 | `crates/common/src/constants.rs` | `jwt_secret()` | 由 get_jwt_secret() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

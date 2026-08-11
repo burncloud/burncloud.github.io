@@ -85,9 +85,20 @@ FILE: crates/database/crates/router/src/token.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: src/cli/token.rs
 │    │    ├─ handle_token_command()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
-│    └─ FILE: crates/server/src/api/response.rs
-│    │    ├─ ok()
+│    │    │    └─ CALL → UserApiKeyModel::list() @ crates/database/crates/user/src/user_api_key.rs
+│    │    │    └─ CALL → UserApiKeyModel::create() @ crates/database/crates/user/src/user_api_key.rs
+│    │    │    └─ CALL → UserApiKeyModel::update() @ crates/database/crates/user/src/user_api_key.rs
+│    │    │    └─ CALL → UserApiKeyModel::delete() @ crates/database/crates/user/src/user_api_key.rs
+│    ├─ FILE: crates/database/crates/user/src/user_api_key.rs
+│    │    ├─ UserApiKeyModel::list()
+│    │    │    └─ CALL → adapt_sql() @ crates/database/src/placeholder.rs
+│    │    ├─ UserApiKeyModel::create()
+│    │    │    └─ CALL → UserApiKeyModel::generate_key() @ crates/database/crates/user/src/user_api_key.rs
+│    │    ├─ UserApiKeyModel::update()
+│    │    ├─ UserApiKeyModel::delete()
+│    │    ├─ UserApiKeyModel::generate_key()
+│    └─ FILE: crates/database/src/placeholder.rs
+│    │    ├─ adapt_sql()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -127,7 +138,8 @@ Token deleted successfully
 | 3 | `src/cli/token.rs` | `handle_token_command()` | Token CLI implementation | CLI → TokenService |
 | 4 | `crates/service/crates/token/src/lib.rs` | `TokenService::*` | Token service boundary | SERVICE |
 | 5 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::*` | Router token/quota/key persistence | READ/WRITE router token state |
-| 6 | `crates/server/src/api/response.rs` | `ok()` | 由 handle_token_command() 直接调用 | CALL / runtime-specific |
+| 6 | `crates/database/crates/user/src/user_api_key.rs` | `UserApiKeyModel::create(), UserApiKeyModel::delete(), UserApiKeyModel::generate_key(), UserApiKeyModel::list(), UserApiKeyModel::update()` | 由 UserApiKeyModel::create() 直接调用；由 handle_token_command() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/database/src/placeholder.rs` | `adapt_sql()` | 由 UserApiKeyModel::list() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

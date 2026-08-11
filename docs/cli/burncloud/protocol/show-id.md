@@ -81,38 +81,19 @@ FILE: crates/database/crates/channel/src/channel_protocol_config.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: src/cli/protocol.rs
 │    │    ├─ handle_protocol_command()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → ChannelProtocolConfigModel::list() @ crates/database/crates/channel/src/channel_protocol_config.rs
 │    │    │    └─ CALL → channel_type_to_name() @ src/cli/protocol.rs
-│    │    │    └─ CALL → ChannelProtocolConfig::is_default_bool() @ crates/database/crates/channel/src/channel_protocol_config.rs
 │    │    │    └─ CALL → ChannelProtocolConfigModel::upsert() @ crates/database/crates/channel/src/channel_protocol_config.rs
 │    │    │    └─ CALL → ChannelProtocolConfigModel::delete() @ crates/database/crates/channel/src/channel_protocol_config.rs
 │    │    ├─ channel_type_to_name()
-│    ├─ FILE: crates/server/src/api/response.rs
-│    │    ├─ ok()
 │    ├─ FILE: crates/database/crates/channel/src/channel_protocol_config.rs
 │    │    ├─ ChannelProtocolConfigModel::list()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → ph() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    ├─ ChannelProtocolConfig::is_default_bool()
 │    │    ├─ ChannelProtocolConfigModel::upsert()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → ph() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    │    └─ CALL → phs() @ crates/database/src/placeholder.rs
 │    │    ├─ ChannelProtocolConfigModel::delete()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → ph() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::fetch_all()
-│    │    ├─ DatabaseConnection::pool()
-│    │    ├─ Database::query()
 │    └─ FILE: crates/database/src/placeholder.rs
 │    │    ├─ ph()
 │    │    ├─ phs()
@@ -157,9 +138,7 @@ enabled=true
 | 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
 | 3 | `src/cli/protocol.rs` | `handle_protocol_command()` | Protocol config CLI implementation | CLI → channel protocol DB |
 | 4 | `crates/database/crates/channel/src/channel_protocol_config.rs` | `ChannelProtocolConfigModel::*` | Protocol configuration persistence | READ/WRITE channel protocol configs |
-| 5 | `crates/server/src/api/response.rs` | `ok()` | 由 handle_protocol_command() 直接调用 | CALL / runtime-specific |
-| 6 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::kind(), Database::query(), DatabaseConnection::pool()` | 由 ChannelProtocolConfigModel::delete() 直接调用；由 ChannelProtocolConfigModel::list() 直接调用；由 ChannelProtocolConfigModel::upsert() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/database/src/placeholder.rs` | `ph(), phs()` | 由 ChannelProtocolConfigModel::delete() 直接调用；由 ChannelProtocolConfigModel::list() 直接调用；由 ChannelProtocolConfigModel::upsert() 直接调用 | CALL / runtime-specific |
+| 5 | `crates/database/src/placeholder.rs` | `ph(), phs()` | 由 ChannelProtocolConfigModel::delete() 直接调用；由 ChannelProtocolConfigModel::list() 直接调用；由 ChannelProtocolConfigModel::upsert() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

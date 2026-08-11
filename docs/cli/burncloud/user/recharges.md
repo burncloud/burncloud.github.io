@@ -101,7 +101,6 @@ FILE: crates/database/crates/user/src/lib.rs
 │    │    │    └─ CALL → BundleVerifier::verify() @ crates/installer/src/bundle.rs
 │    │    │    └─ CALL → UserDatabase::get_user_roles() @ crates/database/crates/user/src/lib.rs
 │    │    ├─ cmd_user_list()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → UserDatabase::list_users() @ crates/database/crates/user/src/lib.rs
 │    │    ├─ cmd_user_topup()
 │    │    │    └─ CALL → UserDatabase::get_user_by_username() @ crates/database/crates/user/src/lib.rs
@@ -109,17 +108,11 @@ FILE: crates/database/crates/user/src/lib.rs
 │    │    │    └─ CALL → UserDatabase::create_recharge() @ crates/database/crates/user/src/lib.rs
 │    │    │    └─ CALL → UserDatabase::update_balance() @ crates/database/crates/user/src/lib.rs
 │    │    ├─ cmd_user_recharges()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → UserDatabase::list_recharges() @ crates/database/crates/user/src/lib.rs
 │    │    ├─ cmd_user_check_username()
 │    │    │    └─ CALL → UserDatabase::get_user_by_username() @ crates/database/crates/user/src/lib.rs
 │    ├─ FILE: crates/database/crates/user/src/lib.rs
 │    │    ├─ UserDatabase::init()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_one() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
 │    │    │    └─ CALL → UserDatabase::assign_role() @ crates/database/crates/user/src/lib.rs
 │    │    ├─ UserDatabase::assign_role()
 │    │    ├─ UserDatabase::get_user_by_username()
@@ -130,16 +123,8 @@ FILE: crates/database/crates/user/src/lib.rs
 │    │    ├─ UserDatabase::create_recharge()
 │    │    ├─ UserDatabase::update_balance()
 │    │    ├─ UserDatabase::list_recharges()
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::query()
-│    │    ├─ DatabaseConnection::pool()
-│    │    ├─ Database::fetch_one()
-│    │    ├─ Database::fetch_all()
-│    ├─ FILE: crates/installer/src/bundle.rs
+│    └─ FILE: crates/installer/src/bundle.rs
 │    │    ├─ BundleVerifier::verify()
-│    └─ FILE: crates/server/src/api/response.rs
-│    │    ├─ ok()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -180,9 +165,7 @@ ID    AMOUNT      CREATED_AT
 | 3 | `src/cli/user.rs` | `handle_user_command()` | User CLI implementation | CLI → UserService |
 | 4 | `crates/service/crates/user/src/lib.rs` | `UserService::*` | User/auth business service | SERVICE |
 | 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | User/role/recharge persistence | READ/WRITE user state |
-| 6 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::fetch_one(), Database::kind(), Database::query(), DatabaseConnection::pool()` | 由 UserDatabase::init() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/installer/src/bundle.rs` | `BundleVerifier::verify()` | 由 cmd_user_login() 直接调用 | CALL / runtime-specific |
-| 8 | `crates/server/src/api/response.rs` | `ok()` | 由 cmd_user_list() 直接调用；由 cmd_user_recharges() 直接调用 | CALL / runtime-specific |
+| 6 | `crates/installer/src/bundle.rs` | `BundleVerifier::verify()` | 由 cmd_user_login() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

@@ -85,15 +85,7 @@ FILE: crates/database/src/lib.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/database/crates/channel/src/channel_provider.rs
 │    │    ├─ ChannelProviderModel::list()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → ph() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::fetch_all()
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    ├─ DatabaseConnection::pool()
 │    └─ FILE: crates/database/src/placeholder.rs
 │    │    ├─ ph()
 │
@@ -138,8 +130,7 @@ router=healthy
 | 3 | `src/cli/monitor.rs` | `cmd_monitor_status(), cmd_monitor_server()` | System/server monitor CLI | READ DB/OS process state |
 | 4 | `crates/database/crates/channel/src/channel_provider.rs` | `ChannelProviderModel::*` | Channel provider persistence | READ/WRITE channel_providers |
 | 5 | `crates/database/src/lib.rs` | `Database::get_connection(), query/execute helpers` | Core database abstraction | SQL boundary |
-| 6 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::kind(), DatabaseConnection::pool()` | 由 ChannelProviderModel::list() 直接调用；由 Database::fetch_all() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/database/src/placeholder.rs` | `ph()` | 由 ChannelProviderModel::list() 直接调用 | CALL / runtime-specific |
+| 6 | `crates/database/src/placeholder.rs` | `ph()` | 由 ChannelProviderModel::list() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

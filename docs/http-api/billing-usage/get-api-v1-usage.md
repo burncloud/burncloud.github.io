@@ -128,44 +128,20 @@ FILE: crates/database/crates/router/src/log.rs
 │    ├─ FILE: crates/router/src/lib.rs
 │    │    ├─ usage_handler()
 │    │    │    └─ CALL → extract_token_user() @ crates/router/src/lib.rs
-│    │    │    └─ CALL → get_usage_stats() @ crates/database/crates/router/src/log.rs
 │    │    │    └─ CALL → build_response_with_header() @ crates/router/src/lib.rs
 │    │    │    └─ CALL → build_response() @ crates/router/src/lib.rs
 │    │    │    └─ CALL → json_error_body() @ crates/router/src/lib.rs
 │    │    ├─ extract_token_user()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → build_response() @ crates/router/src/lib.rs
 │    │    │    └─ CALL → RouterDatabase::validate_token_and_get_info() @ crates/database/crates/router/src/lib.rs
 │    │    │    └─ CALL → RouterDatabase::validate_token_detailed() @ crates/database/crates/router/src/lib.rs
 │    │    ├─ build_response_with_header()
-│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
 │    │    ├─ build_response()
-│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
 │    │    ├─ json_error_body()
-│    ├─ FILE: crates/database/crates/router/src/log.rs
-│    │    ├─ get_usage_stats()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → ph() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::fetch_one() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    ├─ FILE: crates/server/src/api/response.rs
-│    │    ├─ ok()
 │    ├─ FILE: crates/database/crates/router/src/lib.rs
 │    │    ├─ RouterDatabase::validate_token_and_get_info()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ RouterDatabase::validate_token_detailed()
 │    │    │    └─ CALL → RouterTokenModel::validate_detailed() @ crates/database/crates/router/src/token.rs
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::fetch_one()
-│    │    ├─ DatabaseConnection::pool()
-│    │    ├─ Database::fetch_optional()
-│    ├─ FILE: crates/database/src/placeholder.rs
-│    │    ├─ ph()
-│    ├─ FILE: crates/service/crates/billing/src/cache.rs
-│    │    ├─ PriceCache::empty()
 │    └─ FILE: crates/database/crates/router/src/token.rs
 │    │    ├─ RouterTokenModel::validate_detailed()
 │
@@ -219,11 +195,7 @@ Content-Type: application/json
 | 2 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Data Plane 主控制流或 Router internal handler | READ/WRITE router runtime |
 | 3 | `crates/database/crates/router/src/lib.rs` | `entry-specific function(s) shown in E2E` | 当前入口在该文件执行的直接调用点 | runtime-specific |
 | 4 | `crates/database/crates/router/src/log.rs` | `RouterLogModel::* / usage & billing queries` | Request accounting / usage / billing persistence | READ/WRITE router_logs |
-| 5 | `crates/server/src/api/response.rs` | `ok()` | 由 extract_token_user() 直接调用 | CALL / runtime-specific |
-| 6 | `crates/database/src/database.rs` | `Database::fetch_one(), Database::fetch_optional(), Database::kind(), DatabaseConnection::pool()` | 由 RouterDatabase::validate_token_and_get_info() 直接调用；由 get_usage_stats() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/database/src/placeholder.rs` | `ph()` | 由 get_usage_stats() 直接调用 | CALL / runtime-specific |
-| 8 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::empty()` | 由 build_response() 直接调用；由 build_response_with_header() 直接调用 | CALL / runtime-specific |
-| 9 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::validate_detailed()` | 由 RouterDatabase::validate_token_detailed() 直接调用 | CALL / runtime-specific |
+| 5 | `crates/database/crates/router/src/token.rs` | `RouterTokenModel::validate_detailed()` | 由 RouterDatabase::validate_token_detailed() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

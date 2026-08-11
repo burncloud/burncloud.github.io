@@ -82,19 +82,20 @@ $ burncloud
 
 ## 返回结果示例
 
-> 以下为构造的典型终端输出示例；真实 ID、路径、金额、模型、版本与状态以实际 CLI 执行为准。
+> 无参数启动存在平台分支；下面分别给出源码可确认的终态/输出语义。
 
 ```text
-BurnCloud starting...
-mode=server+liveview
-database=ready
-router=ready
-listening=http://0.0.0.0:3000
+# 非 Windows
+Starting BurnCloud Server with LiveView (Headless Mode)...
+Unified Gateway listening on 127.0.0.1:3000
+- Dashboard: http://127.0.0.1:3000/
+- LLM API:   http://127.0.0.1:3000/v1/...
+
+# Windows
+background_server_thread=running (enable_liveview=false)
+desktop_gui_event_loop=running
+system_tray_thread=running
 ```
-
-
-
-
 
 
 ## 穿过的源码文件（详细）

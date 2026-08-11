@@ -78,17 +78,16 @@ $ burncloud client
 
 ## 返回结果示例
 
-> 以下为构造的典型终端输出示例；真实 ID、路径、金额、模型、版本与状态以实际 CLI 执行为准。
+> `client` 是平台分支入口：Windows 进入 Dioxus Desktop 事件循环；非 Windows 的两行提示是源码真实 stdout。
 
 ```text
-BurnCloud client starting...
-ui=ready
-status=running
+# Windows
+BurnCloud desktop window + tray enter the long-running GUI event loop.
+
+# 非 Windows（源码真实 stdout）
+Desktop GUI is only available on Windows.
+On Linux, use 'burncloud server' to start the web dashboard.
 ```
-
-
-
-
 
 
 ## 穿过的源码文件（详细）

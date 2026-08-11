@@ -82,10 +82,7 @@ FILE: src/cli/monitor.rs
 │    │    │    └─ CALL → show_recent_logs() @ src/cli/monitor.rs
 │    │    │    └─ CALL → show_tmux_output() @ src/cli/monitor.rs
 │    │    ├─ get_today_stats()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → ph() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::fetch_one() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ check_server_status()
 │    │    │    └─ CALL → check_process_running() @ src/cli/monitor.rs
 │    │    │    └─ CALL → get_process_pid() @ src/cli/monitor.rs
@@ -95,7 +92,6 @@ FILE: src/cli/monitor.rs
 │    │    │    └─ CALL → get_process_uptime() @ src/cli/monitor.rs
 │    │    │    └─ CALL → get_recent_errors() @ src/cli/monitor.rs
 │    │    ├─ show_recent_logs()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    ├─ show_tmux_output()
 │    │    ├─ check_process_running()
 │    │    ├─ get_process_pid()
@@ -106,19 +102,9 @@ FILE: src/cli/monitor.rs
 │    │    ├─ get_recent_errors()
 │    ├─ FILE: crates/database/crates/channel/src/channel_provider.rs
 │    │    ├─ ChannelProviderModel::list()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → ph() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::fetch_all()
-│    │    ├─ DatabaseConnection::pool()
-│    │    ├─ Database::fetch_one()
-│    ├─ FILE: crates/database/src/placeholder.rs
+│    └─ FILE: crates/database/src/placeholder.rs
 │    │    ├─ ph()
-│    └─ FILE: crates/server/src/api/response.rs
-│    │    ├─ ok()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -157,9 +143,7 @@ status=running
 | 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
 | 3 | `src/cli/monitor.rs` | `cmd_monitor_status(), cmd_monitor_server()` | System/server monitor CLI | READ DB/OS process state |
 | 4 | `crates/database/crates/channel/src/channel_provider.rs` | `ChannelProviderModel::list()` | 由 cmd_monitor_status() 直接调用 | CALL / runtime-specific |
-| 5 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::fetch_one(), Database::kind(), DatabaseConnection::pool()` | 由 ChannelProviderModel::list() 直接调用；由 get_today_stats() 直接调用 | CALL / runtime-specific |
-| 6 | `crates/database/src/placeholder.rs` | `ph()` | 由 ChannelProviderModel::list() 直接调用；由 get_today_stats() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/server/src/api/response.rs` | `ok()` | 由 show_recent_logs() 直接调用 | CALL / runtime-specific |
+| 5 | `crates/database/src/placeholder.rs` | `ph()` | 由 ChannelProviderModel::list() 直接调用；由 get_today_stats() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

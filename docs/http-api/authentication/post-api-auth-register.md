@@ -91,23 +91,11 @@ FILE: crates/server/src/api/auth.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/auth.rs
 │    │    ├─ create_user()
-│    │    │    └─ CALL → UserService::register_user() @ crates/service/crates/user/src/lib.rs
 │    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
-│    ├─ FILE: crates/service/crates/user/src/lib.rs
-│    │    ├─ UserService::register_user()
-│    │    │    └─ CALL → UserDatabase::get_user_by_username() @ crates/database/crates/user/src/lib.rs
-│    │    │    └─ CALL → UserDatabase::count_users() @ crates/database/crates/user/src/lib.rs
-│    │    │    └─ CALL → UserDatabase::create_user() @ crates/database/crates/user/src/lib.rs
-│    │    │    └─ CALL → UserDatabase::assign_role() @ crates/database/crates/user/src/lib.rs
-│    ├─ FILE: crates/server/src/api/response.rs
+│    └─ FILE: crates/server/src/api/response.rs
 │    │    ├─ ok()
 │    │    ├─ err()
-│    └─ FILE: crates/database/crates/user/src/lib.rs
-│    │    ├─ UserDatabase::get_user_by_username()
-│    │    ├─ UserDatabase::count_users()
-│    │    ├─ UserDatabase::create_user()
-│    │    ├─ UserDatabase::assign_role()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │

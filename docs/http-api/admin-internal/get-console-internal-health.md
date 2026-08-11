@@ -81,26 +81,10 @@ FILE: crates/router/src/lib.rs
 │
 │
 ├─ 源码函数展开（静态扫描确认）
-│    ├─ FILE: crates/router/src/lib.rs
+│    └─ FILE: crates/router/src/lib.rs
 │    │    ├─ health_status_handler()
-│    │    │    └─ CALL → CircuitBreaker::get_status_map() @ crates/router/src/circuit_breaker.rs
-│    │    │    └─ CALL → ChannelStateTracker::get_all_states() @ crates/router/src/channel_state.rs
-│    │    │    └─ CALL → AimdController::get_current_limit() @ crates/router/src/aimd_limiter.rs
-│    │    │    └─ CALL → AimdController::get_learned_limit() @ crates/router/src/aimd_limiter.rs
-│    │    │    └─ CALL → AimdController::get_state() @ crates/router/src/aimd_limiter.rs
 │    │    │    └─ CALL → build_response_with_header() @ crates/router/src/lib.rs
 │    │    ├─ build_response_with_header()
-│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
-│    ├─ FILE: crates/router/src/circuit_breaker.rs
-│    │    ├─ CircuitBreaker::get_status_map()
-│    ├─ FILE: crates/router/src/channel_state.rs
-│    │    ├─ ChannelStateTracker::get_all_states()
-│    ├─ FILE: crates/router/src/aimd_limiter.rs
-│    │    ├─ AimdController::get_current_limit()
-│    │    ├─ AimdController::get_learned_limit()
-│    │    ├─ AimdController::get_state()
-│    └─ FILE: crates/service/crates/billing/src/cache.rs
-│    │    ├─ PriceCache::empty()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -159,8 +143,6 @@ Content-Type: application/json
 | 2 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Data Plane 主控制流或 Router internal handler | READ/WRITE router runtime |
 | 3 | `crates/router/src/circuit_breaker.rs` | `circuit_breaker` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
 | 4 | `crates/router/src/channel_state.rs` | `channel_state` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
-| 5 | `crates/router/src/aimd_limiter.rs` | `AimdController::get_current_limit(), AimdController::get_learned_limit(), AimdController::get_state()` | 由 health_status_handler() 直接调用 | CALL / runtime-specific |
-| 6 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::empty()` | 由 build_response_with_header() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

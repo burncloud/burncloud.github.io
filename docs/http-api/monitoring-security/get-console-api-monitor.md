@@ -145,16 +145,13 @@ FILE: crates/service/crates/monitor/src/service.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/monitor.rs
 │    │    ├─ get_system_metrics()
-│    │    │    └─ CALL → SystemMonitorService::get_metrics() @ crates/service/crates/monitor/src/service.rs
 │    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
 │    ├─ FILE: crates/service/crates/monitor/src/service.rs
 │    │    ├─ SystemMonitorService::get_metrics()
-│    │    │    └─ CALL → SystemMonitorService::collect_fresh_metrics() @ crates/service/crates/monitor/src/service.rs
 │    │    ├─ SystemMonitorService::collect_fresh_metrics()
 │    │    │    └─ CALL → SystemMonitorService::collect_metrics_internal() @ crates/service/crates/monitor/src/service.rs
 │    │    ├─ SystemMonitorService::collect_metrics_internal()
-│    │    │    └─ CALL → DiskCollector::collect_all() @ crates/service/crates/monitor/src/collectors/disk.rs
 │    │    │    └─ CALL → SystemMetrics::new() @ crates/service/crates/monitor/src/types.rs
 │    ├─ FILE: crates/service/crates/monitor/src/collectors/cpu.rs
 │    │    ├─ CpuCollector::collect()
@@ -162,18 +159,6 @@ FILE: crates/service/crates/monitor/src/service.rs
 │    │    ├─ MemoryCollector::collect()
 │    ├─ FILE: crates/service/crates/monitor/src/collectors/disk.rs
 │    │    ├─ DiskCollector::collect_all()
-│    │    │    └─ CALL → DiskCollector::collect_all_windows() @ crates/service/crates/monitor/src/collectors/disk.rs
-│    │    │    └─ CALL → DiskCollector::collect_all_unix() @ crates/service/crates/monitor/src/collectors/disk.rs
-│    │    ├─ DiskCollector::collect_all_windows()
-│    │    │    └─ CALL → DiskCollector::get_disk_info_windows() @ crates/service/crates/monitor/src/collectors/disk.rs
-│    │    ├─ DiskCollector::collect_all_unix()
-│    │    │    └─ CALL → DiskCollector::is_local_filesystem() @ crates/service/crates/monitor/src/collectors/disk.rs
-│    │    │    └─ CALL → DiskCollector::is_valid_mount_point() @ crates/service/crates/monitor/src/collectors/disk.rs
-│    │    │    └─ CALL → DiskCollector::get_disk_info_unix() @ crates/service/crates/monitor/src/collectors/disk.rs
-│    │    ├─ DiskCollector::get_disk_info_windows()
-│    │    ├─ DiskCollector::is_local_filesystem()
-│    │    ├─ DiskCollector::is_valid_mount_point()
-│    │    ├─ DiskCollector::get_disk_info_unix()
 │    ├─ FILE: crates/server/src/api/response.rs
 │    │    ├─ ok()
 │    │    ├─ err()

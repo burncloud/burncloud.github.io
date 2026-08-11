@@ -130,16 +130,9 @@ FILE: crates/database/src/lib.rs
 │    ├─ FILE: crates/server/src/api/security.rs
 │    │    ├─ security_filters_put()
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
-│    │    │    └─ CALL → Database::execute_query_with_params() @ crates/database/src/database.rs
 │    │    ├─ Default::default()
-│    ├─ FILE: crates/server/src/api/response.rs
+│    └─ FILE: crates/server/src/api/response.rs
 │    │    ├─ err()
-│    └─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::execute_query_with_params()
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    ├─ Database::query()
-│    │    ├─ DatabaseConnection::pool()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -196,7 +189,6 @@ Content-Type: application/json
 | 4 | `crates/server/src/api/security.rs` | `security_filters_put()` | 写入 sys_settings.security_filters | WRITE sys_settings |
 | 5 | `crates/database/src/lib.rs` | `Database::get_connection(), query/execute helpers` | Core database abstraction | SQL boundary |
 | 6 | `crates/server/src/api/response.rs` | `err()` | 由 security_filters_put() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/database/src/database.rs` | `Database::execute_query_with_params(), Database::query(), DatabaseConnection::pool()` | 由 Database::execute_query_with_params() 直接调用；由 security_filters_put() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

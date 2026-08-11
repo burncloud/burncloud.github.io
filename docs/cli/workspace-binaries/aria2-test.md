@@ -94,65 +94,46 @@ FILE: crates/download/crates/download-aria2/src/lib.rs
 │
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::quick_start()
-│    │    │    └─ CALL → std::download_and_setup() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::start_daemon() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::new()
-│    │    ├─ std::download_and_setup()
-│    │    │    └─ CALL → std::download_aria2() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::download_aria2()
+│    │    ├─ quick_start()
+│    │    │    └─ CALL → Aria2Manager::new() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ Aria2RpcClient::new()
+│    │    ├─ Aria2Manager::download_and_setup()
+│    │    │    └─ CALL → download_aria2() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ download_aria2()
 │    │    │    └─ CALL → get_burncloud_dir() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::extract_aria2() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::extract_aria2()
-│    │    ├─ std::start_daemon()
-│    │    ├─ std::start()
-│    │    │    └─ CALL → std::start_aria2_rpc() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::start_aria2_rpc()
-│    │    │    └─ CALL → std::kill_existing_aria2() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::find_available_port() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::wait_for_rpc_ready() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::add_uri()
-│    │    │    └─ CALL → std::find_existing_task() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::call_method() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::find_existing_task()
-│    │    │    └─ CALL → std::tell_active() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::tell_waiting() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::tell_stopped() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::tell_status() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::is_same_task() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::tell_active()
-│    │    │    └─ CALL → std::call_method() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::tell_waiting()
-│    │    │    └─ CALL → std::call_method() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::tell_stopped()
-│    │    │    └─ CALL → std::call_method() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::tell_status()
-│    │    │    └─ CALL → std::call_method() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::get_files()
-│    │    │    └─ CALL → std::call_method() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::call_method()
-│    │    ├─ std::shutdown()
-│    │    │    └─ CALL → std::call_method() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::stop()
-│    │    │    └─ CALL → std::kill() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    │    └─ CALL → download_file() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    │    └─ CALL → extract_aria2() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ extract_aria2()
+│    │    ├─ Aria2Manager::start_daemon()
+│    │    │    └─ CALL → Aria2Daemon::new() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ Aria2Daemon::start()
+│    │    │    └─ CALL → start_aria2_rpc() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ start_aria2_rpc()
+│    │    │    └─ CALL → kill_existing_aria2() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    │    └─ CALL → find_available_port() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    │    └─ CALL → wait_for_rpc_ready() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ Aria2RpcClient::add_uri()
+│    │    ├─ Aria2RpcClient::find_existing_task()
+│    │    ├─ Aria2RpcClient::tell_active()
+│    │    ├─ Aria2RpcClient::tell_waiting()
+│    │    ├─ Aria2RpcClient::tell_stopped()
+│    │    ├─ Aria2RpcClient::tell_status()
+│    │    ├─ Aria2RpcClient::get_files()
+│    │    ├─ Aria2RpcClient::call_method()
+│    │    ├─ Aria2RpcClient::shutdown()
+│    │    ├─ Aria2Daemon::stop()
+│    │    ├─ Aria2Manager::new()
 │    │    ├─ get_burncloud_dir()
-│    │    ├─ std::kill_existing_aria2()
-│    │    ├─ std::find_available_port()
-│    │    │    └─ CALL → std::check_port_available() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::wait_for_rpc_ready()
-│    │    ├─ std::get_global_stat()
-│    │    │    └─ CALL → std::call_method() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::is_same_task()
-│    │    │    └─ CALL → std::get_files() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    ├─ std::kill()
-│    │    ├─ std::check_port_available()
+│    │    ├─ download_file()
+│    │    ├─ Aria2Daemon::new()
+│    │    ├─ kill_existing_aria2()
+│    │    ├─ find_available_port()
+│    │    │    └─ CALL → check_port_available() @ crates/download/crates/download-aria2/src/lib.rs
+│    │    ├─ wait_for_rpc_ready()
+│    │    ├─ check_port_available()
 │    └─ FILE: crates/download/crates/download-aria2/src/main.rs
 │    │    ├─ test_basic_operations()
-│    │    │    └─ CALL → std::get_global_stat() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::tell_active() @ crates/download/crates/download-aria2/src/lib.rs
 │    │    ├─ test_download()
-│    │    │    └─ CALL → std::add_uri() @ crates/download/crates/download-aria2/src/lib.rs
-│    │    │    └─ CALL → std::tell_status() @ crates/download/crates/download-aria2/src/lib.rs
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │

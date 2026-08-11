@@ -136,20 +136,14 @@ FILE: crates/router/src/circuit_breaker.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → post_router_internal() @ crates/server/src/api/security.rs
 │    │    ├─ post_router_internal()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    ├─ FILE: crates/router/src/lib.rs
 │    │    ├─ circuit_breaker_trip_all_handler()
-│    │    │    └─ CALL → CircuitBreaker::trip_all() @ crates/router/src/circuit_breaker.rs
 │    │    │    └─ CALL → build_response_with_header() @ crates/router/src/lib.rs
 │    │    ├─ build_response_with_header()
-│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
 │    ├─ FILE: crates/router/src/circuit_breaker.rs
 │    │    ├─ CircuitBreaker::trip_all()
-│    ├─ FILE: crates/server/src/api/response.rs
+│    └─ FILE: crates/server/src/api/response.rs
 │    │    ├─ err()
-│    │    ├─ ok()
-│    └─ FILE: crates/service/crates/billing/src/cache.rs
-│    │    ├─ PriceCache::empty()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -202,8 +196,7 @@ Content-Type: application/json
 | 4 | `crates/server/src/api/security.rs` | `security_emergency_circuit_break(), post_router_internal()` | loopback POST Router trip-all | NETWORK localhost / WRITE breaker |
 | 5 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Data Plane 主控制流或 Router internal handler | READ/WRITE router runtime |
 | 6 | `crates/router/src/circuit_breaker.rs` | `circuit_breaker` | Router runtime subsystem used by E2E path | READ/WRITE runtime state |
-| 7 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 post_router_internal() 直接调用；由 security_emergency_circuit_break() 直接调用 | CALL / runtime-specific |
-| 8 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::empty()` | 由 build_response_with_header() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/server/src/api/response.rs` | `err()` | 由 security_emergency_circuit_break() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

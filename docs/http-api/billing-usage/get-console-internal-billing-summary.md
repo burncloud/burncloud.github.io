@@ -136,13 +136,9 @@ FILE: crates/database/crates/router/src/log.rs
 │    ├─ FILE: crates/server/src/api/log.rs
 │    │    ├─ billing_summary_handler()
 │    │    │    └─ CALL → billing_summary_inner() @ crates/server/src/api/log.rs
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    ├─ billing_summary_inner()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
-│    ├─ FILE: crates/service/crates/router-log/src/lib.rs
+│    └─ FILE: crates/service/crates/router-log/src/lib.rs
 │    │    ├─ BillingService::get_billing_summary()
-│    └─ FILE: crates/server/src/api/response.rs
-│    │    ├─ ok()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -196,7 +192,6 @@ Content-Type: application/json
 | 4 | `crates/server/src/api/log.rs` | `billing_summary_handler(), billing_summary_inner()` | 可选 internal secret + 全局 billing summary | READ header/env/logs |
 | 5 | `crates/service/crates/router-log/src/lib.rs` | `RouterLogService::*, BillingService::*` | Router log / usage / billing summary service | SERVICE |
 | 6 | `crates/database/crates/router/src/log.rs` | `RouterLogModel::* / usage & billing queries` | Request accounting / usage / billing persistence | READ/WRITE router_logs |
-| 7 | `crates/server/src/api/response.rs` | `ok()` | 由 billing_summary_handler() 直接调用；由 billing_summary_inner() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

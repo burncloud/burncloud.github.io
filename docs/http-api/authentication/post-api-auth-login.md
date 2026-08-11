@@ -91,20 +91,11 @@ FILE: crates/server/src/api/auth.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/auth.rs
 │    │    ├─ login()
-│    │    │    └─ CALL → UserService::login_user() @ crates/service/crates/user/src/lib.rs
 │    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
-│    ├─ FILE: crates/service/crates/user/src/lib.rs
-│    │    ├─ UserService::login_user()
-│    │    │    └─ CALL → UserDatabase::get_user_by_username() @ crates/database/crates/user/src/lib.rs
-│    │    │    └─ CALL → BundleVerifier::verify() @ crates/installer/src/bundle.rs
-│    ├─ FILE: crates/server/src/api/response.rs
+│    └─ FILE: crates/server/src/api/response.rs
 │    │    ├─ ok()
 │    │    ├─ err()
-│    ├─ FILE: crates/database/crates/user/src/lib.rs
-│    │    ├─ UserDatabase::get_user_by_username()
-│    └─ FILE: crates/installer/src/bundle.rs
-│    │    ├─ BundleVerifier::verify()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -162,7 +153,6 @@ Content-Type: application/json
 | 4 | `crates/service/crates/user/src/lib.rs` | `UserService::*` | User/auth business service | SERVICE |
 | 5 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | User/role/recharge persistence | READ/WRITE user state |
 | 6 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 login() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/installer/src/bundle.rs` | `BundleVerifier::verify()` | 由 UserService::login_user() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

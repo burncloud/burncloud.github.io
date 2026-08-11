@@ -57,11 +57,10 @@ START
 │    │    │    └─ CALL → create_app() @ crates/server/src/lib.rs
 │    │    ├─ create_app()
 │    │    │    └─ CALL → SystemMonitorService::new() @ crates/service/crates/monitor/src/service.rs
-│    │    │    └─ CALL → SystemMonitorService::start_auto_update() @ crates/service/crates/monitor/src/service.rs
 │    │    │    └─ CALL → CacheService::new() @ crates/service/crates/cache/src/service.rs
 │    │    │    └─ CALL → create_router_app() @ crates/router/src/lib.rs
 │    │    │    └─ CALL → UserService::new() @ crates/service/crates/user/src/lib.rs
-│    │    │    └─ CALL → liveview_router() @ crates/client/src/lib.rs
+│    │    │    └─ CALL → routes() @ crates/server/src/api/mod.rs
 │    ├─ FILE: crates/server/src/api/mod.rs
 │    │    ├─ routes()
 │    │    │    └─ CALL → public_routes() @ crates/server/src/api/auth.rs
@@ -69,23 +68,21 @@ START
 │    │    │    └─ CALL → security_routes() @ crates/server/src/api/security.rs
 │    ├─ FILE: crates/client/src/lib.rs
 │    │    ├─ liveview_router()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → liveview_style_tags() @ crates/client/crates/client-shared/src/app_styles.rs
 │    ├─ FILE: crates/router/src/lib.rs
 │    │    ├─ create_router_app()
 │    │    │    └─ CALL → RoundRobinBalancer::new() @ crates/router/src/balancer/mod.rs
 │    │    │    └─ CALL → RateLimiter::new() @ crates/router/src/limiter.rs
 │    │    │    └─ CALL → CircuitBreaker::new() @ crates/router/src/circuit_breaker.rs
+│    │    │    └─ CALL → ModelRouter::new() @ crates/router/src/model_router.rs
 │    │    │    └─ CALL → ChannelStateTracker::new() @ crates/router/src/channel_state.rs
+│    │    │    └─ CALL → DynamicAdaptorFactory::new() @ crates/router/src/adaptor/factory.rs
 │    │    │    └─ CALL → ApiVersionDetector::new() @ crates/router/src/adaptor/detector.rs
 │    │    │    └─ CALL → PriceCache::load() @ crates/service/crates/billing/src/cache.rs
 │    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
 │    │    │    └─ CALL → CostCalculator::new() @ crates/service/crates/billing/src/calculator.rs
-│    │    │    └─ CALL → ExchangeRateService::new() @ crates/router/src/exchange_rate.rs
-│    │    │    └─ CALL → ExchangeRateService::load_rates_from_db() @ crates/router/src/exchange_rate.rs
 │    │    ├─ proxy_handler()
 │    │    │    └─ CALL → normalize_doubled_path() @ crates/router/src/lib.rs
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → build_response_with_header() @ crates/router/src/lib.rs
 │    │    │    └─ CALL → RouterDatabase::validate_token_and_get_info() @ crates/database/crates/router/src/lib.rs
 │    │    │    └─ CALL → RouterDatabase::update_token_accessed_time() @ crates/database/crates/router/src/lib.rs
@@ -94,39 +91,31 @@ START
 │    │    │    └─ CALL → RouterVideoTaskModel::get_by_task_id() @ crates/database/crates/router/src/router_video_task.rs
 │    │    │    └─ CALL → ChannelProviderModel::get_by_id() @ crates/database/crates/channel/src/channel_provider.rs
 │    │    │    └─ CALL → UnifiedTokenCounter::new() @ crates/service/crates/billing/src/counter.rs
+│    │    │    └─ CALL → proxy_logic() @ crates/router/src/lib.rs
 │    │    ├─ proxy_logic()
 │    │    │    └─ CALL → sanitize_request_body() @ crates/router/src/lib.rs
 │    │    │    └─ CALL → sanitize_request_headers() @ crates/router/src/lib.rs
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → extract_model_from_gemini_path() @ crates/router/src/passthrough.rs
 │    │    │    └─ CALL → UserService::resolve_traffic_class() @ crates/service/crates/user/src/lib.rs
 │    │    │    └─ CALL → OrderType::from_db_row() @ crates/router/src/order_type.rs
-│    │    │    └─ CALL → RoutingDecision::route_with_scheduler() @ crates/router/src/model_router.rs
-│    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
 │    │    │    └─ CALL → build_response_with_header() @ crates/router/src/lib.rs
-│    │    │    └─ CALL → CostCalculator::preflight() @ crates/service/crates/billing/src/calculator.rs
+│    │    │    └─ CALL → record_failover_attempt() @ crates/router/src/lib.rs
+│    │    │    └─ CALL → BudgetGuard::new() @ crates/router/src/rate_budget.rs
+│    │    │    └─ CALL → should_passthrough() @ crates/router/src/passthrough.rs
+│    │    │    └─ CALL → build_gemini_passthrough_url() @ crates/router/src/passthrough.rs
 │    ├─ FILE: crates/database/src/database.rs
 │    │    ├─ create_default_database()
 │    │    │    └─ CALL → Database::new() @ crates/database/src/database.rs
 │    ├─ FILE: crates/database/crates/router/src/lib.rs
 │    │    ├─ RouterDatabase::init()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    ├─ FILE: crates/database/crates/user/src/lib.rs
 │    │    ├─ UserDatabase::init()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_one() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
 │    │    │    └─ CALL → UserDatabase::assign_role() @ crates/database/crates/user/src/lib.rs
 │    ├─ FILE: crates/service/crates/monitor/src/service.rs
 │    │    ├─ SystemMonitorService::new()
-│    │    ├─ SystemMonitorService::start_auto_update()
-│    │    │    └─ CALL → SystemMonitorService::collect_metrics_internal() @ crates/service/crates/monitor/src/service.rs
 │    ├─ FILE: crates/service/crates/cache/src/service.rs
 │    │    ├─ CacheService::new()
+│    │    │    └─ CALL → CacheService::with_config() @ crates/service/crates/cache/src/service.rs
 │    ├─ FILE: crates/service/crates/user/src/lib.rs
 │    │    ├─ UserService::new()
 │    ├─ FILE: crates/server/src/api/auth.rs
@@ -134,8 +123,6 @@ START
 │    │    ├─ protected_routes()
 │    ├─ FILE: crates/server/src/api/security.rs
 │    │    ├─ security_routes()
-│    ├─ FILE: crates/server/src/api/response.rs
-│    │    ├─ ok()
 │    ├─ FILE: crates/client/crates/client-shared/src/app_styles.rs
 │    │    ├─ liveview_style_tags()
 │    ├─ FILE: crates/router/src/balancer/mod.rs
@@ -144,14 +131,17 @@ START
 │    │    ├─ RateLimiter::new()
 │    ├─ FILE: crates/router/src/circuit_breaker.rs
 │    │    ├─ CircuitBreaker::new()
+│    ├─ FILE: crates/router/src/model_router.rs
+│    │    ├─ ModelRouter::new()
 │    ├─ FILE: crates/router/src/channel_state.rs
 │    │    ├─ ChannelStateTracker::new()
+│    ├─ FILE: crates/router/src/adaptor/factory.rs
+│    │    ├─ DynamicAdaptorFactory::new()
 │    ├─ FILE: crates/router/src/adaptor/detector.rs
 │    │    ├─ ApiVersionDetector::new()
 │    ├─ FILE: crates/service/crates/billing/src/cache.rs
 │    │    ├─ PriceCache::load()
 │    │    │    └─ CALL → PriceCache::empty() @ crates/service/crates/billing/src/cache.rs
-│    │    │    └─ CALL → PriceCache::refresh() @ crates/service/crates/billing/src/cache.rs
 │    │    ├─ PriceCache::empty()
 │    ├─ FILE: crates/service/crates/billing/src/calculator.rs
 │    │    ├─ CostCalculator::new()
@@ -207,22 +197,23 @@ data_plane_fallback=mounted
 | 4 | `crates/service/crates/monitor/src/service.rs` | `SystemMonitorService::*` | metrics cache + collector coordination | READ OS / WRITE memory cache |
 | 5 | `crates/service/crates/cache/src/service.rs` | `CacheService::*` | Redis-backed cache implementation | READ/WRITE Redis |
 | 6 | `crates/router/src/lib.rs` | `create_router_app(), proxy_handler(), proxy_logic()` | Data Plane 主控制流或 Router internal handler | READ/WRITE router runtime |
-| 7 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::fetch_one(), Database::kind(), Database::new(), Database::query(), DatabaseConnection::pool(), create_default_database()` | 由 RouterDatabase::init() 直接调用；由 UserDatabase::init() 直接调用；由 create_default_database() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/database/src/database.rs` | `Database::new(), create_default_database()` | 由 create_default_database() 直接调用；由 start_server() 直接调用 | CALL / runtime-specific |
 | 8 | `crates/database/crates/router/src/lib.rs` | `RouterDatabase::deduct_quota(), RouterDatabase::init(), RouterDatabase::insert_log(), RouterDatabase::insert_request_log(), RouterDatabase::update_token_accessed_time(), RouterDatabase::validate_token_and_get_info(), RouterDatabase::validate_token_detailed()` | 由 create_router_app() 直接调用；由 proxy_handler() 直接调用；由 start_server() 直接调用 | CALL / runtime-specific |
 | 9 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::assign_role(), UserDatabase::init()` | 由 UserDatabase::init() 直接调用；由 start_server() 直接调用 | CALL / runtime-specific |
 | 10 | `crates/service/crates/user/src/lib.rs` | `UserService::new(), UserService::resolve_traffic_class()` | 由 create_app() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
 | 11 | `crates/server/src/api/auth.rs` | `protected_routes(), public_routes()` | 由 routes() 直接调用 | CALL / runtime-specific |
 | 12 | `crates/server/src/api/security.rs` | `security_routes()` | 由 routes() 直接调用 | CALL / runtime-specific |
-| 13 | `crates/server/src/api/response.rs` | `ok()` | 由 create_router_app() 直接调用；由 liveview_router() 直接调用；由 proxy_handler() 直接调用 | CALL / runtime-specific |
-| 14 | `crates/client/crates/client-shared/src/app_styles.rs` | `liveview_style_tags()` | 由 liveview_router() 直接调用 | CALL / runtime-specific |
-| 15 | `crates/router/src/balancer/mod.rs` | `RoundRobinBalancer::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
-| 16 | `crates/router/src/limiter.rs` | `RateLimiter::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
-| 17 | `crates/router/src/circuit_breaker.rs` | `CircuitBreaker::new(), CircuitBreaker::record_failure_with_type()` | 由 create_router_app() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
-| 18 | `crates/router/src/channel_state.rs` | `ChannelStateTracker::new(), ChannelStateTracker::record_error()` | 由 create_router_app() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
-| 19 | `crates/router/src/adaptor/detector.rs` | `ApiVersionDetector::new(), detect_and_update(), is_deprecation_error()` | 由 create_router_app() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
-| 20 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::empty(), PriceCache::load(), PriceCache::refresh()` | 由 PriceCache::load() 直接调用；由 create_router_app() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
-| 21 | `crates/service/crates/billing/src/calculator.rs` | `CostCalculator::calculate(), CostCalculator::new(), CostCalculator::preflight()` | 由 create_router_app() 直接调用；由 proxy_handler() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
-| 22 | `crates/router/src/exchange_rate.rs` | `ExchangeRateService::load_rates_from_db(), ExchangeRateService::new(), ExchangeRateService::start_sync_task()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 13 | `crates/client/crates/client-shared/src/app_styles.rs` | `liveview_style_tags()` | 由 liveview_router() 直接调用 | CALL / runtime-specific |
+| 14 | `crates/router/src/balancer/mod.rs` | `RoundRobinBalancer::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 15 | `crates/router/src/limiter.rs` | `RateLimiter::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 16 | `crates/router/src/circuit_breaker.rs` | `CircuitBreaker::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 17 | `crates/router/src/model_router.rs` | `ModelRouter::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 18 | `crates/router/src/channel_state.rs` | `ChannelStateTracker::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 19 | `crates/router/src/adaptor/factory.rs` | `DynamicAdaptorFactory::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 20 | `crates/router/src/adaptor/detector.rs` | `ApiVersionDetector::is_deprecation_error(), ApiVersionDetector::new()` | 由 create_router_app() 直接调用；由 proxy_logic() 直接调用 | CALL / runtime-specific |
+| 21 | `crates/service/crates/billing/src/cache.rs` | `PriceCache::empty(), PriceCache::load()` | 由 PriceCache::load() 直接调用；由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 22 | `crates/service/crates/billing/src/calculator.rs` | `CostCalculator::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
+| 23 | `crates/router/src/exchange_rate.rs` | `ExchangeRateService::new()` | 由 create_router_app() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

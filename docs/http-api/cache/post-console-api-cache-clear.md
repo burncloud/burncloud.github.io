@@ -124,7 +124,6 @@ FILE: crates/service/crates/cache/src/service.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/cache.rs
 │    │    ├─ clear()
-│    │    │    └─ CALL → CacheService::clear_all() @ crates/service/crates/cache/src/service.rs
 │    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
 │    ├─ FILE: crates/service/crates/cache/src/service.rs

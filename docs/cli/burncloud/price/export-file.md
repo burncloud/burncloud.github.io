@@ -82,9 +82,9 @@ FILE: crates/database/crates/billing/src/billing_price.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: src/cli/price.rs
 │    │    ├─ handle_price_command()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → BillingPriceModel::list() @ crates/database/crates/billing/src/billing_price.rs
 │    │    │    └─ CALL → from_nano() @ src/cli/price.rs
+│    │    │    └─ CALL → to_nano() @ src/cli/price.rs
 │    │    │    └─ CALL → BillingPriceModel::upsert() @ crates/database/crates/billing/src/billing_price.rs
 │    │    │    └─ CALL → BillingPriceModel::delete_by_region() @ crates/database/crates/billing/src/billing_price.rs
 │    │    │    └─ CALL → BillingPriceModel::delete_all_for_model() @ crates/database/crates/billing/src/billing_price.rs
@@ -94,70 +94,29 @@ FILE: crates/database/crates/billing/src/billing_price.rs
 │    │    │    └─ CALL → BillingTieredPriceModel::get_tiers() @ crates/database/crates/billing/src/billing_tiered_price.rs
 │    │    ├─ from_nano()
 │    │    │    └─ CALL → nano_to_dollars() @ crates/common/src/price_u64.rs
-│    ├─ FILE: crates/server/src/api/response.rs
-│    │    ├─ ok()
+│    │    ├─ to_nano()
+│    │    │    └─ CALL → dollars_to_nano() @ crates/common/src/price_u64.rs
 │    ├─ FILE: crates/database/crates/billing/src/billing_price.rs
 │    │    ├─ BillingPriceModel::list()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ BillingPriceModel::upsert()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ BillingPriceModel::delete_by_region()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ BillingPriceModel::delete_all_for_model()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ BillingPriceModel::get()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ BillingPriceModel::get_all_currencies()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    ├─ FILE: crates/database/crates/billing/src/billing_tiered_price.rs
 │    │    ├─ BillingTieredPriceModel::has_tiered_pricing()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_one() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ BillingTieredPriceModel::get_tiers()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → adapt_sql() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ BillingTieredPriceModel::list_all()
-│    │    │    └─ CALL → Database::fetch_all() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ BillingTieredPriceModel::upsert_tier()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
 │    │    │    └─ CALL → adapt_sql() @ crates/database/src/placeholder.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    ├─ FILE: crates/common/src/types.rs
-│    │    ├─ Price::supports_vision_bool()
-│    │    ├─ Price::supports_function_calling_bool()
 │    ├─ FILE: crates/common/src/pricing_config.rs
 │    │    ├─ PricingConfig::from_json()
 │    │    │    └─ CALL → version_major() @ crates/common/src/pricing_config.rs
-│    │    ├─ PricingConfig::to_json()
 │    │    ├─ version_major()
-│    ├─ FILE: crates/client/crates/client-shared/src/components/toast.rs
-│    │    ├─ ToastManager::warning()
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::fetch_all()
-│    │    ├─ DatabaseConnection::pool()
-│    │    ├─ Database::query()
-│    │    ├─ Database::fetch_optional()
-│    │    ├─ Database::fetch_one()
 │    ├─ FILE: crates/common/src/price_u64.rs
 │    │    ├─ nano_to_dollars()
+│    │    ├─ dollars_to_nano()
 │    └─ FILE: crates/database/src/placeholder.rs
 │    │    ├─ adapt_sql()
 │
@@ -199,14 +158,10 @@ result=success
 | 2 | `src/cli/commands.rs` | `command(), CLI dispatch` | Clap command tree + subcommand dispatch | ARGV |
 | 3 | `src/cli/price.rs` | `handle_price_command() / tiered pricing branches` | Price and tiered-pricing CLI implementation | CLI → billing DB |
 | 4 | `crates/database/crates/billing/src/billing_price.rs` | `BillingPriceModel::*` | Model price persistence | READ/WRITE billing prices |
-| 5 | `crates/server/src/api/response.rs` | `ok()` | 由 handle_price_command() 直接调用 | CALL / runtime-specific |
-| 6 | `crates/database/crates/billing/src/billing_tiered_price.rs` | `BillingTieredPriceModel::get_tiers(), BillingTieredPriceModel::has_tiered_pricing(), BillingTieredPriceModel::list_all(), BillingTieredPriceModel::upsert_tier()` | 由 handle_price_command() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/common/src/types.rs` | `Price::supports_function_calling_bool(), Price::supports_vision_bool()` | 由 handle_price_command() 直接调用 | CALL / runtime-specific |
-| 8 | `crates/common/src/pricing_config.rs` | `PricingConfig::from_json(), PricingConfig::to_json(), version_major()` | 由 PricingConfig::from_json() 直接调用；由 handle_price_command() 直接调用 | CALL / runtime-specific |
-| 9 | `crates/client/crates/client-shared/src/components/toast.rs` | `ToastManager::warning()` | 由 handle_price_command() 直接调用 | CALL / runtime-specific |
-| 10 | `crates/database/src/database.rs` | `Database::fetch_all(), Database::fetch_one(), Database::fetch_optional(), Database::kind(), Database::query(), DatabaseConnection::pool()` | 由 BillingPriceModel::delete_all_for_model() 直接调用；由 BillingPriceModel::delete_by_region() 直接调用；由 BillingPriceModel::get() 直接调用 | CALL / runtime-specific |
-| 11 | `crates/common/src/price_u64.rs` | `nano_to_dollars()` | 由 from_nano() 直接调用 | CALL / runtime-specific |
-| 12 | `crates/database/src/placeholder.rs` | `adapt_sql()` | 由 BillingTieredPriceModel::get_tiers() 直接调用；由 BillingTieredPriceModel::upsert_tier() 直接调用 | CALL / runtime-specific |
+| 5 | `crates/database/crates/billing/src/billing_tiered_price.rs` | `BillingTieredPriceModel::get_tiers(), BillingTieredPriceModel::has_tiered_pricing(), BillingTieredPriceModel::list_all(), BillingTieredPriceModel::upsert_tier()` | 由 handle_price_command() 直接调用 | CALL / runtime-specific |
+| 6 | `crates/common/src/pricing_config.rs` | `PricingConfig::from_json(), version_major()` | 由 PricingConfig::from_json() 直接调用；由 handle_price_command() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/common/src/price_u64.rs` | `dollars_to_nano(), nano_to_dollars()` | 由 from_nano() 直接调用；由 to_nano() 直接调用 | CALL / runtime-specific |
+| 8 | `crates/database/src/placeholder.rs` | `adapt_sql()` | 由 BillingTieredPriceModel::get_tiers() 直接调用；由 BillingTieredPriceModel::upsert_tier() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

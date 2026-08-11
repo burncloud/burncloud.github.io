@@ -99,7 +99,6 @@ FILE: crates/server/src/api/user.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/auth.rs
 │    │    ├─ auth_middleware()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → verify_jwt() @ crates/server/src/api/auth.rs
 │    │    ├─ verify_jwt()
 │    │    │    └─ CALL → get_jwt_secret() @ crates/server/src/api/auth.rs
@@ -107,7 +106,6 @@ FILE: crates/server/src/api/user.rs
 │    │    │    └─ CALL → jwt_secret() @ crates/common/src/constants.rs
 │    ├─ FILE: crates/server/src/api/user.rs
 │    │    ├─ register()
-│    │    │    └─ CALL → UserService::register_user() @ crates/service/crates/user/src/lib.rs
 │    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
 │    ├─ FILE: crates/service/crates/user/src/lib.rs
@@ -121,30 +119,11 @@ FILE: crates/server/src/api/user.rs
 │    │    ├─ err()
 │    ├─ FILE: crates/database/crates/user/src/lib.rs
 │    │    ├─ UserDatabase::get_user_by_username()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ UserDatabase::count_users()
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_one() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ UserDatabase::create_user()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    │    ├─ UserDatabase::assign_role()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::query() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
-│    ├─ FILE: crates/common/src/constants.rs
+│    └─ FILE: crates/common/src/constants.rs
 │    │    ├─ jwt_secret()
-│    └─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::fetch_optional()
-│    │    ├─ DatabaseConnection::pool()
-│    │    ├─ Database::query()
-│    │    ├─ Database::fetch_one()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -201,9 +180,8 @@ Content-Type: application/json
 | 4 | `crates/server/src/api/user.rs` | `register()` | User Handler / Claims / DTO | READ/WRITE request |
 | 5 | `crates/service/crates/user/src/lib.rs` | `UserService::*` | User/auth business service | SERVICE |
 | 6 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | User/role/recharge persistence | READ/WRITE user state |
-| 7 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 auth_middleware() 直接调用；由 register() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 register() 直接调用 | CALL / runtime-specific |
 | 8 | `crates/common/src/constants.rs` | `jwt_secret()` | 由 get_jwt_secret() 直接调用 | CALL / runtime-specific |
-| 9 | `crates/database/src/database.rs` | `Database::fetch_one(), Database::fetch_optional(), Database::kind(), Database::query(), DatabaseConnection::pool()` | 由 UserDatabase::assign_role() 直接调用；由 UserDatabase::count_users() 直接调用；由 UserDatabase::create_user() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

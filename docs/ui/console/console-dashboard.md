@@ -76,18 +76,9 @@ FILE: crates/client/crates/client-dashboard/src/lib.rs
 │    ├─ FILE: crates/client/src/app.rs
 │    │    ├─ App()
 │    │    │    └─ CALL → use_init_i18n() @ crates/client/crates/client-shared/src/i18n.rs
-│    │    │    └─ CALL → use_init_toast() @ crates/client/crates/client-shared/src/components/toast.rs
-│    │    │    └─ CALL → use_init_auth() @ crates/client/crates/client-shared/src/auth_context.rs
-│    │    │    └─ CALL → ThemeContext::use_init_theme() @ crates/client/crates/client-shared/src/theme_context.rs
 │    │    ├─ launch_gui_with_tray()
-│    ├─ FILE: crates/client/crates/client-shared/src/i18n.rs
+│    └─ FILE: crates/client/crates/client-shared/src/i18n.rs
 │    │    ├─ use_init_i18n()
-│    ├─ FILE: crates/client/crates/client-shared/src/components/toast.rs
-│    │    ├─ use_init_toast()
-│    ├─ FILE: crates/client/crates/client-shared/src/auth_context.rs
-│    │    ├─ use_init_auth()
-│    └─ FILE: crates/client/crates/client-shared/src/theme_context.rs
-│    │    ├─ ThemeContext::use_init_theme()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
@@ -134,9 +125,6 @@ theme=system
 | 4 | `crates/client/src/pages/dashboard.rs` | `page component / re-export` | Dioxus Route selected page module | UI component |
 | 5 | `crates/client/crates/client-dashboard/src/lib.rs` | `page/service component implementation` | Feature-specific client crate reached from page wrapper | UI effects/state |
 | 6 | `crates/client/crates/client-shared/src/i18n.rs` | `use_init_i18n()` | 由 App() 直接调用 | CALL / runtime-specific |
-| 7 | `crates/client/crates/client-shared/src/components/toast.rs` | `use_init_toast()` | 由 App() 直接调用 | CALL / runtime-specific |
-| 8 | `crates/client/crates/client-shared/src/auth_context.rs` | `use_init_auth()` | 由 App() 直接调用 | CALL / runtime-specific |
-| 9 | `crates/client/crates/client-shared/src/theme_context.rs` | `ThemeContext::use_init_theme()` | 由 App() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

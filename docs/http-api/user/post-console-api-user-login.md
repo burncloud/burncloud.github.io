@@ -99,7 +99,6 @@ FILE: crates/server/src/api/user.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/auth.rs
 │    │    ├─ auth_middleware()
-│    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → verify_jwt() @ crates/server/src/api/auth.rs
 │    │    ├─ verify_jwt()
 │    │    │    └─ CALL → get_jwt_secret() @ crates/server/src/api/auth.rs
@@ -107,7 +106,6 @@ FILE: crates/server/src/api/user.rs
 │    │    │    └─ CALL → jwt_secret() @ crates/common/src/constants.rs
 │    ├─ FILE: crates/server/src/api/user.rs
 │    │    ├─ login()
-│    │    │    └─ CALL → UserService::login_user() @ crates/service/crates/user/src/lib.rs
 │    │    │    └─ CALL → persist_client_state() @ crates/server/src/api/user.rs
 │    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
@@ -121,9 +119,6 @@ FILE: crates/server/src/api/user.rs
 │    │    ├─ err()
 │    ├─ FILE: crates/database/crates/user/src/lib.rs
 │    │    ├─ UserDatabase::get_user_by_username()
-│    │    │    └─ CALL → Database::kind() @ crates/database/src/database.rs
-│    │    │    └─ CALL → Database::fetch_optional() @ crates/database/src/database.rs
-│    │    │    └─ CALL → DatabaseConnection::pool() @ crates/database/src/database.rs
 │    ├─ FILE: crates/installer/src/bundle.rs
 │    │    ├─ BundleVerifier::verify()
 │    │    │    └─ CALL → BundleManifest::load() @ crates/installer/src/bundle.rs
@@ -133,10 +128,6 @@ FILE: crates/server/src/api/user.rs
 │    │    ├─ BundleVerifier::verify_checksums()
 │    ├─ FILE: crates/common/src/constants.rs
 │    │    ├─ jwt_secret()
-│    ├─ FILE: crates/database/src/database.rs
-│    │    ├─ Database::kind()
-│    │    ├─ Database::fetch_optional()
-│    │    ├─ DatabaseConnection::pool()
 │    └─ FILE: crates/installer/src/platform.rs
 │    │    ├─ Platform::current()
 │
@@ -192,11 +183,10 @@ Content-Type: application/json
 | 4 | `crates/server/src/api/user.rs` | `login()` | User Handler / Claims / DTO | READ/WRITE request |
 | 5 | `crates/service/crates/user/src/lib.rs` | `UserService::*` | User/auth business service | SERVICE |
 | 6 | `crates/database/crates/user/src/lib.rs` | `UserDatabase::*` | User/role/recharge persistence | READ/WRITE user state |
-| 7 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 auth_middleware() 直接调用；由 login() 直接调用 | CALL / runtime-specific |
+| 7 | `crates/server/src/api/response.rs` | `err(), ok()` | 由 login() 直接调用 | CALL / runtime-specific |
 | 8 | `crates/installer/src/bundle.rs` | `BundleManifest::load(), BundleVerifier::verify(), BundleVerifier::verify_checksums()` | 由 BundleVerifier::verify() 直接调用；由 UserService::login_user() 直接调用 | CALL / runtime-specific |
 | 9 | `crates/common/src/constants.rs` | `jwt_secret()` | 由 get_jwt_secret() 直接调用 | CALL / runtime-specific |
-| 10 | `crates/database/src/database.rs` | `Database::fetch_optional(), Database::kind(), DatabaseConnection::pool()` | 由 UserDatabase::get_user_by_username() 直接调用 | CALL / runtime-specific |
-| 11 | `crates/installer/src/platform.rs` | `Platform::current()` | 由 BundleVerifier::verify() 直接调用 | CALL / runtime-specific |
+| 10 | `crates/installer/src/platform.rs` | `Platform::current()` | 由 BundleVerifier::verify() 直接调用 | CALL / runtime-specific |
 
 > Source Traversal V4：区分“启动时执行”“请求时执行”“只注册不执行”。只有源码确认会进入的文件才加入；Handler 被 Router 注册不等于 Server 启动时执行 Handler。
 

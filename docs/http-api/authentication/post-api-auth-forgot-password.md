@@ -91,20 +91,11 @@ FILE: crates/server/src/api/auth.rs
 ├─ 源码函数展开（静态扫描确认）
 │    ├─ FILE: crates/server/src/api/auth.rs
 │    │    ├─ forgot_password()
-│    │    │    └─ CALL → UserService::request_password_reset() @ crates/service/crates/user/src/lib.rs
 │    │    │    └─ CALL → ok() @ crates/server/src/api/response.rs
 │    │    │    └─ CALL → err() @ crates/server/src/api/response.rs
-│    ├─ FILE: crates/service/crates/user/src/lib.rs
-│    │    ├─ UserService::request_password_reset()
-│    │    │    └─ CALL → UserDatabase::get_user_by_email() @ crates/database/crates/user/src/lib.rs
-│    │    │    └─ CALL → PasswordResetDatabase::create_token() @ crates/database/crates/user/src/password_reset.rs
-│    ├─ FILE: crates/server/src/api/response.rs
+│    └─ FILE: crates/server/src/api/response.rs
 │    │    ├─ ok()
 │    │    ├─ err()
-│    ├─ FILE: crates/database/crates/user/src/lib.rs
-│    │    ├─ UserDatabase::get_user_by_email()
-│    └─ FILE: crates/database/crates/user/src/password_reset.rs
-│    │    ├─ PasswordResetDatabase::create_token()
 │
 ├─ 规则：只展开能够解析到 BurnCloud 仓库内部真实函数定义的调用；第三方库调用保留在主 E2E 中，不伪造源码目标文件
 │
