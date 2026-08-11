@@ -11,8 +11,6 @@ def escape_text(fragment: str) -> str:
     # Generated docs deliberately use literal CLI placeholders such as <model>
     # and route placeholders such as {*path}. Outside code spans/fences MDX
     # interprets those as JSX / expressions, so encode them as HTML entities.
-    # Do not escape ampersands globally: generated prose may already contain
-    # entities after a repeated local run.
     return (
         fragment
         .replace("<", "&lt;")
@@ -22,20 +20,34 @@ def escape_text(fragment: str) -> str:
     )
 
 
+def sanitize_inline_content(line: str) -> str:
+    # Preserve Markdown syntax that must remain structural. In particular,
+    # generated Chinese explanations use blockquotes beginning with `>`.
+    prefix = ""
+    body = line
+    if body.startswith("> "):
+        prefix, body = "> ", body[2:]
+    elif body.startswith(">"):
+        prefix, body = ">", body[1:]
+
+    parts = INLINE_CODE.split(body)
+    for idx in range(0, len(parts), 2):
+        parts[idx] = escape_text(parts[idx])
+    return prefix + "".join(parts)
+
+
 def sanitize(path: Path) -> bool:
     text = path.read_text(encoding="utf-8")
     lines = text.splitlines(keepends=True)
     out = []
     in_fence = False
     in_frontmatter = False
-    frontmatter_seen = False
 
     for i, line in enumerate(lines):
         stripped = line.strip()
 
         if i == 0 and stripped == "---":
             in_frontmatter = True
-            frontmatter_seen = True
             out.append(line)
             continue
         if in_frontmatter:
@@ -52,10 +64,7 @@ def sanitize(path: Path) -> bool:
             out.append(line)
             continue
 
-        parts = INLINE_CODE.split(line)
-        for idx in range(0, len(parts), 2):
-            parts[idx] = escape_text(parts[idx])
-        out.append("".join(parts))
+        out.append(sanitize_inline_content(line))
 
     new = "".join(out)
     if new != text:
