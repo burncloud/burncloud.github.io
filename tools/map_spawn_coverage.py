@@ -1,5 +1,8 @@
 from pathlib import Path
 import json
+import os
+import subprocess
+import sys
 
 CENSUS=Path('docs/entrypoint-census.json')
 REPORT=Path('docs/coverage-report.md')
@@ -26,6 +29,30 @@ def map_site(s):
     if f=='crates/service/crates/monitor/src/service.rs': return 'background/long-running-jobs/system-monitor-auto-update'
     if f=='crates/client/src/app.rs': return 'background/desktop-background-work/windows-tray-thread'
     return None
+
+
+def generate_pr_change_atlas_in_ci():
+    # This hook intentionally runs at the very end of the source-enrichment chain.
+    # PR pages therefore embed the final V4 E2E/ICFG text, not the early generic flow.
+    # Keep local standalone spawn-census runs network-free.
+    if os.environ.get('GITHUB_ACTIONS') != 'true':
+        return
+    subprocess.run(
+        [sys.executable, 'tools/generate_pr_atlas.py', '--limit', '50'],
+        check=True,
+    )
+    pr_files=sorted((DOCS/'pr').glob('pr-*.md'))
+    if len(pr_files) != 50:
+        raise RuntimeError(f'expected 50 PR markdown files, got {len(pr_files)}')
+    manifest=json.loads((DOCS/'pr-atlas-manifest.json').read_text(encoding='utf-8'))
+    if manifest.get('pr_count') != 50:
+        raise RuntimeError(f"expected pr_count=50, got {manifest.get('pr_count')}")
+    for p in pr_files:
+        text=p.read_text(encoding='utf-8')
+        for needle in ['## PR 影响总览','## Changed Files','## Affected E2E Impact Matrix','## 完整受影响 E2E Request Flow','## Execution Classification']:
+            if needle not in text:
+                raise RuntimeError(f'{p}: missing {needle}')
+    print('PR Change Atlas: generated and validated 50 pages')
 
 
 def main():
@@ -55,5 +82,7 @@ def main():
     print(f'runtime spawn coverage: mapped={len(mapped)} unmapped={len(unmapped)}')
     if unmapped:
         for s in unmapped: print('UNMAPPED',s['file'],s['line'],s.get('context','')[:180])
+
+    generate_pr_change_atlas_in_ci()
 
 if __name__=='__main__': main()
