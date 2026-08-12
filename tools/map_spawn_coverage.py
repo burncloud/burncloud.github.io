@@ -1,4 +1,5 @@
 from pathlib import Path
+import base64
 import json
 import os
 import subprocess
@@ -31,15 +32,41 @@ def map_site(s):
     return None
 
 
+def checkout_github_token():
+    """Reuse actions/checkout's already-configured token without printing it."""
+    try:
+        raw=subprocess.check_output(
+            ['git','config','--local','--get','http.https://github.com/.extraheader'],
+            text=True,
+            stderr=subprocess.DEVNULL,
+        ).strip()
+        prefix='authorization: basic '
+        if not raw.lower().startswith(prefix):
+            return ''
+        encoded=raw[len(prefix):].strip()
+        decoded=base64.b64decode(encoded).decode('utf-8')
+        if ':' not in decoded:
+            return ''
+        return decoded.split(':',1)[1]
+    except Exception:
+        return ''
+
+
 def generate_pr_change_atlas_in_ci():
     # This hook intentionally runs at the very end of the source-enrichment chain.
     # PR pages therefore embed the final V4 E2E/ICFG text, not the early generic flow.
     # Keep local standalone spawn-census runs network-free.
     if os.environ.get('GITHUB_ACTIONS') != 'true':
         return
+    env=os.environ.copy()
+    if not env.get('GITHUB_TOKEN'):
+        token=checkout_github_token()
+        if token:
+            env['GITHUB_TOKEN']=token
     subprocess.run(
         [sys.executable, 'tools/generate_pr_atlas.py', '--limit', '50'],
         check=True,
+        env=env,
     )
     pr_files=sorted((DOCS/'pr').glob('pr-*.md'))
     if len(pr_files) != 50:
