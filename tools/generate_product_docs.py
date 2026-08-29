@@ -76,7 +76,7 @@ def build_sidebar():
         {type:'doc', id:'burncloud-node/runtime-manager', label:'Runtime Manager'},
         {type:'doc', id:'burncloud-node/process-manager', label:'Process Manager'},
       ]},
-      {type:'category', label:'BurnCloud Network', collapsed:true, link:{type:'doc', id:'burncloud-network/index'}, items:[]},
+      {type:'doc', id:'burncloud-network/index', label:'BurnCloud Network'},
     ]},
     {type:'category', label:'Technical Reference', collapsed:true, items:[
 """
