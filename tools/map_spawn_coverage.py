@@ -2,12 +2,14 @@ from pathlib import Path
 import base64
 import json
 import os
+import re
 import subprocess
 import sys
 
 CENSUS=Path('docs/entrypoint-census.json')
 REPORT=Path('docs/coverage-report.md')
 DOCS=Path('docs')
+SIDEBAR=Path('site/sidebars.js')
 
 
 def map_site(s):
@@ -52,6 +54,36 @@ def checkout_github_token():
         return ''
 
 
+def normalize_sidebar_layout():
+    """Keep the generated sidebar overview-first and stable across Atlas rebuilds."""
+    text=SIDEBAR.read_text(encoding='utf-8')
+    start='    // PR_CHANGE_ATLAS_START\n'
+    end='    // PR_CHANGE_ATLAS_END\n'
+    pattern=re.compile(re.escape(start)+r'.*?'+re.escape(end), flags=re.S)
+    match=pattern.search(text)
+    if not match:
+        raise RuntimeError('PR Change Atlas sidebar block not found')
+
+    pr_block=match.group(0).replace('collapsed:false','collapsed:true')
+    text=pattern.sub('', text, count=1)
+
+    # Every generated category starts closed so the first view shows the major nodes only.
+    text=text.replace('collapsed:false','collapsed:true')
+
+    # PR history is useful reference material, but it should not lead the primary architecture tree.
+    trailer='  ],\n};'
+    if trailer not in text:
+        raise RuntimeError('docsSidebar closing marker not found')
+    text=text.replace(trailer, pr_block+trailer, 1)
+    SIDEBAR.write_text(text, encoding='utf-8')
+
+    final=SIDEBAR.read_text(encoding='utf-8')
+    if 'collapsed:false' in final:
+        raise RuntimeError('sidebar still contains an expanded category')
+    if final.rfind('PR_CHANGE_ATLAS_START') < final.rfind('UI-only Actions'):
+        raise RuntimeError('PR Change Atlas must remain the final sidebar category')
+
+
 def generate_pr_change_atlas_in_ci():
     # This hook intentionally runs at the very end of the source-enrichment chain.
     # PR pages therefore embed the final V4 E2E/ICFG text, not the early generic flow.
@@ -68,6 +100,7 @@ def generate_pr_change_atlas_in_ci():
         check=True,
         env=env,
     )
+    normalize_sidebar_layout()
     pr_files=sorted((DOCS/'pr').glob('pr-*.md'))
     if len(pr_files) != 50:
         raise RuntimeError(f'expected 50 PR markdown files, got {len(pr_files)}')
