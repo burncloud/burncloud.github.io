@@ -42,7 +42,7 @@ flowchart TD
 
 ## BurnCloud 不创建第五套 AI 请求协议
 
-BurnCloud 不应该要求所有请求先变成一套完整的统一 AI Body。
+BurnCloud 不应该要求所有请求先变成 `BurnCloud Unified Request`、`BurnRequest` 或其它完整的统一 AI Body。
 
 例如客户端发送：
 
