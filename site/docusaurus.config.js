@@ -3,8 +3,8 @@ const darkCodeTheme = require('prism-react-renderer').themes.dracula;
 
 /** @type {import('@docusaurus/types').Config} */
 module.exports = {
-  title: 'BurnCloud Entry Point Atlas',
-  tagline: 'Entry Point → Business Capability → Runtime → State → Source',
+  title: 'BurnCloud Documentation',
+  tagline: 'Concept → Flow → Interface → Source',
   url: 'https://burncloud.github.io',
   baseUrl: '/',
   organizationName: 'burncloud',
@@ -29,18 +29,18 @@ module.exports = {
   ],
   themeConfig: {
     navbar: {
-      title: 'BurnCloud Entry Point Atlas',
+      title: 'BurnCloud Docs',
       items: [
-        {type: 'docSidebar', sidebarId: 'docsSidebar', position: 'left', label: 'BurnCloud'},
+        {type: 'docSidebar', sidebarId: 'docsSidebar', position: 'left', label: 'Technical Reference'},
         {href: 'https://github.com/burncloud/burncloud', label: 'BurnCloud Source', position: 'right'},
       ],
     },
-    docs: {sidebar: {hideable: true, autoCollapseCategories: false}},
+    docs: {sidebar: {hideable: true, autoCollapseCategories: true}},
     mermaid: {options: {securityLevel: 'loose'}},
     prism: {theme: lightCodeTheme, darkTheme: darkCodeTheme, additionalLanguages: ['rust', 'bash', 'sql']},
     footer: {
       style: 'dark',
-      copyright: 'BurnCloud Entry Point Atlas · Source-derived, entrypoint-first documentation',
+      copyright: 'BurnCloud Documentation · Concept → Flow → Interface → Source',
     },
   },
 };
