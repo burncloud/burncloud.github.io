@@ -23,7 +23,7 @@ curl http://localhost:3000/v1/chat/completions \
   -d '{"model":"deepseek-v3","messages":[{"role":"user","content":"Hello"}]}'
 ```
 
-同一个 Gateway 后续也可以接收 Anthropic、Gemini、Ollama 等入口，再交给 [Protocol Routing](./protocol-routing) 统一处理。
+同一个 Gateway 后续也可以接收 Anthropic、Gemini、Ollama 等入口，再交给 [Protocol Routing](/burncloud-node/protocol-routing/) 统一处理。
 
 ## Gateway 的职责
 
