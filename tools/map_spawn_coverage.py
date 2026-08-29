@@ -2,12 +2,14 @@ from pathlib import Path
 import base64
 import json
 import os
+import re
 import subprocess
 import sys
 
 CENSUS=Path('docs/entrypoint-census.json')
 REPORT=Path('docs/coverage-report.md')
 DOCS=Path('docs')
+SIDEBAR=Path('site/sidebars.js')
 
 
 def map_site(s):
@@ -52,6 +54,27 @@ def checkout_github_token():
         return ''
 
 
+def normalize_sidebar_layout():
+    """Keep generated reference categories closed before product docs are injected."""
+    text=SIDEBAR.read_text(encoding='utf-8')
+    start='    // PR_CHANGE_ATLAS_START\n'
+    end='    // PR_CHANGE_ATLAS_END\n'
+    pattern=re.compile(re.escape(start)+r'.*?'+re.escape(end), flags=re.S)
+    match=pattern.search(text)
+    if not match:
+        raise RuntimeError('PR Change Atlas sidebar block not found')
+
+    pr_block=match.group(0).replace('collapsed:false','collapsed:true')
+    text=pattern.sub('', text, count=1)
+    text=text.replace('collapsed:false','collapsed:true')
+
+    trailer='  ],\n};'
+    if trailer not in text:
+        raise RuntimeError('docsSidebar closing marker not found')
+    text=text.replace(trailer, pr_block+trailer, 1)
+    SIDEBAR.write_text(text, encoding='utf-8')
+
+
 def generate_pr_change_atlas_in_ci():
     # This hook intentionally runs at the very end of the source-enrichment chain.
     # PR pages therefore embed the final V4 E2E/ICFG text, not the early generic flow.
@@ -67,6 +90,11 @@ def generate_pr_change_atlas_in_ci():
         [sys.executable, 'tools/generate_pr_atlas.py', '--limit', '50'],
         check=True,
         env=env,
+    )
+    normalize_sidebar_layout()
+    subprocess.run(
+        [sys.executable, 'tools/generate_product_docs.py'],
+        check=True,
     )
     pr_files=sorted((DOCS/'pr').glob('pr-*.md'))
     if len(pr_files) != 50:
