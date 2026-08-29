@@ -4,6 +4,238 @@
   "pr_count": 50,
   "prs": [
     {
+      "number": 427,
+      "title": "feat: 更新首页内容",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-26T13:44:42Z",
+      "changed_files": 5
+    },
+    {
+      "number": 426,
+      "title": "[codex] import BurnCloud UI and buyer catalog",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-26T09:27:01Z",
+      "changed_files": 135
+    },
+    {
+      "number": 425,
+      "title": "chore: temporary BurnCloud site screenshots",
+      "state": "closed",
+      "merged_at": null,
+      "created_at": "2026-08-24T16:42:16Z",
+      "changed_files": 1
+    },
+    {
+      "number": 424,
+      "title": "feat(ui): rebuild buyer-overview",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-21T04:33:35Z",
+      "changed_files": 15
+    },
+    {
+      "number": 423,
+      "title": "Run Graphs migration for Overview",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-15T05:03:10Z",
+      "changed_files": 3
+    },
+    {
+      "number": 422,
+      "title": "Define the trust-first product text prototype",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-14T14:54:43Z",
+      "changed_files": 4
+    },
+    {
+      "number": 421,
+      "title": "Align Overview with the canonical product flow",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-14T13:31:40Z",
+      "changed_files": 2
+    },
+    {
+      "number": 420,
+      "title": "Define the canonical Console product flow",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-14T13:23:32Z",
+      "changed_files": 4
+    },
+    {
+      "number": 419,
+      "title": "Polish Guardrails around truthful protection signals",
+      "state": "closed",
+      "merged_at": "2026-08-14T13:13:50Z",
+      "created_at": "2026-08-14T13:06:45Z",
+      "changed_files": 2
+    },
+    {
+      "number": 418,
+      "title": "Polish Team around the real console admin boundary",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-14T12:50:47Z",
+      "changed_files": 3
+    },
+    {
+      "number": 417,
+      "title": "Polish Customers account and funding workflow",
+      "state": "closed",
+      "merged_at": "2026-08-14T10:56:25Z",
+      "created_at": "2026-08-14T10:18:08Z",
+      "changed_files": 2
+    },
+    {
+      "number": 416,
+      "title": "Polish API key lifecycle around secure management refs",
+      "state": "closed",
+      "merged_at": "2026-08-14T10:07:43Z",
+      "created_at": "2026-08-14T05:34:40Z",
+      "changed_files": 5
+    },
+    {
+      "number": 415,
+      "title": "Fix token management contract after secret redaction",
+      "state": "closed",
+      "merged_at": "2026-08-14T05:18:27Z",
+      "created_at": "2026-08-14T03:12:31Z",
+      "changed_files": 7
+    },
+    {
+      "number": 414,
+      "title": "Polish Billing spend hierarchy",
+      "state": "closed",
+      "merged_at": "2026-08-14T03:01:38Z",
+      "created_at": "2026-08-14T02:56:24Z",
+      "changed_files": 1
+    },
+    {
+      "number": 413,
+      "title": "Polish Evaluation observed evidence",
+      "state": "closed",
+      "merged_at": "2026-08-14T02:55:01Z",
+      "created_at": "2026-08-14T02:48:27Z",
+      "changed_files": 1
+    },
+    {
+      "number": 412,
+      "title": "Polish Logs operational triage",
+      "state": "closed",
+      "merged_at": "2026-08-14T02:46:36Z",
+      "created_at": "2026-08-14T02:37:49Z",
+      "changed_files": 2
+    },
+    {
+      "number": 411,
+      "title": "Polish Playground end-to-end verification",
+      "state": "closed",
+      "merged_at": null,
+      "created_at": "2026-08-14T02:30:48Z",
+      "changed_files": 3
+    },
+    {
+      "number": 410,
+      "title": "Polish Playground smoke test workflow",
+      "state": "closed",
+      "merged_at": "2026-08-14T02:35:23Z",
+      "created_at": "2026-08-14T02:30:17Z",
+      "changed_files": 2
+    },
+    {
+      "number": 409,
+      "title": "Polish Routes model-aware resilience",
+      "state": "closed",
+      "merged_at": "2026-08-14T02:27:12Z",
+      "created_at": "2026-08-14T02:22:22Z",
+      "changed_files": 2
+    },
+    {
+      "number": 408,
+      "title": "Polish Models availability workflow",
+      "state": "closed",
+      "merged_at": "2026-08-14T02:18:50Z",
+      "created_at": "2026-08-14T02:13:02Z",
+      "changed_files": 2
+    },
+    {
+      "number": 407,
+      "title": "Polish Providers operator workflow",
+      "state": "closed",
+      "merged_at": "2026-08-14T02:10:59Z",
+      "created_at": "2026-08-14T02:06:44Z",
+      "changed_files": 2
+    },
+    {
+      "number": 406,
+      "title": "Establish Phase 2 visual system",
+      "state": "closed",
+      "merged_at": "2026-08-14T02:01:23Z",
+      "created_at": "2026-08-13T10:31:50Z",
+      "changed_files": 10
+    },
+    {
+      "number": 405,
+      "title": "Polish Overview visual hierarchy and readiness states",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-13T10:02:03Z",
+      "changed_files": 3
+    },
+    {
+      "number": 404,
+      "title": "Secure zero-config first-admin setup and close public registration by default",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-13T08:24:49Z",
+      "changed_files": 12
+    },
+    {
+      "number": 400,
+      "title": "Make BurnCloud product UI human-usable and truthful",
+      "state": "closed",
+      "merged_at": null,
+      "created_at": "2026-08-13T04:50:52Z",
+      "changed_files": 32
+    },
+    {
+      "number": 399,
+      "title": "Fix P0 security and billing invariants",
+      "state": "closed",
+      "merged_at": "2026-08-13T08:26:03Z",
+      "created_at": "2026-08-12T17:03:26Z",
+      "changed_files": 17
+    },
+    {
+      "number": 398,
+      "title": "Define BurnCloud agent docs v1",
+      "state": "closed",
+      "merged_at": "2026-08-12T14:14:18Z",
+      "created_at": "2026-08-12T14:09:16Z",
+      "changed_files": 13
+    },
+    {
+      "number": 397,
+      "title": "Add fast local BurnCloud staging browser audit",
+      "state": "closed",
+      "merged_at": null,
+      "created_at": "2026-08-12T13:36:10Z",
+      "changed_files": 7
+    },
+    {
+      "number": 396,
+      "title": "Refine BurnCloud console UX around operator workflows",
+      "state": "closed",
+      "merged_at": "2026-08-12T13:19:54Z",
+      "created_at": "2026-08-12T12:34:39Z",
+      "changed_files": 17
+    },
+    {
       "number": 395,
       "title": "docs: add repository-local runtime atlas for chat completions",
       "state": "closed",
@@ -14,8 +246,8 @@
     {
       "number": 394,
       "title": "Rebuild client UI in Dioxus from burncloud-ui",
-      "state": "open",
-      "merged_at": null,
+      "state": "closed",
+      "merged_at": "2026-08-12T11:48:41Z",
       "created_at": "2026-08-10T12:26:15Z",
       "changed_files": 224
     },
@@ -170,238 +402,6 @@
       "merged_at": null,
       "created_at": "2026-07-29T04:08:47Z",
       "changed_files": 25
-    },
-    {
-      "number": 374,
-      "title": "Bugfix/monitor disk win unsafe safety comment",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T04:02:52Z",
-      "changed_files": 25
-    },
-    {
-      "number": 373,
-      "title": "Bugfix/monitor memory unsafe safety comment",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T03:56:51Z",
-      "changed_files": 24
-    },
-    {
-      "number": 372,
-      "title": "Bugfix/router p4 safety comment clean",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T03:04:50Z",
-      "changed_files": 36
-    },
-    {
-      "number": 371,
-      "title": "Bugfix/service monitor p4 unsafe safety comment",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T03:04:13Z",
-      "changed_files": 36
-    },
-    {
-      "number": 370,
-      "title": "Bugfix/common p3 jwt secret warning",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T03:02:49Z",
-      "changed_files": 35
-    },
-    {
-      "number": 369,
-      "title": "Bugfix/router p2 metrics expect",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-28T07:39:31Z",
-      "changed_files": 34
-    },
-    {
-      "number": 368,
-      "title": "Bugfix/cli p1 arg unwrap",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-28T07:38:23Z",
-      "changed_files": 34
-    },
-    {
-      "number": 367,
-      "title": "Bugfix/loops p0 expect panic",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-28T07:36:29Z",
-      "changed_files": 32
-    },
-    {
-      "number": 366,
-      "title": "Bugfix/env hardcoded key",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-28T06:38:23Z",
-      "changed_files": 29
-    },
-    {
-      "number": 365,
-      "title": "Bugfix/common validation",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-28T06:32:38Z",
-      "changed_files": 28
-    },
-    {
-      "number": 364,
-      "title": "Bugfix/main runtime unwrap",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-28T06:25:47Z",
-      "changed_files": 28
-    },
-    {
-      "number": 363,
-      "title": "Bugfix/router metrics expect",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-28T06:23:57Z",
-      "changed_files": 28
-    },
-    {
-      "number": 362,
-      "title": "Bugfix/installer p0 compile",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-28T05:58:46Z",
-      "changed_files": 27
-    },
-    {
-      "number": 361,
-      "title": "Feature/bugfix v0.4 batch",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-24T07:40:24Z",
-      "changed_files": 42
-    },
-    {
-      "number": 360,
-      "title": "Feature/load balancer v0.4",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-24T06:48:47Z",
-      "changed_files": 36
-    },
-    {
-      "number": 359,
-      "title": "Feature/test cases 20260724",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-24T04:54:38Z",
-      "changed_files": 31
-    },
-    {
-      "number": 358,
-      "title": "fix: 批量修复业务bug、新增输入校验模块、全局修复clippy告警",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-24T03:50:38Z",
-      "changed_files": 23
-    },
-    {
-      "number": 357,
-      "title": "[codex] Harden runtime, deployment, release, and web delivery",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-22T03:35:01Z",
-      "changed_files": 58
-    },
-    {
-      "number": 356,
-      "title": "Cursor/cloud agent 1783489011499 bzl1g",
-      "state": "closed",
-      "merged_at": null,
-      "created_at": "2026-07-08T06:00:25Z",
-      "changed_files": 123
-    },
-    {
-      "number": 355,
-      "title": "feat(client): E2E preview routes, jobs-aesthetic loop, and CSS acceptance gates",
-      "state": "closed",
-      "merged_at": "2026-07-08T05:55:51Z",
-      "created_at": "2026-07-08T05:46:39Z",
-      "changed_files": 98
-    },
-    {
-      "number": 354,
-      "title": "feat(client): UI design system docs, split CSS, and BCButton migration",
-      "state": "closed",
-      "merged_at": "2026-07-07T04:58:42Z",
-      "created_at": "2026-07-06T18:29:08Z",
-      "changed_files": 57
-    },
-    {
-      "number": 353,
-      "title": "refactor(client): unify design system CSS injection and console styling",
-      "state": "closed",
-      "merged_at": "2026-07-05T16:56:52Z",
-      "created_at": "2026-07-05T16:51:50Z",
-      "changed_files": 34
-    },
-    {
-      "number": 352,
-      "title": "fix(client,auth,db): unify JWT secret, fix modals, and polish desktop UI",
-      "state": "closed",
-      "merged_at": "2026-07-05T15:32:47Z",
-      "created_at": "2026-07-05T15:32:29Z",
-      "changed_files": 29
-    },
-    {
-      "number": 351,
-      "title": "feat: Peek first chunk in streaming responses to enable retry on SSE errors",
-      "state": "closed",
-      "merged_at": "2026-06-19T10:45:48Z",
-      "created_at": "2026-06-15T09:14:49Z",
-      "changed_files": 3
-    },
-    {
-      "number": 350,
-      "title": "fix: detect SSE streaming errors and record to circuit breaker",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-06-14T11:25:50Z",
-      "changed_files": 8
-    },
-    {
-      "number": 349,
-      "title": "fix(db): register missing migrations for router_request_logs (Issue #334)",
-      "state": "closed",
-      "merged_at": "2026-06-13T20:03:36Z",
-      "created_at": "2026-06-13T17:55:10Z",
-      "changed_files": 4
-    },
-    {
-      "number": 348,
-      "title": "fix: HTTP error responses should return JSON format instead of plain text",
-      "state": "closed",
-      "merged_at": "2026-06-13T16:57:28Z",
-      "created_at": "2026-06-13T16:32:06Z",
-      "changed_files": 1
-    },
-    {
-      "number": 347,
-      "title": "fix: HTTP error responses should return JSON format instead of plain text",
-      "state": "closed",
-      "merged_at": "2026-06-13T16:55:46Z",
-      "created_at": "2026-06-13T15:36:39Z",
-      "changed_files": 1
-    },
-    {
-      "number": 346,
-      "title": "test(router): add comprehensive E2E tests for Router functionality (Issue #332)",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-06-10T19:19:15Z",
-      "changed_files": 2
     }
   ]
 }
