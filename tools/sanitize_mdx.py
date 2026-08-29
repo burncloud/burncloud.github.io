@@ -1,6 +1,8 @@
 from pathlib import Path
 import re
 
+from generate_product_docs import build_sidebar, copy_manual_docs
+
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
 
@@ -72,6 +74,14 @@ def sanitize(path: Path) -> bool:
         return True
     return False
 
+
+# generate_atlas.py intentionally rebuilds docs/ from source truth and removes
+# non-Atlas directories. Restore the curated BurnCloud product docs immediately
+# before MDX sanitization so Node/Network docs and their product-first sidebar are
+# part of every Docusaurus build instead of depending on stale generated files.
+copy_manual_docs()
+build_sidebar()
+print("Injected curated BurnCloud product docs before MDX sanitization")
 
 changed = 0
 for md in DOCS.rglob("*.md"):
