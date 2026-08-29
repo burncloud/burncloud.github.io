@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="BurnCloud Node runs local AI models behind one OpenAI-compatible endpoint." />
+  <meta name="theme-color" content="#ffffff" />
+  <title>BurnCloud Node</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f7f8fa;
+      --surface-2: #fbfbfc;
+      --text: #111318;
+      --muted: #666b75;
+      --line: #e7e9ee;
+      --line-strong: #d7dae1;
+      --accent: #111318;
+      --radius: 18px;
+      --shadow: 0 18px 50px rgba(17, 19, 24, .06);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    code, pre { font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace; }
+
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+
+    .nav {
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand { font-size: 18px; font-weight: 750; letter-spacing: -0.02em; }
+    .brand span { color: var(--muted); font-weight: 560; }
+    .nav-links { display: flex; align-items: center; gap: 24px; color: var(--muted); font-size: 14px; }
+    .nav-links a:hover { color: var(--text); }
+
+    .hero {
+      padding: 96px 0 76px;
+      text-align: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 650;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 24px auto 18px;
+      max-width: 860px;
+      font-size: clamp(46px, 7vw, 82px);
+      line-height: .98;
+      letter-spacing: -0.055em;
+      font-weight: 780;
+    }
+
+    .lead {
+      margin: 0 auto;
+      max-width: 700px;
+      color: var(--muted);
+      font-size: clamp(18px, 2.2vw, 22px);
+      line-height: 1.55;
+    }
+
+    .endpoint {
+      margin: 32px auto 0;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: var(--surface-2);
+      font-size: 14px;
+      box-shadow: var(--shadow);
+    }
+    .endpoint .dot { width: 8px; height: 8px; border-radius: 50%; background: #18a957; }
+
+    .actions { margin-top: 26px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border-radius: 11px;
+      border: 1px solid var(--line-strong);
+      font-size: 14px;
+      font-weight: 650;
+    }
+    .btn.primary { background: var(--accent); color: white; border-color: var(--accent); }
+    .btn:hover { transform: translateY(-1px); }
+
+    .section { padding: 82px 0; border-top: 1px solid var(--line); }
+    .section-head { margin-bottom: 42px; }
+    .kicker { color: var(--muted); font-size: 13px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+    h2 { margin: 10px 0 12px; font-size: clamp(32px, 4vw, 48px); letter-spacing: -0.04em; line-height: 1.08; }
+    .section-head p { margin: 0; max-width: 680px; color: var(--muted); font-size: 17px; line-height: 1.65; }
+
+    .node-map {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 68px minmax(0, 1.35fr) 68px minmax(0, 1fr);
+      align-items: center;
+      gap: 12px;
+      padding: 34px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: linear-gradient(180deg, #fff 0%, #fafbfc 100%);
+      box-shadow: var(--shadow);
+    }
+
+    .flow-box {
+      min-height: 150px;
+      padding: 22px;
+      border: 1px solid var(--line-strong);
+      border-radius: 16px;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .flow-box strong { font-size: 18px; letter-spacing: -0.02em; }
+    .flow-box span { margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.5; }
+    .flow-box.node { border-color: #bfc3cc; background: #111318; color: white; }
+    .flow-box.node span { color: #bcc0c8; }
+    .arrow { text-align: center; color: #a1a6b0; font-size: 30px; font-weight: 300; }
+
+    .node-inner {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .node-inner i {
+      font-style: normal;
+      padding: 8px 6px;
+      border: 1px solid #2d3037;
+      border-radius: 8px;
+      color: #d9dce2;
+      font-size: 11px;
+      text-align: center;
+    }
+
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .card {
+      min-height: 190px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface-2);
+    }
+    .num { color: #a0a5af; font: 12px/1 "SFMono-Regular", Consolas, monospace; }
+    .card h3 { margin: 34px 0 10px; font-size: 18px; letter-spacing: -0.02em; }
+    .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    .request-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: stretch; }
+    .code-card, .lifecycle {
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      overflow: hidden;
+      background: #111318;
+      color: #eceef2;
+    }
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid #2b2e35;
+      color: #aeb3bd;
+      font-size: 12px;
+    }
+    pre { margin: 0; padding: 24px; white-space: pre-wrap; font-size: 13px; line-height: 1.7; overflow: auto; }
+    .lifecycle { background: #fff; color: var(--text); }
+    .lifecycle .panel-title { border-color: var(--line); color: var(--muted); }
+    .steps { padding: 12px 18px 18px; }
+    .step {
+      display: grid;
+      grid-template-columns: 26px 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 13px 0;
+      border-bottom: 1px solid var(--line);
+      font-size: 14px;
+    }
+    .step:last-child { border-bottom: 0; }
+    .step .check { color: #18a957; font-weight: 800; }
+    .step small { color: var(--muted); font-size: 12px; }
+
+    .promise {
+      padding: 38px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      background: #111318;
+      color: #fff;
+    }
+    .promise h2 { max-width: 760px; margin-top: 0; }
+    .promise p { max-width: 720px; color: #b7bbc4; line-height: 1.7; }
+    .future-flow {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 13px;
+    }
+    .future-flow span { padding: 9px 12px; border: 1px solid #30333b; border-radius: 9px; color: #e1e3e7; }
+    .future-flow b { color: #7f8590; font-weight: 500; }
+
+    footer { padding: 34px 0 46px; border-top: 1px solid var(--line); color: var(--muted); font-size: 13px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+    @media (max-width: 900px) {
+      .node-map { grid-template-columns: 1fr; }
+      .arrow { transform: rotate(90deg); }
+      .cards { grid-template-columns: 1fr 1fr; }
+      .request-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+      .wrap { width: min(100% - 28px, 1120px); }
+      .nav-links a:first-child { display: none; }
+      .hero { padding: 72px 0 58px; }
+      .section { padding: 62px 0; }
+      .node-map { padding: 18px; }
+      .cards { grid-template-columns: 1fr; }
+      .promise { padding: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="wrap nav">
+    <a class="brand" href="/">BurnCloud <span>Node</span></a>
+    <nav class="nav-links">
+      <a href="#capabilities">Capabilities</a>
+      <a href="/atlas/">Source Atlas</a>
+      <a href="https://github.com/burncloud/burncloud">GitHub ↗</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="wrap hero">
+      <div class="eyebrow">BurnCloud Node · Local AI Runtime</div>
+      <h1>One local endpoint.<br />Your AI models.</h1>
+      <p class="lead">BurnCloud Node turns a local machine into an OpenAI-compatible AI runtime. Ask for a model by name; the Node handles the local model lifecycle behind <strong>/v1</strong>.</p>
+      <div class="endpoint"><span class="dot"></span><code>http://localhost:3000/v1</code></div>
+      <div class="actions">
+        <a class="btn primary" href="https://github.com/burncloud/burncloud">View on GitHub</a>
+        <a class="btn" href="#how-it-works">See how it works</a>
+      </div>
+    </section>
+
+    <section class="section" id="how-it-works">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">What is a Node?</div>
+          <h2>A small local AI control plane.</h2>
+          <p>Your application talks to one stable endpoint. BurnCloud Node sits between the application and the local machine, resolving models, preparing runtimes and managing inference processes.</p>
+        </div>
+
+        <div class="node-map" aria-label="BurnCloud Node architecture">
+          <div class="flow-box">
+            <strong>Your Application</strong>
+            <span>Agent, IDE, service, script or any OpenAI-compatible client.</span>
+          </div>
+          <div class="arrow">→</div>
+          <div class="flow-box node">
+            <strong>BurnCloud Node</strong>
+            <span><code>localhost:3000/v1</code></span>
+            <div class="node-inner">
+              <i>API</i><i>Models</i><i>Runtime</i>
+              <i>Hardware</i><i>Process</i><i>State</i>
+            </div>
+          </div>
+          <div class="arrow">→</div>
+          <div class="flow-box">
+            <strong>Local AI</strong>
+            <span>GGUF + runtime running on the machine's CPU / GPU.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="capabilities">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">Node capabilities</div>
+          <h2>Six responsibilities. One interface.</h2>
+          <p>The first BurnCloud Node is intentionally small. It focuses on making local model execution predictable before adding network or provider complexity.</p>
+        </div>
+
+        <div class="cards">
+          <article class="card"><div class="num">01</div><h3>Local API</h3><p>Expose a stable OpenAI-compatible <code>/v1</code> endpoint for local applications.</p></article>
+          <article class="card"><div class="num">02</div><h3>Hardware Detect</h3><p>Identify CPU, GPU, RAM and VRAM so model decisions match the machine.</p></article>
+          <article class="card"><div class="num">03</div><h3>Model Resolver</h3><p>Turn a friendly model name into the right artifact and variant for available hardware.</p></article>
+          <article class="card"><div class="num">04</div><h3>Model Manager</h3><p>Download, verify, cache, list and remove local model artifacts without manual file hunting.</p></article>
+          <article class="card"><div class="num">05</div><h3>Runtime Manager</h3><p>Prepare and launch the local inference runtime behind the API instead of exposing runtime details.</p></article>
+          <article class="card"><div class="num">06</div><h3>Process Manager</h3><p>Own model process startup, health, ports, logs, shutdown and recovery.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">Request → model</div>
+          <h2>Ask for a model. Let the Node prepare it.</h2>
+          <p>The application should not need to know where a GGUF file lives, which quantization to choose, or which internal port the runtime uses.</p>
+        </div>
+
+        <div class="request-grid">
+          <div class="code-card">
+            <div class="panel-title"><span>OpenAI-compatible request</span><span>localhost</span></div>
+            <pre>curl http://localhost:3000/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "deepseek-r1-7b",
+    "messages": [
+      {"role": "user", "content": "Hello"}
+    ]
+  }'</pre>
+          </div>
+
+          <div class="lifecycle">
+            <div class="panel-title"><span>BurnCloud Node lifecycle</span><span>automatic</span></div>
+            <div class="steps">
+              <div class="step"><span class="check">✓</span><span>Resolve model name</span><small>model</small></div>
+              <div class="step"><span class="check">✓</span><span>Detect local hardware</span><small>CPU / GPU</small></div>
+              <div class="step"><span class="check">✓</span><span>Select compatible variant</span><small>artifact</small></div>
+              <div class="step"><span class="check">✓</span><span>Download & verify model</span><small>cache</small></div>
+              <div class="step"><span class="check">✓</span><span>Prepare & start runtime</span><small>runtime</small></div>
+              <div class="step"><span class="check">✓</span><span>Route request to local model</span><small>ready</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap">
+        <div class="promise">
+          <div class="kicker">The direction</div>
+          <h2>The endpoint stays the same even when compute moves.</h2>
+          <p>BurnCloud starts with a local Node. Later, the same Node can choose private or BurnCloud Network capacity when a requested model cannot run locally—without forcing the application to change its API endpoint.</p>
+          <div class="future-flow">
+            <span>Your App</span><b>→</b><span>BurnCloud Node</span><b>→</b><span>Local GPU</span><b>/</b><span>Private GPU</span><b>/</b><span>BurnCloud Network</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>BurnCloud · Open local AI infrastructure</span>
+      <span><a href="/atlas/">Source Atlas</a> · <a href="https://github.com/burncloud/burncloud">GitHub</a></span>
+    </div>
+  </footer>
+</body>
+</html>
