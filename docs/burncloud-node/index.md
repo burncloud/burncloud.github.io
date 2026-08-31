@@ -23,6 +23,14 @@ flowchart LR
     ROUTE -.-> PROVIDER["Provider"]
 ```
 
+## 实施计划
+
+如果准备基于现有 `burncloud/burncloud` 开始实现 BurnCloud Node，请先阅读：
+
+- **[BurnCloud Node 实施计划](./implementation-plan)**：说明现有 BurnCloud 已具备哪些能力、Node 还需要补齐哪些功能、实施阶段以及 Node v0.1 的完成定义。
+
+这份计划的核心原则是：**不重新实现现有 Gateway、Router、Downloader 和 Database，而是在现有 BurnCloud 上补齐本地模型执行链。**
+
 ## Node 的七个核心功能
 
 | 功能 | 用户看到的结果 | 主要职责 |
@@ -99,4 +107,4 @@ Protocol Translator
 - **✅ Current**：当前 BurnCloud 源码已经存在统一数据面、多个协议入口、Router、下载等基础能力。
 - **🎯 Node v0.1**：把请求链明确为 URL → Protocol → Model ID → Route Engine → Raw Proxy / Protocol Translator，并继续完善硬件画像、本地 Variant 自动解析和 Runtime 生命周期。
 
-建议按左侧菜单依次阅读七个功能页面。
+建议先阅读实施计划，再按左侧菜单依次查看各功能页面。
