@@ -4,6 +4,14 @@
   "pr_count": 50,
   "prs": [
     {
+      "number": 428,
+      "title": "feat(node): introduce Node hardware profile foundation",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-08-31T16:52:36Z",
+      "changed_files": 6
+    },
+    {
       "number": 427,
       "title": "feat: 更新首页内容",
       "state": "open",
@@ -394,14 +402,6 @@
       "merged_at": null,
       "created_at": "2026-07-29T04:20:08Z",
       "changed_files": 26
-    },
-    {
-      "number": 375,
-      "title": "Bugfix/monitor disk unix unsafe safety comment",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T04:08:47Z",
-      "changed_files": 25
     }
   ]
 }

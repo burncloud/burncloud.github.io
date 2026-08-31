@@ -277,6 +277,7 @@ module.exports = {
             ]},
           ]},
       {type:'category', label:"PR Change Atlas（最近 50 条）", collapsed:true, items:[
+        {type:'doc', id:"pr/pr-428", label:"#428 feat(node): introduce Node hardware profile foundation"},
         {type:'doc', id:"pr/pr-427", label:"#427 feat: 更新首页内容"},
         {type:'doc', id:"pr/pr-426", label:"#426 [codex] import BurnCloud UI and buyer catalog"},
         {type:'doc', id:"pr/pr-425", label:"#425 chore: temporary BurnCloud site screenshots"},
@@ -326,7 +327,6 @@ module.exports = {
         {type:'doc', id:"pr/pr-378", label:"#378 Bugfix/download parse log error"},
         {type:'doc', id:"pr/pr-377", label:"#377 Bugfix/monitor cpu parse log error"},
         {type:'doc', id:"pr/pr-376", label:"#376 Bugfix/monitor memory parse log error"},
-        {type:'doc', id:"pr/pr-375", label:"#375 Bugfix/monitor disk unix unsafe safety comment"},
       ]},
       // BURNCLOUD_TECHNICAL_REFERENCE_END
     ]},
