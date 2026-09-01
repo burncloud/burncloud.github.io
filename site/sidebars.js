@@ -1,22 +1,22 @@
 module.exports = {
   docsSidebar: [
     {type:'category', label:'BurnCloud', collapsed:false, link:{type:'doc', id:'index'}, items:[
-      {type:'category', label:'BurnCloud Node', collapsed:true, link:{type:'doc', id:'burncloud-node/index'}, items:[
+      {type:'category', label:'BurnCloud 节点', collapsed:true, link:{type:'doc', id:'burncloud-node/index'}, items:[
         {type:'doc', id:'burncloud-node/implementation-plan', label:'实施计划'},
-        {type:'doc', id:'burncloud-node/local-api-gateway', label:'Local API Gateway'},
-        {type:'doc', id:'burncloud-node/protocol-routing', label:'Protocol Routing'},
-        {type:'doc', id:'burncloud-node/hardware-detection', label:'Hardware Detection'},
-        {type:'doc', id:'burncloud-node/model-resolver', label:'Model Resolver'},
-        {type:'doc', id:'burncloud-node/model-manager', label:'Model Manager'},
-        {type:'doc', id:'burncloud-node/runtime-manager', label:'Runtime Manager'},
-        {type:'doc', id:'burncloud-node/process-manager', label:'Process Manager'},
+        {type:'doc', id:'burncloud-node/local-api-gateway', label:'本地 API 网关'},
+        {type:'doc', id:'burncloud-node/protocol-routing', label:'协议路由'},
+        {type:'doc', id:'burncloud-node/hardware-detection', label:'硬件检测'},
+        {type:'doc', id:'burncloud-node/model-resolver', label:'模型解析'},
+        {type:'doc', id:'burncloud-node/model-manager', label:'模型管理'},
+        {type:'doc', id:'burncloud-node/runtime-manager', label:'运行时管理'},
+        {type:'doc', id:'burncloud-node/process-manager', label:'进程管理'},
       ]},
-      {type:'doc', id:'burncloud-network/index', label:'BurnCloud Network'},
+      {type:'doc', id:'burncloud-network/index', label:'BurnCloud 网络'},
     ]},
-    {type:'category', label:'Technical Reference', collapsed:true, items:[
+    {type:'category', label:'技术参考', collapsed:true, items:[
       // BURNCLOUD_TECHNICAL_REFERENCE_START
       {type:'category', label:"HTTP / API", collapsed:true, items:[
-            {type:'category', label:"AI API / Data Plane", collapsed:true, items:[
+            {type:'category', label:"AI API / 数据面", collapsed:true, items:[
               {type:'doc', id:"http-api/ai-api-data-plane/get-v1-models", label:"GET /v1/models"},
               {type:'doc', id:"http-api/ai-api-data-plane/get-api-v1-usage", label:"GET /api/v1/usage"},
               {type:'doc', id:"http-api/ai-api-data-plane/get-api-v1-usage-models", label:"GET /api/v1/usage/models"},
@@ -37,7 +37,7 @@ module.exports = {
               {type:'doc', id:"http-api/ai-api-data-plane/get-v1-videos-task_id", label:"GET /v1/videos/{task_id}"},
               {type:'doc', id:"http-api/ai-api-data-plane/router-fallback-proxy_handler", label:"Router fallback → proxy_handler"},
             ]},
-            {type:'category', label:"Authentication", collapsed:true, items:[
+            {type:'category', label:"身份认证", collapsed:true, items:[
               {type:'doc', id:"http-api/authentication/post-api-auth-register", label:"POST /api/auth/register"},
               {type:'doc', id:"http-api/authentication/post-api-auth-login", label:"POST /api/auth/login"},
               {type:'doc', id:"http-api/authentication/post-api-auth-forgot-password", label:"POST /api/auth/forgot-password"},
@@ -45,14 +45,14 @@ module.exports = {
               {type:'doc', id:"http-api/authentication/get-api-auth-google", label:"GET /api/auth/google"},
               {type:'doc', id:"http-api/authentication/get-api-auth-github", label:"GET /api/auth/github"},
             ]},
-            {type:'category', label:"Channel Management", collapsed:true, items:[
+            {type:'category', label:"渠道管理", collapsed:true, items:[
               {type:'doc', id:"http-api/channel-management/get-console-api-channel", label:"GET /console/api/channel"},
               {type:'doc', id:"http-api/channel-management/post-console-api-channel", label:"POST /console/api/channel"},
               {type:'doc', id:"http-api/channel-management/put-console-api-channel", label:"PUT /console/api/channel"},
               {type:'doc', id:"http-api/channel-management/get-console-api-channel-id", label:"GET /console/api/channel/{id}"},
               {type:'doc', id:"http-api/channel-management/delete-console-api-channel-id", label:"DELETE /console/api/channel/{id}"},
             ]},
-            {type:'category', label:"Token", collapsed:true, items:[
+            {type:'category', label:"Token 管理", collapsed:true, items:[
               {type:'doc', id:"http-api/token/get-console-api-tokens", label:"GET /console/api/tokens"},
               {type:'doc', id:"http-api/token/post-console-api-tokens", label:"POST /console/api/tokens"},
               {type:'doc', id:"http-api/token/get-console-api-tokens-token", label:"GET /console/api/tokens/{token}"},
@@ -62,7 +62,7 @@ module.exports = {
               {type:'doc', id:"http-api/token/post-console-api-tokens-token-revoke-old", label:"POST /console/api/tokens/{token}/revoke-old"},
               {type:'doc', id:"http-api/token/post-console-api-tokens-token-ip-whitelist", label:"POST /console/api/tokens/{token}/ip-whitelist"},
             ]},
-            {type:'category', label:"User", collapsed:true, items:[
+            {type:'category', label:"用户", collapsed:true, items:[
               {type:'doc', id:"http-api/user/post-console-api-user-register", label:"POST /console/api/user/register"},
               {type:'doc', id:"http-api/user/post-console-api-user-login", label:"POST /console/api/user/login"},
               {type:'doc', id:"http-api/user/post-console-api-user-topup", label:"POST /console/api/user/topup"},
@@ -70,18 +70,18 @@ module.exports = {
               {type:'doc', id:"http-api/user/get-console-api-user-recharges", label:"GET /console/api/user/recharges"},
               {type:'doc', id:"http-api/user/get-console-api-list_users", label:"GET /console/api/list_users"},
             ]},
-            {type:'category', label:"Billing / Usage", collapsed:true, items:[
+            {type:'category', label:"计费 / 用量", collapsed:true, items:[
               {type:'doc', id:"http-api/billing-usage/get-api-billing-summary", label:"GET /api/billing/summary"},
               {type:'doc', id:"http-api/billing-usage/get-console-internal-billing-summary", label:"GET /console/internal/billing/summary"},
               {type:'doc', id:"http-api/billing-usage/get-api-v1-usage", label:"GET /api/v1/usage"},
               {type:'doc', id:"http-api/billing-usage/get-api-v1-usage-models", label:"GET /api/v1/usage/models"},
               {type:'doc', id:"http-api/billing-usage/get-console-api-usage-user_id", label:"GET /console/api/usage/{user_id}"},
             ]},
-            {type:'category', label:"Logs", collapsed:true, items:[
+            {type:'category', label:"日志", collapsed:true, items:[
               {type:'doc', id:"http-api/logs/get-console-api-logs", label:"GET /console/api/logs"},
               {type:'doc', id:"http-api/logs/get-console-api-usage-user_id", label:"GET /console/api/usage/{user_id}"},
             ]},
-            {type:'category', label:"Monitoring / Security", collapsed:true, items:[
+            {type:'category', label:"监控 / 安全", collapsed:true, items:[
               {type:'doc', id:"http-api/monitoring-security/get-console-api-monitor", label:"GET /console/api/monitor"},
               {type:'doc', id:"http-api/monitoring-security/get-console-api-monitor-security", label:"GET /console/api/monitor/security"},
               {type:'doc', id:"http-api/monitoring-security/get-console-api-monitor-security-events", label:"GET /console/api/monitor/security/events"},
@@ -90,11 +90,11 @@ module.exports = {
               {type:'doc', id:"http-api/monitoring-security/post-console-api-monitor-security-emergency-circuit-break", label:"POST /console/api/monitor/security/emergency-circuit-break"},
               {type:'doc', id:"http-api/monitoring-security/get-console-api-monitor-security-circuit-breaker-status", label:"GET /console/api/monitor/security/circuit-breaker-status"},
             ]},
-            {type:'category', label:"Cache", collapsed:true, items:[
+            {type:'category', label:"缓存", collapsed:true, items:[
               {type:'doc', id:"http-api/cache/get-console-api-cache-stats", label:"GET /console/api/cache/stats"},
               {type:'doc', id:"http-api/cache/post-console-api-cache-clear", label:"POST /console/api/cache/clear"},
             ]},
-            {type:'category', label:"Admin / Internal", collapsed:true, items:[
+            {type:'category', label:"管理 / 内部", collapsed:true, items:[
               {type:'doc', id:"http-api/admin-internal/get-health", label:"GET /health"},
               {type:'doc', id:"http-api/admin-internal/get-console-internal-health", label:"GET /console/internal/health"},
               {type:'doc', id:"http-api/admin-internal/post-console-internal-prices-sync", label:"POST /console/internal/prices/sync"},
@@ -126,7 +126,7 @@ module.exports = {
               {type:'doc', id:"http-api/web-ui-liveview-websocket/get-ws", label:"GET /ws"},
             ]},
           ]},
-          {type:'category', label:"CLI / Executables", collapsed:true, items:[
+          {type:'category', label:"CLI / 可执行程序", collapsed:true, items:[
             {type:'category', label:"burncloud", collapsed:true, items:[
               {type:'doc', id:"cli/burncloud/burncloud", label:"burncloud"},
               {type:'doc', id:"cli/burncloud/server", label:"server"},
@@ -223,7 +223,7 @@ module.exports = {
               {type:'doc', id:"background/desktop-background-work/windows-background-server-thread", label:"Windows Background Server Thread"},
             ]},
           ]},
-          {type:'category', label:"Startup", collapsed:true, items:[
+          {type:'category', label:"启动流程", collapsed:true, items:[
             {type:'category', label:"Startup Chain", collapsed:true, items:[
               {type:'doc', id:"startup/src-main.rs", label:"src/main.rs"},
               {type:'doc', id:"startup/start_server", label:"start_server"},
@@ -231,7 +231,7 @@ module.exports = {
               {type:'doc', id:"startup/create_router_app", label:"create_router_app"},
             ]},
           ]},
-          {type:'category', label:"UI-only Actions", collapsed:true, items:[
+          {type:'category', label:"仅 UI 操作", collapsed:true, items:[
             {type:'category', label:"Guest / Public", collapsed:true, items:[
               {type:'doc', id:"ui/guest-public/index", label:"/"},
               {type:'doc', id:"ui/guest-public/home", label:"/home"},
@@ -277,7 +277,7 @@ module.exports = {
               {type:'doc', id:"ui/desktop/show-hide-focus", label:"show / hide / focus"},
             ]},
           ]},
-      {type:'category', label:"PR Change Atlas（最近 50 条）", collapsed:true, items:[
+      {type:'category', label:"PR 变更图谱（最近 50 条）", collapsed:true, items:[
         {type:'doc', id:"pr/pr-428", label:"#428 feat(node): introduce Node hardware profile foundation"},
         {type:'doc', id:"pr/pr-427", label:"#427 feat: 更新首页内容"},
         {type:'doc', id:"pr/pr-426", label:"#426 [codex] import BurnCloud UI and buyer catalog"},
