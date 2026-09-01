@@ -5,11 +5,11 @@
   "prs": [
     {
       "number": 429,
-      "title": "docs(agent): establish engineering issue standard",
+      "title": "docs(agent): enforce canonical engineering issue standard",
       "state": "open",
       "merged_at": null,
       "created_at": "2026-09-01T01:51:47Z",
-      "changed_files": 4
+      "changed_files": 5
     },
     {
       "number": 428,

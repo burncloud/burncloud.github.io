@@ -312,7 +312,7 @@ module.exports = {
             ]},
           ]},
       {type:'category', label:"PR 变更图谱（最近 50 条）", collapsed:true, items:[
-        {type:'doc', id:"pr/pr-429", label:"#429 docs(agent): establish engineering issue standard"},
+        {type:'doc', id:"pr/pr-429", label:"#429 docs(agent): enforce canonical engineering issue standard"},
         {type:'doc', id:"pr/pr-428", label:"#428 feat(node): introduce Node hardware profile foundation"},
         {type:'doc', id:"pr/pr-427", label:"#427 feat: 更新首页内容"},
         {type:'doc', id:"pr/pr-426", label:"#426 [codex] import BurnCloud UI and buyer catalog"},
