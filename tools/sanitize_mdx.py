@@ -90,6 +90,44 @@ def ensure_node_implementation_plan_sidebar() -> None:
     SIDEBAR.write_text(text.replace(marker, entry + marker, 1), encoding="utf-8")
 
 
+def localize_sidebar_labels() -> None:
+    """Use Chinese navigation labels while preserving API paths and code identifiers."""
+    text = SIDEBAR.read_text(encoding="utf-8")
+    translations = {
+        "BurnCloud Node": "BurnCloud 节点",
+        "Local API Gateway": "本地 API 网关",
+        "Protocol Routing": "协议路由",
+        "Hardware Detection": "硬件检测",
+        "Model Resolver": "模型解析",
+        "Model Manager": "模型管理",
+        "Runtime Manager": "运行时管理",
+        "Process Manager": "进程管理",
+        "BurnCloud Network": "BurnCloud 网络",
+        "Technical Reference": "技术参考",
+        "AI API / Data Plane": "AI API / 数据面",
+        "Authentication": "身份认证",
+        "Channel Management": "渠道管理",
+        "Token": "Token 管理",
+        "User": "用户",
+        "Billing / Usage": "计费 / 用量",
+        "Logs": "日志",
+        "Monitoring / Security": "监控 / 安全",
+        "Cache": "缓存",
+        "Admin / Internal": "管理 / 内部",
+        "CLI / Executables": "CLI / 可执行程序",
+        "Background Jobs": "后台任务",
+        "Startup": "启动流程",
+        "UI-only Actions": "仅 UI 操作",
+        "PR Change Atlas（最近 50 条）": "PR 变更图谱（最近 50 条）",
+    }
+
+    for source, target in translations.items():
+        text = text.replace(f"label:'{source}'", f"label:'{target}'")
+        text = text.replace(f'label:"{source}"', f'label:"{target}"')
+
+    SIDEBAR.write_text(text, encoding="utf-8")
+
+
 # generate_atlas.py intentionally rebuilds docs/ from source truth and removes
 # non-Atlas directories. Restore the curated BurnCloud product docs immediately
 # before MDX sanitization so Node/Network docs and their product-first sidebar are
@@ -97,7 +135,8 @@ def ensure_node_implementation_plan_sidebar() -> None:
 copy_manual_docs()
 build_sidebar()
 ensure_node_implementation_plan_sidebar()
-print("Injected curated BurnCloud product docs before MDX sanitization")
+localize_sidebar_labels()
+print("Injected curated BurnCloud product docs with Chinese sidebar labels before MDX sanitization")
 
 changed = 0
 for md in DOCS.rglob("*.md"):
