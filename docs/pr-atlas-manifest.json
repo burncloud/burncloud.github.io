@@ -4,6 +4,14 @@
   "pr_count": 50,
   "prs": [
     {
+      "number": 429,
+      "title": "docs(agent): establish engineering issue standard",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-09-01T01:51:47Z",
+      "changed_files": 4
+    },
+    {
       "number": 428,
       "title": "feat(node): introduce Node hardware profile foundation",
       "state": "open",
@@ -394,14 +402,6 @@
       "merged_at": null,
       "created_at": "2026-07-29T04:24:40Z",
       "changed_files": 27
-    },
-    {
-      "number": 376,
-      "title": "Bugfix/monitor memory parse log error",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T04:20:08Z",
-      "changed_files": 26
     }
   ]
 }

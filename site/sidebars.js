@@ -2,7 +2,41 @@ module.exports = {
   docsSidebar: [
     {type:'category', label:'BurnCloud', collapsed:false, link:{type:'doc', id:'index'}, items:[
       {type:'category', label:'BurnCloud 节点', collapsed:true, link:{type:'doc', id:'burncloud-node/index'}, items:[
-        {type:'doc', id:'burncloud-node/implementation-plan', label:'实施计划'},
+        {type:'category', label:'实施计划', collapsed:false, link:{type:'doc', id:'burncloud-node/implementation-plan'}, items:[
+          {type:'doc', id:'burncloud-node/implementation-plan/issue-standard', label:'Issue 标准'},
+          {type:'category', label:'类别一：Node Core', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/node-core'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-001', label:'NODE-001 启动入口与生命周期'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-002', label:'NODE-002 配置与共享上下文'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-003', label:'NODE-003 复用 Server / Router'},
+          ]},
+          {type:'category', label:'类别二：Hardware Profile', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/hardware-profile'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-101', label:'NODE-101 canonical HardwareProfile'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-102', label:'NODE-102 NVIDIA GPU 检测'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-103', label:'NODE-103 兼容性与资源快照'},
+          ]},
+          {type:'category', label:'类别三：Model Resolver', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/model-resolver'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-201', label:'NODE-201 Model Manifest'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-202', label:'NODE-202 Model ID / Alias'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-203', label:'NODE-203 Variant 选择'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-204', label:'NODE-204 ResolvedModel 合同'},
+          ]},
+          {type:'category', label:'类别四：Model Preparation', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/model-preparation'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-301', label:'NODE-301 Local Artifact State'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-302', label:'NODE-302 Prepare / 下载去重'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-303', label:'NODE-303 校验与失败恢复'},
+          ]},
+          {type:'category', label:'类别五：Runtime 与 Process', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/runtime-process'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-401', label:'NODE-401 llama.cpp Runtime Adapter'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-402', label:'NODE-402 端口与 Process Spawn'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-403', label:'NODE-403 Readiness / Health'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-404', label:'NODE-404 Stop / Crash / Restart / Logs'},
+          ]},
+          {type:'category', label:'类别六：Local Channel Integration', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/local-channel'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-501', label:'NODE-501 注册 Local Channel / Ability'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-502', label:'NODE-502 健康联动与摘除'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-503', label:'NODE-503 本地推理完整 E2E'},
+          ]},
+        ]},
         {type:'doc', id:'burncloud-node/local-api-gateway', label:'本地 API 网关'},
         {type:'doc', id:'burncloud-node/protocol-routing', label:'协议路由'},
         {type:'doc', id:'burncloud-node/hardware-detection', label:'硬件检测'},
@@ -278,6 +312,7 @@ module.exports = {
             ]},
           ]},
       {type:'category', label:"PR 变更图谱（最近 50 条）", collapsed:true, items:[
+        {type:'doc', id:"pr/pr-429", label:"#429 docs(agent): establish engineering issue standard"},
         {type:'doc', id:"pr/pr-428", label:"#428 feat(node): introduce Node hardware profile foundation"},
         {type:'doc', id:"pr/pr-427", label:"#427 feat: 更新首页内容"},
         {type:'doc', id:"pr/pr-426", label:"#426 [codex] import BurnCloud UI and buyer catalog"},
@@ -327,7 +362,6 @@ module.exports = {
         {type:'doc', id:"pr/pr-379", label:"#379 Bugfix/env jwt secret warning enhance"},
         {type:'doc', id:"pr/pr-378", label:"#378 Bugfix/download parse log error"},
         {type:'doc', id:"pr/pr-377", label:"#377 Bugfix/monitor cpu parse log error"},
-        {type:'doc', id:"pr/pr-376", label:"#376 Bugfix/monitor memory parse log error"},
       ]},
       // BURNCLOUD_TECHNICAL_REFERENCE_END
     ]},
