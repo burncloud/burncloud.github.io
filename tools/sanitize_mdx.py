@@ -24,8 +24,6 @@ def escape_text(fragment: str) -> str:
 
 
 def sanitize_inline_content(line: str) -> str:
-    # Preserve Markdown syntax that must remain structural. In particular,
-    # generated Chinese explanations use blockquotes beginning with `>`.
     prefix = ""
     body = line
     if body.startswith("> "):
@@ -77,17 +75,53 @@ def sanitize(path: Path) -> bool:
 
 
 def ensure_node_implementation_plan_sidebar() -> None:
-    """Keep the curated Node implementation plan visible after generated sidebar rebuilds."""
+    """Inject the curated, categorized BurnCloud Node implementation plan."""
     text = SIDEBAR.read_text(encoding="utf-8")
-    entry = "        {type:'doc', id:'burncloud-node/implementation-plan', label:'实施计划'},\n"
     marker = "        {type:'doc', id:'burncloud-node/local-api-gateway', label:'Local API Gateway'},\n"
 
-    if entry in text:
+    if "id:'burncloud-node/implementation-plan/node-503'" in text:
         return
     if marker not in text:
         raise RuntimeError("BurnCloud Node sidebar marker not found")
 
-    SIDEBAR.write_text(text.replace(marker, entry + marker, 1), encoding="utf-8")
+    block = """        {type:'category', label:'实施计划', collapsed:false, link:{type:'doc', id:'burncloud-node/implementation-plan'}, items:[
+          {type:'doc', id:'burncloud-node/implementation-plan/issue-standard', label:'Issue 标准'},
+          {type:'category', label:'类别一：Node Core', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/node-core'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-001', label:'NODE-001 启动入口与生命周期'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-002', label:'NODE-002 配置与共享上下文'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-003', label:'NODE-003 复用 Server / Router'},
+          ]},
+          {type:'category', label:'类别二：Hardware Profile', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/hardware-profile'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-101', label:'NODE-101 canonical HardwareProfile'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-102', label:'NODE-102 NVIDIA GPU 检测'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-103', label:'NODE-103 兼容性与资源快照'},
+          ]},
+          {type:'category', label:'类别三：Model Resolver', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/model-resolver'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-201', label:'NODE-201 Model Manifest'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-202', label:'NODE-202 Model ID / Alias'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-203', label:'NODE-203 Variant 选择'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-204', label:'NODE-204 ResolvedModel 合同'},
+          ]},
+          {type:'category', label:'类别四：Model Preparation', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/model-preparation'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-301', label:'NODE-301 Local Artifact State'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-302', label:'NODE-302 Prepare / 下载去重'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-303', label:'NODE-303 校验与失败恢复'},
+          ]},
+          {type:'category', label:'类别五：Runtime 与 Process', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/runtime-process'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-401', label:'NODE-401 llama.cpp Runtime Adapter'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-402', label:'NODE-402 端口与 Process Spawn'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-403', label:'NODE-403 Readiness / Health'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-404', label:'NODE-404 Stop / Crash / Restart / Logs'},
+          ]},
+          {type:'category', label:'类别六：Local Channel Integration', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/local-channel'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-501', label:'NODE-501 注册 Local Channel / Ability'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-502', label:'NODE-502 健康联动与摘除'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-503', label:'NODE-503 本地推理完整 E2E'},
+          ]},
+        ]},
+"""
+
+    SIDEBAR.write_text(text.replace(marker, block + marker, 1), encoding="utf-8")
 
 
 def localize_sidebar_labels() -> None:
@@ -128,15 +162,11 @@ def localize_sidebar_labels() -> None:
     SIDEBAR.write_text(text, encoding="utf-8")
 
 
-# generate_atlas.py intentionally rebuilds docs/ from source truth and removes
-# non-Atlas directories. Restore the curated BurnCloud product docs immediately
-# before MDX sanitization so Node/Network docs and their product-first sidebar are
-# part of every Docusaurus build instead of depending on stale generated files.
 copy_manual_docs()
 build_sidebar()
 ensure_node_implementation_plan_sidebar()
 localize_sidebar_labels()
-print("Injected curated BurnCloud product docs with Chinese sidebar labels before MDX sanitization")
+print("Injected curated BurnCloud product docs with categorized Node issue plan before MDX sanitization")
 
 changed = 0
 for md in DOCS.rglob("*.md"):
