@@ -2,6 +2,7 @@ module.exports = {
   docsSidebar: [
     {type:'category', label:'BurnCloud', collapsed:false, link:{type:'doc', id:'index'}, items:[
       {type:'category', label:'BurnCloud Node', collapsed:true, link:{type:'doc', id:'burncloud-node/index'}, items:[
+        {type:'doc', id:'burncloud-node/implementation-plan', label:'实施计划'},
         {type:'doc', id:'burncloud-node/local-api-gateway', label:'Local API Gateway'},
         {type:'doc', id:'burncloud-node/protocol-routing', label:'Protocol Routing'},
         {type:'doc', id:'burncloud-node/hardware-detection', label:'Hardware Detection'},
