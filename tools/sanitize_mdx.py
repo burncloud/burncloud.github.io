@@ -5,6 +5,7 @@ from generate_product_docs import build_sidebar, copy_manual_docs
 
 ROOT = Path(__file__).resolve().parents[1]
 DOCS = ROOT / "docs"
+SIDEBAR = ROOT / "site" / "sidebars.js"
 
 INLINE_CODE = re.compile(r"(`[^`]*`)")
 
@@ -75,12 +76,27 @@ def sanitize(path: Path) -> bool:
     return False
 
 
+def ensure_node_implementation_plan_sidebar() -> None:
+    """Keep the curated Node implementation plan visible after generated sidebar rebuilds."""
+    text = SIDEBAR.read_text(encoding="utf-8")
+    entry = "        {type:'doc', id:'burncloud-node/implementation-plan', label:'实施计划'},\n"
+    marker = "        {type:'doc', id:'burncloud-node/local-api-gateway', label:'Local API Gateway'},\n"
+
+    if entry in text:
+        return
+    if marker not in text:
+        raise RuntimeError("BurnCloud Node sidebar marker not found")
+
+    SIDEBAR.write_text(text.replace(marker, entry + marker, 1), encoding="utf-8")
+
+
 # generate_atlas.py intentionally rebuilds docs/ from source truth and removes
 # non-Atlas directories. Restore the curated BurnCloud product docs immediately
 # before MDX sanitization so Node/Network docs and their product-first sidebar are
 # part of every Docusaurus build instead of depending on stale generated files.
 copy_manual_docs()
 build_sidebar()
+ensure_node_implementation_plan_sidebar()
 print("Injected curated BurnCloud product docs before MDX sanitization")
 
 changed = 0
