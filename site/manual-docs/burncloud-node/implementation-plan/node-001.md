@@ -5,63 +5,103 @@ slug: /burncloud-node/implementation-plan/node-001/
 
 # NODE-001：建立 Node Core 启动入口与生命周期合同
 
+## 第一层：人类阅读区（Human Readable Layer）
+
 **状态：PLANNED**  
 **类别：Node Core**  
-**主要结果：为 BurnCloud Node 建立唯一、明确、可停止的运行生命周期入口**  
 **功能依赖：无**
 
-> 本页是 Implementation Plan，不是实现授权。即使本页规格已经完整，也必须在准备开发时依据当时的 `burncloud/burncloud` `main` 重新执行 Evidence Audit，创建通过 READY Gate 的 Engineering Issue 后，才能交给 Codex 实现。
+> 这是实施计划，不是 Codex 的直接开发授权。真正开始实现前，仍需基于当时的 `burncloud/burncloud/main` 重新做 Evidence Audit，并创建通过 READY Gate 的 Engineering Issue。
 
-## 1. 目标（Goal）
+### TL;DR
 
-为 BurnCloud 增加一个一等的 **Node 运行入口与 Node Core 生命周期合同**，使 `BurnCloud Node` 成为现有 BurnCloud 的一种受控运行形态，而不是另一套独立程序体系。
+我们要给 BurnCloud 增加一个正式的 `burncloud node` 启动入口，并定义 Node 从启动到关闭的基本生命周期。这样后续硬件检测、模型解析和本地 Runtime 都能挂在同一个稳定入口上，而不是各自发明启动方式。完成后，BurnCloud Node 会成为现有 BurnCloud 的一种运行形态，而不是第二套系统。
 
-本 Issue 只解决：
+### 背景与动机（Why）
+
+现在 BurnCloud 已经有统一的可执行入口，`server` 和 `router` 也共享现有 Server startup，但还没有一个和它们同级的 Node runtime 入口。
+
+如果这个边界现在不先划清楚，后续开发很容易出现几个问题：有人把 Node 当成新的 Server，有人直接把本地模型逻辑塞进 CLI，还有人可能重新创建 Router、Database 或进程管理体系。短期看都能“跑起来”，长期却会形成两套启动链和重复的系统职责。
+
+所以 NODE-001 只做一件事：**先把 Node 的门口和生命周期立起来。** 至于配置上下文、Server / Router 组合、本地模型执行，全部交给后续 Issue。
+
+### 范围速览（In / Out）
+
+| ✅ 做 | ❌ 不做 |
+| --- | --- |
+| 增加一等 `burncloud node` runtime 入口 | 不创建第二个 BurnCloud 可执行程序 |
+| 定义 initialize / start / shutdown 生命周期 | 不在本 Issue 里接入 Server / Router |
+| 建立最小 Node Core 编排层 | 不建立 NodeConfig / NodeContext |
+| 处理 Node 自己的启动失败与退出清理 | 不做 Hardware / Resolver / Download / Runtime |
+| 保持现有 `server` / `router` 行为不变 | 不修改 Billing / Auth / Router / Database 语义 |
+
+### 风险与安全网（Risk）
+
+> 这是一个**加性、低侵入**改动：最坏结果应该只是新的 Node 入口无法正常启动；一旦实现需要跨进 Router、Billing、Database 或其它未授权领域，Codex 必须停止并报告，而不是继续硬改现有系统。
+
+### 审批者关注点（Reviewer Focus）
+
+你只需要确认 3 个核心决策，其余实现细节由 Task Contract、测试和 CI 约束：
+
+1. **是否同意 `burncloud node` 成为一等运行入口，而不是普通管理 CLI 命令？**
+2. **是否同意 Node Core 只负责生命周期编排，不负责 Server、Router、模型和进程业务？**
+3. **是否同意 NODE-001 明确止步于生命周期，NodeConfig 留给 NODE-002，Server / Router 组合留给 NODE-003？**
+
+---
+
+## 第二层：机器执行层（Machine Executable Specification）
+
+### 1. Goal
+
+建立一个一等的 `burncloud node` runtime entry，以及最小 Node Core 生命周期合同：
 
 ```text
 burncloud node
-      ↓
-Node Core lifecycle
       ↓
 initialize
       ↓
 start
       ↓
+RUNNING
+      ↓
 shutdown
+      ↓
+STOPPED
 ```
 
-本 Issue **不负责**把 Server / Router 真正组合进 Node 模式；该职责属于 `NODE-003`。
+NODE-001 只授权 Node runtime entry 与生命周期编排。
 
-本 Issue **不负责**建立 NodeConfig / NodeContext；该职责属于 `NODE-002`。
+- `NODE-002`：NodeConfig / NodeContext。
+- `NODE-003`：复用现有 Server / Router 形成 Node 模式。
 
-## 2. 当前事实与证据（Current Evidence）
+### 2. Evidence
 
-以下事实基于当前 `burncloud/burncloud` `main`：
+以下证据基于当前 `burncloud/burncloud/main`。
 
-### `STATIC CONFIRMED` — 顶层 CLI 已有统一入口
+#### STATIC CONFIRMED — 顶层 CLI 已有统一入口
 
-`src/main.rs :: main` 是当前 BurnCloud 可执行程序的顶层入口，并在进入具体子命令前统一完成：
+`src/main.rs :: main` 是当前可执行程序入口，并统一完成：
 
 - `.env` 加载；
 - `MASTER_KEY` 检查 / 生成；
 - logging 初始化；
-- CLI 子命令分发。
+- CLI dispatch。
 
-这意味着 Node 不需要创建第二个二进制启动体系或第二套 logging bootstrap。
+结论：Node 必须复用现有 executable / bootstrap，不创建第二套启动体系。
 
-### `STATIC CONFIRMED` — `server` 与 `router` 当前共享 Server startup
+#### STATIC CONFIRMED — `server` 与 `router` 共享 Server startup
 
-`src/main.rs :: main` 将 `server` 与 `router` 都分发到 `run_async_server()`；`run_async_server()` 最终调用：
+`src/main.rs :: main` 将 `server` 与 `router` 分发到 `run_async_server()`，后者调用：
 
 ```text
 burncloud_server::start_server(...)
 ```
 
-对应现有工程不变量：`INV-RUNTIME-001`。
+对应：`INV-RUNTIME-001`。
 
-### `STATIC CONFIRMED` — 当前顶层入口没有一等的 Node runtime 分支
+#### STATIC CONFIRMED — 当前没有一等 Node runtime 分支
 
-`src/main.rs :: main` 当前一等处理：
+当前顶层 runtime dispatch 明确处理：
 
 ```text
 client
@@ -69,25 +109,25 @@ server
 router
 ```
 
-其他命令进入通用 `run_async_cli()` / `handle_command()` 路径。当前顶层启动代码中不存在与 `server` / `router` 同级的 Node runtime lifecycle 分支。
+不存在与 `server` / `router` 同级的 Node lifecycle entry。
 
-### `STATIC CONFIRMED` — 当前 workspace 没有 `crates/node`
+#### STATIC CONFIRMED — 当前 workspace 没有 `crates/node`
 
-当前 `crates/` 包含现有 Server、Router、Database、Download、Service 等 crate，但没有独立 `crates/node`。
+当前 `crates/` 已有 Server、Router、Database、Download、Service 等 crate，但没有 `crates/node`。
 
-这只是当前事实，**不代表本 Issue 已经批准必须创建 `crates/node`**。具体实现位置应在 Task Contract 阶段基于当前源码决定；若创建 `crates/node`，它必须保持为薄的 orchestration / lifecycle 层。
+此事实**不构成创建 `crates/node` 的预先授权**。实现位置必须在 READY Issue / Task Contract 阶段根据当时源码确定；如新增 `crates/node`，其职责只能是薄的 orchestration / lifecycle 层。
 
-### `STATIC CONFIRMED` — 现有 Server 已经是统一 Axum App
+#### STATIC CONFIRMED — Server 已是统一 Axum App
 
-`crates/server/src/lib.rs :: create_app` 已组合 management plane、internal routes、可选 LiveView 与 data-plane router fallback。
+`crates/server/src/lib.rs :: create_app` 已组合 management routes、internal routes、可选 LiveView 与 data-plane router fallback。
 
-对应现有工程不变量：`INV-RUNTIME-002`。
+对应：`INV-RUNTIME-002`。
 
-本 Issue 不应重建或改变这一 Server 结构。
+NODE-001 不得重建或改变该 Server 结构。
 
-## 3. 入口 / 调查起点（Entry / Starting Point）
+### 3. Entry / Starting Point
 
-### 当前真实入口
+当前调查起点：
 
 ```text
 src/main.rs :: main
@@ -95,173 +135,164 @@ src/main.rs :: run_async_server
 src/main.rs :: run_async_cli
 ```
 
-### 目标产品入口
+目标产品入口：
 
 ```text
 burncloud node
 ```
 
-Codex 在实现前必须从 `src/main.rs :: main` 开始确认当前 CLI dispatch，而不是从全仓库自由搜索后自行发明第二个入口。
+实现前必须先从 `src/main.rs :: main` 重新确认 current-main CLI dispatch。
 
-## 4. 复用目标（Reuse Targets）
+### 4. Reuse Targets / Do Not Recreate
 
-### 必须优先复用
+#### Reuse
 
-- 现有 BurnCloud 单一可执行程序入口；
-- `src/main.rs` 已有的 process bootstrap；
+- 现有 BurnCloud 单一 executable；
+- 现有 process bootstrap；
 - 现有 `.env` / `MASTER_KEY` / logging 初始化顺序；
-- 现有 workspace 依赖和 crate 组织方式；
-- 后续由 `NODE-003` 复用的 `burncloud-server` / `burncloud-router`。
+- 现有 workspace dependency / crate 组织方式。
 
-### 不得重新创建
+#### Do Not Recreate
 
 ```text
-第二个 BurnCloud Node binary
-第二套 logging bootstrap
-第二套 HTTP Server
+second BurnCloud binary
+second logging bootstrap
+second HTTP server
 NodeGateway
 NodeRouter
 NodeDatabase
 ```
 
-如果现有结构无法承载 Node lifecycle，必须先给出源码证据并触发 Stop Condition；不能因为实现方便而创建平行体系。
+若现有结构无法承载 Node lifecycle，必须触发 Stop Condition；不得以“实现方便”为理由创建平行体系。
 
-## 5. 期望行为（Expected Behavior）
+### 5. Scope
 
-完成后：
+#### Allowed
 
-1. BurnCloud 有一个明确的一等 Node 运行入口；
-2. `burncloud node` 进入 Node Core，而不是伪装成 `server`、`router` 或普通管理 CLI 命令；
-3. Node Core 有明确的 initialize / start / shutdown 生命周期语义；
-4. 初始化失败时不得继续进入 RUNNING；
-5. shutdown 完成后不得遗留由 Node Core 自己拥有的后台生命周期任务；
-6. Node Core 只负责生命周期编排，不承担 Server、Router、模型下载、模型选择或进程执行职责。
-
-本 Issue 完成时 **不要求 Node 已经提供 AI API**。AI API 组合属于 `NODE-003`。
-
-## 6. 行为合同（Behavior Contract）
-
-### Inputs
-
-- 用户 / 运维启动意图：`burncloud node`；
-- 现有顶层 bootstrap 已准备的 process environment；
-- 进程级 shutdown request / termination signal。
-
-### Output semantics
-
-Node Core 必须提供以下语义，而不强制具体 Rust struct / trait 名称：
-
-```text
-initialize succeeds
-    ↓
-start
-    ↓
-RUNNING
-    ↓
-shutdown requested
-    ↓
-STOPPING
-    ↓
-STOPPED
-```
-
-如果 initialize 或 start 失败：
-
-```text
-FAILED
-```
-
-并向调用方返回明确错误 / 非成功退出结果。
-
-### Ownership
-
-Node Core 只拥有：
-
-- Node runtime 的生命周期顺序；
-- Node 级启动 / 停止编排；
-- 自己创建的生命周期任务的清理责任。
-
-Node Core 不拥有：
-
-- HTTP 请求处理；
-- Provider / Local route selection；
-- Database 业务状态；
-- Model Resolution；
-- Artifact 下载；
-- llama.cpp 参数构造；
-- 模型子进程生命周期。
-
-这些职责必须由对应现有组件或后续 Node Issue 拥有。
-
-### Side effects
-
-本 Issue 允许的新增副作用仅限：
-
-- CLI runtime dispatch；
-- process-local Node lifecycle state；
-- shutdown signal handling；
-- Node Core 自己的生命周期任务启动与清理。
-
-本 Issue不应新增数据库 schema、网络协议、模型文件、副进程或计费副作用。
-
-## 7. 失败行为（Failure Behavior）
-
-### 初始化失败
-
-- 返回明确错误；
-- 不进入 RUNNING；
-- 清理已经由 Node Core 创建的部分生命周期资源。
-
-### 启动失败
-
-- 返回明确错误；
-- 不把失败状态伪装成 Node 已启动；
-- 不静默 fallback 到普通 `server` 或 `router` 模式。
-
-### shutdown 失败
-
-- 必须暴露失败 / 未完成状态；
-- 不允许通过直接忽略错误来宣称正常停止。
-
-### Forbidden fallbacks
-
-```text
-do not silently run `burncloud server`
-do not silently run `burncloud router`
-do not create a second HTTP server
-do not start model runtime/processes as a workaround
-do not modify unrelated modules merely to make Node appear startable
-```
-
-## 8. 范围（Scope）
-
-### Allowed
-
-- 顶层 CLI 对 `burncloud node` 的一等 dispatch；
+- 顶层 CLI 增加一等 `burncloud node` runtime dispatch；
 - 最小 Node Core lifecycle abstraction / composition root；
-- initialize / start / shutdown 的生命周期合同；
+- initialize / start / shutdown 生命周期；
 - 最小 shutdown signal plumbing；
-- 为上述行为增加必要的 targeted tests；
-- 若源码证明确有必要，进行最小且不改变现有行为的 workspace wiring。
+- Node Core 自己创建的生命周期任务清理；
+- 与上述行为直接相关的 targeted tests；
+- 经 current-main 证据证明必要的最小 workspace wiring。
 
-实现位置不在本计划页预先锁死。一个薄的 `crates/node` 是允许的候选，但不是本 Issue 的既定结论。
+#### Avoid
 
-### Avoid
-
-- `NODE-002` 的 NodeConfig / NodeContext；
-- `NODE-003` 的 Server / Router Node profile 组合；
+- NODE-002：NodeConfig / NodeContext；
+- NODE-003：Server / Router Node profile；
 - HardwareProfile；
 - Model Resolver；
 - Model Preparation / Download；
 - Runtime adapter；
 - model child-process management；
 - Local Channel registration；
-- Billing / Auth / quota 语义变化；
+- Billing / Auth / quota；
 - Router 行为变化；
-- Database schema / persistence 变化；
+- Database schema / persistence；
 - 第二套 Gateway / Router / Database。
 
-## 9. 影响面（Impact）
+### 6. Behavior Contract
+
+#### Inputs
+
+- `burncloud node` 启动意图；
+- 已由现有顶层 bootstrap 准备的 process environment；
+- process-level shutdown request / termination signal。
+
+#### State semantics
+
+正常状态机：
+
+```text
+CREATED
+  ↓ initialize
+INITIALIZED
+  ↓ start
+RUNNING
+  ↓ shutdown requested
+STOPPING
+  ↓ cleanup complete
+STOPPED
+```
+
+失败状态：
+
+```text
+initialize failure → FAILED
+start failure      → FAILED
+shutdown failure   → failure must be surfaced
+```
+
+`FAILED` 不得被伪装成 `RUNNING` 或 `STOPPED`。
+
+#### Ownership
+
+Node Core owns：
+
+- Node runtime 生命周期顺序；
+- Node 级启动 / 停止编排；
+- 自己创建的 lifecycle resources 的清理。
+
+Node Core does not own：
+
+- HTTP request handling；
+- Provider / Local route selection；
+- Database 业务状态；
+- Model Resolution；
+- Artifact 下载；
+- llama.cpp 参数；
+- 模型子进程生命周期。
+
+#### Side Effects
+
+允许：
+
+- CLI runtime dispatch；
+- process-local lifecycle state；
+- shutdown signal handling；
+- Node Core 自身 lifecycle task 创建 / 清理。
+
+禁止新增：
+
+- database schema；
+- network protocol；
+- model artifact；
+- model subprocess；
+- billing / quota side effect。
+
+### 7. Failure / Forbidden Fallbacks
+
+#### Initialize failure
+
+- 返回明确错误；
+- 不进入 RUNNING；
+- 清理已经由 Node Core 创建的部分资源。
+
+#### Start failure
+
+- 返回明确错误；
+- 不宣称 Node 已启动；
+- 不 fallback 到 `server` 或 `router`。
+
+#### Shutdown failure
+
+- 暴露未完成 / 失败状态；
+- 不忽略错误后宣称正常停止。
+
+#### Forbidden fallbacks
+
+```text
+do not silently run `burncloud server`
+do not silently run `burncloud router`
+do not create a second HTTP server
+do not create a second Router
+do not start model runtime/processes as a workaround
+do not modify unrelated modules to make Node appear startable
+do not pull NODE-002 / NODE-003 responsibilities into NODE-001
+```
+
+### 8. Impact / Invariants
 
 ```text
 persistence: none
@@ -270,75 +301,64 @@ billing_usage_quota: none
 auth_authorization: none
 routing_provider: none
 concurrency_transactions: process-local lifecycle coordination only
-public_api_cli: yes — add first-class `burncloud node` runtime entry
-process_runtime_lifecycle: yes — define Node Core initialize/start/shutdown semantics
+public_api_cli: yes — add first-class `burncloud node`
+process_runtime_lifecycle: yes — define Node Core lifecycle
 ```
 
-如果实现过程中发现必须改变上述 `none` 项，本 Issue 的当前边界不再成立，必须触发 Stop Condition。
+必须保持：
 
-## 10. Invariants / Architecture
+- `INV-RUNTIME-001` — `server` / `router` 现有 startup 语义不变；
+- `INV-RUNTIME-002` — 现有 Server 继续是统一 Axum application；
+- `INV-WORKSPACE-001` — 新增 workspace wiring 时遵循现有依赖组织方式。
 
-### 必须保持
+架构约束：
 
-- `INV-RUNTIME-001` — `server` 与 `router` 现有 CLI 语义继续共享当前 Server startup；NODE-001 不应改变它们。
-- `INV-RUNTIME-002` — 现有 Server 继续保持统一 Axum application；NODE-001 不创建平行 Server。
-- `INV-WORKSPACE-001` — 如果新增 workspace crate / dependency，继续遵守现有 workspace dependency 组织方式。
+- Node Core = orchestration / lifecycle layer；
+- Node Core 不进入每个 inference request 的 data plane；
+- Node Core 不成为 Router / Downloader / Runtime / Process Manager 的第二实现。
 
-### Node 架构约束
-
-- Node Core 是 orchestration / lifecycle 层，不是业务 God Object；
-- Node Core 不进入每一个 inference request 的数据面执行路径；
-- Node Core 不成为 Router、Downloader、Runtime 或 Process Manager 的第二实现。
-
-如果实现要求改变上述边界，必须标记：
+若必须改变以上任一边界：
 
 ```text
 ARCHITECTURE / INVARIANT CHANGE REQUIRED
 ```
 
-并停止普通 Feature 实现流程。
+然后停止普通 Feature 实现流程。
 
-## 11. 依赖与阻塞（Dependencies / Blockers）
+### 9. Dependencies
 
-### 功能前置依赖
+功能依赖：无。
 
-无。
-
-`NODE-001` 是 Node Core 后续工作的基础，后续：
+后续依赖本合同：
 
 ```text
 NODE-002
 NODE-003
 ```
 
-依赖本 Issue 的稳定生命周期合同。
+真正进入实现前必须：
 
-### 工程流程依赖
+1. 针对当时 `burncloud/burncloud/main` 重新执行 Evidence Audit；
+2. 创建正式 Engineering Issue；
+3. 通过 READY Gate；
+4. 生成 current-main Task Contract 后才能编码。
 
-在真正交给 Codex 前：
-
-- Canonical Issue Standard 必须已经生效；
-- `burncloud/burncloud` 的 Issue / Task Contract enforcement 必须可用；
-- 必须针对当时的 `main` 再执行一次 Evidence Audit。
-
-## 12. 停止条件（Stop Conditions）
-
-Codex 必须在以下任一条件出现时停止，而不是扩大 Diff：
+### 10. Stop Conditions
 
 ```text
 STOP IF:
-- current main already contains a materially different Node runtime entry or Node Core implementation
-- `burncloud node` requires changing Billing / Auth / Router semantics
-- implementation requires a second HTTP server or second Router
+- current main already has a materially different Node runtime entry / Node Core
+- implementing `burncloud node` requires changing Billing / Auth / Router semantics
+- implementation requires a second HTTP server or Router
 - implementation requires new persistent schema/state ownership
-- implementation requires NODE-002 or NODE-003 responsibilities to be pulled into NODE-001
-- implementation requires model download, resolver, runtime adapter, or model process lifecycle
-- an existing INV-* must be changed but the Engineering Issue did not authorize it
-- preserving existing `server` / `router` behavior becomes impossible within this Issue scope
+- implementation pulls NODE-002 or NODE-003 responsibility into NODE-001
+- implementation requires Hardware / Resolver / Download / Runtime / model process lifecycle
+- an INV-* must change without explicit architecture authorization
+- existing `server` / `router` behavior cannot be preserved inside this scope
 - meaningful targeted/regression verification cannot be performed
 ```
 
-触发后必须报告：
+触发后必须输出：
 
 ```text
 SCOPE / ARCHITECTURE CONFLICT DETECTED
@@ -348,94 +368,52 @@ Conflict: ...
 Decision required: ...
 ```
 
-## 13. 验证目标（Verification Targets）
+---
 
-### Targeted
+## 第三层：验收层（Definition of Done）
 
-验证：
+只有以下项目全部满足，NODE-001 对应的 Engineering Issue 才可验收。
 
-- `burncloud node` 被识别为一等 runtime entry；
-- lifecycle 顺序满足 initialize → start → shutdown；
-- initialize failure 不会进入 RUNNING；
-- start failure 被向上传播；
-- shutdown request 能进入明确停止流程；
-- Node Core 不静默 fallback 到 `server` / `router`。
+### ✅ 功能结果
 
-具体测试文件和命令必须在创建 READY Engineering Issue / Task Contract 时根据当前仓库确定。
+- [ ] 存在明确的一等 `burncloud node` runtime entry。
+- [ ] `burncloud node` 进入 Node Core，而不是普通管理 CLI、`server` 或 `router` 的别名。
+- [ ] Node Core 具有可测试的 initialize / start / shutdown 生命周期。
+- [ ] 正常状态满足 `CREATED → INITIALIZED → RUNNING → STOPPING → STOPPED`。
+- [ ] initialize / start 失败会明确进入失败路径，不会被伪装成成功。
+- [ ] shutdown 有明确完成 / 失败语义，并清理 Node Core 自己拥有的生命周期资源。
 
-### Regression
+### ✅ 边界保护
 
-至少保护：
+- [ ] 未创建第二个 BurnCloud binary。
+- [ ] 未创建第二套 logging bootstrap、HTTP Server、Router 或 Database。
+- [ ] 未实现 NODE-002 的 NodeConfig / NodeContext。
+- [ ] 未实现 NODE-003 的 Server / Router Node profile。
+- [ ] 未引入 Hardware、Resolver、Download、Runtime、model process 或 Local Channel 职责。
+- [ ] Node Core 仍然只是 orchestration / lifecycle layer。
 
-- `burncloud server` 继续走现有 Server startup；
-- `burncloud router` 继续保持现有行为；
-- `burncloud client` 现有 dispatch 不被 NODE-001 改写；
-- `INV-RUNTIME-001` 保持成立；
-- `INV-RUNTIME-002` 保持成立。
+### ✅ 回归验证
 
-### Runtime / E2E
+- [ ] `burncloud server` 保持现有 startup 行为。
+- [ ] `burncloud router` 保持现有 startup 行为。
+- [ ] `burncloud client` 的现有 dispatch 未被 NODE-001 改写。
+- [ ] `INV-RUNTIME-001` 保持成立。
+- [ ] `INV-RUNTIME-002` 保持成立。
+- [ ] 如涉及 workspace wiring，`INV-WORKSPACE-001` 保持成立。
 
-在可执行测试环境中验证：
+### ✅ Targeted / Runtime 验证
 
-```text
-start `burncloud node`
-      ↓
-Node Core reaches its running lifecycle state
-      ↓
-request process shutdown
-      ↓
-Node Core completes shutdown without silently switching runtime mode
-```
+- [ ] 有测试证明 `burncloud node` 被识别为一等 runtime entry。
+- [ ] 有测试证明 initialize failure 不会进入 RUNNING。
+- [ ] 有测试证明 start failure 会向上传播。
+- [ ] 有测试证明 shutdown request 进入明确停止流程。
+- [ ] 有测试证明不会静默 fallback 到 `server` / `router`。
+- [ ] 在可执行环境中完成一次 `burncloud node → RUNNING → shutdown → STOPPED` 的 runtime 验证。
 
-NODE-001 的 Runtime/E2E **不要求** `/v1/...` 已经可用；Server / Router 接入属于 NODE-003。
+### ✅ 工程流程
 
-### Protected behavior
-
-- 一个 BurnCloud executable / bootstrap；
-- 不创建第二套 HTTP Gateway / Router；
-- Node lifecycle failure 必须显式失败；
-- 不通过扩大 Issue Scope 来“修通”启动链。
-
-## 14. 完成条件（Done When）
-
-只有以下条件全部满足，NODE-001 对应的 Engineering Issue 才可验收：
-
-- 存在明确的一等 `burncloud node` runtime entry；
-- Node Core 有稳定、可测试的 initialize / start / shutdown 生命周期语义；
-- 初始化或启动失败不会被伪装成成功；
-- shutdown 有明确完成语义；
-- Node Core 仍然只是生命周期 / orchestration 层；
-- 没有创建第二套 Server、Router、Database、logging bootstrap 或 Node binary；
-- 没有提前实现 NODE-002 / NODE-003 或后续模型执行职责；
-- 现有 `server` / `router` / `client` 关键启动行为保持回归；
-- 要求的 targeted / regression / runtime verification 已完成；
-- 实现通过 branch + Pull Request 进入 `main`。
-
-## 15. 从 PLANNED 转成 READY
-
-本页面继续保持 `PLANNED`，因为 Implementation Plan 本身不提供实现授权。
-
-准备开发 NODE-001 时，应执行：
-
-```text
-本计划页
-   ↓
-重新审计 burncloud/burncloud current main
-   ↓
-确认 Entry / Reuse Targets / Invariants / tests 仍成立
-   ↓
-创建 GitHub Engineering Issue
-   ↓
-通过 READY Gate
-   ↓
-Codex 创建 Task Contract
-   ↓
-开始实现
-```
-
-尤其需要在 READY 前重新确认：
-
-- 当前 `main` 是否仍无一等 Node runtime entry；
-- 是否已经出现新的 Node Core / `crates/node` 实现；
-- 真实测试入口在哪里；
-- `burncloud node` 的最小实现是否仍可在不侵入 NODE-002 / NODE-003 的情况下完成。
+- [ ] 开发前已针对 current `main` 重新完成 Evidence Audit。
+- [ ] 正式 Engineering Issue 已通过 READY Gate。
+- [ ] Task Contract 未获得比 Issue 更大的架构权限。
+- [ ] 没有未解决的 Stop Condition。
+- [ ] 所有实现通过 feature/fix branch + Pull Request 进入 `main`，没有直接提交实现到 `main`。
