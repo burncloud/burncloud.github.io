@@ -91,7 +91,7 @@ def ensure_node_implementation_plan_sidebar() -> None:
     text = SIDEBAR.read_text(encoding="utf-8")
     marker = "        {type:'doc', id:'burncloud-node/local-api-gateway', label:'Local API Gateway'},\n"
 
-    if "id:'burncloud-node/implementation-plan/node-503'" in text:
+    if "id:'burncloud-node/implementation-plan/node-504'" in text:
         return
     if marker not in text:
         raise RuntimeError("BurnCloud Node sidebar marker not found")
@@ -109,26 +109,28 @@ def ensure_node_implementation_plan_sidebar() -> None:
             {type:'doc', id:'burncloud-node/implementation-plan/node-103', label:'NODE-103 兼容性与资源快照'},
           ]},
           {type:'category', label:'类别三：Model Resolver', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/model-resolver'}, items:[
-            {type:'doc', id:'burncloud-node/implementation-plan/node-201', label:'NODE-201 Model Manifest'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-201', label:'NODE-201 Model Manifest + Catalog'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-202', label:'NODE-202 Model ID / Alias'},
-            {type:'doc', id:'burncloud-node/implementation-plan/node-203', label:'NODE-203 Variant 选择'},
-            {type:'doc', id:'burncloud-node/implementation-plan/node-204', label:'NODE-204 ResolvedModel 合同'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-203', label:'NODE-203 Variant 选择与诊断'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-204', label:'NODE-204 ResolvedModel / Failure 合同'},
           ]},
           {type:'category', label:'类别四：Model Preparation', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/model-preparation'}, items:[
             {type:'doc', id:'burncloud-node/implementation-plan/node-301', label:'NODE-301 Local Artifact State'},
-            {type:'doc', id:'burncloud-node/implementation-plan/node-302', label:'NODE-302 Prepare / 下载去重'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-302', label:'NODE-302 后台 Prepare / 磁盘准入 / 去重'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-303', label:'NODE-303 校验与失败恢复'},
           ]},
           {type:'category', label:'类别五：Runtime 与 Process', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/runtime-process'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-400', label:'NODE-400 llama.cpp Runtime 自动可用'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-401', label:'NODE-401 llama.cpp Runtime Adapter'},
-            {type:'doc', id:'burncloud-node/implementation-plan/node-402', label:'NODE-402 端口与 Process Spawn'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-402', label:'NODE-402 资源准入 / 端口 / Spawn'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-403', label:'NODE-403 Readiness / Health'},
-            {type:'doc', id:'burncloud-node/implementation-plan/node-404', label:'NODE-404 Stop / Crash / Restart / Logs'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-404', label:'NODE-404 自动 Stop / Crash / Restart / Logs'},
           ]},
-          {type:'category', label:'类别六：Local Channel Integration', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/local-channel'}, items:[
-            {type:'doc', id:'burncloud-node/implementation-plan/node-501', label:'NODE-501 注册 Local Channel / Ability'},
+          {type:'category', label:'类别六：Local Channel + Demand', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/local-channel'}, items:[
+            {type:'doc', id:'burncloud-node/implementation-plan/node-501', label:'NODE-501 READY 自动注册 Local Channel'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-502', label:'NODE-502 健康联动与摘除'},
-            {type:'doc', id:'burncloud-node/implementation-plan/node-503', label:'NODE-503 本地推理完整 E2E'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-504', label:'NODE-504 Model Demand Reconciliation'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-503', label:'NODE-503 Demand-driven 完整 E2E'},
           ]},
         ]},
 """

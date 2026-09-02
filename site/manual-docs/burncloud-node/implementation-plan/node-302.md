@@ -1,47 +1,45 @@
 ---
-title: "NODE-302：复用下载系统完成 Prepare / 去重"
+title: "NODE-302：后台 Prepare、磁盘准入与下载去重"
 slug: /burncloud-node/implementation-plan/node-302/
 ---
 
-# NODE-302：复用下载系统完成 Prepare / 去重
+# NODE-302：后台 Prepare、磁盘准入与下载去重
 
 ## 第一层：人类阅读区（Human Readable Layer）
 
 **状态：PLANNED**  
 **类别：Model Preparation**  
-**功能依赖：NODE-301**
+**功能依赖：NODE-301、NODE-103、NODE-204**
 
-> 这是实施计划，不是 Codex 的直接开发授权。真正实现前必须重新核对 current `main` 并通过 READY Gate。
+> 这是实施计划，不是 Codex 的直接开发授权。真正实现前必须重新核对 current `burncloud/burncloud/main` 并通过 READY Gate。
 
 ### TL;DR
 
-NODE-302 要复用现有 ModelService / DownloadManager，把 `ResolvedModel` 需要的 Artifact 准备到本地，并确保同一个 Artifact 同时只产生一个真实下载任务。它不重新发明下载技术，也不允许第一次推理请求卡住几十分钟等大模型。完成后，模型准备会变成可追踪、可复用、可去重的显式步骤。
+NODE-302 要让本地模型准备完全后台化：当 Node 收到一个模型需求后，只启动一条 Prepare / Download 任务，并在下载前检查磁盘是否足够。当前 `/v1` 请求绝不能因为大型模型下载而被长期阻塞。完成后，1000 个相同模型请求也只会触发 1 个实际下载。
 
 ### 背景与动机（Why）
 
-BurnCloud 当前已有 aria2-based `DownloadManager`，支持数据库记录、进度监控、暂停/恢复和未完成任务恢复；ModelService 也能构造 Hugging Face 下载 URL 并调用 DownloadManager。问题是 Node 还缺一层以“Artifact identity”为单位的 Preparation 编排和并发去重。
-
-如果每次需要模型都直接 `add_download()`，两个并发请求可能创建两个真实下载任务；如果把下载塞进 inference 请求，又会让 API 请求承担长时间准备工作。NODE-302 因此只负责**准备编排与去重**，下载实现继续属于现有 DownloadManager。
+用户不会手工点击“下载模型”。因此 Preparation 必须能由 Demand Reconciler 自动触发，同时又不能让 Router 或请求处理线程变成下载器。现有 DownloadManager 已有 aria2、DB 状态、恢复和进度能力，Node 应复用它并补齐 demand dedup 与磁盘准入。
 
 ### 范围速览（In / Out）
 
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| 复用 ModelService / DownloadManager | 不创建 NodeDownloader |
-| 以 Artifact identity 做 prepare 去重 | 不在 inference 请求里长时间阻塞下载 |
-| 已有完整 Artifact 直接复用 | 不把下载完成直接当校验 READY |
-| Preparation 状态接入 NODE-301 | 不启动 Runtime |
-| 明确失败 / 重试入口 | 不绕过现有下载数据库 |
+| 后台 Prepare / Download | 不在 `/v1` 请求里同步等待下载 |
+| 相同 Artifact 并发去重 | 不创建 NodeDownloader |
+| 下载前检查可用磁盘 | 不判断 GPU Variant（Resolver 已完成） |
+| 复用 DownloadManager / ModelService | 不启动 Runtime |
+| 维护 PREPARING / failure facts | 不决定 Provider fallback |
 
 ### 风险与安全网（Risk）
 
-> 这是**现有下载能力的编排层**：即使准备失败，也只能让 Artifact 保持非 READY；不能为了“继续运行”绕过验证、启动半成品文件或再造下载系统。
+> 宁可明确返回 `INSUFFICIENT_DISK` 或保持 PREPARING，也不能为了“自动”而重复下载、占满磁盘或阻塞请求。
 
 ### 审批者关注点（Reviewer Focus）
 
-1. 是否同意 Node 复用现有 DownloadManager，而不是创建 NodeDownloader？
-2. 是否同意同一 Artifact 的并发 prepare 必须合并为一个实际下载任务？
-3. 是否同意 v0.1 的 inference API 不自动等待大型 Artifact 下载完成？
+1. 是否同意下载必须后台化？
+2. 是否同意同一 Artifact 只能有一个 active prepare pipeline？
+3. 是否同意磁盘不足必须在下载前尽早失败并可诊断？
 
 ---
 
@@ -50,111 +48,118 @@ BurnCloud 当前已有 aria2-based `DownloadManager`，支持数据库记录、�
 ### 1. Goal
 
 ```text
-ResolvedModel + ArtifactState
+ResolvedModel
++ Local Artifact State
++ current disk facts
         ↓
-prepare(artifact_identity)
+Prepare admission
         ↓
-reuse existing READY/complete candidate
-        OR
-single deduplicated DownloadManager task
+ABSENT -> PREPARING
         ↓
-PREPARING / downloaded candidate
+existing ModelService / DownloadManager
+        ↓
+download completed
         ↓
 NODE-303 verification
 ```
 
 ### 2. Evidence
 
-- `crates/download/src/lib.rs :: DownloadManager` 当前通过 aria2 执行下载，保存状态/进度到 `DownloadDB`，并恢复 incomplete downloads。
-- `ModelService::download_model_file()` 当前会创建 `DownloadManager` 并调用 `add_download()`。
-- `DownloadManager::add_download()` 本身按调用创建下载任务；current main 没有以 Node Artifact identity 为单位的明确并发 prepare 去重合同。
+- current DownloadManager 已有 DB-backed download status、aria2、resume/remove、restore incomplete downloads。
+- current ModelService 已有 model/file/source knowledge。
+- NODE-204 会提供 Artifact identity / expected size（when known）。
+- current implementation 尚无“model demand -> exactly one background prepare”合同。
 
-### 3. Entry / Starting Point
+### 3. Reuse Targets / Do Not Recreate
 
-重新检查：
+Reuse：ModelService、DownloadManager、Download DB/state、NODE-301 Artifact state、NODE-103 disk facts。  
+Do Not Recreate：第二套 downloader、第二套 download DB、request-local downloader。
 
-```text
-NODE-301 Local Artifact State
-NODE-204 ResolvedModel
-crates/service/crates/models/src/lib.rs
-crates/download/src/lib.rs
-current DownloadDB schema / task identity
-```
-
-### 4. Reuse Targets / Do Not Recreate
-
-Reuse：`ModelService`、`DownloadManager`、`DownloadDB`、existing aria2 continuation/recovery。  
-Do Not Recreate：NodeDownloader、parallel download DB、custom HTTP downloader。
-
-### 5. Scope
+### 4. Scope
 
 #### Allowed
 
-- Preparation orchestration；
-- Artifact identity → existing local file / download task lookup；
-- concurrent prepare deduplication；
-- download task reuse / join semantics；
-- state transitions to NODE-301；
-- explicit prepare errors；
-- targeted concurrency tests。
+- prepare admission；
+- disk capacity check；
+- same-artifact in-flight dedup；
+- background task coordination；
+- existing DownloadManager invocation；
+- retry/reuse of resumable incomplete download；
+- structured preparation failure；
+- concurrency tests。
 
 #### Avoid
 
+- Variant selection；
 - Artifact integrity verification（NODE-303）；
-- Runtime / Process；
-- first inference request hidden auto-prepare；
-- replacing aria2 / DownloadManager；
-- Router / Billing / Auth。
+- Runtime / Process spawn；
+- Router / Provider fallback；
+- blocking `/v1` until download finishes。
 
-### 6. Behavior Contract
-
-Inputs：`ResolvedModel` + Local Artifact State。  
-Output：prepared candidate awaiting/eligible for NODE-303 verification，或明确 prepare failure。
-
-核心并发合同：
+### 5. Behavior Contract
 
 ```text
-same artifact identity + concurrent prepare
-                ↓
-       one underlying download task
-                ↓
- multiple callers observe/join same preparation
+same artifact + N concurrent demands => <= 1 active prepare execution
+READY artifact => no download
+PREPARING artifact => join/observe existing preparation, do not duplicate
+ABSENT + enough disk => start background preparation
+ABSENT + insufficient disk => fail with INSUFFICIENT_DISK
+failed resumable download => follow explicit retry/resume policy
 ```
 
-已有可复用文件：不创建新 download task，但是否 READY 仍由 NODE-303 校验语义决定。
+Disk admission 至少应考虑：
 
-### 7. Failure / Forbidden Fallbacks
+```text
+required_bytes (from manifest/ResolvedModel when known)
+available_disk
+safety margin / temporary download overhead if required by actual downloader
+```
+
+请求路径只允许提交/观察 demand，不允许持有下载 Future 直到模型完成。
+
+### 6. Failure / Forbidden Fallbacks
+
+结构化失败至少支持：
+
+```text
+INSUFFICIENT_DISK
+ARTIFACT_SOURCE_UNAVAILABLE
+DOWNLOAD_FAILED
+DOWNLOAD_STATE_CONFLICT
+```
 
 禁止：
 
 ```text
-concurrent prepare => multiple real downloads
-first inference => block until huge model finishes downloading
-DownloadManager unavailable => implement temporary downloader
-existing file => skip all verification
-prepare failure => start Runtime with partial file
+100 requests => 100 downloads
+insufficient disk => start anyway
+provider available => cancel background preparation automatically
+request handler => wait for full model download
+prepare failure => mark Artifact READY
+create NodeDownloader because wrapping existing DownloadManager is inconvenient
 ```
 
-### 8. Impact / Invariants
+### 7. Impact / Invariants
 
 ```text
-persistence: reuse existing download/model persistence
-external_calls: model artifact download via existing manager
+persistence: reuse existing download/model state
+external_calls: artifact source download
 billing/auth/routing: none
-process runtime: no model spawn
-concurrency: artifact-keyed preparation coordination
+process/runtime: none
 ```
 
-Candidate invariant：**下载技术属于现有 DownloadManager；Node 只编排 Artifact preparation。**
+Candidate invariants：
+- **Same Artifact has at most one active preparation pipeline.**
+- **Inference request does not synchronously wait for large model preparation.**
 
-### 9. Dependencies
+### 8. Dependencies
 
-前置：`NODE-301`。  
-后续：`NODE-303`。
+前置：NODE-301、NODE-103、NODE-204。  
+后续：NODE-303、NODE-504。
 
-### 10. Stop Conditions
+### 9. Stop Conditions
 
-STOP IF：去重必须重写 downloader、需要新下载数据库、需要把下载塞进 inference 请求、需要把未验证文件直接标 READY、或 scope 扩展到 Runtime/Router。
+STOP IF：必须创建第二套 downloader、必须阻塞 inference request、无法避免重复下载、无法在下载前得到可信磁盘事实、或必须修改 Router/Billing/Auth 才能 Prepare。
 
 ---
 
@@ -162,27 +167,29 @@ STOP IF：去重必须重写 downloader、需要新下载数据库、需要把�
 
 ### ✅ 功能结果
 
-- [ ] ResolvedModel 可以进入明确 Preparation 流程。
-- [ ] 同一 Artifact 并发 prepare 只创建一个真实下载任务。
-- [ ] 已有候选文件可复用，不重复下载。
-- [ ] prepare 状态与 NODE-301 一致。
+- [ ] ABSENT Artifact 可通过后台 Prepare 进入 PREPARING。
+- [ ] 相同 Artifact 的并发需求只产生一个实际下载任务。
+- [ ] PREPARING 状态可复用/观察，不重复执行。
+- [ ] 下载前执行磁盘准入。
+- [ ] 磁盘不足返回结构化 `INSUFFICIENT_DISK`。
+- [ ] 下载完成交给 NODE-303，而不是直接标记 READY。
 
 ### ✅ 边界保护
 
-- [ ] 未创建 NodeDownloader / 第二套 DownloadDB。
-- [ ] 未在 inference 请求中实现隐藏的长时间 auto-download。
-- [ ] 未把 downloaded candidate 直接等同于最终 READY。
-- [ ] 未启动 Runtime / Process。
+- [ ] 未创建第二套 downloader / download DB。
+- [ ] 未在 Router 内执行下载。
+- [ ] 未让 `/v1` 请求同步等待完整下载。
+- [ ] 未提前启动 Runtime。
 
 ### ✅ 回归与验证
 
-- [ ] tests 覆盖并发去重、已有文件复用、下载失败、任务恢复/复用。
-- [ ] existing DownloadManager pause/resume/recovery 语义不被破坏。
-- [ ] partial file 不会进入 Runtime。
+- [ ] 并发测试证明 N 个相同 demand <= 1 个下载。
+- [ ] tests 覆盖 READY/no-op、PREPARING/dedup、disk insufficient、download failure、resume。
+- [ ] existing DownloadManager 基础行为不被破坏。
 
 ### ✅ 工程流程
 
 - [ ] current-main Evidence Audit 完成。
 - [ ] Engineering Issue 通过 READY Gate。
-- [ ] Task Contract 明确 Artifact identity / dedup key。
+- [ ] Task Contract 明确真实 downloader / disk state ownership。
 - [ ] 只通过分支 + Pull Request 合并。
