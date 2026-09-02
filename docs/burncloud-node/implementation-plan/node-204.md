@@ -11,37 +11,35 @@ slug: /burncloud-node/implementation-plan/node-204/
 **类别：Model Resolver**  
 **功能依赖：NODE-203**
 
-> 这是实施计划，不是 Codex 的直接开发授权。实现前必须基于当时的 `burncloud/burncloud/main` 重新做 Evidence Audit 并通过 READY Gate。
+> 这是实施计划，不是 Codex 的直接开发授权。实现前必须基于当时的 `burncloud/burncloud/main` 重做 Evidence Audit 并通过 READY Gate。
 
 ### TL;DR
 
-NODE-204 要把 Resolver 的最终结果固定成一个稳定合同 `ResolvedModel`。后面的 Model Preparation 和 Runtime 只依赖这个合同，不需要知道 Resolver 内部怎么筛 Variant。完成后，模型选择层和执行层之间会有清楚的边界，错误也不再靠字符串判断。
+NODE-204 要把 Resolver 的成功结果和失败原因都固定成稳定合同。成功时，Preparation / Runtime 能直接知道要准备什么；失败时，Demand Reconciler 能区分显存不足、Runtime 不支持、没有兼容 Variant 等真实原因。这样 `/v1` 无法立即服务时可以返回准确状态，而不是靠解析错误字符串。
 
 ### 背景与动机（Why）
 
-即使 NODE-203 已经能选出 Variant，如果输出只是临时 tuple 或散落字段，Preparation、Runtime 很快又会直接读取 Manifest、HardwareProfile 或 Resolver 内部状态，造成耦合回流。
-
-因此 NODE-204 的任务是把“选择结果”变成**稳定、可审查、可序列化/测试的边界对象**。它只包含后续真正需要的模型事实，不允许混入 PID、端口、下载进度等运行状态。
+Demand-driven Node 会自动做很多事情，因此模块之间更不能靠“猜”。如果 Resolver 只返回临时 tuple 或自由文本错误，后续后台准备和 API error mapping 很容易重新解释同一事实。NODE-204 用一个最小、稳定的合同切断这种耦合。
 
 ### 范围速览（In / Out）
 
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
 | 定义稳定 `ResolvedModel` | 不包含 PID / Child handle |
-| 固定 canonical ID / Variant / Artifact / Runtime requirements | 不包含动态内部端口 |
-| 定义结构化 resolver error | 不包含下载进度 |
-| 为 Preparation / Runtime 提供唯一输入 | 不启动/下载任何东西 |
-| 避免字符串匹配错误 | 不让下游读取 Resolver 内部状态 |
+| 固定 Artifact / Runtime / Resource facts | 不包含下载进度 |
+| 定义结构化 ResolutionFailure | 不包含内部端口 |
+| 为 Preparation / Reconciler 提供唯一输入 | 不启动/下载任何东西 |
+| 支持机器可读 failure code | 不决定 Provider fallback |
 
 ### 风险与安全网（Risk）
 
-> 这是**合同收口**改动：如果某字段属于运行时状态而不是解析结果，就必须留在后续模块；宁可合同暂时小，也不能把整个 Node 状态塞进 `ResolvedModel`。
+> 这是边界合同：字段不够就回到架构审查，不能把整个 Node 的运行状态塞进 `ResolvedModel`。
 
 ### 审批者关注点（Reviewer Focus）
 
-1. 是否同意 `ResolvedModel` 成为 Resolver 与执行层之间的唯一稳定边界？
-2. 是否同意它只描述“要准备/运行什么”，不描述“现在运行到哪”？
-3. 是否同意失败必须结构化，不能依赖错误字符串解析？
+1. 是否同意 `ResolvedModel` 只描述“要准备什么”？
+2. 是否同意 Resolver failure 必须机器可读？
+3. 是否确认 Provider/Router 状态不进入这个合同？
 
 ---
 
@@ -52,64 +50,42 @@ NODE-204 要把 Resolver 的最终结果固定成一个稳定合同 `ResolvedMod
 ```text
 NODE-203 selection
       ↓
-ResolvedModel
-      ├─ canonical model ID
-      ├─ selected variant
-      ├─ format / quantization
-      ├─ artifact reference
-      ├─ runtime requirement
-      └─ resource requirement
+ResolvedModel | ResolutionFailure
       ↓
-NODE-301 Preparation
-NODE-401 Runtime Adapter
+Preparation / Runtime / Demand Reconciler
 ```
 
 ### 2. Evidence
 
-- 当前 `InferenceConfig` 直接混合 `model_id`、`file_path`、`port`、`context_size`、`gpu_layers`，其中既有模型事实也有进程运行参数，说明现有原型还没有清晰的 Resolver → Runtime 边界。
-- NODE-203 计划产生纯 Variant selection；NODE-204 必须把该结果封装成稳定 contract，而不是继续传播内部选择结构。
-- current main 尚无 authoritative `ResolvedModel` 类型。
+- current InferenceConfig 混合 `model_id`、`file_path`、`port`、`gpu_layers`，说明模型事实与运行状态尚未分离。
+- NODE-203 将产生纯 selection + diagnostics；NODE-204 将它收敛成稳定 contract。
 
-### 3. Entry / Starting Point
+### 3. Reuse Targets / Do Not Recreate
 
-实现前重新检查：
+Reuse：canonical model、Variant、Artifact、runtime/resource 类型。  
+Do Not Recreate：process config、download state、Router/channel state。
 
-```text
-NODE-203 selection output
-NODE-201 Manifest fields
-current model/inference types
-future NODE-301 / NODE-401 input needs
-```
-
-### 4. Reuse Targets / Do Not Recreate
-
-Reuse：canonical model/Variant/Artifact/runtime requirement 类型中可复用部分。  
-Do Not Recreate：process config、download state、Router channel state。
-
-### 5. Scope
+### 4. Scope
 
 #### Allowed
 
 - `ResolvedModel` schema；
-- semantic resolver error types；
+- `ResolutionFailure` / equivalent enum；
 - stable field ownership；
-- serialization/equality/debug contract（如后续需要）；
-- conversion from NODE-203 result；
+- conversion from NODE-203；
+- serialization/debug/equality as needed；
 - contract tests。
 
 #### Avoid
 
-- PID / Child handle；
-- internal port；
+- PID / Child / internal port；
 - download GID/progress；
 - process/readiness status；
 - Local Channel ID；
-- Router / Billing / Auth state。
+- Provider availability；
+- Router/Billing/Auth state。
 
-### 6. Behavior Contract
-
-Inputs：NODE-203 已完成的 selection result。  
-Output：稳定 `ResolvedModel` 或结构化 resolver failure。
+### 5. Behavior Contract
 
 `ResolvedModel` 最低语义：
 
@@ -117,29 +93,41 @@ Output：稳定 `ResolvedModel` 或结构化 resolver failure。
 canonical_id
 selected_variant_id
 model_format
-quantization (if applicable)
+quantization
 artifact_reference
+artifact_expected_size (when known)
 runtime_requirement
 resource_requirement / execution constraints
 ```
 
-不得要求下游重新访问 Resolver 内部对象才能理解结果。
+`ResolutionFailure` 至少能够稳定表达：
 
-### 7. Failure / Forbidden Fallbacks
+```text
+MODEL_UNKNOWN
+NO_COMPATIBLE_VARIANT
+INSUFFICIENT_VRAM
+INSUFFICIENT_RAM
+UNSUPPORTED_RUNTIME
+UNSUPPORTED_FORMAT
+COMPATIBILITY_UNKNOWN
+```
+
+下游不得重新访问 Resolver 内部对象才能理解成功或失败。
+
+### 6. Failure / Forbidden Fallbacks
 
 禁止：
 
 ```text
-error => free-form string only
-resolved model => include runtime PID/port
-resolved model => include download progress/GID
-missing field => let downstream guess
+failure => free-form string only
+resolved model => include PID/port
+resolved model => include download state
+failure => include Provider fallback decision
+missing contract field => let downstream guess
 Preparation/Runtime => re-run Resolver internally
 ```
 
-若合同字段不足，应回到架构审查，而不是把所有后续状态都塞进该类型。
-
-### 8. Impact / Invariants
+### 7. Impact / Invariants
 
 ```text
 persistence: none required
@@ -148,18 +136,16 @@ billing/auth/routing: none
 process/runtime side effects: none
 ```
 
-Candidate invariants：
-- Artifact selection 与 Process state 分离；
-- Preparation / Runtime 只消费稳定 ResolvedModel，不依赖 Resolver 内部选择过程。
+Candidate invariant：**Resolution truth 与 execution state 分离。**
 
-### 9. Dependencies
+### 8. Dependencies
 
-前置：`NODE-203`。  
-后续：`NODE-301`、`NODE-401`。
+前置：NODE-203。  
+后续：NODE-301、NODE-302、NODE-401、NODE-504。
 
-### 10. Stop Conditions
+### 9. Stop Conditions
 
-STOP IF：合同必须包含 PID/port/download state 才能工作、下游必须重新执行 Resolver、需要修改 Router/Billing/Auth、或 current main 已有 authoritative contract 与本设计冲突。
+STOP IF：合同必须包含 PID/port/download/router state 才能工作、下游必须重新执行 Resolver、或 failure 无法稳定映射成机器可读诊断。
 
 ---
 
@@ -167,26 +153,26 @@ STOP IF：合同必须包含 PID/port/download state 才能工作、下游必须
 
 ### ✅ 功能结果
 
-- [ ] `ResolvedModel` 有稳定、明确、最小的字段合同。
-- [ ] NODE-203 selection 可转换为 ResolvedModel。
-- [ ] Resolver failures 使用结构化错误类型。
-- [ ] NODE-301 / NODE-401 可只依赖 ResolvedModel 获得所需模型事实。
+- [ ] `ResolvedModel` 有稳定最小字段合同。
+- [ ] `ResolutionFailure` 有稳定机器可读 codes。
+- [ ] NODE-203 result 可直接转换。
+- [ ] NODE-301/302/401/504 不需要读取 Resolver 内部状态。
 
 ### ✅ 边界保护
 
-- [ ] ResolvedModel 不包含 PID、port、Child handle、download progress、Channel ID。
-- [ ] 未加入 Router / Billing / Auth state。
-- [ ] 下游不需要读取 Resolver 内部状态。
+- [ ] 不包含 PID、port、Child、download progress、Channel ID。
+- [ ] 不包含 Provider/Router/Billing/Auth 状态。
+- [ ] 错误处理不依赖字符串匹配。
 
 ### ✅ 回归与验证
 
 - [ ] contract tests 覆盖成功对象和主要 failure variants。
-- [ ] 错误处理不依赖字符串匹配。
-- [ ] 固定 selection result 得到稳定 ResolvedModel。
+- [ ] 固定 selection result 得到稳定结果。
+- [ ] downstream 无需重新 Resolve。
 
 ### ✅ 工程流程
 
 - [ ] current-main Evidence Audit 完成。
 - [ ] Engineering Issue 通过 READY Gate。
-- [ ] Task Contract 明确 NODE-301 / NODE-401 的真实输入需求。
+- [ ] Task Contract 明确真实下游字段需求。
 - [ ] 只通过分支 + Pull Request 合并。

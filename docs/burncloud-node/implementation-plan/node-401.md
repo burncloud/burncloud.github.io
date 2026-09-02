@@ -9,39 +9,37 @@ slug: /burncloud-node/implementation-plan/node-401/
 
 **状态：PLANNED**  
 **类别：Runtime 与 Process**  
-**功能依赖：NODE-103、NODE-204、NODE-303**
+**功能依赖：NODE-400、NODE-103、NODE-204、NODE-303**
 
 > 这是实施计划，不是 Codex 的直接开发授权。真正实现前必须重新核对 current `burncloud/burncloud/main` 并通过 READY Gate。
 
 ### TL;DR
 
-NODE-401 要把“一个已经解析并验证好的模型，应该用什么 llama.cpp 命令运行”收敛成 `Runtime Adapter → ProcessSpec`。Adapter 只生成 binary、args、env 和健康检查等运行说明，不真正启动进程。完成后，Runtime 决策和 Process 生命周期会彻底分开，也为以后扩展其它 Runtime 留下稳定边界。
+NODE-401 要把“一个已经解析并验证好的模型应该如何运行”转换成无副作用 `ProcessSpec`。它只能使用 NODE-400 提供的 VERIFIED Runtime Artifact 和 NODE-303 提供的 READY Model Artifact；用户不需要提供 llama-server 路径、GGUF 路径、端口或命令参数。
 
 ### 背景与动机（Why）
 
-当前 `InferenceService::start_instance()` 同时负责找 `llama-server`、拼命令、spawn、健康检查、状态更新和 Local Channel 注册。这个原型证明本地 llama.cpp 路径可行，但职责过于集中，任何参数变化都会和进程/Router 生命周期纠缠在一起。
-
-NODE-401 只抽出其中一层：**Runtime 决定“怎么运行”，Process Manager 决定“如何管理运行中的进程”。** v0.1 只做 llama.cpp / llama-server，不趁机设计庞大的多 Runtime framework。
+当前 InferenceService 把找 binary、拼命令、spawn、health 和 Channel 注册混在一起。Demand-driven Node 需要把这些职责拆开：Runtime Adapter 只回答“怎么运行”，Process Manager 才真正执行。否则后台自动准备链无法稳定重试和诊断。
 
 ### 范围速览（In / Out）
 
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| 定义 llama.cpp Runtime Adapter | 不实际 spawn 进程 |
-| 根据 ResolvedModel / hardware facts 生成 args | 不持有 PID / Child |
-| 输出无副作用 `ProcessSpec` | 不注册 Router / Channel |
-| 定义 binary/env/workdir/readiness contract | 不扩展 vLLM / SGLang |
-| 参数不兼容时明确失败 | 不重新下载/验证 Artifact |
+| VERIFIED Runtime + READY Artifact → ProcessSpec | 不实际 spawn |
+| 自动生成 llama.cpp args/env/workdir | 不让用户填写参数 |
+| 描述 port requirement / health probes | 不持有 PID / Child |
+| 参数不兼容时明确失败 | 不下载 Runtime / Model |
+| 固定输入生成确定 spec | 不注册 Router / Channel |
 
 ### 风险与安全网（Risk）
 
-> 这是**纯运行规格生成层**：生成不了合法 ProcessSpec 就明确失败；它没有权限通过 spawn、下载或改 Router 来验证“也许能跑”。
+> ProcessSpec 生成不了就失败；不能通过“先启动看看”来验证配置，也不能绕过 Runtime/Artifact verification。
 
 ### 审批者关注点（Reviewer Focus）
 
-1. 是否同意 Runtime Adapter 只输出 ProcessSpec，不拥有进程？
-2. 是否同意 Node v0.1 先锁定 llama.cpp，而不是提前做多 Runtime 抽象？
-3. 是否同意所有模型输入必须来自已验证的 ResolvedModel / Artifact READY？
+1. 是否同意 Runtime Adapter 不拥有进程？
+2. 是否同意用户不提供任何底层运行参数？
+3. 是否同意只有 VERIFIED Runtime + READY Artifact 才能生成 spec？
 
 ---
 
@@ -51,111 +49,96 @@ NODE-401 只抽出其中一层：**Runtime 决定“怎么运行”，Process Ma
 
 ```text
 ResolvedModel
-+ READY Artifact
-+ Hardware / Compatibility facts
-           ↓
++ READY Model Artifact
++ VERIFIED Runtime Artifact
++ Hardware/Compatibility facts
+          ↓
 llama.cpp Runtime Adapter
-           ↓
+          ↓
 ProcessSpec
 ```
 
 ### 2. Evidence
 
-- 当前 `InferenceService::start_instance()` 会查找 `llama-server`，构造 `-m <file> --port <port> -c <ctx> -ngl <gpu_layers> --nobrowser`，随后直接 spawn。
-- 当前 `InferenceConfig` 混合 model/file/port/context/gpu_layers，说明 Runtime spec 与 Process lifecycle 尚未分离。
-- current main 已证明 llama-server 可作为 OpenAI-compatible 本地 endpoint，但尚无独立 `ProcessSpec` contract。
+current InferenceService 会构造 `llama-server -m <file> --port <port> -c <ctx> -ngl <gpu_layers> --nobrowser` 并直接 spawn；current main 尚无独立 ProcessSpec contract。
 
-### 3. Entry / Starting Point
+### 3. Reuse Targets / Do Not Recreate
 
-重新检查：
+Reuse：current llama-server CLI knowledge、NODE-400 RuntimeArtifact、NODE-204 ResolvedModel、NODE-303 READY Artifact。  
+Do Not Recreate：runtime download、model download、Process Manager、Router registration。
 
-```text
-crates/service/crates/inference/src/lib.rs
-NODE-204 ResolvedModel
-NODE-303 READY Artifact
-NODE-103 compatibility/resource view
-current llama-server binary discovery/config
-```
-
-### 4. Reuse Targets / Do Not Recreate
-
-Reuse：现有 llama-server binary discovery/CLI knowledge、ResolvedModel、Hardware facts。  
-Do Not Recreate：download/verification、Process Manager、Router registration。
-
-### 5. Scope
+### 4. Scope
 
 #### Allowed
 
-- llama.cpp / llama-server Runtime Adapter；
-- binary resolution contract；
-- args/env/working-dir generation；
-- model path/context/GPU-related 参数的显式规则；
+- llama.cpp adapter；
+- binary/path consumption from VERIFIED RuntimeArtifact；
+- args/env/workdir generation；
+- context/GPU-related explicit policy；
+- port binding requirement/placeholder；
 - readiness/health probe description；
-- `ProcessSpec` schema；
-- pure adapter tests。
+- ProcessSpec schema；
+- pure tests。
 
 #### Avoid
 
-- actual `Command::spawn()`；
+- `Command::spawn()`；
 - PID/Child state；
-- internal port allocation（NODE-402；可接受由 ProcessSpec 使用 port placeholder/requirement）；
-- readiness polling implementation（NODE-403）；
-- Local Channel registration；
-- vLLM/SGLang/general plugin framework。
+- runtime/model acquisition；
+- actual port allocation（NODE-402）；
+- readiness polling（NODE-403）；
+- Channel registration；
+- vLLM/SGLang/general plugin abstraction。
 
-### 6. Behavior Contract
-
-Inputs：ResolvedModel + verified Artifact + hardware/compatibility facts。  
-Output：无副作用 `ProcessSpec`。
+### 5. Behavior Contract
 
 ProcessSpec 至少表达：
 
 ```text
-runtime kind
-binary / executable requirement
+runtime kind/version
+verified executable path
+model artifact path/reference
 args
-optional env
-working directory if required
-port binding requirement / placeholder
+env
+working directory
+port binding requirement
 readiness endpoint/semantics
 health endpoint/semantics
 ```
 
-Runtime Adapter owns 参数与兼容性到运行规格的转换；不拥有进程生命周期。
+spec generation 无网络、下载或 process side effect。
 
-### 7. Failure / Forbidden Fallbacks
+### 6. Failure / Forbidden Fallbacks
 
 禁止：
 
 ```text
-binary unavailable => spawn another runtime
-unsupported model format => try anyway
-missing READY artifact => use raw file path
-spec generation => start process for validation
-llama.cpp incompatibility => silently switch provider/router
-add vLLM/SGLang abstraction to solve one llama.cpp case
+missing verified runtime => use PATH directly
+missing READY artifact => use raw user path
+unsupported format => try anyway
+spec generation => spawn for validation
+llama incompatibility => silently switch provider
 ```
 
-### 8. Impact / Invariants
+### 7. Impact / Invariants
 
 ```text
 persistence: none
-external_calls: none during spec generation
+external_calls: none
 billing/auth/routing: none
 process side effect: none
-filesystem: read validated artifact/runtime location only
 ```
 
-Candidate invariant：**Runtime 决定如何运行；Process Manager 决定如何管理进程。**
+Candidate invariant：**Runtime Adapter 决定如何运行；Process Manager 决定如何管理运行中的进程。**
 
-### 9. Dependencies
+### 8. Dependencies
 
-前置：`NODE-103`、`NODE-204`、`NODE-303`。  
-后续：`NODE-402`。
+前置：NODE-400、NODE-103、NODE-204、NODE-303。  
+后续：NODE-402、NODE-504。
 
-### 10. Stop Conditions
+### 9. Stop Conditions
 
-STOP IF：必须 spawn 才能生成 spec、需要重新下载/验证 Artifact、需要添加多 Runtime framework、需要修改 Router/Billing/Auth、或 current main 的 llama.cpp execution contract 已发生根本变化。
+STOP IF：必须 spawn 才能生成 spec、需要绕过 verified runtime/artifact、需要添加通用多 Runtime framework、或需要修改 Router/Billing/Auth。
 
 ---
 
@@ -163,27 +146,26 @@ STOP IF：必须 spawn 才能生成 spec、需要重新下载/验证 Artifact、
 
 ### ✅ 功能结果
 
-- [ ] llama.cpp Runtime Adapter 可由 ResolvedModel + facts 生成 ProcessSpec。
-- [ ] ProcessSpec 包含明确 binary/args/env/workdir/health semantics。
-- [ ] 参数/格式不兼容时返回结构化错误。
-- [ ] spec generation 本身不启动进程。
+- [ ] VERIFIED Runtime + READY Artifact 可生成稳定 ProcessSpec。
+- [ ] 用户无需提供 executable/model path/port/gpu args。
+- [ ] ProcessSpec 包含明确 health/readiness semantics。
+- [ ] spec generation 不启动进程。
 
 ### ✅ 边界保护
 
-- [ ] 未持有 PID / Child。
+- [ ] 未持有 PID/Child。
+- [ ] 未重新下载 Runtime/Model。
+- [ ] 未使用未验证 PATH binary 作为正常产品 fallback。
 - [ ] 未实现 NODE-402/403/501 的职责。
-- [ ] 未扩展 vLLM/SGLang/general runtime framework。
-- [ ] 未绕过 READY Artifact。
 
 ### ✅ 回归与验证
 
-- [ ] pure tests 覆盖正常 GGUF、unsupported format、缺 binary、hardware/resource constraints。
-- [ ] 固定输入生成确定 ProcessSpec。
-- [ ] current InferenceService/Provider routing 不因本 Issue 被破坏。
+- [ ] pure tests 覆盖正常 GGUF、unsupported format、missing verified runtime、resource incompatibility。
+- [ ] 固定输入得到确定 ProcessSpec。
 
 ### ✅ 工程流程
 
 - [ ] current-main Evidence Audit 完成。
 - [ ] Engineering Issue 通过 READY Gate。
-- [ ] Task Contract 锁定真实 llama-server 参数与 binary discovery 行为。
+- [ ] Task Contract 锁定 current llama-server CLI contract。
 - [ ] 只通过分支 + Pull Request 合并。
