@@ -15,33 +15,31 @@ slug: /burncloud-node/implementation-plan/node-203/
 
 ### TL;DR
 
-NODE-203 要根据 canonical model、Model Manifest、HardwareProfile 和资源/兼容性视图，选择当前机器真正能执行的 Variant。这个选择必须确定、可解释、可测试；没有合适 Variant 时明确失败。完成后，Node 不需要让用户手工挑 GGUF，也不会靠随机 fallback“碰运气”。
+NODE-203 要让 Node 在用户只给出逻辑 `model` 时，自动选出本机可运行的 Variant，并且把“不为什么能跑”或“为什么不能跑”都说清楚。它仍然只做决策，不下载、不启动、不路由。这样自动准备失败时，BurnCloud 能给出真实的 VRAM / RAM / Runtime 诊断，而不是一句“模型不存在”。
 
 ### 背景与动机（Why）
 
-同一个逻辑模型可能有多个量化、不同 Artifact 和不同 Runtime 需求。若选择规则散落在下载器、Runtime 或 CLI 里，系统就无法解释“为什么这台机器选了这个文件”，也很难在硬件不足时正确失败。
-
-NODE-203 是 Resolver 真正做决策的地方，但权限必须非常窄：**只选择，不下载、不启动、不路由。** 选择逻辑只消费已经确认的事实，不允许自己重新检测硬件或从文件名猜兼容性。
+Demand-driven Node 不会让用户自己挑 GGUF，因此 Resolver 的责任更重要：它既要选对 Variant，也要给后台 Reconciler 一个可靠的失败原因。若硬件不够却只返回一个自由文本错误，API 层就无法稳定区分“正在下载”和“这台机器根本跑不了”。
 
 ### 范围速览（In / Out）
 
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| 根据硬件与 Manifest 筛选 Variant | 不下载 Artifact |
-| 检查 resource fit / compatibility | 不启动 llama.cpp |
-| 给出可解释 selection reason | 不修改 Router |
-| 无可行 Variant 时结构化失败 | 不静默选随机 GGUF |
+| 自动筛选可执行 Variant | 不下载 Artifact |
+| 检查格式、Runtime、VRAM/RAM fit | 不检查动态下载进度 |
+| 输出可解释 selection/rejection reasons | 不启动 llama.cpp |
+| 明确 no-compatible 原因 | 不修改 Router / Provider fallback |
 | 固定输入得到确定结果 | 不重新调用硬件探测 |
 
 ### 风险与安全网（Risk）
 
-> 这是**纯决策层**：最坏结果应是 `NO_COMPATIBLE_VARIANT`，而不是为了让请求成功而偷偷下载、改 Router 或选择未经证明兼容的文件。
+> Resolver 宁可明确拒绝，也不能猜兼容性。自动化不等于“尽量试着跑”。
 
 ### 审批者关注点（Reviewer Focus）
 
-1. 是否同意 Resolver 只做选择，不拥有任何执行副作用？
-2. 是否同意选择必须基于 Manifest + Hardware/Compatibility facts，而不是文件名猜测？
-3. 是否同意没有兼容 Variant 时 fail closed，不做随机降级？
+1. 是否同意 Resolver 只决策、不执行副作用？
+2. 是否同意硬件不足必须输出结构化原因？
+3. 是否同意 Provider fallback 仍由现有 Router 决定，而不是 Resolver 决定？
 
 ---
 
@@ -53,62 +51,49 @@ NODE-203 是 Resolver 真正做决策的地方，但权限必须非常窄：**�
 canonical Model ID
 + validated Manifest variants
 + HardwareProfile
-+ ResourceSnapshot / RuntimeCompatibility
++ ResourceSnapshot
++ RuntimeCompatibility
              ↓
- deterministic Variant selection
+deterministic selection
              ↓
- selection result + reason
+Selected Variant + Diagnostics
 ```
 
 ### 2. Evidence
 
-- NODE-201/202 计划提供稳定逻辑身份和 Variant 声明事实。
-- NODE-101~103 计划提供 canonical hardware facts 与 resource/compatibility view。
-- 当前 `InferenceService` 仍要求调用方直接提供 `file_path`、`gpu_layers`，说明 current main 尚缺“逻辑模型 → 当前机器可执行 Variant”的独立选择层。
-- 当前 `ModelService` 能筛选 GGUF，但 GGUF 列表本身不等于兼容性选择策略。
+- NODE-201/202 提供稳定模型身份与 Variant 声明事实。
+- NODE-101~103 提供 authoritative hardware/resource/compatibility facts。
+- current InferenceConfig 仍要求调用方直接提供 `file_path`、`gpu_layers`，说明 current main 尚缺自动 Variant selection。
 
-### 3. Entry / Starting Point
+### 3. Reuse Targets / Do Not Recreate
 
-实现前重新检查：
-
-```text
-NODE-201 Manifest
-NODE-202 canonical identity
-NODE-101 HardwareProfile
-NODE-103 compatibility/resource view
-current model/runtime types in main
-```
-
-### 4. Reuse Targets / Do Not Recreate
-
-Reuse：Manifest facts、HardwareProfile、ResourceSnapshot / Compatibility facts。  
+Reuse：Manifest、HardwareProfile、ResourceSnapshot、RuntimeCompatibility。  
 Do Not Recreate：hardware detection、download manager、runtime/process manager、Router policy。
 
-### 5. Scope
+### 4. Scope
 
 #### Allowed
 
 - candidate filtering；
-- format/runtime compatibility checks；
-- resource-fit checks；
-- deterministic ordering / tie-break policy；
-- selection explanation / reason；
-- structured selection errors；
+- format/runtime compatibility；
+- VRAM/RAM/resource-fit checks；
+- deterministic ordering/tie-break；
+- structured selection diagnostics；
 - pure unit tests。
 
 #### Avoid
 
 - network/download；
-- local file mutation；
+- filesystem mutation；
+- disk admission for actual download（NODE-302）；
 - process spawn；
-- runtime binary installation；
 - Channel registration；
-- Router / Billing / Auth；
+- Router/Billing/Auth；
 - hidden hardware detection。
 
-### 6. Behavior Contract
+### 5. Behavior Contract
 
-#### Inputs
+输入：
 
 ```text
 canonical_model_id
@@ -118,23 +103,30 @@ resource_snapshot
 runtime_compatibility_view
 ```
 
-#### Output
+成功输出：明确 Selected Variant + reason。  
+失败输出：结构化 reject reason，至少可表达：
 
-一个明确的 Variant selection result，供 NODE-204 封装成稳定 `ResolvedModel`。
+```text
+NO_COMPATIBLE_VARIANT
+INSUFFICIENT_VRAM
+INSUFFICIENT_RAM
+UNSUPPORTED_RUNTIME
+UNSUPPORTED_FORMAT
+COMPATIBILITY_UNKNOWN
+```
 
-Selection 必须满足：
+必须满足：
 
 ```text
 same facts => same selection
-unsupported format => candidate rejected with reason
-insufficient resources => candidate rejected with reason
-unknown required compatibility => not treated as confirmed compatible
-no candidate => structured NO_COMPATIBLE_VARIANT-like error
+unknown compatibility != compatible
+insufficient resource => explicit rejection
+no candidate => explicit diagnosis
 ```
 
-若 Manifest 明确允许 CPU fallback，可以参与 policy；若未声明，不得自行 fallback。
+若 Manifest 明确允许 CPU fallback，才可参与选择；未声明不得自行 fallback。
 
-### 7. Failure / Forbidden Fallbacks
+### 6. Failure / Forbidden Fallbacks
 
 禁止：
 
@@ -142,13 +134,13 @@ no candidate => structured NO_COMPATIBLE_VARIANT-like error
 no compatible variant => choose smallest file
 no GPU => assume CPU fallback
 unknown compatibility => treat as compatible
-missing artifact => download it here
+missing artifact => download here
 selection failure => route to Provider
 selection failure => mutate Manifest
 call nvidia-smi / OS tools directly
 ```
 
-### 8. Impact / Invariants
+### 7. Impact / Invariants
 
 ```text
 persistence: none
@@ -157,25 +149,16 @@ billing/auth/routing: none
 process/runtime side effects: none
 ```
 
-Candidate invariant：**Resolver 只选择，不执行副作用。**  
-必须保持 `INV-ROUTER-001`：本地模型未来仍通过 existing Router 接入，不由 Resolver 直接路由。
+Candidate invariant：**Resolver 只选择并诊断，不执行副作用。**
 
-### 9. Dependencies
+### 8. Dependencies
 
-前置：`NODE-101~103`、`NODE-201~202`。  
-直接后续：`NODE-204`。
+前置：NODE-101~103、NODE-201~202。  
+后续：NODE-204、NODE-504。
 
-### 10. Stop Conditions
+### 9. Stop Conditions
 
-```text
-STOP IF:
-- selection requires network/download/process side effects
-- required compatibility is unavailable but implementation wants to guess
-- Router/Provider fallback must be changed
-- hardware must be re-detected inside Resolver
-- Manifest facts are insufficient and would need silent mutation
-- selection contract cannot remain deterministic/testable
-```
+STOP IF：需要下载/process/router side effect、需要猜测未知兼容性、需要在 Resolver 内决定 Provider fallback、或无法给出稳定结构化 reject reasons。
 
 ---
 
@@ -183,28 +166,27 @@ STOP IF:
 
 ### ✅ 功能结果
 
-- [ ] Resolver 能基于固定 facts 选择可执行 Variant。
-- [ ] selection reason 可被测试/诊断。
-- [ ] resource insufficient / unsupported / unknown 均有明确拒绝原因。
+- [ ] 固定 facts 能确定选择可执行 Variant。
+- [ ] 成功 selection reason 可测试。
+- [ ] VRAM/RAM/Runtime/Format/Unknown 均有稳定 reject reason。
 - [ ] 无可行 Variant 返回结构化失败。
 
 ### ✅ 边界保护
 
 - [ ] Resolver 无下载、网络、进程、Router side effect。
 - [ ] 未重新检测硬件。
-- [ ] 未静默 CPU fallback 或随机选择 Artifact。
-- [ ] 未直接返回 PID、port、download state 等执行状态。
+- [ ] 未静默 CPU fallback 或随机选 Artifact。
+- [ ] 未决定 Provider fallback。
 
 ### ✅ 回归与验证
 
-- [ ] tests 覆盖资源充足、显存不足、多个可行 Variant、完全不兼容、unknown compatibility。
-- [ ] tie-break policy 对固定输入确定。
-- [ ] Manifest 未允许时 CPU fallback 不发生。
+- [ ] tests 覆盖资源充足、显存不足、内存不足、多 Variant、完全不兼容、unknown compatibility。
+- [ ] tie-break 对固定输入确定。
 - [ ] Provider routing 行为不受影响。
 
 ### ✅ 工程流程
 
 - [ ] current-main Evidence Audit 完成。
 - [ ] Engineering Issue 通过 READY Gate。
-- [ ] Task Contract 锁定选择输入/输出合同。
+- [ ] Task Contract 锁定输入/输出/diagnostic contract。
 - [ ] 只通过分支 + Pull Request 合并。
