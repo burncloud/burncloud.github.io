@@ -5,15 +5,38 @@ slug: /burncloud-node/implementation-plan/runtime-process/
 
 # 类别五：Runtime 与 Process
 
-Runtime Manager 决定“怎么运行”；Process Manager 负责“实际运行”。v0.1 只把 `GGUF + llama.cpp / llama-server` 做完整。
+Runtime / Process 层负责让一个 READY Model Artifact 在本机**无需用户操作**地变成健康可服务的 Runtime。
 
-## Issue
+```text
+Hardware / Platform
+   ↓
+Managed llama.cpp Runtime
+   ↓
+ProcessSpec
+   ↓
+Resource Admission + Port
+   ↓
+Spawn
+   ↓
+Readiness / Health
+   ↓
+READY
+   ↓
+Automatic Stop / Crash / Restart / Logs
+```
 
-| ID | 功能 | 依赖 | 状态 |
-|---|---|---|---|
-| NODE-401 | llama.cpp Runtime Adapter 与 ProcessSpec | NODE-103, NODE-204, NODE-303 | PLANNED |
-| NODE-402 | 内部端口分配与 Process Spawn | NODE-401 | PLANNED |
-| NODE-403 | Readiness / Health 状态机 | NODE-402 | PLANNED |
-| NODE-404 | Stop / Crash / Restart / Logs | NODE-403 | PLANNED |
+关键原则：
 
-必须保持：`spawn success != READY`。
+- 用户不安装/寻找 `llama-server` 作为正常产品流程；
+- 用户不提供端口、PID、GGUF 路径或启动参数；
+- `Process Spawned != Model READY`；
+- BurnCloud 对自己启动的所有模型进程负责清理；
+- v0.1 只做最小资源准入，不建设复杂 GPU Scheduler。
+
+本类别包括：
+
+- **NODE-400**：确保 llama.cpp Runtime 自动可用；
+- **NODE-401**：Runtime Adapter + ProcessSpec；
+- **NODE-402**：资源准入、端口分配与 Spawn；
+- **NODE-403**：Readiness / Health；
+- **NODE-404**：自动 Stop / Crash / Restart / Logs。
