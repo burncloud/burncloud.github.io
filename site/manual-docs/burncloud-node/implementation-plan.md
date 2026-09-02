@@ -6,66 +6,196 @@ hide_table_of_contents: false
 
 # BurnCloud Node 实施计划
 
-本文档用于说明：**基于现有 `burncloud/burncloud` 代码，BurnCloud Node 已经具备哪些基础能力、还缺少哪些关键能力，以及接下来按什么顺序补齐。**
+本文档定义 BurnCloud Node v0.1 的实施边界与产品行为。
 
-本文档不是重新设计一套 BurnCloud，也不是把所有未来设想一次性加入 Node。
+> **BurnCloud Node 不是一个需要用户手工下载、启动、停止模型的本地模型管理器。用户只声明 `model`；BurnCloud 负责决定当前请求走 Local 还是现有 Provider，并在后台把可本地运行的模型自动准备成 READY Local Channel。**
 
-BurnCloud Node 的实施原则是：
+## 1. 核心产品合同
 
-> **复用现有 BurnCloud，补齐本地 AI Runtime 链，最终形成一个可以独立运行、管理本地模型并通过现有 Router 提供稳定 AI API 的 Node。**
-
-## 1. 本次开发目标
-
-BurnCloud Node v0.1 首先完成一条稳定的本地模型执行链：
+用户只需要继续调用现有 BurnCloud API：
 
 ```text
-Model ID
-   ↓
-Hardware Profile
-   ↓
-Model Resolver
-   ↓
+POST http://localhost:3000/v1/...
+model = qwen-4b
+```
+
+用户不需要知道或管理：
+
+```text
+GGUF 文件
+量化版本
+Hugging Face 地址
+llama-server 路径
+启动参数
+内部端口
+PID / Child Handle
+下载任务 ID
+启动 / 停止命令
+```
+
+BurnCloud 自动管理这些内部事实。
+
+## 2. 请求时行为
+
+### 场景 A：本地模型已经 READY
+
+```text
+/v1 request: qwen-4b
+      ↓
+Local Channel READY + healthy
+      ↓
+Existing ModelRouter
+      ↓
+优先选择 Local Channel
+      ↓
+本地推理响应
+```
+
+“本地存在”不等于“本地可用”。只有真实 `READY + healthy` 的 Runtime 才能成为可路由 Local Channel。
+
+### 场景 B：本地没有，但现有 Provider 有该模型
+
+```text
+/v1 request: qwen-4b
+      ↓
+Local not READY
+      +
+Provider qwen-4b available
+      ↓
+当前请求立即走 Provider
+      ↓
+同时异步产生一个 Model Demand
+      ↓
+后台自动 Resolve → Download → Verify → Start → READY
+      ↓
+注册 Local Channel
+      ↓
+后续请求自然优先 Local
+```
+
+**当前请求不能等待大型模型下载。** Provider fallback 与后台本地准备并行发生。
+
+### 场景 C：Local 和 Provider 都暂时不可用，但本机可以运行
+
+```text
+/v1 request: qwen-4b
+      ↓
+no current route candidate
+      ↓
+Model Demand accepted
+      ↓
+background preparation active
+      ↓
+503 MODEL_PREPARING
+Retry-After: ...
+```
+
+BurnCloud 明确告诉客户端模型正在准备，而不是返回模糊的“模型不存在”。
+
+### 场景 D：本机无法准备模型
+
+如果没有可立即服务的 Provider，并且本地准备被真实资源条件阻止，返回结构化原因，例如：
+
+```text
+INSUFFICIENT_VRAM
+INSUFFICIENT_RAM
+INSUFFICIENT_DISK
+UNSUPPORTED_RUNTIME
+NO_COMPATIBLE_VARIANT
+ARTIFACT_NOT_AVAILABLE
+```
+
+如果 Provider 已成功服务当前请求，本地准备失败不应破坏正常响应；失败原因进入 Node 的结构化诊断 / 状态事实。
+
+## 3. 最重要的架构边界
+
+BurnCloud Node 必须把“当前请求怎么走”和“未来本地模型怎么 READY”分开。
+
+```text
+                 /v1 request
+                     ↓
+             Existing ModelRouter
+              /              \
+       Local READY           Provider
+          Channel             Channel
+              \              /
+               \            /
+                 response
+
+同时：
+
+Observed Model Demand
+        ↓
+Model Demand Reconciler
+        ↓
+Resolver
+        ↓
+Resource / Disk checks
+        ↓
 Model Preparation
-   ↓
-Runtime Preparation
-   ↓
-Process Lifecycle
-   ↓
-Local Endpoint
-   ↓
+        ↓
+Runtime / Process
+        ↓
+READY
+        ↓
 Local Channel
-   ↓
-Existing BurnCloud Router
-   ↓
-http://localhost:3000
 ```
 
-完成后，用户不需要手工管理 GGUF 文件名、内部端口、PID 或 llama.cpp 启动参数。
+### Router 负责
 
-## 2. Node 与现有 BurnCloud 的关系
+- 选择当前可用 Channel；
+- 保持现有 priority / availability / scorer / affinity / failover 语义；
+- Local READY 后把它当正常 Channel 候选。
 
-BurnCloud Node **不是第二套 BurnCloud**。
+### Router 不负责
 
-现有 `burncloud/burncloud` 已经拥有可以直接复用的基础能力：
+- 下载模型；
+- 选择 GGUF；
+- 启动 llama.cpp；
+- 等待模型 READY；
+- 管理 PID；
+- 重试下载。
+
+### Model Demand Reconciler 负责
+
+- 观察模型需求；
+- 将并发需求去重；
+- 驱动本地模型从 `ABSENT` 收敛到 `READY`；
+- 失败时保留可诊断状态；
+- Node 重启后清理 stale local state，并根据新的真实需求继续收敛。
+
+硬约束：
 
 ```text
-burncloud/burncloud
-│
-├── Server
-├── Router
-├── Database
-├── Settings
-├── Models
-├── Download
-├── Monitor
-├── Inference
-├── Logging
-└── Auto Update
+1000 requests for qwen-4b
+        ↓
+1 logical Model Demand
+        ↓
+1 active preparation pipeline
+        ↓
+1 managed runtime instance
+        ↓
+1 Local Channel identity
 ```
 
-Node 应在这些能力之上增加本地节点编排层，并补齐目前不完整的 Local Runtime 能力。
+## 4. Node 与现有 BurnCloud 的关系
 
-明确不做：
+BurnCloud Node **不是第二套 BurnCloud**。必须复用现有：
+
+```text
+Server
+Router
+Database
+Settings
+Models
+Download
+Monitor
+Inference prototype
+Logging
+Auto Update
+```
+
+明确禁止：
 
 ```text
 第二个 HTTP Server
@@ -75,51 +205,7 @@ Node 应在这些能力之上增加本地节点编排层，并补齐目前不完
 第二套模型系统
 ```
 
-## 3. 当前已经具备的能力
-
-### 3.1 Server / API 入口
-
-现有 `burncloud-server` 已经负责统一 Axum 应用、管理 API、内部 API、Data Plane fallback、Request ID、Tracing、CORS 和安全边界。
-
-**结论：** Node 不重新创建 HTTP Gateway；复用现有 Server / Router 作为稳定 API 边界。
-
-状态：**已存在，主要复用。**
-
-### 3.2 Model Router
-
-现有 `burncloud-router` 已经具备基于 Model、Channel Ability、可用性、优先级、调度器、Affinity 和 Failover 的路由能力。
-
-**结论：** 不创建 `NodeRouteEngine`。本地模型应作为现有 Router 可以选择的一种 Channel 进入数据面。
-
-状态：**已存在，主要复用。**
-
-### 3.3 Local Inference 雏形
-
-现有 `InferenceService` 已经可以启动 `llama-server`、保存进程句柄、等待 `/v1/models` 健康检查，并在启动成功后创建 Local Channel 与 Channel Ability。
-
-这证明以下路径已经可行：
-
-```text
-Local Runtime
-   ↓
-Local Endpoint
-   ↓
-Channel
-   ↓
-Existing Router
-```
-
-但当前 `InferenceService` 同时承担 Runtime、Process、Health Check 和 Router Registration 等多个职责，需要继续整理。
-
-状态：**已有原型，需要拆清职责并增强。**
-
-### 3.4 Models / Download / Monitor
-
-现有 BurnCloud 已经具备模型记录、Hugging Face 文件发现、GGUF 筛选、下载 URL、aria2 下载、断点续传、下载状态恢复，以及 CPU / Memory / Disk 监控等能力。
-
-**结论：** Node 应复用这些能力，不重写下载器和基础监控。
-
-## 4. 需要补齐的六项核心能力
+## 5. 七项核心能力
 
 ```text
 1. Node Core
@@ -128,229 +214,180 @@ Existing Router
 4. Model Preparation
 5. Runtime / Process Lifecycle
 6. Local Channel Integration
+7. Model Demand Reconciliation
 ```
 
-这六项共同构成本地 Node 的最小完整闭环。
+其中前六项提供执行能力，第七项把 `/v1` 中真实出现的模型需求自动收敛成 Local READY 能力。
 
-## 5. Node Core
+## 6. Node Core
 
-Node Core 是 BurnCloud Node 的编排层。
+Node Core 是薄的编排 / lifecycle 层：初始化 Node、共享上下文、组合现有 Server / Router、协调子系统并处理 shutdown。
 
-主要负责：
+Node Core 不进入每个 inference request 的数据面，不实现第二个 Router，也不直接承担下载或 llama.cpp 细节。
 
-- 初始化 Node 所需组件
-- 读取 Node 配置
-- 建立共享状态
-- 初始化 Hardware Profile
-- 协调模型准备流程
-- 协调 Runtime / Process 生命周期
-- 将 READY 的本地模型接入现有 Router
-- 处理 Node 启动与关闭
+## 7. Hardware Profile
 
-Node Core 不实现新的 HTTP Router、Provider Router、下载器，也不直接承担 llama.cpp 细节。
-
-## 6. Hardware Profile
-
-Node 需要统一的 `HardwareProfile`，至少覆盖：
+Node 维护唯一 authoritative Hardware Profile，并区分静态硬件身份与动态可用资源：
 
 ```text
-OS
-CPU Architecture
-CPU Cores
-RAM
-Available RAM
-GPU Vendor
-GPU Model
-GPU Count
-VRAM
-Available VRAM
+OS / CPU / RAM / Disk
+GPU Vendor / Model / Count / VRAM
 Driver
+Available RAM / VRAM / Disk
 Runtime Compatibility
-Disk Free Space
 ```
 
-关键原则：**Node 内只保留一份权威 Hardware Profile。** Resolver、Runtime、诊断和未来 UI 都读取同一份硬件事实。
+Hardware 层产生事实；Resolver 才做模型选择。
 
-## 7. Model Resolver
+## 8. Model Resolver
 
-用户面对逻辑模型：
-
-```text
-qwen3-8b
-```
-
-Node 内部根据：
+Resolver 输入：
 
 ```text
 Model ID
 +
-Hardware Profile
-+
 Model Manifest
 +
-Local Model State
+Hardware Profile
++
+Resource Snapshot
 +
 Runtime Capabilities
-        ↓
-Resolved Model
 ```
 
-`ResolvedModel` 至少应明确 Canonical Model ID、Variant、Format、Quantization、Artifact、Runtime 和 Resource Requirements。
+输出 `ResolvedModel` 或结构化失败诊断。
 
-关键原则：
+Resolver 只选择，不下载、不启动、不路由。
 
-> **Resolver 负责选择，不负责下载，不负责启动进程。**
+v0.1 必须随 BurnCloud 提供一组真实、可用、版本明确的 curated Model Manifest；不能只交付 Schema 和测试 fixture。
 
-## 8. Model Preparation
+## 9. Model Preparation
 
-Model Preparation 把 `ResolvedModel` 变成经过验证、可供 Runtime 使用的本地 Artifact。
+Model Preparation 复用 Model Service + Download Manager，把 `ResolvedModel` 收敛成经过验证的 READY Artifact。
 
-优先复用：
+它必须：
+
+- 由后台 Model Demand 自动触发；
+- 并发去重；
+- 下载前检查磁盘空间；
+- 支持断点恢复；
+- 下载完成后完成完整性校验；
+- 不在 `/v1` 请求线程内阻塞等待大型下载。
+
+## 10. Runtime / Process Lifecycle
+
+v0.1 首先支持：
 
 ```text
-Model Service
-+
-Download Manager
+GGUF + llama.cpp / llama-server
 ```
 
-主要职责：判断 Artifact 是否存在、避免重复下载、追踪状态、完成校验，并维护 Local Model State。
-
-## 9. Runtime Manager
-
-Runtime Manager 回答：**这个模型应该用什么 Runtime、以什么参数运行？**
-
-Node v0.1 首先只支持：
+BurnCloud 负责 Runtime 可用性、ProcessSpec、内部端口、spawn、readiness、health、stop、crash、bounded restart 和日志。
 
 ```text
-GGUF
-+
-llama.cpp / llama-server
+Process Spawned != Model READY
 ```
 
-Runtime Manager 负责查找或准备 Runtime、检查兼容性、构建启动参数和环境变量，并生成 Process Spec。
-
-Runtime Manager 不长期持有 PID 或进程句柄。
-
-## 10. Process Manager
-
-Process Manager 只负责运行中的模型进程：
-
-- 内部端口
-- Spawn Process
-- PID / Process Handle
-- Readiness Check
-- Health Check
-- Stop
-- Crash Detection
-- Restart Policy
-- Runtime Logs
-
-必须明确：
-
-```text
-Process Spawned
-      ≠
-Model Ready
-```
-
-只有完成 readiness 与 health check 后，模型才允许注册到 Router 接收真实请求。
+用户不需要手工执行 llama-server，也不需要管理进程退出和关闭。
 
 ## 11. Local Channel Integration
 
-本地模型进入 READY 后：
+只有 READY Runtime 才能注册为 existing Channel / Ability：
 
 ```text
-Local Model READY
-      ↓
+READY Runtime
+   ↓
 127.0.0.1:<port>
-      ↓
-Local Channel
-      ↓
-Channel Ability
-      ↓
+   ↓
+Local Channel / Ability
+   ↓
 Existing ModelRouter
 ```
 
-本地模型不是 Router 的特殊旁路。Router 不需要知道模型运行在 llama.cpp、vLLM 还是其他 Runtime 上。
+Local 默认应通过现有 Router 的合法 priority / availability 机制获得本地优先，而不是通过 `if local { bypass_router }` 特判。
 
-## 12. Node v0.1 暂不实施
+Runtime stop / crash / unhealthy 后必须自动失去 routable 状态。
 
-为了控制边界，以下能力暂不作为 v0.1 前置条件：
+## 12. Model Demand Reconciliation
 
-- BurnCloud Network
-- P2P Transport
-- Node-to-Node Routing
-- 多机任务调度
-- 复杂 GPU Resource Scheduler
-- 同时支持大量 Runtime
-- 第一次推理请求自动阻塞等待大型模型下载
-- 第二套 Router / Gateway / Downloader / Database
-
-## 13. 实施阶段
-
-### Phase 1：Node Core
-
-建立 Node 生命周期、状态、配置入口，以及与现有 Server / Router 的组合方式。
-
-### Phase 2：Hardware + Model Resolver
-
-完成 Hardware Profile、GPU / VRAM / Driver detection、Model Manifest、Model Resolver 和 ResolvedModel。
-
-### Phase 3：Model Preparation
-
-复用 Model Service 与 Download Manager，完成 Artifact 状态、下载去重、校验和 Local Model State。
-
-### Phase 4：Runtime + Process
-
-完成 llama.cpp Runtime Adapter、Process Spec、内部端口、Readiness / Health、停止、恢复和日志。
-
-### Phase 5：Local Channel Integration
-
-完成 Local Channel / Channel Ability 注册、健康状态联动和完整请求链验证。
-
-## 14. Node v0.1 完成定义
-
-只有以下链路稳定运行，才认为 BurnCloud Node v0.1 完成：
+这是自动化产品体验的关键层。
 
 ```text
-选择逻辑模型
+Observed model=qwen-4b
       ↓
-检测本机硬件
+Demand dedup
       ↓
-选择兼容 Variant
-      ↓
-准备 / 下载 Artifact
-      ↓
-准备 llama.cpp Runtime
-      ↓
-启动模型进程
-      ↓
-Readiness + Health Check
-      ↓
-注册 Local Channel
-      ↓
-Existing BurnCloud Router
-      ↓
-http://localhost:3000/v1/...
-      ↓
-客户端获得正常模型响应
+Local READY?
+  ├─ yes → no-op
+  └─ no
+       ↓
+Preparation already active?
+  ├─ yes → no-op
+  └─ no
+       ↓
+Resolve local candidate
+       ↓
+Check hardware / disk / runtime
+       ↓
+Prepare Artifact
+       ↓
+Start Runtime
+       ↓
+READY
+       ↓
+Register Local Channel
 ```
 
-同时必须满足：
+它是 orchestration，不是新的 Router。
 
-- 用户不需要填写 GGUF 绝对路径
-- 用户不需要手工选择内部端口
-- 用户不需要管理 PID
-- 用户不需要手工执行 llama-server
-- 未 READY 的模型不能接收真实路由流量
-- 不破坏现有 Provider Routing
-- 不破坏现有 API / Auth / Billing 行为
+## 13. Node v0.1 暂不实施
 
-## 15. 实施边界
+- BurnCloud Network / P2P；
+- Node-to-Node Routing；
+- 多机任务调度；
+- 复杂 GPU Scheduler；
+- 大规模 multi-runtime framework；
+- inference request 同步阻塞等待大型模型下载；
+- 第二套 Router / Gateway / Downloader / Database；
+- 要求用户先进入管理页手工“下载 → 启动 → 运行”模型。
 
-在 Node 开发过程中，任何新增实现都优先回答两个问题：
+## 14. 实施阶段
 
-1. 现有 BurnCloud 是否已经拥有同类能力？
-2. 这个能力是否真的属于 Node v0.1 的必要闭环？
+### Phase 1：Node Core
+NODE-001~003。
 
-如果现有能力可以复用，就不创建第二套实现；如果功能不属于 v0.1 必要闭环，就暂不扩大架构。
+### Phase 2：Hardware + Resolver
+NODE-101~103、NODE-201~204。
+
+### Phase 3：Model Preparation
+NODE-301~303。
+
+### Phase 4：Runtime + Process
+NODE-400~404。
+
+### Phase 5：Local Channel
+NODE-501~502。
+
+### Phase 6：Demand Reconciliation + E2E
+NODE-504 驱动自动收敛，NODE-503 做最终系统级验收。
+
+## 15. Node v0.1 完成定义
+
+必须至少稳定通过四个系统场景：
+
+1. **Local READY**：请求直接通过 existing Router 使用 Local Channel。
+2. **Local absent + Provider available**：当前请求由 Provider 正常响应，同时后台只启动一条本地准备链；本地 READY 后后续请求自动优先 Local。
+3. **Local absent + Provider unavailable + local feasible**：返回 `MODEL_PREPARING`，后台完成后重试可成功。
+4. **Local impossible**：没有 Provider 可服务时，返回结构化的 Hardware / Disk / Runtime / Artifact 失败原因。
+
+同时：
+
+- 用户只声明 `model`；
+- 用户不提供 GGUF path / port / PID / llama.cpp args；
+- 用户不手工下载、启动、停止模型；
+- 并发请求不会产生重复下载或重复 Runtime；
+- 未 READY 模型不接真实流量；
+- Local 失效后 Provider failover 仍按现有 Router 语义工作；
+- 不破坏现有 API / Auth / Billing 行为。
+
+> **BurnCloud Node v0.1 的最终目标不是“能启动一个本地模型”，而是“用户只调用 `/v1`，BurnCloud 自动管理模型实际在哪里、何时下载、何时启动、何时切换 Local、何时失败和何时退出”。**
