@@ -1,9 +1,9 @@
 ---
-title: "NODE-404：Stop / Crash / Restart / Logs"
+title: "NODE-404：自动 Stop / Crash / Restart / Logs"
 slug: /burncloud-node/implementation-plan/node-404/
 ---
 
-# NODE-404：Stop / Crash / Restart / Logs
+# NODE-404：自动 Stop / Crash / Restart / Logs
 
 ## 第一层：人类阅读区（Human Readable Layer）
 
@@ -15,33 +15,31 @@ slug: /burncloud-node/implementation-plan/node-404/
 
 ### TL;DR
 
-NODE-404 要补齐模型进程的完整生命周期：主动停止、异常 crash、有限重启和 stdout/stderr 日志。这样 Node 关闭时不会残留模型进程，进程 crash 后也不会继续保持 READY。完成后，Process Manager 才真正对“模型进程从生到死”负责。
+NODE-404 要让模型进程从启动后到退出都由 BurnCloud 自动托管：Node shutdown 自动清理，异常 crash 自动离开 READY，允许有边界的重启，并持续消费 stdout/stderr。用户不需要“停止模型”或管理 PID。v0.1 不要求复杂的空闲驱逐策略，但绝不能留下孤儿进程或无限重启风暴。
 
 ### 背景与动机（Why）
 
-current `InferenceService` 已能 `kill()` Child 并设置 `Stopped`，stdout/stderr 也被设置为 piped；但当前原型没有完整 crash monitor、bounded restart policy 和日志生命周期。更关键的是，如果异常退出没有及时驱动状态变化，Router 未来可能继续把已经不存在的 Runtime 当成可用目标。
-
-NODE-404 因此只负责**真实进程生命周期**，不做 Router 摘除本身；NODE-502 会消费这里的状态事实。
+在 demand-driven 模式下，用户不会进入管理页手工 stop。谁启动进程，谁就必须负责在 Node 退出、Runtime crash 或健康失效时正确收尾。current InferenceService 已有 Child handle 和 stop prototype，但还缺完整 supervisor semantics。
 
 ### 范围速览（In / Out）
 
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| 主动 stop / Node shutdown 清理 | 不做多机恢复 |
-| 监控 unexpected crash | 不做 GPU scheduler |
-| 有边界的 restart policy | 不无限重启风暴 |
-| 捕获 stdout / stderr 日志 | 不修改 Router 选择算法 |
-| crash 后立即失去可用状态 | 不把日志系统变成大型 observability 项目 |
+| Node shutdown 自动清理 | 不要求用户手工 stop |
+| unexpected crash detection | 不做多机恢复 |
+| bounded restart | 不无限重启 |
+| stdout/stderr drain + diagnostics | 不建大型 observability 平台 |
+| crash 后立即失去 READY truth | 不直接修改 Router availability |
 
 ### 风险与安全网（Risk）
 
-> 这是**进程资源治理**：最坏结果是 Runtime 停止并明确失败；不允许通过无限重启、吞掉 crash 或伪造 READY 来掩盖故障。
+> 自动托管的底线是“真实状态优先”：进程死了就必须承认死了，不能为了看起来稳定而保留 READY 或反复无限拉起。
 
 ### 审批者关注点（Reviewer Focus）
 
-1. 是否同意 Process Manager 对 stop/crash/restart/logs 负完整责任？
-2. 是否同意 restart 必须 bounded，不能形成重启风暴？
-3. 是否确认 Router 联动仍留在 NODE-502，NODE-404 只提供真实状态？
+1. 是否同意用户不承担 stop/cleanup 责任？
+2. 是否同意 restart 必须 bounded？
+3. 是否确认 Router 摘除仍由 NODE-502 消费状态完成？
 
 ---
 
@@ -50,105 +48,92 @@ NODE-404 因此只负责**真实进程生命周期**，不做 Router 摘除本�
 ### 1. Goal
 
 ```text
-READY / STARTING process
-   ├─ explicit stop → STOPPING → STOPPED
+STARTING / READY process
+   ├─ Node shutdown → STOPPING → STOPPED
+   ├─ explicit internal replacement/stop policy → STOPPED
    ├─ unexpected exit → FAILED/UNHEALTHY
    │                     ↓ bounded policy
    │                  optional restart
-   └─ stdout/stderr → owned runtime logs
+   └─ stdout/stderr → runtime diagnostics
 ```
 
 ### 2. Evidence
 
-- current `InferenceService::stop_instance()` 能从 HashMap 取出 Child、`kill().await` 并设置 `Stopped`。
-- current spawn 已将 stdout/stderr 设为 `Stdio::piped()`，但当前实现没有在该模块中形成完整日志消费合同。
-- current statuses 主要在内存 HashMap 中，尚未形成 unexpected crash / bounded restart 的独立 lifecycle contract。
+current InferenceService 可 `kill().await` Child，stdout/stderr 已 piped，但没有完整 crash monitor、bounded restart 和 automatic shutdown ownership contract。
 
-### 3. Entry / Starting Point
+### 3. Reuse Targets / Do Not Recreate
 
-重新检查：
+Reuse：owned Child handles、Tokio process APIs、existing tracing/logging、NODE-001 shutdown plumbing。  
+Do Not Recreate：cluster supervisor、new observability platform、Router health tracker。
 
-```text
-NODE-402 Process Manager ownership
-NODE-403 health state machine
-crates/service/crates/inference/src/lib.rs :: stop_instance / process map
-current logging infrastructure
-Node shutdown plumbing from NODE-001
-```
-
-### 4. Reuse Targets / Do Not Recreate
-
-Reuse：owned Child handles、Tokio process APIs、现有 tracing/logging 基础设施。  
-Do Not Recreate：system-wide scheduler、new observability platform、Router health tracker。
-
-### 5. Scope
+### 4. Scope
 
 #### Allowed
 
-- graceful/forced stop policy；
+- shutdown cleanup；
+- internal stop/replacement policy；
 - child exit observation；
-- unexpected crash transition；
-- bounded restart count/backoff policy；
+- crash transition；
+- bounded restart count/backoff；
 - stdout/stderr drain/capture；
-- Node shutdown child cleanup；
-- lifecycle tests。
+- lifecycle diagnostics；
+- tests。
 
 #### Avoid
 
-- Local Channel availability mutation（NODE-502）；
-- complex supervisor cluster；
-- GPU/multi-model scheduler；
-- multi-host failover；
-- billing/auth/routing changes。
+- user-required manual stop workflow；
+- Local Channel mutation（NODE-502）；
+- GPU scheduler；
+- multi-host recovery；
+- billing/auth/routing changes；
+- idle eviction unless separately approved by v0.1 policy。
 
-### 6. Behavior Contract
-
-必须满足：
+### 5. Behavior Contract
 
 ```text
-explicit stop => process is not restarted unless contract explicitly says so
+Node shutdown => all owned children cleaned up
 unexpected exit => READY cannot remain true
-restart policy => finite attempts + bounded delay/window
+restart => finite attempts + bounded delay/window
 restart exhaustion => terminal diagnosable failure
-Node shutdown => owned children are cleaned up
-logs => stdout/stderr are drained so pipes do not block child execution
+logs => pipes continuously drained
+manual user action is not required for normal lifecycle
 ```
 
-Process Manager owns child lifecycle truth；Router 只消费该 truth。
+v0.1 可以保持 READY 模型常驻直到 Node shutdown / crash / replacement / explicit internal resource policy；不要求本 Issue 设计复杂 idle unload。
 
-### 7. Failure / Forbidden Fallbacks
+### 6. Failure / Forbidden Fallbacks
 
 禁止：
 
 ```text
 crash => keep READY
 restart forever
-stop failure => ignore and mark STOPPED
-child output pipe => never drained
-Node shutdown => orphan model processes
-restart failure => silently spawn a different runtime
+stop failure => mark STOPPED anyway
+stdout/stderr pipe => never drained
+Node shutdown => orphan child
+restart failure => silently launch a different runtime
+normal operation => require user to kill PID manually
 ```
 
-### 8. Impact / Invariants
+### 7. Impact / Invariants
 
 ```text
-persistence: optional minimal restart metadata only if current design requires
-external_calls: local process control only
+persistence: minimal lifecycle metadata only if justified
+external_calls: local process control
 billing/auth/routing: no direct mutation
-process lifecycle: full child lifecycle ownership
-logging: runtime stdout/stderr integration
+process lifecycle: full ownership after spawn
 ```
 
-Candidate invariant：**真实进程状态必须驱动 Runtime 可用状态。**
+Candidate invariant：**BurnCloud owns cleanup for every managed process it starts.**
 
-### 9. Dependencies
+### 8. Dependencies
 
-前置：`NODE-403`。  
-后续：`NODE-502`。
+前置：NODE-403。  
+后续：NODE-502、NODE-504。
 
-### 10. Stop Conditions
+### 9. Stop Conditions
 
-STOP IF：需要无限 restart、需要 Router mutation 才能表达 crash、无法保证 child cleanup、日志方案要求重建全局 logging、或 scope 扩展到 GPU/multi-host scheduler。
+STOP IF：需要无限 restart、需要 Router mutation 才能表达 crash、无法保证 child cleanup、日志方案要求重建全局 logging、或正常生命周期仍依赖用户手工管理 PID。
 
 ---
 
@@ -156,29 +141,29 @@ STOP IF：需要无限 restart、需要 Router mutation 才能表达 crash、无
 
 ### ✅ 功能结果
 
-- [ ] explicit stop 能结束 owned child 并进入 STOPPED。
-- [ ] unexpected crash 能被观察并离开 READY。
+- [ ] Node shutdown 自动结束 owned children。
+- [ ] unexpected crash 被观察并离开 READY。
 - [ ] restart policy 有明确次数/窗口/退避边界。
-- [ ] restart exhaustion 有终态和诊断。
-- [ ] stdout/stderr 被安全消费/记录。
-- [ ] Node shutdown 不残留 owned model processes。
+- [ ] restart exhaustion 有终态诊断。
+- [ ] stdout/stderr 被安全消费。
+- [ ] 用户无需手工 stop / kill PID。
 
 ### ✅ 边界保护
 
 - [ ] 未实现 Router availability mutation。
 - [ ] 未实现无限重启。
 - [ ] 未引入 GPU scheduler / multi-host recovery。
-- [ ] 未重建全局 observability/logging 平台。
+- [ ] 未强行加入复杂 idle eviction。
 
 ### ✅ 回归与验证
 
-- [ ] tests 覆盖 explicit stop、crash、restart success、restart limit、shutdown cleanup。
-- [ ] crash 后 READY 不会残留。
-- [ ] pipe capture 不导致子进程阻塞。
+- [ ] tests 覆盖 shutdown、crash、restart success、restart limit、cleanup。
+- [ ] crash 后 READY 不残留。
+- [ ] pipe capture 不阻塞 child。
 
 ### ✅ 工程流程
 
 - [ ] current-main Evidence Audit 完成。
 - [ ] Engineering Issue 通过 READY Gate。
-- [ ] Task Contract 明确 restart policy 与 shutdown ownership。
+- [ ] Task Contract 明确 restart/shutdown ownership。
 - [ ] 只通过分支 + Pull Request 合并。
