@@ -1,9 +1,9 @@
 ---
-title: "NODE-201：定义 Model Manifest"
+title: "NODE-201：定义 Model Manifest 与首批可用模型目录"
 slug: /burncloud-node/implementation-plan/node-201/
 ---
 
-# NODE-201：定义 Model Manifest
+# NODE-201：定义 Model Manifest 与首批可用模型目录
 
 ## 第一层：人类阅读区（Human Readable Layer）
 
@@ -15,33 +15,33 @@ slug: /burncloud-node/implementation-plan/node-201/
 
 ### TL;DR
 
-NODE-201 要定义一份声明式 `Model Manifest`，明确“逻辑模型、Variant、Artifact、Runtime requirement”之间的关系。这样 BurnCloud 不再通过 GGUF 文件名猜模型身份，也能让同一个逻辑模型安全地拥有多个量化 / Runtime 变体。完成后，Resolver 会有稳定的事实输入，而不是临时规则集合。
+NODE-201 要定义稳定的 `Model Manifest`，并随 BurnCloud v0.1 交付一组真实可用的模型目录。用户只写 `model=qwen-4b`，Node 就能知道有哪些 Variant、Artifact、Runtime 和资源要求，而不是让用户自己找 GGUF。只有 Schema 没有真实模型数据，不算完成。
 
 ### 背景与动机（Why）
 
-现有 BurnCloud `ModelService` 能管理模型记录、访问 Hugging Face、筛选 GGUF 和构造下载 URL，但这些能力并没有定义“一个逻辑模型有哪些可选 Variant，以及每个 Variant 需要什么 Runtime / 资源”。如果直接从远端文件树或文件名推断，模型身份会和具体 Artifact 绑死，后续 alias、不同量化和不同 Runtime 会不断产生特殊判断。
+自动化 Node 的前提是系统自己知道“这个模型是什么、有哪些可运行版本、从哪里获得、需要什么资源”。如果这些事实靠文件名、Hugging Face 搜索结果或运行时猜测，后续 Resolver、下载和 Runtime 都会产生不同答案。
 
-因此 NODE-201 只负责建立**声明事实**：哪些 Variant 属于这个模型、它们是什么格式、指向什么 Artifact、需要什么 Runtime。下载、选择和执行都不属于本 Issue。
+因此 Manifest 是模型事实源；v0.1 还必须附带首批 curated manifests，让真实 `/v1` 模型需求可以直接进入 Resolver，而不是要求用户先配置模型文件。
 
 ### 范围速览（In / Out）
 
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
 | 定义 canonical model + Variant schema | 不下载 Artifact |
-| 描述 format / quantization / artifact identity | 不启动 Runtime |
+| 描述 Artifact source / identity / size | 不启动 Runtime |
 | 描述 runtime / resource requirements | 不做 Hardware-aware 选择 |
-| 支持一个模型多个 Variant | 不自动抓取全部 Hugging Face 内容 |
-| 校验 Manifest 冲突和缺失字段 | 不把文件名当模型身份 |
+| 随 v0.1 提供真实 curated manifests | 不让用户填写 GGUF 路径 |
+| 校验 Manifest 冲突和缺失字段 | 不在线抓取后静默猜字段 |
 
 ### 风险与安全网（Risk）
 
-> 这是**声明式元数据合同**：错误 Manifest 应直接校验失败，而不是让 Resolver 在运行时靠猜测修补；不会改变现有 Provider routing。
+> 这是声明事实，不是执行逻辑：错误 Manifest 必须校验失败；未知事实保持 unknown，不能为了自动化而猜测。
 
 ### 审批者关注点（Reviewer Focus）
 
-1. 是否同意 canonical Model ID 与 Artifact 文件名彻底分离？
-2. 是否同意一个逻辑模型可声明多个 Variant？
-3. 是否同意 Manifest 只描述事实和 requirements，不做下载或选择？
+1. 是否同意 Model ID 与 Artifact 文件名彻底分离？
+2. 是否同意 v0.1 必须附带首批真实 manifests，而不是只有 schema？
+3. 是否同意 Manifest 只描述事实，不承担下载、选择或启动？
 
 ---
 
@@ -50,106 +50,95 @@ NODE-201 要定义一份声明式 `Model Manifest`，明确“逻辑模型、Var
 ### 1. Goal
 
 ```text
-Model Manifest
-├─ canonical model identity
-├─ aliases (identity facts only)
+canonical model
+├─ aliases[]
 └─ variants[]
-   ├─ format
-   ├─ quantization
-   ├─ artifact reference
+   ├─ format / quantization
+   ├─ artifact identity
+   ├─ artifact source
+   ├─ expected size / integrity facts
    ├─ runtime requirement
    └─ resource requirement
 ```
 
+同时提供一组版本明确、可在 v0.1 E2E 中真实使用的 curated manifests。
+
 ### 2. Evidence
 
-- `crates/service/crates/models/src/lib.rs` 当前提供模型 CRUD、Hugging Face model/file tree、GGUF filter、data dir 和 download URL 能力。
-- 当前 `InferenceConfig` 仍直接接收 `model_id + file_path + gpu_layers`，说明逻辑模型与 Artifact/Runtime 尚未通过统一 resolver contract 分开。
-- current main 尚无一份 Node 专用 Model Manifest 作为 Resolver 的 authoritative input。
+- current ModelService 已有 Hugging Face model/file tree、GGUF filter、data dir 和 download URL 能力。
+- current InferenceConfig 仍直接接收 `model_id + file_path + gpu_layers`，逻辑模型与 Artifact/Runtime 尚未解耦。
+- current main 没有 Node authoritative Model Manifest catalog。
 
-### 3. Entry / Starting Point
+### 3. Reuse Targets / Do Not Recreate
 
-实现前重新检查：
+Reuse：现有 model identity/storage、serde/workspace conventions、可复用的 Hugging Face source knowledge。  
+Do Not Recreate：第二套 model DB、下载器、Runtime manager、在线搜索引擎。
 
-```text
-crates/service/crates/models/
-current model database schema / ModelInfo
-NODE implementation location at current main
-```
-
-### 4. Reuse Targets / Do Not Recreate
-
-Reuse：现有 model identity / storage 能力中可复用的部分、serde/workspace conventions。  
-Do Not Recreate：下载器、Hugging Face crawler、Runtime manager、第二套模型数据库。
-
-### 5. Scope
+### 4. Scope
 
 #### Allowed
 
 - Manifest schema；
-- canonical model fields；
+- canonical ID / alias facts；
 - Variant schema；
-- format / quantization / Artifact reference；
-- runtime / resource requirements；
+- artifact source / expected size / integrity metadata；
+- runtime/resource requirements；
 - schema validation；
-- 最小 fixtures / examples。
+- curated manifest storage/versioning；
+- 首批真实可用模型 fixtures/catalog。
 
 #### Avoid
 
 - alias resolution algorithm（NODE-202）；
-- Hardware-aware selection（NODE-203）；
-- ResolvedModel output（NODE-204）；
+- Variant selection（NODE-203）；
 - download / verification；
-- process/runtime startup；
-- provider routing。
+- Runtime / Process；
+- Provider routing。
 
-### 6. Behavior Contract
-
-Inputs：静态/受控 Manifest 数据。  
-Outputs：已校验的 model facts。
-
-必须支持：
+### 5. Behavior Contract
 
 ```text
 one canonical model -> N variants
 variant identity != artifact filename
+artifact source is explicit
 requirements are declarative facts
 invalid/ambiguous manifest -> explicit validation error
 ```
 
-Manifest parsing/validation 不得产生网络、下载、进程或 Router side effect。
+Manifest parsing不得产生网络、下载、进程或 Router side effect。
 
-### 7. Failure / Forbidden Fallbacks
+### 6. Failure / Forbidden Fallbacks
 
 禁止：
 
 ```text
-missing format => infer from filename silently
+missing format => infer silently from filename
 missing quantization => guess from artifact name
-missing runtime requirement => assume llama.cpp
-invalid variant => ignore it and continue silently
-manifest load => automatically download model metadata from internet
+missing runtime => assume llama.cpp
+missing size => invent estimate
+invalid variant => ignore silently
+unknown model => search internet and auto-trust result
 ```
 
-### 8. Impact / Invariants
+### 7. Impact / Invariants
 
 ```text
-persistence: optional only if current architecture requires; no second model DB
-external_calls: none required
+persistence: curated/static source or existing model storage only
+external_calls: none required for parsing
 billing/auth/routing: none
 runtime/process: none
 ```
 
-Candidate invariant：**Model ID 是稳定逻辑身份，Artifact 是可替换实现细节。**
+Candidate invariant：**Model ID 是稳定逻辑身份，Artifact 是声明式实现细节。**
 
-### 9. Dependencies
+### 8. Dependencies
 
 前置：无。  
-后续：`NODE-202`、`NODE-203`、`NODE-204`。
+后续：NODE-202、NODE-203、NODE-204、NODE-504。
 
-### 10. Stop Conditions
+### 9. Stop Conditions
 
-STOP IF：必须把文件名当唯一模型身份、必须启动下载/Runtime 才能解析 Manifest、必须建立第二套模型数据库、或 scope 扩展到 alias/selection/process execution。
+STOP IF：必须把文件名当唯一身份、必须执行下载/Runtime 才能理解 Manifest、必须建立第二套模型数据库、或 curated catalog 无法给出真实可验证来源。
 
 ---
 
@@ -157,26 +146,27 @@ STOP IF：必须把文件名当唯一模型身份、必须启动下载/Runtime �
 
 ### ✅ 功能结果
 
-- [ ] 定义稳定、可校验的 Model Manifest schema。
+- [ ] 存在稳定、可校验的 Model Manifest schema。
 - [ ] 一个 canonical model 可声明多个 Variant。
-- [ ] Variant 可表达 format、quantization、Artifact、runtime/resource requirements。
-- [ ] Artifact 文件名不承担模型身份职责。
+- [ ] Variant 可表达 source、size、format、quantization、Artifact、runtime/resource requirements。
+- [ ] BurnCloud v0.1 随包/仓库提供一组真实可用、版本明确的 curated manifests。
+- [ ] NODE-503 的测试模型可完全由 catalog 解析，不需要人工填写 GGUF URL/path。
 
 ### ✅ 边界保护
 
-- [ ] Manifest parser 无下载、网络、Runtime 或 Router side effect。
-- [ ] 未实现 NODE-202/203/204 的职责。
-- [ ] 未创建第二套模型数据库。
+- [ ] Manifest parser 无网络、下载、Runtime、Router side effect。
+- [ ] 未实现 NODE-202/203/204 的执行职责。
+- [ ] 未创建第二套 model DB。
 
 ### ✅ 回归与验证
 
 - [ ] tests 覆盖 valid、缺字段、重复 Variant、冲突 identity、多个 Variant。
 - [ ] 非法 Manifest 明确失败，不通过字符串猜测修复。
-- [ ] 现有 ModelService 行为不被破坏。
+- [ ] curated manifests 的 source/identity 可被验证。
 
 ### ✅ 工程流程
 
 - [ ] current-main Evidence Audit 完成。
 - [ ] Engineering Issue 通过 READY Gate。
-- [ ] Task Contract 明确 Manifest 的 authoritative storage/location。
+- [ ] Task Contract 锁定 authoritative catalog location/versioning。
 - [ ] 只通过分支 + Pull Request 合并。
