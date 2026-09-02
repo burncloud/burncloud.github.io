@@ -1,5 +1,6 @@
 from pathlib import Path
 import re
+import shutil
 
 from generate_product_docs import build_sidebar, copy_manual_docs
 
@@ -74,6 +75,17 @@ def sanitize(path: Path) -> bool:
     return False
 
 
+def sync_burncloud_ui_docs() -> None:
+    """Copy the hand-written BurnCloud UI product docs into generated docs."""
+    source = ROOT / "site" / "manual-docs" / "burncloud-ui"
+    target = DOCS / "burncloud-ui"
+    if not source.is_dir():
+        raise RuntimeError("BurnCloud UI manual docs source not found")
+    if target.exists():
+        shutil.rmtree(target)
+    shutil.copytree(source, target)
+
+
 def ensure_node_implementation_plan_sidebar() -> None:
     """Inject the curated, categorized BurnCloud Node implementation plan."""
     text = SIDEBAR.read_text(encoding="utf-8")
@@ -126,11 +138,61 @@ def ensure_node_implementation_plan_sidebar() -> None:
     SIDEBAR.write_text(text.replace(marker, block + marker, 1), encoding="utf-8")
 
 
+def ensure_burncloud_ui_sidebar() -> None:
+    """Expose the target BurnCloud UI docs below BurnCloud and before Network."""
+    text = SIDEBAR.read_text(encoding="utf-8")
+    marker = "      {type:'doc', id:'burncloud-network/index', label:'BurnCloud Network'},\n"
+
+    if "id:'burncloud-ui/admin/settings'" in text:
+        return
+    if marker not in text:
+        raise RuntimeError("BurnCloud Network sidebar marker not found")
+
+    block = """      {type:'category', label:'BurnCloud UI', collapsed:true, link:{type:'doc', id:'burncloud-ui/index'}, items:[
+        {type:'doc', id:'burncloud-ui/implementation-plan', label:'实施计划'},
+        {type:'category', label:'Buyer', collapsed:true, link:{type:'doc', id:'burncloud-ui/buyer/index'}, items:[
+          {type:'doc', id:'burncloud-ui/buyer/overview', label:'Overview'},
+          {type:'doc', id:'burncloud-ui/buyer/playground', label:'Playground'},
+          {type:'doc', id:'burncloud-ui/buyer/marketplace', label:'Marketplace'},
+          {type:'doc', id:'burncloud-ui/buyer/api-keys', label:'API Keys'},
+          {type:'doc', id:'burncloud-ui/buyer/usage', label:'Usage'},
+          {type:'doc', id:'burncloud-ui/buyer/billing', label:'Billing'},
+          {type:'doc', id:'burncloud-ui/buyer/logs', label:'Logs'},
+        ]},
+        {type:'category', label:'Supplier', collapsed:true, link:{type:'doc', id:'burncloud-ui/supplier/index'}, items:[
+          {type:'doc', id:'burncloud-ui/supplier/overview', label:'Overview'},
+          {type:'doc', id:'burncloud-ui/supplier/resources', label:'Resources'},
+          {type:'doc', id:'burncloud-ui/supplier/deployments', label:'Deployments'},
+          {type:'doc', id:'burncloud-ui/supplier/earnings', label:'Earnings'},
+          {type:'doc', id:'burncloud-ui/supplier/settlements', label:'Settlements'},
+          {type:'doc', id:'burncloud-ui/supplier/reliability', label:'Reliability'},
+          {type:'doc', id:'burncloud-ui/supplier/settings', label:'Settings'},
+        ]},
+        {type:'category', label:'Admin', collapsed:true, link:{type:'doc', id:'burncloud-ui/admin/index'}, items:[
+          {type:'doc', id:'burncloud-ui/admin/overview', label:'Overview'},
+          {type:'doc', id:'burncloud-ui/admin/supply', label:'Supply'},
+          {type:'doc', id:'burncloud-ui/admin/capacity', label:'Capacity'},
+          {type:'doc', id:'burncloud-ui/admin/demand', label:'Demand'},
+          {type:'doc', id:'burncloud-ui/admin/models', label:'Models'},
+          {type:'doc', id:'burncloud-ui/admin/revenue', label:'Revenue'},
+          {type:'doc', id:'burncloud-ui/admin/settlements', label:'Settlements'},
+          {type:'doc', id:'burncloud-ui/admin/suppliers', label:'Suppliers'},
+          {type:'doc', id:'burncloud-ui/admin/customers', label:'Customers'},
+          {type:'doc', id:'burncloud-ui/admin/operations', label:'Operations'},
+          {type:'doc', id:'burncloud-ui/admin/settings', label:'Settings'},
+        ]},
+      ]},
+"""
+
+    SIDEBAR.write_text(text.replace(marker, block + marker, 1), encoding="utf-8")
+
+
 def localize_sidebar_labels() -> None:
     """Use Chinese navigation labels while preserving API paths and code identifiers."""
     text = SIDEBAR.read_text(encoding="utf-8")
     translations = {
         "BurnCloud Node": "BurnCloud 节点",
+        "BurnCloud UI": "BurnCloud 界面",
         "Local API Gateway": "本地 API 网关",
         "Protocol Routing": "协议路由",
         "Hardware Detection": "硬件检测",
@@ -165,10 +227,12 @@ def localize_sidebar_labels() -> None:
 
 
 copy_manual_docs()
+sync_burncloud_ui_docs()
 build_sidebar()
 ensure_node_implementation_plan_sidebar()
+ensure_burncloud_ui_sidebar()
 localize_sidebar_labels()
-print("Injected curated BurnCloud product docs with categorized Node issue plan before MDX sanitization")
+print("Injected curated BurnCloud product docs with Node and UI product hierarchies before MDX sanitization")
 
 changed = 0
 for md in DOCS.rglob("*.md"):
