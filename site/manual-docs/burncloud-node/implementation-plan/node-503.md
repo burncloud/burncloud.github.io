@@ -1,47 +1,47 @@
 ---
-title: "NODE-503：localhost:3000 本地推理完整 E2E"
+title: "NODE-503：Demand-driven 本地推理完整 E2E"
 slug: /burncloud-node/implementation-plan/node-503/
 ---
 
-# NODE-503：localhost:3000 本地推理完整 E2E
+# NODE-503：Demand-driven 本地推理完整 E2E
 
 ## 第一层：人类阅读区（Human Readable Layer）
 
 **状态：PLANNED**  
 **类别：Local Channel Integration**  
-**功能依赖：NODE-003、NODE-502，以及 Node v0.1 本地执行链全部前置 Issue**
+**功能依赖：NODE-003、NODE-502、NODE-504，以及 Node v0.1 全部前置 Issue**
 
-> 这是实施计划，不是 Codex 的直接开发授权。真正实现前必须重新核对当时的 `burncloud/burncloud/main`、确认所有前置 Issue 已 DONE，并通过 READY Gate。
+> 这是实施计划，不是 Codex 的直接开发授权。真正实现前必须确认所有前置 Issue 已 DONE，并基于当时 `burncloud/burncloud/main` 重新通过 READY Gate。
 
 ### TL;DR
 
-NODE-503 不再增加新的核心能力，而是证明 BurnCloud Node v0.1 的整条本地推理链真的能从“逻辑模型”一路走到 `localhost:3000/v1/...` 并返回响应。客户端不需要知道 GGUF 路径、内部端口、PID 或 llama-server 命令，未 READY 的模型也绝不能接到真实流量。这个 E2E 稳定通过，才说明 Node 的本地执行闭环真正完成。
+NODE-503 要证明用户只写 `model=qwen-4b` 就能完成整个 Node 生命周期：本地 READY 时自动用本地；本地没有但 Provider 有时先用 Provider、后台自动下载并加载；两边都没有但本机能跑时明确返回 `MODEL_PREPARING`；硬件或磁盘不满足时返回真实原因。这个 E2E 全部通过，才算 BurnCloud Node v0.1 产品闭环完成。
 
 ### 背景与动机（Why）
 
-前面的 Issue 都可以单独测试通过，但系统级失败往往发生在模块连接处：Resolver 选出的 Artifact Runtime 不认、Process 已 READY 但 Channel 没注册、Channel 注册了却被 Router 错误过滤，或者本地链能跑但破坏了 Provider/Auth/Billing 回归。
+前面的 Issue 可以分别证明 Resolver、Download、Runtime 和 Router 都正确，但产品价值在于它们能否在真实 `/v1` 请求下自动协作。尤其要防止一种“技术上都完成、用户仍需手工下载启动”的假完成。
 
-因此 NODE-503 是**闭环证明**，不是“大扫除 Issue”。如果 E2E 暴露某个前置合同错误，应回到对应 Issue / 新 Engineering Issue 修正，而不是借 E2E 权限顺手重构 Router、Billing 或 Auth。
+NODE-503 是系统验收，不是大扫除 Issue。任何某层失败都必须回到对应责任边界修复。
 
 ### 范围速览（In / Out）
 
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| 验证完整本地执行链 | 不新增第二套核心架构 |
-| 从逻辑 Model ID 发起准备/运行 | 不要求客户端提供 GGUF 绝对路径 |
-| 通过 existing Router 的 `localhost:3000/v1/...` 请求 | 不让客户端管理 PID / 内部端口 |
-| 验证 non-READY 不接流量 | 不借 E2E 修改 Provider/Billing/Auth 语义 |
-| 验证 Provider/Auth/Billing 回归 | 不把失败藏在测试专用 bypass 里 |
+| 用户只通过 existing `/v1` 声明 model | 不调用管理 API 手工下载/启动作为前置 |
+| 验证 Local READY 直接服务 | 不直接请求 llama-server 冒充成功 |
+| 验证 Provider-first + background local prepare | 不让请求等待完整模型下载 |
+| 验证 MODEL_PREPARING / resource errors | 不返回模糊“模型不存在”代替真实状态 |
+| 验证并发 demand 去重和自动切 Local | 不借 E2E 重写 Router/Billing/Auth |
 
 ### 风险与安全网（Risk）
 
-> 这是**系统验收 Issue，不是扩权 Issue**：E2E 如果发现某层合同不成立，Codex 必须定位并停止在对应责任边界，而不是扩大 NODE-503 来“把所有东西修通”。
+> 这是最终产品行为验收：只要测试仍需要人工 GGUF、PID、端口、start/stop 命令，就说明 Node 还没有完成。
 
 ### 审批者关注点（Reviewer Focus）
 
-1. **是否同意这条链稳定通过才算 Node v0.1 本地执行闭环完成？**
-2. **是否同意客户端只提供逻辑模型/API 请求，不承担 GGUF、PID、内部端口等内部实现细节？**
-3. **是否同意本地能力上线不能以破坏现有 Provider routing、Auth、Billing 为代价？**
+1. 是否同意“用户只声明 model”是 v0.1 的硬完成标准？
+2. 是否同意 Provider-first 与后台 Local Preparation 可以并行？
+3. 是否同意硬件/磁盘失败必须可解释，而不是隐藏或伪装成 model not found？
 
 ---
 
@@ -49,174 +49,156 @@ NODE-503 不再增加新的核心能力，而是证明 BurnCloud Node v0.1 的�
 
 ### 1. Goal
 
-验证以下主链在真实/受控测试环境中可重复成立：
+验证真实产品闭环：
 
 ```text
-logical model ID
-      ↓
-HardwareProfile
-      ↓
-Model Resolver
-      ↓
-ResolvedModel
-      ↓
-Model Preparation
-      ↓
-READY Artifact
-      ↓
-llama.cpp Runtime Adapter
-      ↓
-ProcessSpec
-      ↓
-Process Spawn
-      ↓
-Readiness / Health = READY
-      ↓
-Local Channel / Ability
-      ↓
-Existing ModelRouter
-      ↓
-Existing BurnCloud Server
-      ↓
-http://localhost:3000/v1/...
-      ↓
-normal model response
+/v1 request(model=qwen-4b)
+        ↓
+Existing ModelRouter serves current reality
+        +
+NODE-504 observes demand
+        ↓
+Resolve / Prepare / Runtime / READY
+        ↓
+Local Channel appears
+        ↓
+future requests naturally prefer Local
 ```
 
-### 2. Evidence
+### 2. Mandatory E2E Scenarios
 
-以下证据基于 current main 的现有基础能力：
-
-- `src/main.rs` / `burncloud_server::start_server()` 已提供统一 BurnCloud Server startup。
-- `crates/server/src/lib.rs :: create_app` 已把 data-plane Router 作为统一 App 的 fallback，并应用全局 security boundary。
-- current `InferenceService` 已证明 `llama-server → /v1/models readiness → Local Channel + Ability` 的原型路径存在。
-- `ModelRouter` 已从 existing Channel / Ability 数据中选择候选并执行 availability / scheduler / failover。
-
-NODE-503 的任务是验证前置 Issue 完成后这些能力形成一个闭环，而不是重新定义它们。
-
-### 3. Entry / Starting Point
-
-READY Audit 必须确认所有前置 Issue 的真实 DONE evidence，并重新检查：
+#### Scenario A — Local already READY
 
 ```text
-burncloud node runtime entry
-NodeContext / Server composition
-HardwareProfile / Resolver
-Model Preparation
-Runtime / Process Manager
-Local Channel integration
-existing /v1 data plane
+Local READY + Provider optional
+        ↓
+/v1 request
+        ↓
+Existing Router selects Local according to current policy
+        ↓
+normal response
 ```
 
-### 4. Reuse Targets / Do Not Recreate
-
-#### Reuse
-
-- existing BurnCloud Server / Router；
-- 已完成的 NODE-001~502 contracts；
-- existing Auth / Billing / quota path；
-- 最小可控 GGUF fixture 或明确批准的测试模型资源；
-- existing E2E test infrastructure。
-
-#### Do Not Recreate
+#### Scenario B — Local absent, Provider available
 
 ```text
-E2E-only Router bypass
-E2E-only authentication bypass
-E2E-only direct llama-server client as success proof
-second local API gateway
-test-only model state that cannot occur in production path
+Request #1
+  ↓
+Provider response succeeds immediately
+  +
+exactly one background Model Demand
+  ↓
+Download → Verify → Runtime → READY
+  ↓
+Local Channel registered
+  ↓
+subsequent request prefers Local
 ```
 
-### 5. Scope
+当前 Provider 响应不能等待本地下载。
+
+#### Scenario C — Local absent, Provider unavailable, local feasible
+
+```text
+/v1 request
+   ↓
+no serving candidate
+   + demand accepted
+   ↓
+503 MODEL_PREPARING
+   ↓
+background pipeline continues
+   ↓
+READY
+   ↓
+retry succeeds through Local
+```
+
+#### Scenario D — No Provider and local preparation impossible
+
+至少验证：
+
+```text
+INSUFFICIENT_VRAM
+INSUFFICIENT_DISK
+UNSUPPORTED_RUNTIME or NO_COMPATIBLE_VARIANT
+```
+
+返回 machine-readable diagnosis，而不是 generic model-not-found。
+
+#### Scenario E — Concurrent demand dedup
+
+```text
+N concurrent requests for same model
+        ↓
+<= 1 active local preparation pipeline
+<= 1 managed runtime identity
+<= 1 Local Channel identity
+```
+
+### 3. Reuse Targets / Do Not Recreate
+
+Reuse：existing Server/Router/Auth/Billing、NODE-001~504 production path、curated model manifest、minimal approved test model/runtime artifacts。  
+Do Not Recreate：E2E-only Router bypass、direct llama client、test-only local state impossible in production。
+
+### 4. Scope
 
 #### Allowed
 
-- 建立完整 E2E fixture / harness；
-- 使用最小、可重复的本地测试模型资源；
-- 启动完整 Node local chain；
-- 通过真实 existing `/v1/...` 入口发请求；
-- 观测前置合同状态；
-- 对明确属于 integration wiring 的小型修复提出对应 scoped change。
+- deterministic E2E harness/fixture；
+- controlled provider fixture when required；
+- controlled local model/runtime artifacts；
+- real `/v1` request path；
+- observation of demand/preparation/runtime/channel states；
+- precise assertions on response origin/state transitions。
 
 #### Avoid
 
-- 借 E2E 重构 Provider Router；
-- 修改 Billing / quota / Auth 语义；
-- 重新设计 Resolver / Runtime / Process contracts；
-- 引入 P2P / BurnCloud Network；
-- 多机 scheduling；
-- 用 test-only bypass 代替生产路径。
+- manual pre-download/start steps as success criteria；
+- Provider Router rewrite；
+- Auth/Billing weakening；
+- test-only bypass；
+- direct llama-server success proof；
+- architecture changes hidden inside E2E fixes。
 
-### 6. Behavior Contract
+### 5. Behavior Contract
 
-#### Client-visible inputs
-
-客户端只需要使用 BurnCloud 正常 API 合同，例如：
+客户端只提供：
 
 ```text
-base URL: http://localhost:3000
-model: logical/canonical model identity exposed by product contract
-API credential: existing BurnCloud data-plane credential semantics
-request body: existing compatible /v1 request
+base URL
+existing BurnCloud credential
+model
+normal request body
 ```
 
-客户端不得要求提供：
+客户端不得提供：
 
 ```text
-GGUF absolute path
-llama-server binary path
-internal runtime port
-PID / Child handle
-gpu_layers command argument
-download GID
+GGUF path
+artifact URL
+llama-server path
+internal port
+PID
+gpu_layers
+download task ID
+start/stop command
 ```
 
-#### Required system behavior
-
-```text
-model not READY => no real inference traffic reaches local runtime
-model READY => Local Channel may become routable
-local runtime fails => stale channel becomes unavailable
-request => existing ModelRouter chooses according to current routing semantics
-response => returns through existing BurnCloud data plane
-```
-
-### 7. Failure / Forbidden Fallbacks
-
-E2E 失败必须定位责任层，不得通过扩大 NODE-503 掩盖：
-
-```text
-Resolver contract failure -> stop / route to Resolver issue
-Artifact failure          -> stop / route to Preparation issue
-Runtime/Process failure   -> stop / route to Runtime issue
-Channel health failure    -> stop / route to Local Channel issue
-Auth/Billing regression   -> reject integration; do not weaken invariant
-```
+### 6. Failure / Forbidden Fallbacks
 
 禁止：
 
 ```text
-call llama-server directly and call E2E successful
-skip existing Router
-skip API credential/security boundary
-mark model READY only for tests
-hard-code internal port/PID/path in client test
-change Provider routing to make local path win
-silently auto-download huge model inside inference request
+provider available => block until local download finishes
+no provider + preparing => generic MODEL_NOT_FOUND
+hardware insufficient => pretend download is still preparing
+local failure => bypass Router/Auth/Billing
+direct llama-server call => call Node E2E passed
+concurrent requests => duplicate downloads/runtimes/channels
 ```
 
-### 8. Impact / Invariants
-
-```text
-persistence: exercise existing model/download/channel state
-external_calls: optional artifact preparation source + loopback runtime
-billing_usage_quota: existing semantics must remain intact
-auth_authorization: existing data-plane credential semantics must remain intact
-routing_provider: existing ModelRouter semantics must remain intact
-process_runtime_lifecycle: full local runtime lifecycle exercised
-public_api: existing localhost:3000 /v1/... path
-```
+### 7. Impact / Invariants
 
 必须保持：
 
@@ -224,87 +206,79 @@ public_api: existing localhost:3000 /v1/... path
 - `INV-ROUTER-001`；
 - `INV-AUTH-002`；
 - `INV-BILLING-001`；
-- `INV-BILLING-002`。
+- `INV-BILLING-002`；
+- `Process Spawned != Model READY`；
+- same model demand is deduplicated。
 
-### 9. Dependencies
+### 8. Dependencies
 
-最低前置：`NODE-003`、`NODE-502`。  
-实际 READY Gate 必须确认 Node v0.1 local chain 所有必需 Issue 已 DONE：
+实际 READY Gate 必须确认：
 
 ```text
 NODE-001~003
 NODE-101~103
 NODE-201~204
 NODE-301~303
-NODE-401~404
+NODE-400~404
 NODE-501~502
+NODE-504
 ```
 
-### 10. Stop Conditions
+### 9. Stop Conditions
 
-```text
-STOP IF:
-- any required predecessor is not actually DONE
-- E2E requires bypassing existing Server/Router/Auth/Billing
-- client must supply GGUF path/PID/internal port to succeed
-- non-READY model must be made routable for the test
-- integration requires changing an upstream contract outside this Issue
-- a test-only code path would differ materially from production execution
-- an INV-* must be weakened to make the E2E pass
-```
-
-触发时必须输出责任层、证据和需要的新/返工 Issue；不得在 NODE-503 内扩大架构权限。
+STOP IF：任何前置 Issue 未真实 DONE、E2E 需要手工 model lifecycle、需要绕过 existing Server/Router/Auth/Billing、需要 test-only production-incompatible path、或必须弱化 invariant 才能通过。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
 
-### ✅ 完整链路
+### ✅ Scenario A：Local READY
 
-- [ ] 所有必需前置 Issue 已有真实 DONE evidence。
-- [ ] 从 logical Model ID 能进入 Resolver，而不是由客户端指定 Artifact。
-- [ ] Artifact 可按 Preparation contract 到达 READY。
-- [ ] llama.cpp Runtime 由 ProcessSpec 启动，不需要客户端提供命令参数。
-- [ ] Process 通过 readiness 后才进入 READY。
-- [ ] READY Runtime 注册为 existing Local Channel / Ability。
-- [ ] 请求通过 existing ModelRouter + existing Server 到达本地 Runtime。
-- [ ] `http://localhost:3000/v1/...` 返回正常模型响应。
+- [ ] `/v1` 只声明 model 即可成功。
+- [ ] Local READY 通过 existing Router 被选中。
+- [ ] 客户端不知道内部 port/PID/path。
 
-### ✅ 客户端体验
+### ✅ Scenario B：Provider-first → 自动 Local
 
-- [ ] 客户端不提供 GGUF absolute path。
-- [ ] 客户端不提供 internal runtime port。
-- [ ] 客户端不管理 PID / Child handle。
-- [ ] 客户端不直接调用 llama-server。
-- [ ] inference 请求不会因为隐藏下载大型模型而无限阻塞。
+- [ ] Local absent 时 Provider 请求立即成功。
+- [ ] 同时自动产生后台 local demand。
+- [ ] Provider 响应不等待模型下载。
+- [ ] 下载/校验/启动/READY 全自动完成。
+- [ ] Local Channel 自动出现。
+- [ ] 后续请求按 existing Router policy 优先 Local。
 
-### ✅ 安全与失败行为
+### ✅ Scenario C：无 Provider但可本地准备
 
-- [ ] 未 READY 模型不接真实流量。
-- [ ] Runtime stop/crash/unhealthy 后 Local Channel 不再可路由。
-- [ ] E2E 未使用 Router/Auth/Billing bypass。
-- [ ] 任何前置合同失败都能定位责任层，而不是被 NODE-503 静默修补。
+- [ ] 初始请求返回 `503 MODEL_PREPARING` 或等价明确合同。
+- [ ] background prepare 不因请求结束而取消。
+- [ ] READY 后重试成功。
+
+### ✅ Scenario D：不可准备
+
+- [ ] VRAM 不足返回结构化诊断。
+- [ ] Disk 不足返回结构化诊断。
+- [ ] Runtime/Variant 不支持返回结构化诊断。
+- [ ] 不使用 generic model-not-found 掩盖已知原因。
+
+### ✅ Scenario E：并发与生命周期
+
+- [ ] N 个相同请求只产生一个 active prepare pipeline。
+- [ ] 不产生重复 Runtime / Local Channel。
+- [ ] Node shutdown 自动清理 managed process。
+- [ ] crash/unhealthy 后 Local Channel 自动失去 routable 状态。
 
 ### ✅ 回归验证
 
-- [ ] existing Provider routing regression 通过。
-- [ ] existing data-plane authentication regression 通过。
-- [ ] `INV-AUTH-002` 保持成立。
-- [ ] `INV-BILLING-001/002` 保持成立。
-- [ ] `INV-RUNTIME-002`、`INV-ROUTER-001` 保持成立。
-
-### ✅ 可重复性
-
-- [ ] E2E fixture/model resource 有明确版本或稳定 identity。
-- [ ] 测试可从干净状态重复执行。
-- [ ] 失败日志能指出 Hardware / Resolver / Preparation / Runtime / Channel / Router 中的责任层。
-- [ ] 不依赖手工修改数据库、PID 或内部端口才能通过。
+- [ ] existing Provider routing 通过。
+- [ ] existing Auth / Billing semantics 保持。
+- [ ] 未 READY 模型永不接真实流量。
+- [ ] inference 请求不同步阻塞等待大型模型下载。
 
 ### ✅ 工程流程
 
 - [ ] current-main Evidence Audit 已完成。
 - [ ] Engineering Issue 已通过 READY Gate。
-- [ ] Task Contract 明确完整 execution path 和 protected invariants。
+- [ ] Task Contract 明确完整 production execution path。
 - [ ] 所有实现只通过分支 + Pull Request 合并。
 
-> **只有这一页对应的 E2E Checklist 全部通过，BurnCloud Node v0.1 的本地执行闭环才可以宣布完成。**
+> **只有以上场景全部通过，才能宣布 BurnCloud Node v0.1 完成。**
