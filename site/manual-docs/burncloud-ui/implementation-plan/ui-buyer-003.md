@@ -9,94 +9,71 @@ slug: /burncloud-ui/implementation-plan/ui-buyer-003/
 
 **状态：PLANNED**  
 **类别：Buyer**  
-**功能依赖：UI-003、UI-BUYER-002、Node demand states、Buyer Logs（trace link）**
+**功能依赖：UI-003、UI-007、UI-008 + Marketplace + authenticated data-plane proxy + Node demand states**
 
-> 产品合同：[/burncloud-ui/buyer/playground/](/burncloud-ui/buyer/playground/)
+> 产品合同：[/burncloud-ui/buyer/playground/](/burncloud-ui/buyer/playground/)  
+> Canonical production route：`/console/buyer/playground`
 
 ### TL;DR
-
-Playground 是第一次真实 API 使用，不是 demo。Buyer 选 Model/Tier、发真实请求、看到 response/latency/usage/cost/request trace；不能选 Provider/GPU，也不能 Download/Start Runtime。
-
-### 背景与动机（Why）
-
-current `playground_live.rs` 已经通过 authenticated console proxy 发真实路由请求，且 bearer secret 留在 server-side。这是重要复用资产；迁移目标是产品化 Model/Tier 与 Node states，而不是重写执行路径。
+Playground 必须通过真实 BurnCloud data plane 执行模型请求，Buyer 只选 Model/Tier/推理参数，不选 Provider/GPU。Node 本地准备状态只能 Observe/Explain。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| real request/response | 不 fake response |
-| Model/Tier selection | 不选 Provider/GPU |
-| latency/usage/cost/trace | 不直接 download/start |
-| preparing/blocker/recovered | 不实现 Demand Reconciliation |
-
-### 审批者关注点（Reviewer Focus）
-1. 是否继续使用真实 production semantics？
-2. management JWT / API credential boundary 是否保持？
-3. MODEL_PREPARING 等状态是否来自 backend 而不是 spinner 猜测？
+| Model/Tier/prompt/params | 不选 Provider/GPU |
+| real `/v1` request path | 不 bypass Auth/Billing/Router |
+| response + usage/latency/trace | 不直接 Download/Start Runtime |
+| localized Node status | 不翻译 Model ID/error code |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-把现有真实 Playground 演进为 Buyer Model/Tier 产品入口，并正确解释 Node/Serving 状态。
+在 `/console/buyer/playground` 提供真实、可追溯、Buyer-safe 的 inference test surface。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — current `/console/api/playground/chat` 发真实请求。
-- STATIC CONFIRMED — client 使用 opaque token management reference，bearer secret server-side。
-- STATIC CONFIRMED — current response 已解析 usage 与 route trace headers。
-- STATIC CONFIRMED — current model choices 来自 active Channels，尚未是 product catalog。
-- UNKNOWN — Tier contract 与 canonical Node preparing/blocker/recovery semantics。
+- STATIC CONFIRMED — current Playground 已通过 authenticated console proxy 触发真实 data-plane request 并保留 route trace。
+- STATIC CONFIRMED — Node demand-driven architecture 要求 Provider serving 与 Local preparation 并行，UI 不拥有 Runtime。
+- UNKNOWN — Product Tier 与完整 Node lifecycle projection contracts。
 
 ### 3. Entry / Starting Point
-
-`functional_pages/playground_live.rs`、`/console/api/playground/chat`、existing `/v1/*` semantics、UI-BUYER-002 catalog。
+current Playground/proxy、Marketplace model identity、UI-004、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：existing proxy/token ref/real response/usage/trace/Router。  
-Do Not Recreate：fake endpoint、second execution path、Provider/GPU selector、runtime/download controls。
+Reuse：existing authenticated proxy、Router/Billing/Auth path、request trace、shared status/i18n。  
+Do Not Recreate：direct Provider call、client route engine、Node downloader/runtime controls。
 
 ### 5. Scope
-
-Allowed：Buyer Playground UI、Model/Tier selector、structured error/preparing states、Logs trace navigation。  
-Avoid：Router/Node demand/runtime backend、catalog backend、billing semantics。
+Allowed：prompt/model/tier/params、run/cancel where supported、response/usage/trace/status presentation。  
+Avoid：routing policy、Provider selection、Node process lifecycle。
 
 ### 6. Behavior Contract
-
-**Inputs**：Buyer + approved Model/Tier + request content。  
-**Outputs**：real response or structured production failure/preparing state + usage/cost/latency/trace。  
-**Ownership**：Router executes；Node demand prepares；UI composes/presents。  
-**Side Effects**：real potentially billable inference request only。
+**Inputs**：Buyer identity/token、Model/Tier/prompt/params、locale。  
+**Outputs**：real response or structured failure + usage/latency/route receipt + localized Node serving explanation。  
+**Ownership**：Router/Data Plane/Node own execution；UI owns interaction/presentation。  
+**Side Effects**：real inference usage/billing occurs。
 
 ### 7. Failure / Forbidden Fallbacks
-
-区分 Auth/Billing/Serving/MODEL_PREPARING/Hardware 等 approved classes；secondary usage failure 不抹掉成功 response。禁止 fake response、manual Provider/GPU/runtime、无限 spinner 代替 state。
+Request failure 不伪装 success；MODEL_PREPARING 等 code 保留 raw machine value + localized explanation。禁止直连 Provider、URL 获权、Runtime 操作。
 
 ### 8. Impact / Invariants
-
-真实 inference external call/billing semantics；management JWT 不能成为 data-plane credential；Buyer declares Model/Tier only。
+Data-plane call yes；Billing/Auth/Router semantics unchanged；route `/console/buyer/playground`；API/model/error identifiers unlocalized。
 
 ### 9. Dependencies
-
-UI-003、UI-BUYER-002、Node state contracts、Buyer Logs trace destination。
+UI-003、007、008、Marketplace、UI-004 Node states、real proxy/data-plane contract。
 
 ### 10. Stop Conditions
-
-STOP IF UI 需要下载/启动 runtime，preparing/blocker 无 authoritative contract，final model list 只能从 raw Channels 得出，或 Router semantics 必须修改。
+STOP IF request 需要绕过 existing Router/Auth/Billing、Buyer 必须选择 Provider/GPU、或 UI 必须管理模型进程。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Playground 与 production request semantics 一致。
-- [ ] no fake response。
-- [ ] Buyer 只选择 Model/Tier。
-- [ ] response/usage/latency/request trace 真实。
-- [ ] preparing/blocker/recovered explicit。
-- [ ] no Download/Deploy/Runtime control。
-- [ ] Request ID 可去 Buyer Logs。
-- [ ] credential security invariants 回归通过。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Buyer auth/tenant scope 验证。
+- [ ] 请求真实经过 BurnCloud Router/Auth/Billing。
+- [ ] Provider/Local 选择不交给 Buyer。
+- [ ] Node preparing/ready/failure 使用 UI-004 + UI-007。
+- [ ] error/model/API identifiers 不翻译。
+- [ ] success/error/timeout/preparing/recovered E2E。
 - [ ] branch + PR。

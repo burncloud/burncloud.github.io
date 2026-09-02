@@ -9,90 +9,70 @@ slug: /burncloud-ui/implementation-plan/ui-buyer-004/
 
 **状态：PLANNED**  
 **类别：Buyer**  
-**功能依赖：UI-003**
+**功能依赖：UI-003、UI-007、UI-008 + owner-scoped Token contract**
 
-> 产品合同：[/burncloud-ui/buyer/api-keys/](/burncloud-ui/buyer/api-keys/)
+> 产品合同：[/burncloud-ui/buyer/api-keys/](/burncloud-ui/buyer/api-keys/)  
+> Canonical production route：`/console/buyer/api-keys`
 
 ### TL;DR
-
-Buyer 只管理自己的 BurnCloud API credential：Create、Rotate、Revoke 以及当前 backend 真正支持的 policy。完整 Secret 只允许在批准的创建/轮换响应中短暂展示，不从 list/get 再拿回来。
+Buyer 管理自己的 API credentials；Secret 只在创建/旋转合同允许的瞬间显示，列表不重新返回 bearer secret。URL 或 WorkspaceGate 不能替代服务端 owner scope。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| owner-scoped create/rotate/revoke | 不显示 Supplier/Provider credential |
-| masked metadata / last used | 不长期保存 plaintext secret |
-| spend/IP policy（若支持） | 不在 Buyer 页面选 owner |
-| explicit failure | 不 optimistic success |
-
-### 审批者关注点（Reviewer Focus）
-1. server owner scope 是否仍是授权真相？
-2. list/get 是否始终 redacted？
-3. optional Name/Scope 是否只有 backend 支持时才出现？
+| list/create/revoke own keys | 不查看别人 key |
+| one-time secret reveal | 不在列表回显 secret |
+| spend/rate metadata if authoritative | 不前端伪造 quota |
+| localized confirmations | 不翻译 token IDs |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-把现有 API Keys 页面适配为 Buyer self-service credential page，并保持 secret/security invariants。
+在 `/console/buyer/api-keys` 提供 owner-scoped credential lifecycle UI。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — `api_keys_live.rs` 已用真实 TokenService create/rotate/revoke。
-- STATIC CONFIRMED — server list/get 返回 opaque management id + token hint，不返回 bearer secret。
-- STATIC CONFIRMED — server 对 non-admin token management 做 owner scope。
-- STATIC CONFIRMED — security tests 验证 cross-user denial/redaction。
-- STATIC CONFIRMED — current UI 仍有 admin-style owner selection，需要 Buyer page 去除。
-- UNKNOWN — target Name/Scope 若无 backend contract 不得添加。
+- STATIC CONFIRMED — current `/console/api/tokens` 已有 token CRUD capability。
+- STATIC CONFIRMED — management list/read path不应返回 bearer secret，owner scope 需服务端验证。
+- UNKNOWN — spend cap/rate-limit metadata 的最终 authoritative contract。
 
 ### 3. Entry / Starting Point
-
-`functional_pages/api_keys_live.rs`、`backend::TokenService`、`server/api/token.rs`、security invariant tests。
+current APIKeys page、TokenService/backend endpoints、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：TokenService、management refs、secret reveal pattern、owner authorization。  
-Do Not Recreate：browser vault、client authorization filter、upstream credentials、duplicate token service。
+Reuse：token service、auth token handling、secure one-time secret pattern、shared dialogs/i18n。  
+Do Not Recreate：client credential DB、secret cache、frontend owner filter as security boundary。
 
 ### 5. Scope
-
-Allowed：Buyer self-only page、supported policy controls、confirmation/reveal/test。  
-Avoid：token auth model、multi-owner admin management、unsupported schema fields。
+Allowed：own key list/create/revoke/rename/metadata where supported。  
+Avoid：Admin key management、auth backend redesign、secret persistence。
 
 ### 6. Behavior Contract
-
-**Inputs**：Buyer + explicit token action。  
-**Outputs**：owner metadata + approved one-time new secret。  
-**Ownership**：server owns auth/secret lifecycle；UI owns reveal/confirm。  
-**Side Effects**：real credential mutations。
+**Inputs**：Buyer identity + authorized token actions + locale。  
+**Outputs**：owner-scoped key metadata and one-time secret when backend explicitly returns it。  
+**Ownership**：Token service owns credentials/authorization。  
+**Side Effects**：credential mutations。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Mutation failure = not applied；secret absent = 不恢复/不读 storage；owner mismatch = server denial。Secret 不进 URL/log/persistent client state。
+Create/revoke failure 不 optimistic success；secret reveal不能从历史数据恢复。禁止显示全量 tokens 再前端过滤、URL 获权、翻译 raw token reference。
 
 ### 8. Impact / Invariants
-
-Existing token persistence only；management ref ≠ bearer credential；Buyer only own keys；frontend visibility ≠ authorization。
+Security-sensitive；backend owner scope final；canonical route `/console/buyer/api-keys`。
 
 ### 9. Dependencies
-
-UI-003；core backend 已有强复用证据。Optional fields 需单独 backend contract。
+UI-003、007、008 + owner-scoped Token contract。
 
 ### 10. Stop Conditions
-
-STOP IF list/get 必须返回 bearer secret，Buyer 需要拉全量 users/tokens 再 client filter，或 unsupported fields 需要未授权 schema change。
+STOP IF service returns cross-tenant list、UI must retain bearer secret、或 route/auth 需要绕过 UI-008/Backend Authorization。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Buyer 仅管理自己的 API Keys。
-- [ ] Create/Rotate/Revoke real backend working。
-- [ ] list/get never redisclose bearer secret。
-- [ ] cross-tenant denied server-side。
-- [ ] optional unsupported fields 不伪造。
-- [ ] Empty/Error/Recovered verified。
-- [ ] security invariants remain green。
-- [ ] branch + PR。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Buyer only sees own key metadata。
+- [ ] secret only appears under approved one-time contract。
+- [ ] revoke/create failure truthful。
+- [ ] unauthorized direct URL/API access denied。
+- [ ] dialogs/messages localized；IDs/secrets不翻译。
+- [ ] branch + PR + security regression tests。

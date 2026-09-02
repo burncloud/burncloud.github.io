@@ -9,90 +9,68 @@ slug: /burncloud-ui/implementation-plan/ui-admin-001/
 
 **状态：PLANNED**  
 **类别：Admin**  
-**功能依赖：UI-003 + Platform Revenue / Verified Cost / Capacity / Availability**
+**功能依赖：UI-003、UI-007、UI-008 + Revenue / Cost / Capacity / Reliability contracts**
 
-> 产品合同：[/burncloud-ui/admin/overview/](/burncloud-ui/admin/overview/)
+> 产品合同：[/burncloud-ui/admin/overview/](/burncloud-ui/admin/overview/)  
+> Canonical production route：`/console/admin/overview`
 
 ### TL;DR
-
-Admin Overview 是 Business + Infrastructure Command Center：先回答 Today Revenue、Gross Margin、Online GPU Capacity、API Availability，再告诉 Admin 最值得关注的 Supply/Capacity/Demand/Economics 风险。
-
-### 背景与动机（Why）
-
-current Overview 已经能读取 system metrics、Channels、Logs、Tokens、Usage、Billing，但目标首页不是 setup dashboard，也不能把 Buyer billing 当平台 Revenue。Admin 需要系统级结论而不是原始指标墙。
+Admin Overview 只提供平台级经营与基础设施结论：Revenue/Cost/Margin、Supply/Capacity/Demand、Reliability 与需要人工处理的例外。不是 Provider/Route/GPU 列表首页。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Revenue / Margin | 不显示 Buyer secret |
-| Online Capacity | 不逐 PID 操作 |
-| API Availability | 不做原始 GPU 信息墙 |
-| Needs Attention | 不前端猜成本/毛利 |
-
-### 审批者关注点（Reviewer Focus）
-1. Gross Margin 是否只在 cost complete 时显示？
-2. Needs Attention 是否有原因/影响/动作/结果？
-3. 首页是否先给结论而不是原始 infrastructure dump？
+| platform economics summary | 不猜 Gross Margin |
+| supply/capacity/demand conclusions | 不逐 GPU 调度 |
+| reliability/attention | 不把 Admin URL 当权限 |
+| Operations drilldown | 不直接执行高风险动作 |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-建立 platform-level Admin Overview composition，不在页面定义 Revenue/Cost/Capacity truth。
+建立 `/console/admin/overview` 的 Admin command overview。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — `critical_pages/dashboard.rs::Overview` 已有真实 operational data fragments。
-- STATIC CONFIRMED — current page 是 setup/traffic oriented，不是 target economics/capacity command center。
-- UNKNOWN — platform Revenue ledger、verified cost/Gross Margin、online GPU capacity aggregation、cross-domain risk summary。
-- TARGET CONFIRMED — cost incomplete 时禁止 fake precise Margin。
+- STATIC CONFIRMED — current Overview 有多个真实数据片段，但 mental model 混合。
+- UNKNOWN — unified platform revenue/cost/capacity/demand/reliability projections。
 
 ### 3. Entry / Starting Point
-
-current Overview UI/resource patterns；Admin workspace；Revenue/Cost/Capacity/Availability/Risk summary services。
+current Overview patterns、future platform domain services、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：existing observability/channel/log/status/partial-failure patterns。  
-Do Not Recreate：frontend Revenue/Margin engine、user billing as platform revenue、raw PID dashboard。
+Reuse：authoritative finance/capacity/demand/reliability facts、shared metrics/status。  
+Do Not Recreate：client gross-margin engine、capacity engine、manual GPU scheduler。
 
 ### 5. Scope
-
-Allowed：Admin Overview/read-only aggregates/drilldowns。  
-Avoid：Revenue/Cost/Capacity engines、payments、scheduler/process controls。
+Allowed：read-only executive summary + drilldowns。  
+Avoid：domain engines、routing/runtime control、financial mutation。
 
 ### 6. Behavior Contract
-
-**Inputs**：Admin + revenue/cost/capacity/availability/risk facts。  
-**Outputs**：platform conclusions + Needs Attention/drilldown。  
-**Ownership**：domain services own facts；Overview composes。  
-**Side Effects**：read-only；high-risk action 在 Operations/domain page。
+**Inputs**：Admin-authorized identity + platform facts + locale。  
+**Outputs**：platform conclusions/alerts/navigation。  
+**Ownership**：domain services own facts。  
+**Side Effects**：read-only/navigation。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Missing cost => Margin Unknown/Estimated；partial failure 保留 confirmed metrics；action HTTP 200 不等于 recovery verified。禁止 Buyer secret/client economics/per-PID normal control。
+Incomplete cost → Margin unavailable/estimated；unknown capacity 不显示 Healthy。禁止 URL 获权、client business truth。
 
 ### 8. Impact / Invariants
-
-Read-only platform analytics；Admin auth；Overview gives conclusions not raw control；Margin requires verified cost。
+Admin-only read；route `/console/admin/overview`；estimated != final。
 
 ### 9. Dependencies
-
-UI-003 + Revenue + Verified Cost/Margin semantics + Capacity + Availability + Needs Attention summaries。
+UI-003、007、008 + platform finance/capacity/demand/reliability contracts。
 
 ### 10. Stop Conditions
-
-STOP IF target metrics 需要 frontend formulas/mock、user billing 被重解释成 platform revenue、或 Overview 必须实现 domain action engine。
+STOP IF Overview must compute domain truth client-side、requires direct runtime control、or Admin authorization cannot be server-side verified。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Revenue/Margin/Capacity/Availability authoritative。
-- [ ] incomplete cost never fake precise Margin。
-- [ ] Needs Attention includes reason/impact/action/result。
-- [ ] no per-GPU/PID daily operation burden。
-- [ ] partial/recovered states truthful。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Admin workspace/API authorization verified。
+- [ ] Revenue/Cost/Margin/Capacity/Demand facts authoritative or explicit Unknown。
+- [ ] no fake precise margin/capacity。
+- [ ] money/number/time/status localized via UI-007。
 - [ ] branch + PR。

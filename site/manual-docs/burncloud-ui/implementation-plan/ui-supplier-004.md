@@ -9,85 +9,68 @@ slug: /burncloud-ui/implementation-plan/ui-supplier-004/
 
 **状态：PLANNED**  
 **类别：Supplier**  
-**功能依赖：UI-003 + Reliability Service / Node Evidence / Event Semantics**
+**功能依赖：UI-003、UI-007、UI-008 + Reliability Evidence contract**
 
-> 产品合同：[/burncloud-ui/supplier/reliability/](/burncloud-ui/supplier/reliability/)
+> 产品合同：[/burncloud-ui/supplier/reliability/](/burncloud-ui/supplier/reliability/)  
+> Canonical production route：`/console/supplier/reliability`
 
 ### TL;DR
-
-Reliability 让 Supplier 理解自己的稳定性等级、为什么变化、需要修什么。默认给可理解等级与证据，不暴露其他 Supplier、隐藏可被游戏化阈值或 Traffic Weight 算法。
+Reliability 解释“我的供应质量如何、为什么、怎样改善”，必须由可验证 uptime/health/incident evidence 支撑，不在前端制造一个 opaque score。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Reliability Level | 不暴露 hidden scoring internals |
-| Availability Trend | 不显示 other Supplier scores |
-| Unexpected Offline | 不显示 Traffic Weight logic |
-| Actionable Reasons | 不在前端计算 score |
-
-### 审批者关注点（Reviewer Focus）
-1. level 是否可解释？
-2. active vs recovered 是否分离？
-3. actionable reason 是否有下一步？
+| reliability level/evidence | 不 client-compute trust score |
+| uptime/incidents/qualification | 不混同 contribution/revenue share |
+| reasons + improvement path | 不显示其他 Supplier private data |
+| localized explanations | 不翻译 evidence IDs |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-呈现 authoritative Supplier reliability result + evidence + actionability，不在 UI 定义 reliability algorithm。
+建立 `/console/supplier/reliability` 的 evidence-backed reliability view。
 
 ### 2. Evidence
-
-- TARGET CONFIRMED — levels/availability/unexpected offline/actionable reasons。
-- TARGET CONFIRMED — forbid other-Supplier/internal gameable thresholds。
-- UNKNOWN — authoritative Reliability service、Supplier lifecycle events、network/performance evidence、benchmark records。
+- STATIC CONFIRMED — Target 要求 Reliability 与 Level/Contribution/Revenue Share 分离。
+- UNKNOWN — current-main Reliability domain contract and evidence model。
 
 ### 3. Entry / Starting Point
-
-UI-003；Reliability service；Node telemetry/lifecycle evidence；approved benchmark history。
+future Reliability service、Node health/incident evidence、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：canonical evidence/events/benchmark + shared status/chart patterns。  
-Do Not Recreate：frontend reliability formula、local thresholds、second incident store。
+Reuse：health/readiness/incidents/uptime facts、approved reliability policy。  
+Do Not Recreate：client scoring engine、opaque combined business score。
 
 ### 5. Scope
-
-Allowed：Reliability page/evidence/reasons/active-vs-recovered。  
-Avoid：Reliability engine、scheduler/traffic algorithm、cross-Supplier comparison。
+Allowed：reliability status/history/evidence/reason/qualification roadmap。  
+Avoid：policy engine、earnings/contribution computation、Admin cross-supplier details。
 
 ### 6. Behavior Contract
-
-**Inputs**：Supplier scope + authoritative reliability + reasons/events。  
-**Outputs**：level/trend/reasons/action/history。  
-**Ownership**：Reliability/Telemetry own classification/evidence；UI explains。  
-**Side Effects**：read-only。
+**Inputs**：Supplier identity + reliability result + supporting evidence + locale。  
+**Outputs**：status/why/how-to-improve。  
+**Ownership**：Reliability service owns scoring/policy。  
+**Side Effects**：none。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Missing evidence => Unknown reason，不猜 score；partial telemetry 保留 confirmed facts。禁止 frontend score、other Supplier data、hidden thresholds。
+Missing evidence → Unknown；不能根据 UI telemetry 临时算分。禁止把 Level/Contribution/Revenue Share 合成 Reliability。
 
 ### 8. Impact / Invariants
-
-Read-only；evidence-backed；Recovered ≠ Active Problem；Supplier privacy server-side。
+Read-only trust/reliability；route `/console/supplier/reliability`；evidence-backed。
 
 ### 9. Dependencies
-
-UI-003 + Reliability result + Node availability/network/performance evidence + active/recovered event semantics。
+UI-003、007、008 + Reliability contract/evidence。
 
 ### 10. Stop Conditions
-
-STOP IF level 必须由 UI 计算、需要 other Supplier data、hidden thresholds 必须暴露、或需要改变 traffic/scheduler behavior。
+STOP IF score must be computed client-side、evidence unavailable、or unrelated economic concepts must be collapsed。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Reliability level authoritative/explainable。
-- [ ] reasons trace real telemetry/events。
-- [ ] Active Problem / Recovered distinct。
-- [ ] action only where Supplier intervention needed。
-- [ ] no other-Supplier/internal scoring exposure。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] reliability authoritative and evidence-backed。
+- [ ] Level/Reliability/Contribution/Revenue Share remain distinct。
+- [ ] unknown evidence not shown Verified/Healthy。
+- [ ] localized explanation; stable evidence IDs unchanged。
 - [ ] branch + PR。

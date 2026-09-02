@@ -9,86 +9,68 @@ slug: /burncloud-ui/implementation-plan/ui-supplier-006/
 
 **状态：PLANNED**  
 **类别：Supplier**  
-**功能依赖：UI-003 + Final Earnings / Settlement Ledger / Payout Result**
+**功能依赖：UI-003、UI-007、UI-008 + Settlement / Payout Ledger contract**
 
-> 产品合同：[/burncloud-ui/supplier/settlements/](/burncloud-ui/supplier/settlements/)
+> 产品合同：[/burncloud-ui/supplier/settlements/](/burncloud-ui/supplier/settlements/)  
+> Canonical production route：`/console/supplier/settlements`
 
 ### TL;DR
-
-Supplier 必须能区分 Estimated、Payable、Processing、Paid、Failed。Payment API 提交成功不等于 Paid，只有 payout/ledger 真实确认才能变 Paid。
+Supplier Settlements 只展示自己从 Payable → Processing → Paid/Failed 的真实结算生命周期和付款证据；不得把请求提交或 HTTP 200 显示成 Paid。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Payable/Processing/Paid/Failed | 不显示 Buyer Billing |
-| Settlement Period | 不前端算 Payable |
-| Payout Method Summary | 不 optimistic Paid |
-| Statement/Receipt | 不看 other Supplier payout |
-
-### 审批者关注点（Reviewer Focus）
-1. Payable 与 Paid 是否完全分离？
-2. Failed 是否有原因/下一步？
-3. payout result 是否可审计？
+| payable/processing/paid/failed | 不 client-compute payable |
+| settlement history | 不直接调用 payment provider |
+| payout evidence/reference | 不显示其他 Supplier |
+| localized status/currency | 不翻译 tx/reference IDs |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 Supplier-scoped authoritative settlement status/history。
+建立 `/console/supplier/settlements` 的 Supplier-owned settlement lifecycle view。
 
 ### 2. Evidence
-
-- TARGET CONFIRMED — Payable/Processing/Paid/Failed + period + payout summary。
-- TARGET CONFIRMED — API success ≠ Paid。
-- UNKNOWN — Settlement ledger、finalized earnings、payout-provider state、statement/receipt source。
+- STATIC CONFIRMED — Target requires Payable/Processing/Paid/Failed distinction。
+- UNKNOWN — current-main Supplier settlement ledger/payout provider result contract。
 
 ### 3. Entry / Starting Point
-
-UI-003；final earnings；settlement ledger；payout provider；document source。
+future settlement ledger/provider result、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：authoritative financial ledger/results。  
-Do Not Recreate：frontend settlement ledger、client-computed payable、Buyer billing semantics。
+Reuse：finalized earnings、settlement ledger、provider result。  
+Do Not Recreate：client payable ledger、payment provider integration。
 
 ### 5. Scope
-
-Allowed：settlement list/detail/status/documents。  
-Avoid：payout integration、ledger implementation、Admin batch payment。
+Allowed：own settlement list/detail/status/evidence and approved request action if backend supports。  
+Avoid：Admin batch payout、payment engine、earnings computation。
 
 ### 6. Behavior Contract
-
-**Inputs**：Supplier scope + finalized earnings + settlement/payout/document facts。  
-**Outputs**：settlement states/history。  
-**Ownership**：financial backend owns truth；UI presents。  
-**Side Effects**：none by default；任何 payout action 必须独立 Human Gate。
+**Inputs**：Supplier identity + authoritative settlement records/provider results + locale。  
+**Outputs**：payable/payment lifecycle and evidence。  
+**Ownership**：Settlement/payment services own state。  
+**Side Effects**：only explicitly supported Supplier request action。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Unknown/delayed != Paid；document failure 不重写 settlement state；禁止 client payable/optimistic payment/other Supplier records。
+Submission != Processing/Paid unless authoritative state says so；partial/failed stays truthful。禁止 client payable calculation or optimistic paid。
 
 ### 8. Impact / Invariants
-
-Financial read surface；Estimated ≠ Payable ≠ Processing ≠ Paid；Paid requires verified result。
+Financial sensitive；route `/console/supplier/settlements`；Payable != Processing != Paid。
 
 ### 9. Dependencies
-
-UI-003 + finalized earnings + settlement ledger + payout result + document source。
+UI-003、007、008 + Settlement/Payout ledger/result contracts。
 
 ### 10. Stop Conditions
-
-STOP IF payable/Paid 必须 client-derived、payout 不能 verify、或 cross-Supplier isolation 不是 server-side。
+STOP IF payable must be client-computed、Paid lacks provider/ledger verification、or page needs direct provider call。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] all financial states authoritative。
-- [ ] Paid only follows verified result。
-- [ ] currency/period explicit。
-- [ ] failure/next step truthful。
-- [ ] cross-Supplier isolation verified。
-- [ ] document partial failure safe。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] only Supplier-owned settlements visible。
+- [ ] Payable/Processing/Paid/Failed distinct。
+- [ ] provider/ledger result required for Paid。
+- [ ] money/date/status localized; tx/reference IDs stable。
 - [ ] branch + PR。

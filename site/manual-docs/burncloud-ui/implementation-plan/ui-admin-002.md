@@ -9,86 +9,68 @@ slug: /burncloud-ui/implementation-plan/ui-admin-002/
 
 **状态：PLANNED**  
 **类别：Admin**  
-**功能依赖：UI-003 + Supplier Registry / Node Inventory / Hardware / Reliability / Verification**
+**功能依赖：UI-003、UI-007、UI-008 + Supplier / Node / Hardware / Provider supply contracts**
 
-> 产品合同：[/burncloud-ui/admin/supply/](/burncloud-ui/admin/supply/)
+> 产品合同：[/burncloud-ui/admin/supply/](/burncloud-ui/admin/supply/)  
+> Canonical production route：`/console/admin/supply`
 
 ### TL;DR
-
-Supply 回答“平台现在有多少可靠算力供应”。按 Supplier→Node→GPU 下钻，并解释 Reliability/Verification；它不是 Provider Channel 页面，也不是逐进程控制台。
+Supply 回答“平台现在有多少可靠供给、来自哪里、健康度如何”。它可以复用 Provider/Channel、Supplier Node、owned IDC、cloud reservation 等事实，但不能把其中任意一种当全部 Supply。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Online Supply / Supplier Health | 不把 Channel 当 Supplier |
-| Node/GPU/Region | 不逐 PID 管理 |
-| Reliability/Verification | 不显示 Buyer Billing |
-| drilldown | 不显示 Prompt/Secret |
-
-### 审批者关注点（Reviewer Focus）
-1. Supply total 是否与 Node inventory 一致？
-2. Supplier identity 是否独立于 Provider Channel？
-3. Trust/Verification 是否 evidence-backed？
+| supply composition | 不把 Channel=Supplier |
+| supplier/node/provider/owned capacity evidence | 不把 Supply=Capacity headroom |
+| health/geography/type | 不直接调度 GPU |
+| Advanced drilldown | 不泄露 secrets |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 authoritative platform supply inventory/health/trust view。
+建立 `/console/admin/supply` 的 authoritative platform supply view。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — current production 有 Providers/Channels/system metrics，但它们不是 Supplier/Node/GPU supply domain。
-- TARGET CONFIRMED — page 需要 Supplier registry/Node inventory/HardwareProfile/Reliability/Verification。
-- UNKNOWN — 上述 authoritative domain contracts 当前是否存在/完整。
+- STATIC CONFIRMED — current Providers/Channels 有真实 upstream supply facts。
+- UNKNOWN — canonical Supplier registry/Node supply/owned capacity/cloud reservation unified projection。
 
 ### 3. Entry / Starting Point
-
-Admin workspace；Supplier registry；Node inventory；HardwareProfile/ResourceSnapshot；Reliability/Verification services。
+existing Provider/Channel pages as evidence/reuse、future Supplier/Node inventory、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：canonical Node hardware/telemetry + future Supplier/trust services；现有 table/filter patterns。  
-Do Not Recreate：Channel→Supplier inference、second resource registry、PID control console。
+Reuse：Provider/Channel facts、Supplier/Node inventory、health/resource evidence。  
+Do Not Recreate：client supply registry、Channel→Supplier inference。
 
 ### 5. Scope
-
-Allowed：Supply page/read-only aggregates/drilldown。  
-Avoid：registry/telemetry/reliability backend、scheduler/process controls、Buyer data。
+Allowed：supply aggregation/read/detail/filters。  
+Avoid：capacity planning engine、route mutation、raw credentials。
 
 ### 6. Behavior Contract
-
-**Inputs**：Admin + Supplier/Node/hardware/reliability/verification facts。  
-**Outputs**：supply totals/filter/drilldown/attention。  
-**Ownership**：Supply/Resource/Trust domains own facts；UI presents。  
+**Inputs**：Admin identity + authoritative supply facts + locale。  
+**Outputs**：supply totals/composition/health/drilldown。  
+**Ownership**：Supply constituent services own facts。  
 **Side Effects**：read-only。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Partial inventory failure 显示 confirmed scope + Unknown；verification unknown ≠ Trusted。禁止把 Channels relabel Supplier 或以 UI 构造 trust。
+Missing Supplier registry ≠ infer from Channel；partial sources remain partial. Legacy `/providers` may remain Advanced/Legacy until parity。
 
 ### 8. Impact / Invariants
-
-Read-only infrastructure/business supply；Supplier identity ≠ Provider Channel；Trust requires evidence。
+Admin read-only；route `/console/admin/supply`；Supply != Capacity != Demand。
 
 ### 9. Dependencies
-
-UI-003 + Supplier Registry + Node Inventory + Hardware + Reliability + Verification。
+UI-003、007、008 + supply contracts。
 
 ### 10. Stop Conditions
-
-STOP IF Provider Channels 必须被当 Supplier、Trust 需要猜测、或页面需要 routine PID/process operation。
+STOP IF Supplier must be inferred from Channel、secrets required、or Supply page must implement scheduler/routing mutations。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Supply total reconciles inventory。
-- [ ] Supplier/Node/GPU drilldown preserves same facts。
-- [ ] Verification/Reliability explainable。
-- [ ] no Channel/Supplier identity confusion。
-- [ ] no per-PID normal control。
-- [ ] partial/unknown states truthful。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] supply sources explicit and authoritative。
+- [ ] Channel/Supplier/Owned/Cloud concepts not collapsed incorrectly。
+- [ ] legacy Providers capability preserved until parity/removal decision。
+- [ ] i18n/formatting follows UI-007；IDs stable。
 - [ ] branch + PR。

@@ -9,86 +9,69 @@ slug: /burncloud-ui/implementation-plan/ui-supplier-007/
 
 **状态：PLANNED**  
 **类别：Supplier**  
-**功能依赖：UI-003 + Supplier Settings / Payout Profile / Maintenance / Notifications**
+**功能依赖：UI-003、UI-007、UI-008 + Supplier-owned Settings contracts**
 
-> 产品合同：[/burncloud-ui/supplier/settings/](/burncloud-ui/supplier/settings/)
+> 产品合同：[/burncloud-ui/supplier/settings/](/burncloud-ui/supplier/settings/)  
+> Canonical production route：`/console/supplier/settings`
 
 ### TL;DR
-
-Settings 只放 Supplier 真正拥有的设置：Notifications、Payout Profile、Maintenance Window 和批准的 resource preferences。这里不是 Runtime/Scheduler/Route 配置中心。
+Supplier Settings 只允许修改真正属于 Supplier 的资料、通知、payout destination 等后端已定义设置；不把 Runtime、Routing、Model deployment 或任意 env/config 暴露出来。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Notifications | 不 Manual Model Deployment |
-| Payout Profile | 不 Runtime CLI/GPU Layers |
-| Maintenance Window | 不 Route Weights |
-| Supplier Preferences | 不 Scheduler internals |
-
-### 审批者关注点（Reviewer Focus）
-1. 每个 setting 是否有 backend owner？
-2. Payout/identity 是否有额外验证？
-3. Maintenance Window 是否只是约束声明？
+| profile/notification settings | 不编辑 raw env/database |
+| payout destination if authorized | 不控制 Runtime/Traffic |
+| daemon credential lifecycle if approved | 不显示 bearer secret repeatedly |
+| locale preference integration | 不让 locale 授权 |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 Supplier-owned settings surface，不把 frontend 变成 generic configuration source。
+建立 `/console/supplier/settings` 的 Supplier-owned settings surface。
 
 ### 2. Evidence
-
-- TARGET CONFIRMED — Supplier settings 仅 Notifications/Payout/Maintenance/Preferences。
-- TARGET CONFIRMED — 明确排除 Deployment/Runtime/Route/Scheduler controls。
-- UNKNOWN — authoritative Supplier settings backend、payout profile、maintenance policy、notification preference contracts。
+- STATIC CONFIRMED — Target includes supplier profile/notification/payout/daemon credential concepts。
+- UNKNOWN — current-main authoritative Supplier settings ownership/APIs。
 
 ### 3. Entry / Starting Point
-
-UI-003；existing settings form patterns（reuse only after ownership audit）；future Supplier setting domains。
+future Supplier settings service、credential/payout services、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：existing form/error patterns + authoritative domain services。  
-Do Not Recreate：generic settings blob、client config DB、raw env editor、runtime/scheduler controls。
+Reuse：backend-owned settings、secure credential patterns、locale preference contract。  
+Do Not Recreate：generic settings blob、raw env editor、client policy store。
 
 ### 5. Scope
-
-Allowed：Supplier-owned settings + approved validation。  
-Avoid：platform settings、backend settings architecture、model/runtime/traffic controls。
+Allowed：Supplier-owned settings only when authoritative owner/API exists。  
+Avoid：runtime/routing/deployment configuration、Admin commercial policy、raw secrets。
 
 ### 6. Behavior Contract
-
-**Inputs**：Supplier scope + authoritative values + explicit edits。  
-**Outputs**：confirmed saved/not-applied values。  
-**Ownership**：每个 backend domain owns setting；UI owns form/confirmation。  
-**Side Effects**：real settings changes through owner service only。
+**Inputs**：Supplier identity + backend-owned setting values + explicit edits + locale。  
+**Outputs**：confirmed settings/result。  
+**Ownership**：domain service owns each field。  
+**Side Effects**：approved Supplier setting mutation only。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Unknown config 不用 frontend default 覆盖；partial save 保留 confirmed values；high-risk change 无验证则不应用。禁止 raw env、route/runtime/deployment/scheduler controls。
+No owner/API → no editable control；save failure stays not applied。禁止 raw DB/env、secret re-display、URL/locale authorization。
 
 ### 8. Impact / Invariants
-
-Persistence via authoritative services；Supplier preference constrains Autopilot, does not replace it。
+Supplier persistence only through authoritative service；route `/console/supplier/settings`。
 
 ### 9. Dependencies
-
-UI-003 + ownership map + notifications + payout profile + maintenance/resource policy。
+UI-003、007、008 + Supplier settings/credential/payout contracts。
 
 ### 10. Stop Conditions
-
-STOP IF setting 无 backend owner、需 raw DB/env mutation、或给 Supplier deployment/runtime/route authority。
+STOP IF field lacks backend owner、requires raw env/database mutation、or grants model/runtime/traffic control。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] every setting has authoritative owner。
-- [ ] failed fields remain not applied。
-- [ ] payout/identity uses required validation。
-- [ ] maintenance window only declares constraints。
-- [ ] no runtime/route/deployment controls。
-- [ ] cross-Supplier isolation verified。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] every editable field has backend owner。
+- [ ] unauthorized Supplier cannot view/change settings。
+- [ ] secret/payout mutations follow approved security/audit semantics。
+- [ ] locale preference uses UI-007 and never changes authorization。
+- [ ] no runtime/routing/deployment controls。
 - [ ] branch + PR。

@@ -9,86 +9,69 @@ slug: /burncloud-ui/implementation-plan/ui-supplier-005/
 
 **状态：PLANNED**  
 **类别：Supplier**  
-**功能依赖：UI-003 + Earnings Ledger / Contribution / Revenue Share Attribution**
+**功能依赖：UI-003、UI-007、UI-008 + Contribution / Earnings Ledger contract**
 
-> 产品合同：[/burncloud-ui/supplier/earnings/](/burncloud-ui/supplier/earnings/)
+> 产品合同：[/burncloud-ui/supplier/earnings/](/burncloud-ui/supplier/earnings/)  
+> Canonical production route：`/console/supplier/earnings`
 
 ### TL;DR
-
-Earnings 解释 Supplier 收入从哪里来：Contribution、Revenue Share、Estimated Earnings、Final Earnings 必须分开，并可按 Model/Usage/Cluster/Node 下钻。
+Earnings 解释 Supplier 的 Contribution 如何形成收入，并区分 Gross Contribution Value、Revenue Share、Estimated Earnings、Finalized Earnings；不在 UI 用 GPU 时长乘一个价格算钱。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Period Earnings | 不显示 Buyer private data |
-| Contribution | 不显示 Platform Margin |
-| Revenue Share read-only | 不显示 other Supplier terms |
-| Estimated / Final | 不前端算 payout |
-
-### 审批者关注点（Reviewer Focus）
-1. Contribution ≠ Revenue Share ≠ Earnings 是否清楚？
-2. Estimated/Final 是否严格区分？
-3. earnings 是否能追溯真实 contribution/metering？
+| earnings totals/trends | 不 client-compute payout |
+| by node/model/period | 不把 payable 当 paid |
+| Estimated vs Final | 不猜 revenue share |
+| currency-aware formatting | 不显示其他 Supplier terms |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 explainable Supplier earnings drilldown，不在 UI 定义 payout/commercial formula。
+建立 `/console/supplier/earnings` 的 authoritative earnings explanation。
 
 ### 2. Evidence
-
-- TARGET CONFIRMED — Compute Contribution / Revenue Share / Estimated / Final 是不同概念。
-- TARGET CONFIRMED — page 不计算 final payout。
-- UNKNOWN — Supplier earnings ledger、Contribution engine、authorized Revenue Share config。
+- STATIC CONFIRMED — Target 要求 Contribution、Revenue Share、Earnings、Settlement 分离。
+- UNKNOWN — current-main Supplier contribution/earnings ledger contracts。
 
 ### 3. Entry / Starting Point
-
-UI-003；Earnings/Contribution/commercial config/metering services。
+future Contribution/Earnings services、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：authoritative metering + future contribution/ledger。  
-Do Not Recreate：frontend payout formula、client revenue-share rules、Buyer-cost inference。
+Reuse：Contribution facts、earnings ledger、settlement references、shared money/date formatter。  
+Do Not Recreate：client earnings engine、GPU-hour formula、settlement ledger。
 
 ### 5. Scope
-
-Allowed：earnings page/time/currency/drilldown。  
-Avoid：Contribution engine、Settlement/Payout、Revenue Share modification、platform economics。
+Allowed：earnings read analytics/explanations/export where supported。  
+Avoid：payout execution、commercial policy design、Admin financial details。
 
 ### 6. Behavior Contract
-
-**Inputs**：Supplier scope + ledger + contribution + authorized commercial config + attribution。  
-**Outputs**：period earnings/explanation/drilldown。  
-**Ownership**：backend domains own values；UI presents。  
-**Side Effects**：none。
+**Inputs**：Supplier identity + contribution/earnings records + finality + locale。  
+**Outputs**：earnings totals/trends/breakdown/finality。  
+**Ownership**：Finance/Contribution services own values。  
+**Side Effects**：read/export only。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Estimated 不变 Final；missing contribution/config => Unknown；禁止 Buyer private data、platform margin、client payout formula。
+Missing finality → Estimated/Unknown；Payable/Paid 不得由 UI 推导。禁止 client formula、cross-supplier data。
 
 ### 8. Impact / Invariants
-
-Read-only financial surface；Contribution ≠ Revenue Share ≠ Earnings ≠ Paid；final truth ledger-owned。
+Financial read-only；route `/console/supplier/earnings`；Estimated != Final。
 
 ### 9. Dependencies
-
-UI-003 + Earnings Ledger + Contribution + Revenue Share + resource/model attribution。
+UI-003、007、008 + Contribution/Earnings ledger。
 
 ### 10. Stop Conditions
-
-STOP IF final earnings 需要 frontend calculation、Buyer private data、或 commercial terms 无 authorization owner。
+STOP IF earnings requires client math、revenue share guessed、or authoritative finality unavailable。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] earnings trace Contribution。
-- [ ] Contribution/Revenue Share separated。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Supplier-only financial scope。
+- [ ] Contribution/Earnings/Payable/Paid concepts separated。
 - [ ] Estimated/Final explicit。
-- [ ] currency/time explicit。
-- [ ] drilldown reconciles totals。
-- [ ] Supplier isolation verified。
+- [ ] currency/date/number use UI-007 formatter。
+- [ ] no client payout formula。
 - [ ] branch + PR。

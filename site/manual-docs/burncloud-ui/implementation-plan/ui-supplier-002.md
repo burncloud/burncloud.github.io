@@ -9,86 +9,70 @@ slug: /burncloud-ui/implementation-plan/ui-supplier-002/
 
 **状态：PLANNED**  
 **类别：Supplier**  
-**功能依赖：UI-003 + Supplier Node Inventory / HardwareProfile / Resource Lifecycle**
+**功能依赖：UI-003、UI-007、UI-008 + Supplier Node Inventory / ResourceSnapshot / Graceful Offline contract**
 
-> 产品合同：[/burncloud-ui/supplier/resources/](/burncloud-ui/supplier/resources/)
+> 产品合同：[/burncloud-ui/supplier/resources/](/burncloud-ui/supplier/resources/)  
+> Canonical production route：`/console/supplier/resources`
 
 ### TL;DR
-
-Resources 展示 Supplier 自己的 Node/GPU/VRAM/Temperature/Utilization/Uptime/Assigned Model，并允许请求 Graceful Offline。Assigned Model 是只读 Autopilot 结果，不是 Supplier 的模型选择器。
+Resources 让 Supplier 看自己的 Node/GPU/VRAM/temperature/utilization/health，并允许在后端支持时请求 Graceful Offline；它不提供模型、端口、进程、Traffic 控制。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Node/GPU/VRAM/Health | 不 Choose Model |
-| Current Model read-only | 不改 Runtime args |
-| Graceful Offline | 不改 Traffic Weight |
-| Draining lifecycle | 不 Force Route |
-
-### 审批者关注点（Reviewer Focus）
-1. Graceful Offline 是否真实经历 Drain→Finish→Release→Offline？
-2. Current Model 是否清楚标记 Autopilot assigned/read-only？
-3. Force/Unexpected Offline 是否与正常下线分开？
+| own nodes/GPU/VRAM/health | 不选 model |
+| telemetry/resource snapshot | 不设 gpu_layers/port/PID |
+| graceful offline request | 不 kill runtime |
+| diagnostics/explanation | 不修改 Router |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 Supplier-scoped resource inventory/health 与一个受控 Graceful Offline intent。
+建立 `/console/supplier/resources` 的 Supplier-owned resource inventory 和安全 lifecycle request surface。
 
 ### 2. Evidence
-
-- TARGET CONFIRMED — page requires Node/GPU/VRAM/temp/utilization/current model/uptime。
-- TARGET CONFIRMED — Graceful Offline state chain 明确。
-- UNKNOWN — canonical Supplier-scoped HardwareProfile/ResourceSnapshot/managed assignment/resource lifecycle API。
+- STATIC CONFIRMED — Target Resources 是 Supplier 资源页，不是 Admin capacity scheduler。
+- UNKNOWN — current-main Supplier registry/Node ownership/HardwareProfile/ResourceSnapshot contracts。
+- UNKNOWN — Graceful Offline lifecycle API/policy。
 
 ### 3. Entry / Starting Point
-
-UI-003；canonical Node inventory/HardwareProfile/ResourceSnapshot；resource lifecycle service。
+Node hardware/resource services once accepted、UI-003/007/008、shared status/table patterns。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：Node hardware/resource/runtime state + shared tables/statuses。  
-Do Not Recreate：`MOCK_SUPPLIER_NODES`、second telemetry store、model selector、Runtime CLI editor、traffic controller。
+Reuse：canonical Node identity、HardwareProfile、ResourceSnapshot、health lifecycle。  
+Do Not Recreate：frontend hardware discovery、process manager、scheduler、Supplier route engine。
 
 ### 5. Scope
-
-Allowed：resource list/detail、approved Graceful Offline action。  
-Avoid：Node backend、deployment selection、process control、routing changes。
+Allowed：own resource list/detail、telemetry、graceful offline/resume only if authoritative。  
+Avoid：model selection、runtime command、Traffic control、Admin fleet planning。
 
 ### 6. Behavior Contract
-
-**Inputs**：Supplier scope + inventory/telemetry/deployment state + explicit offline request。  
-**Outputs**：resource health/detail + lifecycle state。  
-**Ownership**：Node/resource services own state/lifecycle；UI requests intent。  
-**Side Effects**：Graceful Offline request only。
+**Inputs**：Supplier identity + owned Node/resource telemetry + locale + explicit graceful lifecycle request。  
+**Outputs**：resource state + verified lifecycle result。  
+**Ownership**：Node/Supplier services own resources/actions。  
+**Side Effects**：only approved graceful lifecycle request。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Telemetry unknown remains Unknown；offline request failure 不乐观显示 Offline。禁止 force-stop、deploy-model、runtime params、traffic controls。
+Offline request submitted != Offline；必须等待 authoritative result。禁止 direct process kill、frontend ownership inference、URL 获权。
 
 ### 8. Impact / Invariants
-
-Supplier 可声明资源 availability intent，但不拥有 model/runtime/traffic decisions。Process ownership stays Node Autopilot。
+Operational but bounded；Supplier may request graceful lifecycle, not runtime/process control。Route `/console/supplier/resources`。
 
 ### 9. Dependencies
-
-UI-003 + Supplier-scoped inventory + hardware/resource telemetry + managed assignment + graceful-offline lifecycle。
+UI-003、007、008 + Supplier Node Inventory/ResourceSnapshot/Graceful Offline contract。
 
 ### 10. Stop Conditions
-
-STOP IF UI 必须直接读 raw OS/process state、force stop、choose model/runtime 或自己实现 drain lifecycle。
+STOP IF ownership 需 client 推断、action 必须直接 kill process、或 Supplier 被授予 model/runtime/traffic authority。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] real Node/GPU data replaces mock。
-- [ ] hardware/health/assigned model authoritative。
-- [ ] Graceful Offline stages visible/verified。
-- [ ] unexpected/forced offline distinct。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] only Supplier-owned resources visible。
+- [ ] hardware/telemetry authoritative。
+- [ ] graceful offline result verified，不 optimistic。
 - [ ] no model/runtime/traffic controls。
-- [ ] Supplier isolation verified。
+- [ ] units/status localized appropriately；Node/GPU model IDs 保持稳定。
 - [ ] branch + PR。

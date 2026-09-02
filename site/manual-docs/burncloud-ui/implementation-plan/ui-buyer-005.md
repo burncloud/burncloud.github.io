@@ -9,88 +9,70 @@ slug: /burncloud-ui/implementation-plan/ui-buyer-005/
 
 **状态：PLANNED**  
 **类别：Buyer**  
-**功能依赖：UI-003 + Tier/API Key/Date attribution + Buyer Logs**
+**功能依赖：UI-003、UI-007、UI-008 + authoritative Usage attribution**
 
-> 产品合同：[/burncloud-ui/buyer/usage/](/burncloud-ui/buyer/usage/)
+> 产品合同：[/burncloud-ui/buyer/usage/](/burncloud-ui/buyer/usage/)  
+> Canonical production route：`/console/buyer/usage`
 
 ### TL;DR
-
-Usage 解释 Buyer 的 Requests、Tokens、Cost 到底用在哪里，并按 Model/Tier/API Key/时间下钻。它不是 GPU、Supplier 或 Provider Cost 分析页。
+Usage 解释 Buyer 自己用了多少请求/Token、哪些模型贡献了用量、趋势如何；不把 Billing ledger、Admin logs 或 Provider telemetry 混成同一事实源。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Requests/Tokens/Cost | 不算 GPU utilization |
-| Model/Tier/API Key breakdown | 不显示 Supplier earnings |
-| Date/Search/Filter | 不显示 provider cost |
-| drilldown to Logs | 不在前端重算 billing |
-
-### 审批者关注点（Reviewer Focus）
-1. total 与 breakdown 是否 reconcile？
-2. currency/time/Estimated/Final 是否明确？
-3. API Key 维度是否只用 metadata？
+| requests/tokens/time trends | 不计算平台 Revenue |
+| model attribution | 不读取跨 tenant logs |
+| export if authoritative | 不前端重建 metering |
+| locale-aware numbers/time | 不翻译 model IDs |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 Buyer-scoped authoritative consumption analysis 与安全 drilldown。
+建立 `/console/buyer/usage` 的 tenant-safe usage analytics。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — `billing_summary` 提供 user-scoped model-level requests/tokens/cost。
-- STATIC CONFIRMED — `user_usage` 与 current Billing page 已消费真实 metering。
-- UNKNOWN — authoritative Tier attribution。
-- UNKNOWN — Buyer-safe API-key usage attribution。
-- UNKNOWN — 所需 date-range semantics 是否完整。
+- STATIC CONFIRMED — current backend 已有 user-scoped usage/billing fragments。
+- STATIC CONFIRMED — current Billing 页面包含 request/token/model spend evidence，但 Usage 与 Billing 目标语义应分离。
+- UNKNOWN — 完整时间粒度/模型归因/export contract。
 
 ### 3. Entry / Starting Point
-
-`functional_pages/analytics.rs::Billing`、`backend::billing_summary`、`backend::user_usage`、Buyer Logs。
+backend user usage/billing summary、existing analytics UI patterns、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：existing metering/billing、canonical model identity、safe API key metadata。  
-Do Not Recreate：client final totals、client pricing engine、admin logs summation、secret display。
+Reuse：metering projections、model identity、chart/table patterns、shared formatters。  
+Do Not Recreate：client metering engine、Admin log export、billing ledger。
 
 ### 5. Scope
-
-Allowed：Usage page、authoritative read adapters、filter/date/drilldown。  
-Avoid：pricing/billing semantics、Provider/Supplier cost、admin observability access。
+Allowed：usage totals/trends/model breakdown/export where supported。  
+Avoid：payment/invoice、platform Revenue、Provider telemetry。
 
 ### 6. Behavior Contract
-
-**Inputs**：Buyer + time/filter + authoritative usage/billing breakdown。  
-**Outputs**：totals/breakdowns + Logs links。  
-**Ownership**：Metering/Billing own values；UI owns presentation。  
-**Side Effects**：read-only。
+**Inputs**：Buyer identity + scoped usage facts + time range + locale。  
+**Outputs**：request/token/model/time analytics。  
+**Ownership**：Metering/Usage service owns facts。  
+**Side Effects**：read/export only。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Breakdown failure 不清空 confirmed total；Unknown attribution 不 client-infer；sorting/filtering 不改金额/token 语义。
+Missing bucket/attribution → Unknown/partial，不填 0。禁止跨 tenant logs、client recomputation、URL 获权。
 
 ### 8. Impact / Invariants
-
-Read-only analytics；tenant scoped；Estimated ≠ Final；API key = metadata only。
+Read-only analytics；server-side tenant scope；route `/console/buyer/usage`；locale-aware formatting only。
 
 ### 9. Dependencies
-
-UI-003 + Tier/API-key/date attribution + Buyer Logs destination。
+UI-003、007、008 + authoritative usage attribution。
 
 ### 10. Stop Conditions
-
-STOP IF final totals 必须从 admin logs client-side 重建，breakdown 无 authoritative owner，或页面必须暴露 provider/supplier costs/secrets。
+STOP IF usage 必须从 Admin logs 前端过滤、metering 需在 UI 重建、或路由权限不明确。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Requests/Tokens/Cost authoritative。
-- [ ] Model/Tier/API Key/time breakdown reconcile。
-- [ ] currency/time/Estimated/Final explicit。
-- [ ] partial failure preserves confirmed totals。
-- [ ] anomaly can drill to Buyer Logs。
-- [ ] no GPU/Supplier/Provider cost data。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] tenant isolation server-side。
+- [ ] request/token/model totals 可追溯。
+- [ ] partial attribution truthful。
+- [ ] number/date/time format 使用 UI-007。
+- [ ] model IDs 不翻译。
 - [ ] branch + PR。

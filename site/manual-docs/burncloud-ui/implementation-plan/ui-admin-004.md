@@ -9,86 +9,68 @@ slug: /burncloud-ui/implementation-plan/ui-admin-004/
 
 **状态：PLANNED**  
 **类别：Admin**  
-**功能依赖：UI-003 + Demand Aggregation / Tier/Region Attribution / Forecast**
+**功能依赖：UI-003、UI-007、UI-008 + Demand / Attribution / Forecast contracts**
 
-> 产品合同：[/burncloud-ui/admin/demand/](/burncloud-ui/admin/demand/)
+> 产品合同：[/burncloud-ui/admin/demand/](/burncloud-ui/admin/demand/)  
+> Canonical production route：`/console/admin/demand`
 
 ### TL;DR
-
-Demand 展示 Requests、Tokens、Concurrency、增长/峰值和 Forecast，按 Model/Tier/Region 下钻。Prediction 是事实之外的预测，必须与 Actual 分开。
+Demand 只回答“请求/token 需求在哪里增长、哪些 Model/Tier/tenant/region 贡献、未来可能怎样”。Forecast 必须和 Actual 分开。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Actual demand trend | 不显示 Buyer Prompt |
-| Model/Tier/Region breakdown | 不显示 API secret |
-| Forecast + confidence | 不用 UI 写 predictor |
-| link to Capacity | 不在这里做 capacity action |
-
-### 审批者关注点（Reviewer Focus）
-1. Actual/Forecast 是否清楚分离？
-2. Model/Tier 是否与 Capacity/Usage 一致？
-3. Forecast failure 是否保留 Actual？
+| actual demand trends | 不用 Revenue 代替 demand |
+| model/tier/tenant/region attribution | 不把 forecast 当 actual |
+| forecast + confidence if authoritative | 不 client AI 猜趋势 |
+| bursts/velocity | 不泄露 unauthorized tenant details |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 authoritative demand analytics + prediction view，为 Capacity 提供 explainable input。
+建立 `/console/admin/demand` 的 platform demand analytics。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — current logs/usage 可提供 request/token evidence fragments。
-- STATIC CONFIRMED — current logs page 不是 demand forecast service。
-- UNKNOWN — concurrency time-series、Tier/Region attribution、Forecast/confidence service。
+- STATIC CONFIRMED — existing usage/logs contain demand evidence fragments。
+- UNKNOWN — canonical demand aggregation/forecast service and confidence contract。
 
 ### 3. Entry / Starting Point
-
-Admin workspace；metering/request aggregates；canonical Model/Tier；Demand prediction service；Admin Capacity。
+Usage/Logs evidence、future Demand service、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：metering/request facts + canonical model identity。  
-Do Not Recreate：frontend forecast model、private prompt analysis、unrelated UI-derived region/tier。
+Reuse：metering/request facts、canonical Model/Tier identity、approved forecast。  
+Do Not Recreate：client forecast engine、Revenue→Demand inference。
 
 ### 5. Scope
-
-Allowed：Demand page/filter/chart/forecast explanation/Capacity links。  
-Avoid：predictor implementation、capacity action、routing/scheduling changes。
+Allowed：actual demand/trends/attribution/forecast presentation。  
+Avoid：capacity scheduler、pricing changes、client prediction engine。
 
 ### 6. Behavior Contract
-
-**Inputs**：authoritative actual demand + product attribution + forecast/confidence。  
-**Outputs**：Actual/Forecast trends and risk links。  
-**Ownership**：Demand service owns aggregation/prediction；UI presents。  
+**Inputs**：Admin identity + actual demand + optional forecast/confidence + locale。  
+**Outputs**：demand trends/bursts/attribution/forecast。  
+**Ownership**：Demand service owns facts/forecast。  
 **Side Effects**：read-only。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Forecast failure 保留 Actual；missing Region/Tier => Unknown；forecast 不伪装事实。禁止 client forecast/private prompt/secret use。
+No forecast → unavailable；Actual remains usable。禁止 client forecast、cross-tenant unauthorized detail。
 
 ### 8. Impact / Invariants
-
-Read-only analytics；Actual ≠ Forecast；Demand predicts, Capacity/Operations acts。
+Read-only；route `/console/admin/demand`；Actual != Forecast。
 
 ### 9. Dependencies
-
-UI-003 + demand aggregation + Tier/Region attribution + forecast/confidence + compatible Capacity semantics。
+UI-003、007、008 + Demand/Forecast contracts。
 
 ### 10. Stop Conditions
-
-STOP IF forecast 必须在 UI 生成、facts 需要 Buyer sensitive content、或 Model/Tier semantics 与 Capacity 冲突。
+STOP IF demand must be inferred from revenue、forecast computed client-side、or tenant privacy cannot be preserved。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Actual/Forecast separated。
-- [ ] Model/Tier breakdown matches Usage/Capacity。
-- [ ] Forecast has confidence/source。
-- [ ] Buyer private content absent。
-- [ ] demand risk links to Capacity。
-- [ ] forecast partial failure preserves Actual。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Actual demand authoritative。
+- [ ] Forecast explicitly separated + confidence/finality where applicable。
+- [ ] tenant/region drilldown authorization safe。
+- [ ] locale-aware numbers/time; machine Model/Tier IDs stable。
 - [ ] branch + PR。

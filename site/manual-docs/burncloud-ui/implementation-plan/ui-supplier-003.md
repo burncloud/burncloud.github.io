@@ -9,87 +9,69 @@ slug: /burncloud-ui/implementation-plan/ui-supplier-003/
 
 **状态：PLANNED**  
 **类别：Supplier**  
-**功能依赖：UI-003 + Managed Deployment / Process Readiness / Autopilot Reason**
+**功能依赖：UI-003、UI-007、UI-008 + Managed Deployment / Node Runtime State contract**
 
-> 产品合同：[/burncloud-ui/supplier/deployments/](/burncloud-ui/supplier/deployments/)
+> 产品合同：[/burncloud-ui/supplier/deployments/](/burncloud-ui/supplier/deployments/)  
+> Canonical production route：`/console/supplier/deployments`
 
 ### TL;DR
-
-Deployments 是透明页：告诉 Supplier BurnCloud 当前在其资源上跑什么、状态如何、为什么这么做。不是部署控制台。
+Deployments 是只读的自动部署结果页。Supplier 可以看 BurnCloud 在自己的资源上运行了什么、状态和效率如何，但不能 Deploy、Start、Stop、Choose Model、Change Traffic。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Model/State/Resource summary | 不 Deploy Model |
-| Preparing/Ready/Draining/Failed | 不 Start/Stop process |
-| Autopilot reason/result | 不 Change Runtime |
-| link to Resource/Reliability | 不 Traffic Control |
-
-### 审批者关注点（Reviewer Focus）
-1. 是否严格 read-only？
-2. `Process Spawned != Model READY` 是否保留？
-3. 异常是否引导看 Resource/Reliability，而不是“手工修部署”？
+| managed deployments | 不 Deploy/Undeploy |
+| model/runtime state | 不 Start/Stop |
+| resource/throughput/efficiency | 不选 model/tier |
+| failure/recovered explanation | 不改 traffic/routing |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 Supplier-scoped managed deployment transparency，不授予 runtime/process authority。
+在 `/console/supplier/deployments` 提供 Supplier-owned managed deployment observability。
 
 ### 2. Evidence
-
-- TARGET CONFIRMED — Deployments = read-only transparency。
-- TARGET CONFIRMED — forbidden actions: Deploy/Choose Model/Change Runtime/Traffic Control。
-- NODE INVARIANT — Spawned != Ready。
-- UNKNOWN — Supplier-scoped deployment state、Process Manager readiness/health、Scheduler/Demand explanation projection。
+- STATIC CONFIRMED — Target 明确 Deployments read-only；Autopilot/Node owns deployment decisions。
+- UNKNOWN — authoritative managed deployment projection linking Supplier Node ↔ Model ↔ Runtime state。
 
 ### 3. Entry / Starting Point
-
-UI-003；managed Node deployment/runtime/process state；resource allocation；Autopilot reason/result。
+Node Runtime/Deployment state、UI-004 canonical Node UX、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：canonical runtime/process lifecycle、readiness、resource state、shared status/timeline。  
-Do Not Recreate：deployment controller、PID/port manager、Route control surface。
+Reuse：Node/Autopilot deployment state、readiness/health、resource metrics。  
+Do Not Recreate：frontend deployment scheduler、runtime manager、manual routing controls。
 
 ### 5. Scope
-
-Allowed：read-only list/detail/reason/navigation。  
-Avoid：process lifecycle implementation、scheduler/demand logic、routing mutations、secret diagnostics。
+Allowed：read-only list/detail/status/throughput/resource allocation。  
+Avoid：deployment mutation、runtime command、model selection、Traffic control。
 
 ### 6. Behavior Contract
-
-**Inputs**：Supplier scope + deployment/readiness/resource/reason facts。  
-**Outputs**：read-only deployment transparency。  
-**Ownership**：Node runtime/process/demand own lifecycle；UI observes。  
+**Inputs**：Supplier identity + owned managed deployment states + locale。  
+**Outputs**：read-only deployment view with canonical status/explanation。  
+**Ownership**：Node/Autopilot owns lifecycle；UI presents。  
 **Side Effects**：none。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Unknown lifecycle stays Unknown；missing reason 不猜。禁止 Deploy/Start/Stop/Choose Model/Traffic actions；PID/internal port/raw CLI 默认隐藏。
+Unknown deployment state 不映射 Running；Process exists != READY。禁止 action buttons 直接操作 runtime/process。
 
 ### 8. Impact / Invariants
-
-Read-only；Supplier transparency ≠ authority；Spawned ≠ Ready；diagnostic visibility ≠ write permission。
+Read-only；route `/console/supplier/deployments`；UI-004 status semantics；Supplier no deployment authority。
 
 ### 9. Dependencies
-
-UI-003 + Supplier-scoped managed deployment + readiness + reason/result contracts。
+UI-003、007、008、UI-004 + managed deployment projection。
 
 ### 10. Stop Conditions
-
-STOP IF normal UI 需要 raw PID/port/CLI、manual deployment controls，或 readiness 只能从 process existence 推导。
+STOP IF page needs direct runtime command、client deployment state machine、or supplier can select model/traffic。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] deployment state authoritative/read-only。
-- [ ] Preparing/Ready/Draining/Failed semantics real。
-- [ ] automatic actions expose safe reason/result。
-- [ ] no Deploy/Start/Choose/Route controls。
-- [ ] no PID/internal port/raw CLI default exposure。
-- [ ] Supplier isolation verified。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Supplier sees only own deployment projection。
+- [ ] Deployments read-only。
+- [ ] Node statuses use UI-004；copy uses UI-007。
+- [ ] Process Spawned 不显示成 READY。
+- [ ] no Deploy/Start/Stop/Choose Model/Traffic actions。
 - [ ] branch + PR。

@@ -9,87 +9,68 @@ slug: /burncloud-ui/implementation-plan/ui-admin-006/
 
 **状态：PLANNED**  
 **类别：Admin**  
-**功能依赖：UI-003 + Autopilot Event Stream / Proposal / Approval / Audit / Verify**
+**功能依赖：UI-003、UI-007、UI-008 + Autopilot Event / Proposal / Human Gate / Verify contracts**
 
-> 产品合同：[/burncloud-ui/admin/operations/](/burncloud-ui/admin/operations/)
+> 产品合同：[/burncloud-ui/admin/operations/](/burncloud-ui/admin/operations/)  
+> Canonical production route：`/console/admin/operations`
 
 ### TL;DR
-
-Operations 是 BurnCloud Autopilot 的观察与例外处理中心。低风险动作自动完成；高风险动作以明确 Proposal 进入 Human Gate；所有动作必须有 Reason → Action → Verify → Result，HTTP 200 不是完成。
+Operations 是 Human-by-Exception 页面。Admin 看到系统自动做了什么、为什么、哪里失败、需要什么人工决策。任何高风险动作必须 `Reason → Proposal → Human Decision → Action → Verify → Result`。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Autopilot Actions | 不 generic `Allow AI` |
-| Needs Attention | 不每个低风险动作都确认 |
-| Proposal Approve/Reject | 不以 HTTP 200 当 Success |
-| Verify/Audit | 不 raw PID console |
-
-### 审批者关注点（Reviewer Focus）
-1. high-risk Proposal 是否对象化且有 reason/cost/risk/scope？
-2. Approve/Reject 是否授权并审计？
-3. Verify 是否独立证明目标结果？
+| event/reason/action/result feed | 不逐 PID 操作 |
+| proposal approve/reject | 不 HTTP 200=完成 |
+| verify evidence | 不绕过 policy/audit |
+| failed/recovered | 不手工 scheduler |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-建立 Autopilot action history + exception/proposal gate，保持 Human by Exception。
+建立 `/console/admin/operations` 的 Autopilot exception/decision/audit surface。
 
 ### 2. Evidence
-
-- TARGET CONFIRMED — `Observe → Decide → Act → Verify → Report`。
-- TARGET CONFIRMED — payment/security/commercial/irreversible infra 等进入 Human Gate。
-- STATIC CONFIRMED — current router logs 是 request observability，不等于 Autopilot decision/action audit。
-- UNKNOWN — unified Autopilot event stream、Proposal service、approval audit、Verify evidence contracts。
+- STATIC CONFIRMED — Target Operations requires Reason/Action/Verify/Result and Human-by-Exception。
+- UNKNOWN — current-main unified Autopilot Event/Proposal/Verify contracts。
 
 ### 3. Entry / Starting Point
-
-Admin workspace；Operations event/proposal/audit services；shared logs/timeline/drawer patterns。
+future Autopilot/Proposal/Audit services、existing observability/guardrail evidence、UI-004、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：authoritative domain action events + audit/security infrastructure。  
-Do Not Recreate：router-log-derived Autopilot history、client decision engine、raw process console。
+Reuse：backend events/proposals/audit/verify、Node statuses、security policy。  
+Do Not Recreate：client workflow engine、scheduler、process manager。
 
 ### 5. Scope
-
-Allowed：Operations page/event/proposal/audit clients/approve-reject UX。  
-Avoid：Autopilot engine、scheduler/runtime internals、policy definition、payment provider implementation。
+Allowed：event feed、exception detail、approved proposal decisions、verify/result display。  
+Avoid：generic automation engine、runtime/process direct controls、unaudited actions。
 
 ### 6. Behavior Contract
-
-**Inputs**：Admin + action events + Proposal + risk/approval policy + Verify evidence。  
-**Outputs**：history/active exceptions/proposal decision/verified result。  
-**Ownership**：Autopilot decides low-risk；policy defines high-risk gate；UI records explicit human decision。  
-**Side Effects**：Approve/Reject only for authorized Proposal objects。
+**Inputs**：Admin identity + events/proposals/reason/evidence + explicit decision + locale。  
+**Outputs**：decision/result/audit UI。  
+**Ownership**：Autopilot/Policy owns proposal/action；UI gathers explicit human decision。  
+**Side Effects**：authorized approve/reject/actions only via backend contract。
 
 ### 7. Failure / Forbidden Fallbacks
-
-API 200 without Verify stays unverified；proposal execution failure remains failed/auditable。禁止 generic AI switch、low-risk every-action confirmation、raw PID controls。
+HTTP 200 submission != success；must verify authoritative result。禁止 optimistic completed、direct runtime command、hidden unaudited retry。
 
 ### 8. Impact / Invariants
-
-High-risk action surface；Human by Exception；Verify mandatory；AI/Autopilot cannot self-authorize high-risk financial/security/architecture decisions。
+High-risk operations；route `/console/admin/operations`；Human-by-Exception；audit/verify mandatory。
 
 ### 9. Dependencies
-
-UI-003 + Events + Proposal/Risk Policy + Approval/Audit + Verify Result。
+UI-003、007、008、UI-004 + Event/Proposal/Human Gate/Verify contracts。
 
 ### 10. Stop Conditions
-
-STOP IF Proposal 由 frontend 合成、Success 无 Verify、generic AI permission 取代 object policy、或必须直接 PID/runtime control。
+STOP IF action lacks proposal/audit/verify、UI must directly manage runtime/process、or high-risk operation can bypass Human Gate。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] every automatic action has Reason/Action/Verify/Result。
-- [ ] Proposal explicit/auditable。
-- [ ] Approve/Reject authorized/recorded。
-- [ ] high-risk cannot bypass Human Gate。
-- [ ] Recovered vs Active distinct。
-- [ ] no raw process-control dashboard。
-- [ ] branch + PR。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Admin authorization/action policy server-side。
+- [ ] Reason→Proposal→Decision→Action→Verify→Result traceable。
+- [ ] failed/recovered truthful；HTTP 200 not completion。
+- [ ] machine event/action/error IDs stable；explanation localized。
+- [ ] branch + PR + approve/reject/failure/recovery E2E。

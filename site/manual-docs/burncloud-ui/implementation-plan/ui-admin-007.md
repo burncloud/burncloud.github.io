@@ -9,91 +9,68 @@ slug: /burncloud-ui/implementation-plan/ui-admin-007/
 
 **状态：PLANNED**  
 **类别：Admin**  
-**功能依赖：UI-003 + Platform Revenue Ledger / Verified Cost / Attribution**
+**功能依赖：UI-003、UI-007、UI-008 + Revenue / Verified Cost / Completeness contracts**
 
-> 产品合同：[/burncloud-ui/admin/revenue/](/burncloud-ui/admin/revenue/)
+> 产品合同：[/burncloud-ui/admin/revenue/](/burncloud-ui/admin/revenue/)  
+> Canonical production route：`/console/admin/revenue`
 
 ### TL;DR
-
-Revenue 解释平台 Revenue、Verified Cost、Gross Margin 从哪里来，并按 Model/Tier/Customer Segment/时间下钻。Cost 不完整时必须显示 Unknown/Estimated，不能制造虚假精确毛利。
-
-### 背景与动机（Why）
-
-Buyer billing summary 是用户消费事实，不等于平台 Revenue；Router log cost 是成本证据片段，也不自动等于 verified total cost。Admin Revenue 必须建立在独立 authoritative economics facts 上。
+Revenue 展示平台 Revenue、Verified Cost、Gross Margin，并明确 currency/time/finality/completeness。缺成本时不能显示假精确 Margin。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Revenue / Verified Cost | 不把 Buyer spend 当平台 ledger |
-| Gross Margin | 不猜 local/provider cost |
-| Model/Tier/Segment drilldown | 不显示无权限 Supplier secret terms |
-| Estimated / Final | 不前端写 margin engine |
-
-### 审批者关注点（Reviewer Focus）
-1. Revenue/Cost/Margin 是否分别有 source？
-2. cost completeness 是否决定能否显示 final Margin？
-3. External capacity cost 是否能解释 margin impact？
+| revenue/cost/margin | 不把 Buyer spend 直接当 platform revenue |
+| model/tier/segment drilldown | 不猜 local GPU cost |
+| Estimated/Final/completeness | 不显示不完整精确 margin |
+| currency/time formatting | 不泄露 unauthorized Supplier terms |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-提供 authoritative platform economics analysis，不在 UI 合成 Revenue/Cost/Margin truth。
+建立 `/console/admin/revenue` 的 authoritative platform economics view。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — current `/api/billing/summary` 是 user-scoped spend/cost，不是 platform Revenue ledger。
-- STATIC CONFIRMED — router logs 有 request cost components，但不等于完整 verified Provider/local/external cost。
-- TARGET CONFIRMED — cost incomplete 时禁止 precise Gross Margin。
-- UNKNOWN — platform Revenue ledger、verified cost ledger、customer-segment economics attribution。
+- STATIC CONFIRMED — current billing/logs have financial evidence fragments but not full platform economics ledger。
+- UNKNOWN — platform Revenue ledger、verified Provider/local/external cost、completeness metadata。
 
 ### 3. Entry / Starting Point
-
-UI-003 Admin workspace；Metering/Billing evidence fragments；future Revenue/Cost/Economics services。
+future Revenue/Cost services、existing metering/billing evidence、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：authoritative metering/revenue facts + verified compute/provider costs。  
-Do Not Recreate：frontend ledger、Buyer spend summation as revenue、guessed local GPU cost、client final margin engine。
+Reuse：ledger revenue facts、verified cost facts、product identity、shared financial formatter。  
+Do Not Recreate：client margin engine、cost guesses。
 
 ### 5. Scope
-
-Allowed：Revenue page/filter/drilldown/completeness/finality presentation。  
-Avoid：Revenue/Cost ledger engine、pricing policy mutation、Supplier settlement/payment actions。
+Allowed：read-only economics totals/trends/drilldowns/completeness explanation。  
+Avoid：pricing policy、ledger engine、Supplier payout。
 
 ### 6. Behavior Contract
-
-**Inputs**：Admin + Revenue ledger + verified Cost + attribution + completeness/finality metadata。  
-**Outputs**：Revenue/Cost/Margin totals/trends/drilldowns。  
-**Ownership**：Economics backend owns financial facts；UI presents。  
-**Side Effects**：read-only；pricing/business change 属于单独 Product/Business Gate。
+**Inputs**：Admin identity + revenue/cost/completeness/finality + locale。  
+**Outputs**：Revenue/Cost/Margin analytics。  
+**Ownership**：Finance services own values。  
+**Side Effects**：read-only。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Incomplete cost → Margin Unknown/Estimated with reason；Revenue source failure 不 fallback Buyer spend；禁止 unauthorized Supplier terms 和 client cost formula。
+Incomplete cost → Margin unavailable/estimated, never fake precise。禁止 Buyer-spend proxy、local GPU cost guess。
 
 ### 8. Impact / Invariants
-
-Read-only high-value financial analytics；Revenue ≠ Cost ≠ Margin；Estimated ≠ Final；Margin only if cost completeness supports it。
+Financial read-only；route `/console/admin/revenue`；Revenue != Cost != Margin；Estimated != Final。
 
 ### 9. Dependencies
-
-UI-003 + platform Revenue ledger + verified Provider/local/external Cost + completeness/finality + Model/Tier/Segment attribution。
+UI-003、007、008 + Revenue/Verified Cost/completeness contracts。
 
 ### 10. Stop Conditions
-
-STOP IF platform Revenue 必须从 Buyer page 重建、cost 需要猜测、final Margin 缺完整 verified costs，或 sensitive commercial details 无授权。
+STOP IF revenue/cost must be reconstructed client-side、required costs incomplete but precise margin expected、or supplier secrets exposed。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Revenue/Cost/Margin separate authoritative sources。
-- [ ] incomplete cost never fake precise Margin。
-- [ ] Estimated/Final explicit。
-- [ ] currency/time explicit。
-- [ ] drilldowns reconcile totals。
-- [ ] external capacity cost impact explainable safely。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Revenue/Cost separate authoritative sources。
+- [ ] incomplete cost never yields fake precise Margin。
+- [ ] Estimated/Final/currency/time explicit。
+- [ ] locale formatting via UI-007；ledger/reference IDs stable。
 - [ ] branch + PR。

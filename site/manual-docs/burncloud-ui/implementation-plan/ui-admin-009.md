@@ -9,91 +9,69 @@ slug: /burncloud-ui/implementation-plan/ui-admin-009/
 
 **状态：PLANNED**  
 **类别：Admin**  
-**功能依赖：UI-003 + Supplier Registry / Verification / Reliability / Contribution / Commercial**
+**功能依赖：UI-003、UI-007、UI-008 + Supplier Registry / Verification / Reliability / Commercial contracts**
 
-> 产品合同：[/burncloud-ui/admin/suppliers/](/burncloud-ui/admin/suppliers/)
+> 产品合同：[/burncloud-ui/admin/suppliers/](/burncloud-ui/admin/suppliers/)  
+> Canonical production route：`/console/admin/suppliers`
 
 ### TL;DR
-
-Suppliers 管供应商身份、Verification/Level、Reliability、Resources、Contribution 和商业状态。Provider Channel 不是 Supplier；Level、Reliability、Contribution、Revenue Share 也不是同一个分数。
-
-### 背景与动机（Why）
-
-BurnCloud 的信任与供给体系需要长期可解释。如果 UI 把上游 Channel、可靠性、贡献度和商业分成混成一个“Supplier Score”，后续很难审计，也容易错误授权。
+Suppliers 管理真实 Supplier business identity、verification、level、reliability、resources、contribution 和 commercial status。Provider Channel 不是 Supplier identity。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Supplier Profile | 不把 Channel 当 Supplier |
-| Verification / Level | 不 client-compute trust score |
-| Reliability / Resources | 不显示 Buyer credential |
-| Contribution / Commercial Status | 不默认暴露 commercial secrets |
-
-### 审批者关注点（Reviewer Focus）
-1. Supplier identity 是否来自 registry？
-2. Level/Reliability/Contribution/Revenue Share 是否分开？
-3. 高风险商业修改是否进入 audit/gate？
+| supplier profile/verification | 不 Channel→Supplier inference |
+| reliability/resources/contribution | 不合成 opaque trust score |
+| authorized commercial config | 不泄露 credentials/secrets |
+| evidence-backed status | 不直接 route/runtime control |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-建立 authoritative Supplier business/trust management surface，并保持各 domain 语义独立。
+建立 `/console/admin/suppliers` 的 authoritative Supplier registry/business/trust surface。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — current Providers/Channels 是 routing entities，不是 verified Supplier identities。
-- TARGET CONFIRMED — page 需要 Profile/Level/Verification/Reliability/Resources/Commercial。
-- TARGET CONFIRMED — Level/Reliability/Contribution/Revenue Share 必须分离。
-- UNKNOWN — Supplier registry、verification/level、Reliability、Contribution、commercial config contracts。
+- STATIC CONFIRMED — current Providers/Channels 是 upstream routing entities，不等于 Supplier business identity。
+- UNKNOWN — Supplier registry/verification/level/reliability/contribution/commercial services。
 
 ### 3. Entry / Starting Point
-
-UI-003；Supplier Registry；Verification/Reliability；Node resources；Contribution/Earnings；Commercial config/audit。
+future Supplier services、Admin Supply、UI-003/007/008。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：canonical Supplier identity + resource/reliability/contribution/commercial services。  
-Do Not Recreate：Channel→Supplier inference、single opaque score、client trust engine、secret exposure。
+Reuse：canonical Supplier identity、Node/resources、Reliability、Contribution、approved commercial settings。  
+Do Not Recreate：Channel-derived Supplier registry、client trust score。
 
 ### 5. Scope
-
-Allowed：Supplier list/detail/evidence + separately authorized profile/commercial changes。  
-Avoid：registry/reliability/contribution engine、Provider routing management、raw secrets。
+Allowed：Supplier list/detail/evidence and approved gated changes。  
+Avoid：routing/provider management、secret display、trust engine design。
 
 ### 6. Behavior Contract
-
-**Inputs**：Admin + Supplier profile/verification/level/reliability/resource/contribution/commercial facts。  
-**Outputs**：Supplier list/detail + approved management actions。  
-**Ownership**：each domain owns its fact；UI does not merge semantics。  
-**Side Effects**：authorized/audited profile/commercial actions only。
+**Inputs**：Admin identity + supplier/trust/resource/commercial facts + authorized edit + locale。  
+**Outputs**：supplier view/management result。  
+**Ownership**：respective backend domains own facts/actions。  
+**Side Effects**：only authorized/audited profile/commercial changes。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Unknown verification ≠ Verified；unavailable Reliability/Contribution stays Unknown；save failure not applied。禁止 Channel inference、client trust score、credential secrets。
+Unknown verification != Verified；no Channel inference；save failure not applied。禁止 secrets/client trust score。
 
 ### 8. Impact / Invariants
-
-Supplier identity ≠ Provider Channel；Trust requires evidence；Level/Reliability/Contribution/Revenue Share separate；high-risk commercial change audited。
+Admin trust/business management；route `/console/admin/suppliers`；Level/Reliability/Contribution/Revenue Share remain distinct。
 
 ### 9. Dependencies
-
-UI-003 + Supplier Registry + Verification/Level + Reliability + Resources + Contribution + Commercial/Audit。
+UI-003、007、008 + Supplier registry/trust/reliability/contribution/commercial contracts。
 
 ### 10. Stop Conditions
-
-STOP IF Supplier 必须从 Channel 推导、trust/client score、commercial change 无 audit/gate、或需要暴露 secret credentials。
+STOP IF Supplier inferred from Channel、trust computed client-side、commercial changes unaudited、or secrets required。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Supplier identity authoritative。
-- [ ] Level/Reliability/Contribution/Revenue Share separated。
-- [ ] Verification evidence-backed。
-- [ ] commercial sensitive fields permission-controlled。
-- [ ] important changes authorized/audited。
-- [ ] no credential secret exposure。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] Supplier identity authoritative and separate from Provider Channel。
+- [ ] verification evidence-backed。
+- [ ] concept separation preserved。
+- [ ] gated changes authorized/audited。
+- [ ] i18n labels/statuses localized; stable IDs unchanged。
 - [ ] branch + PR。

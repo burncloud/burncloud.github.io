@@ -9,89 +9,70 @@ slug: /burncloud-ui/implementation-plan/ui-buyer-006/
 
 **状态：PLANNED**  
 **类别：Buyer**  
-**功能依赖：UI-003 + Balance/Payment/Transaction/Invoice contracts**
+**功能依赖：UI-003、UI-007、UI-008 + Balance / Transactions / Payment / Invoice contracts**
 
-> 产品合同：[/burncloud-ui/buyer/billing/](/burncloud-ui/buyer/billing/)
+> 产品合同：[/burncloud-ui/buyer/billing/](/burncloud-ui/buyer/billing/)  
+> Canonical production route：`/console/buyer/billing`
 
 ### TL;DR
-
-Buyer Billing 管余额、充值、交易、发票和支持的消费控制。账本和 payment result 是唯一金融真相；HTTP 200、前端 state 或 admin balance-mint endpoint 都不能代表 Buyer 已付款。
+Buyer Billing 管理余额、充值、交易、发票和支持的 spend controls。它不等于 current `/billing` 的 spend analytics，因此 legacy `/billing` 不能在 semantic parity 前直接重定向到本页。
 
 ### 范围速览（In / Out）
 | ✅ 做 | ❌ 不做 |
 | --- | --- |
-| Balance / Transactions | 不做 Supplier Settlement |
-| user-initiated Top Up | 不用 admin topup 模拟支付 |
-| Invoices / Receipts | 不 optimistic Paid |
-| Spend Controls（若支持） | 不前端记账 |
-
-### 审批者关注点（Reviewer Focus）
-1. Pending/Paid/Failed 是否来自真实 payment/ledger？
-2. Buyer 是否始终主动发起资金动作？
-3. admin topup 是否仍保持 Admin-only？
+| balance/transactions/invoices | 不拿 Usage 页面当 ledger |
+| explicit Add Funds | 不自动 top-up without contract |
+| payment result truth | 不用 Admin topup 伪装 Buyer payment |
+| currency-aware formatting | 不猜汇率/币种 |
 
 ---
 
 ## 第二层：机器执行层（Machine Executable Specification）
 
 ### 1. Goal
-
-建立 Buyer-safe financial page，显示真实 Balance/Payment/Transactions/Documents。
+建立 `/console/buyer/billing` 的 Buyer financial management surface。
 
 ### 2. Evidence
-
-- STATIC CONFIRMED — current Billing page 是 billed usage analytics，不是 wallet/payment page。
-- STATIC CONFIRMED — `/api/billing/summary` 不等于完整 Balance/Payment contract。
-- STATIC CONFIRMED — user accounts 有 balance fields。
-- STATIC CONFIRMED — security test 证明 normal user 禁止 `/console/api/user/topup`，该 endpoint 不能复用作 Buyer payment。
-- UNKNOWN — Buyer payment/provider result、transaction ledger、invoice、spend-control contracts。
+- STATIC CONFIRMED — current Billing 页面读取 user-scoped billed spend/usage，语义偏 analytics。
+- STATIC CONFIRMED — Admin customer funding/topup 能力不等同 Buyer payment flow。
+- UNKNOWN — Buyer payment methods/transactions/invoices/auto-topup contracts。
 
 ### 3. Entry / Starting Point
-
-`functional_pages/analytics.rs::Billing`（pattern only）、billing summary、user account balance evidence、future Buyer payment services。
+existing billing summary patterns、future authoritative financial services、UI-003/007/008；legacy `/billing` 由 UI-005/008 管理。
 
 ### 4. Reuse Targets / Do Not Recreate
-
-Reuse：authoritative ledger structures / billed summary / financial UI states。  
-Do Not Recreate：frontend wallet ledger、admin topup payment、client payment processor、fake invoice。
+Reuse：authoritative balance/ledger/payment/invoice services、shared money formatter。  
+Do Not Recreate：client ledger、fake payment method、Admin topup as Buyer payment。
 
 ### 5. Scope
-
-Allowed：Buyer Billing page + approved Buyer-safe financial clients。  
-Avoid：payment/ledger architecture、Admin/Supplier settlements、direct DB balance mutation。
+Allowed：balance/transactions/invoices/payment actions supported by backend。  
+Avoid：ledger/payment provider architecture、usage metering semantics、admin funding workflow。
 
 ### 6. Behavior Contract
-
-**Inputs**：Buyer + explicit Top Up/control action + ledger/payment/document facts。  
-**Outputs**：Balance/transaction/payment/document state。  
-**Ownership**：financial backend owns truth；UI owns human intent/confirmation。  
-**Side Effects**：real user-initiated financial action only when backend exists。
+**Inputs**：Buyer identity + financial ledger/payment facts + explicit user action + locale。  
+**Outputs**：balance/history/invoices and verified payment result。  
+**Ownership**：Financial services own money/state。  
+**Side Effects**：explicit payment/funding actions only when authoritative contract exists。
 
 ### 7. Failure / Forbidden Fallbacks
-
-Payment submission failure 不改余额；Pending/Delayed/Unknown 不显示 Paid；invoice failure 不覆盖 ledger facts。禁止 admin topup、optimistic state、client receipt。
+Payment submit/HTTP 200 != settled funds；failed transaction 不 optimistic balance。禁止 client balance math、fake payment、legacy `/billing` silent semantic rewrite。
 
 ### 8. Impact / Invariants
-
-Direct financial surface；tenant scoped；Pending ≠ Paid；Autopilot 不发起资金动作。
+Financial high-risk；currency/finality explicit；route `/console/buyer/billing`。
 
 ### 9. Dependencies
-
-UI-003 + Balance read + Buyer payment + transaction + invoice + supported spend controls。
+UI-003、007、008 + Buyer financial contracts；UI-005 handles legacy migration after parity。
 
 ### 10. Stop Conditions
-
-STOP IF admin topup 被提议当 payment，Paid 只能从 HTTP 200 推断，financial data 无 backend owner，或需要 UI direct DB mutation。
+STOP IF Buyer payment 必须复用 Admin topup 无审计、余额需前端计算、或 current legacy `/billing` 被要求直接等价本页。
 
 ---
 
 ## 第三层：验收层（Definition of Done）
-
-- [ ] Balance matches authoritative ledger。
-- [ ] Top Up uses real Buyer payment flow。
-- [ ] Pending/Paid/Failed authoritative。
-- [ ] Transactions/Invoices authoritative。
-- [ ] currency/time/status explicit。
-- [ ] cross-tenant denied。
-- [ ] admin topup security invariant preserved。
-- [ ] branch + PR。
+- [ ] canonical route 与 UI-008 一致。
+- [ ] balance/transaction/invoice 有 authoritative source。
+- [ ] payment result/finality truthful。
+- [ ] unauthorized tenant/account access denied。
+- [ ] USD/CNY/date/time 使用 UI-007 formatter。
+- [ ] legacy `/billing` 在 UI-005 前不强制改语义。
+- [ ] branch + PR + financial failure tests。
