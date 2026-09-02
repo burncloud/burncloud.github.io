@@ -11,40 +11,43 @@ hide_table_of_contents: false
 **状态：PLANNED**  
 **Canonical Standard：BurnCloud Engineering Issue Standard**
 
-> 本页是 BurnCloud UI 的 canonical 实施计划索引，不是 Codex 的直接开发授权。每一个计划项真正开始实现前，都必须针对当时的 `burncloud/burncloud/main` 重新执行 Evidence Audit，创建通过 READY Gate 的 Engineering Issue，再生成 Task Contract。
+> 本页是 BurnCloud UI 的 canonical 实施计划索引，不是 Codex 的直接开发授权。真正编码前仍必须执行：current-main Evidence Audit → READY Engineering Issue → Task Contract → Branch / Pull Request。
 
 ### TL;DR
 
-BurnCloud UI 不做“React → Dioxus 翻译”。目标是把批准后的 Buyer / Supplier / Admin 产品合同迁移到唯一的生产 Dioxus Console，并同时锁定 **权限、Console 路径、i18n、真实数据、Node Autopilot 与 legacy compatibility**。
-
-生产 Console 的 canonical namespace 统一为：
+BurnCloud UI 统一为一个受保护的 Console 管理面。Buyer、Supplier、Admin 不是三个独立根级应用，而是 `/console/*` 下三个拥有不同权限和业务职责的 workspace。
 
 ```text
 PUBLIC
-/                     public entry
-/login                public auth
-/register             public auth
+/
+/login
+/register
 
 DATA PLANE
-/v1/*                  AI API
+/v1/*
 
-MANAGEMENT PLANE
-/console               authenticated workspace resolver
-/console/buyer/*       Buyer workspace
-/console/supplier/*    Supplier workspace
-/console/admin/*       Admin workspace
-/console/api/*         authenticated management API
-/console/internal/*    internal API
+MANAGEMENT UI
+/console
+├── /console/buyer/*
+├── /console/supplier/*
+└── /console/admin/*
+
+MANAGEMENT / INTERNAL API
+├── /console/api/*
+└── /console/internal/*
 
 TRANSPORT / HEALTH
 /ws
 /health
 ```
 
-核心原则：
+核心规则：
 
 ```text
-URL namespace
+/console namespace
+≠ authorization
+
+URL
 ≠ authorization
 
 Sidebar visibility
@@ -52,9 +55,58 @@ Sidebar visibility
 
 Role Switcher
 ≠ permission grant
+
+Backend Authorization
+= final authority
 ```
 
-真正权限始终由 Backend Authorization 决定。
+### 根级 Legacy URL 的新规则
+
+任何需要 authentication / role / tenant / admin 权限的**真正生产 UI 页面**，canonical URL 必须位于 `/console/*`。
+
+根级旧 URL 只允许作为无业务逻辑的 compatibility redirect：
+
+```text
+legacy root URL
+      ↓ redirect only
+/console/...
+      ↓ AuthGate
+      ↓ WorkspaceGate
+      ↓ Page
+      ↓ Backend Authorization
+```
+
+因此根级 `/models`、`/logs`、`/billing`、`/providers`、`/routes` 等不能继续渲染敏感页面、读取管理数据或调用管理 API。
+
+### Billing 的业务拆分
+
+Buyer 与 Admin 都有 Billing，但职责不同，不冲突：
+
+```text
+Buyer Billing
+/console/buyer/billing
+= 我自己的余额、充值、交易、Invoice、支付方式、Spend Limit
+
+Admin Billing
+/console/admin/billing
+= 全平台客户账务、充值订单、欠费、账务异常、Billing Policy、账务操作与审计
+
+Admin Revenue
+/console/admin/revenue
+= Revenue / Verified Cost / Gross Margin
+
+Admin Settlements
+/console/admin/settlements
+= Supplier Payable / Settlement Batch / Payout Result
+```
+
+必须保持：
+
+```text
+Admin Billing
+≠ Admin Revenue
+≠ Admin Settlements
+```
 
 ### 执行链
 
@@ -74,9 +126,11 @@ Verification / Review
 main
 ```
 
-### 计划列表
+---
 
-#### Phase 1 — Foundation / Platform Contracts
+## 计划列表
+
+### Phase 1 — Foundation / Platform Contracts
 
 | ID | 计划 | 功能依赖 |
 | --- | --- | --- |
@@ -86,75 +140,96 @@ main
 | [UI-003](/burncloud-ui/implementation-plan/ui-003/) | Production Shell + Role/Auth Workspace | UI-001, UI-002, UI-007 |
 | [UI-008](/burncloud-ui/implementation-plan/ui-008/) | Console Namespace + Route Authorization Contract | UI-003, UI-007 |
 
-#### Phase 2 — Buyer
+Foundation 完成前，角色页面不得靠 URL、localStorage、mock role 或隐藏菜单自行实现权限。
 
-所有 Buyer 页面都依赖 **UI-003 + UI-007 + UI-008**，并额外依赖自己的 backend contract。
+### Phase 2 — Buyer
 
-| ID | 页面 | Canonical Production Route | 额外功能依赖 |
+所有 Buyer 页面都依赖 UI-003 + UI-007 + UI-008。
+
+| ID | 页面 | Canonical Production Route | 主要职责 |
 | --- | --- | --- | --- |
-| [UI-BUYER-001](/burncloud-ui/implementation-plan/ui-buyer-001/) | Overview | `/console/buyer/overview` | Buyer metrics |
-| [UI-BUYER-002](/burncloud-ui/implementation-plan/ui-buyer-002/) | Marketplace | `/console/buyer/marketplace` | Product Catalog/Tier/Pricing |
-| [UI-BUYER-003](/burncloud-ui/implementation-plan/ui-buyer-003/) | Playground | `/console/buyer/playground` | Marketplace + Node demand states |
-| [UI-BUYER-004](/burncloud-ui/implementation-plan/ui-buyer-004/) | API Keys | `/console/buyer/api-keys` | Token ownership contract |
-| [UI-BUYER-005](/burncloud-ui/implementation-plan/ui-buyer-005/) | Usage | `/console/buyer/usage` | Usage attribution |
-| [UI-BUYER-006](/burncloud-ui/implementation-plan/ui-buyer-006/) | Billing | `/console/buyer/billing` | Buyer financial contracts |
-| [UI-BUYER-007](/burncloud-ui/implementation-plan/ui-buyer-007/) | Logs | `/console/buyer/logs` | tenant-safe log projection |
+| [UI-BUYER-001](/burncloud-ui/implementation-plan/ui-buyer-001/) | Overview | `/console/buyer/overview` | Spend / Balance / Availability / Tokens |
+| [UI-BUYER-002](/burncloud-ui/implementation-plan/ui-buyer-002/) | Marketplace | `/console/buyer/marketplace` | Model/Tier 产品目录 |
+| [UI-BUYER-003](/burncloud-ui/implementation-plan/ui-buyer-003/) | Playground | `/console/buyer/playground` | 真实 `/v1` 测试 |
+| [UI-BUYER-004](/burncloud-ui/implementation-plan/ui-buyer-004/) | API Keys | `/console/buyer/api-keys` | Buyer-owned credentials |
+| [UI-BUYER-005](/burncloud-ui/implementation-plan/ui-buyer-005/) | Usage | `/console/buyer/usage` | Requests / Tokens / Cost attribution |
+| [UI-BUYER-006](/burncloud-ui/implementation-plan/ui-buyer-006/) | Billing | `/console/buyer/billing` | 自己的余额、充值、交易、Invoice、支付方式、Spend Limit |
+| [UI-BUYER-007](/burncloud-ui/implementation-plan/ui-buyer-007/) | Logs | `/console/buyer/logs` | tenant-safe request observability |
 
-#### Phase 3 — Supplier
+Buyer mental model：
 
-所有 Supplier 页面都依赖 **UI-003 + UI-007 + UI-008**。
+```text
+Discover Model
+→ Test
+→ Get Credential
+→ Call API
+→ Understand Usage
+→ Manage Billing
+→ Diagnose Request
+```
 
-| ID | 页面 | Canonical Production Route | 额外功能依赖 |
+### Phase 3 — Supplier
+
+所有 Supplier 页面都依赖 UI-003 + UI-007 + UI-008。
+
+| ID | 页面 | Canonical Production Route |
+| --- | --- | --- |
+| [UI-SUPPLIER-001](/burncloud-ui/implementation-plan/ui-supplier-001/) | Overview | `/console/supplier/overview` |
+| [UI-SUPPLIER-002](/burncloud-ui/implementation-plan/ui-supplier-002/) | Resources | `/console/supplier/resources` |
+| [UI-SUPPLIER-003](/burncloud-ui/implementation-plan/ui-supplier-003/) | Deployments | `/console/supplier/deployments` |
+| [UI-SUPPLIER-004](/burncloud-ui/implementation-plan/ui-supplier-004/) | Reliability | `/console/supplier/reliability` |
+| [UI-SUPPLIER-005](/burncloud-ui/implementation-plan/ui-supplier-005/) | Earnings | `/console/supplier/earnings` |
+| [UI-SUPPLIER-006](/burncloud-ui/implementation-plan/ui-supplier-006/) | Settlements | `/console/supplier/settlements` |
+| [UI-SUPPLIER-007](/burncloud-ui/implementation-plan/ui-supplier-007/) | Settings | `/console/supplier/settings` |
+
+Supplier 硬边界：资源、自动部署结果、可靠性、贡献和收入可以观察；Model Deployment、Runtime、Traffic 权限不交给 Supplier。
+
+### Phase 4 — Admin
+
+所有 Admin 页面都依赖 UI-003 + UI-007 + UI-008。
+
+| ID | 页面 | Canonical Production Route | 主要职责 |
 | --- | --- | --- | --- |
-| [UI-SUPPLIER-001](/burncloud-ui/implementation-plan/ui-supplier-001/) | Overview | `/console/supplier/overview` | Supplier/Node/Earnings |
-| [UI-SUPPLIER-002](/burncloud-ui/implementation-plan/ui-supplier-002/) | Resources | `/console/supplier/resources` | Node inventory/resources |
-| [UI-SUPPLIER-003](/burncloud-ui/implementation-plan/ui-supplier-003/) | Deployments | `/console/supplier/deployments` | managed deployments |
-| [UI-SUPPLIER-004](/burncloud-ui/implementation-plan/ui-supplier-004/) | Reliability | `/console/supplier/reliability` | reliability evidence |
-| [UI-SUPPLIER-005](/burncloud-ui/implementation-plan/ui-supplier-005/) | Earnings | `/console/supplier/earnings` | contribution/earnings |
-| [UI-SUPPLIER-006](/burncloud-ui/implementation-plan/ui-supplier-006/) | Settlements | `/console/supplier/settlements` | settlement/payout |
-| [UI-SUPPLIER-007](/burncloud-ui/implementation-plan/ui-supplier-007/) | Settings | `/console/supplier/settings` | supplier-owned settings |
+| [UI-ADMIN-001](/burncloud-ui/implementation-plan/ui-admin-001/) | Overview | `/console/admin/overview` | 系统经营与基础设施结论 |
+| [UI-ADMIN-002](/burncloud-ui/implementation-plan/ui-admin-002/) | Supply | `/console/admin/supply` | 供给、Supplier、Node/Hardware |
+| [UI-ADMIN-003](/burncloud-ui/implementation-plan/ui-admin-003/) | Capacity | `/console/admin/capacity` | Model/Tier Headroom / Risk |
+| [UI-ADMIN-004](/burncloud-ui/implementation-plan/ui-admin-004/) | Demand | `/console/admin/demand` | 请求、Token、Concurrency、Forecast |
+| [UI-ADMIN-005](/burncloud-ui/implementation-plan/ui-admin-005/) | Models | `/console/admin/models` | 产品模型目录、Manifest、Pricing/Readiness |
+| [UI-ADMIN-006](/burncloud-ui/implementation-plan/ui-admin-006/) | Operations | `/console/admin/operations` | Autopilot Exception / Proposal / Verify |
+| [UI-ADMIN-012](/burncloud-ui/implementation-plan/ui-admin-012/) | Billing | `/console/admin/billing` | 客户账务、充值订单、欠费、异常、Billing Policy、审计 |
+| [UI-ADMIN-007](/burncloud-ui/implementation-plan/ui-admin-007/) | Revenue | `/console/admin/revenue` | Revenue / Verified Cost / Gross Margin |
+| [UI-ADMIN-008](/burncloud-ui/implementation-plan/ui-admin-008/) | Settlements | `/console/admin/settlements` | Supplier Payable / Payout |
+| [UI-ADMIN-009](/burncloud-ui/implementation-plan/ui-admin-009/) | Suppliers | `/console/admin/suppliers` | Supplier business/trust view |
+| [UI-ADMIN-010](/burncloud-ui/implementation-plan/ui-admin-010/) | Customers | `/console/admin/customers` | Customer accounts / risk / limits |
+| [UI-ADMIN-011](/burncloud-ui/implementation-plan/ui-admin-011/) | Settings | `/console/admin/settings` | backend-owned platform settings |
 
-Supplier 硬边界：**可以 Observe / Explain / Graceful Offline，但不能获得 Model Deployment、Runtime、Traffic 控制权。**
+Admin economics 必须拆开：
 
-#### Phase 4 — Admin
+```text
+Customer
+   ↓
+Admin Billing
+   ↓
+Revenue
+   ↓
+Verified Cost
+   ↓
+Gross Margin
 
-所有 Admin 页面都依赖 **UI-003 + UI-007 + UI-008**。
+Supplier Earnings
+   ↓
+Admin Settlements
+   ↓
+Payout Result
+```
 
-| ID | 页面 | Canonical Production Route | 额外功能依赖 |
-| --- | --- | --- | --- |
-| [UI-ADMIN-001](/burncloud-ui/implementation-plan/ui-admin-001/) | Overview | `/console/admin/overview` | Revenue/Cost/Capacity |
-| [UI-ADMIN-002](/burncloud-ui/implementation-plan/ui-admin-002/) | Supply | `/console/admin/supply` | Supplier/Node/Hardware |
-| [UI-ADMIN-003](/burncloud-ui/implementation-plan/ui-admin-003/) | Capacity | `/console/admin/capacity` | Capacity/Demand/Economics |
-| [UI-ADMIN-004](/burncloud-ui/implementation-plan/ui-admin-004/) | Demand | `/console/admin/demand` | Demand/Forecast |
-| [UI-ADMIN-005](/burncloud-ui/implementation-plan/ui-admin-005/) | Models | `/console/admin/models` | Product Catalog/Manifest |
-| [UI-ADMIN-006](/burncloud-ui/implementation-plan/ui-admin-006/) | Operations | `/console/admin/operations` | Autopilot Event/Proposal/Verify |
-| [UI-ADMIN-007](/burncloud-ui/implementation-plan/ui-admin-007/) | Revenue | `/console/admin/revenue` | Revenue/Verified Cost |
-| [UI-ADMIN-008](/burncloud-ui/implementation-plan/ui-admin-008/) | Settlements | `/console/admin/settlements` | Settlement/Payout + Human Gate |
-| [UI-ADMIN-009](/burncloud-ui/implementation-plan/ui-admin-009/) | Suppliers | `/console/admin/suppliers` | Supplier registry/trust/commercial |
-| [UI-ADMIN-010](/burncloud-ui/implementation-plan/ui-admin-010/) | Customers | `/console/admin/customers` | Customer Risk/Activity |
-| [UI-ADMIN-011](/burncloud-ui/implementation-plan/ui-admin-011/) | Settings | `/console/admin/settings` | domain settings + Human Gate |
-
-#### Phase 5–7 — Cross-cutting / Release
+### Phase 5–7 — Cross-cutting / Release
 
 | ID | 计划 | 功能依赖 |
 | --- | --- | --- |
-| [UI-004](/burncloud-ui/implementation-plan/ui-004/) | Canonical Node Autopilot UX States | UI-002, UI-003, UI-007, UI-008 + Node state contracts |
+| [UI-004](/burncloud-ui/implementation-plan/ui-004/) | Canonical Node Autopilot UX States | UI-002/003/007/008 + Node states |
 | [UI-005](/burncloud-ui/implementation-plan/ui-005/) | Legacy Console Route Compatibility | UI-008 + target page parity |
-| [UI-006](/burncloud-ui/implementation-plan/ui-006/) | Final Quality / Golden Page Gates | release pages + UI-004/005/007/008 |
-
-### 全局风险与安全网
-
-- Target truth ≠ current source truth。
-- Unknown / Unavailable 不得被 0、Success、Ready 或 mock 替代。
-- Production 只有一套 Dioxus frontend / Router。
-- `/console/*` 是管理 UI namespace，不是授权事实；Backend Authorization 才是最终权限真相。
-- `/console/api/*` 与 `/console/internal/*` 是保留后端 namespace，不能被 LiveView / SPA catch-all 吞掉。
-- i18n 不进入 Console URL；语言变化不得改变权限、Route 或 machine identifiers。
-- Buyer 不默认看到 GPU / Supplier / IDC / Runtime。
-- Supplier 不拥有 Deploy / Runtime / Traffic 权限。
-- Admin 管理系统级结果与例外，不退化成逐 PID / GPU 控制台。
-- Node 生命周期由后端拥有，UI 只 Observe / Explain / Report。
-- Legacy URL 保持原业务语义；不能按当前角色动态改变同一个 bookmark 的产品含义。
+| [UI-006](/burncloud-ui/implementation-plan/ui-006/) | Final Quality / Golden Page Gates | role pages + UI-004/005/007/008 |
 
 ---
 
@@ -162,23 +237,23 @@ Supplier 硬边界：**可以 Observe / Explain / Graceful Offline，但不能�
 
 ### 1. Goal
 
-把 BurnCloud UI 拆成 33 个单一结果计划单元，并以 UI-007 与 UI-008 分别作为 localization 和 Console namespace/route 的 canonical contract，使每个页面只有在 current-main 证据、依赖、权限边界和验证目标明确后才可转成 READY Engineering Issue。
+把 BurnCloud UI 拆成 **34 个单一结果计划单元**：8 个 platform/cross-cutting contracts、7 个 Buyer 页面、7 个 Supplier 页面、12 个 Admin 页面。所有受保护 UI 的 canonical path 都位于 `/console/*`，所有根级 legacy UI URL 只能作为 redirect-only compatibility stub。
 
 ### 2. Evidence
 
 Evidence baseline：`burncloud/burncloud@c314bff9646f9113c9a58a818552fc80c77543a6`。
 
 STATIC CONFIRMED：
-- 生产客户端是 `crates/client` 下唯一 Dioxus frontend；
-- current `app.rs` 受保护页面仍使用根级 `/models`、`/billing` 等 URL，并通过 `AuthGate` 做 authentication；
-- current `AuthGate` 只判断 authenticated，不是 Role/Capability Gate；
-- Server management API 已 canonical 使用 `/console/api/*`，internal 使用 `/console/internal/*`；
-- LiveView 当前仍硬编码旧根级 UI paths；
-- Target Workbench 已有 Buyer/Supplier/Admin path 与 `en/zh/zh-TW/ja` i18n reference，但它不是生产权限/路由真相；
-- current backend 已有真实 Billing、Usage、Token、Playground、Logs、Customers 等能力片段；
-- Supplier、Capacity、Demand Forecast、Settlement、Autopilot Proposal 等目标域仍存在大量 UNKNOWN/backend blockers。
 
-结论：**计划完整 ≠ backend 已存在 ≠ 可以编码。**
+- 生产客户端是 `crates/client` 下唯一 Dioxus frontend；
+- current protected Dioxus UI 仍存在 root-level `/models`、`/billing` 等路径；
+- current `AuthGate` 只检查 authenticated；
+- management API 已使用 `/console/api/*`，internal API 使用 `/console/internal/*`；
+- current LiveView 仍硬编码 legacy root UI paths；
+- current Billing 是 authenticated user-spend/usage 视角，不能替代未来 Admin Billing；
+- Target Workbench 的 URL-driven role/i18n 只能作产品参考，不能成为 production authority。
+
+结论：计划文档必须先锁定 Management Plane 边界，之后页面才能进入 READY。
 
 ### 3. Entry / Starting Point
 
@@ -191,54 +266,78 @@ crates/client/src/backend.rs
 crates/server/src/lib.rs
 crates/server/src/api/*
 crates/common/src/constants.rs
-rustburn/burncloud-ui :: target route/i18n reference
+rustburn/burncloud-ui (Target reference only)
 ```
 
 ### 4. Reuse Targets / Do Not Recreate
 
-Reuse：single Dioxus Router、AuthContext、existing management API namespace、visual_system.css、shared components、real backend services、existing UI gates。
+Reuse：single Dioxus Router、AuthContext、management API namespace、visual system、real backend services、existing UI/security gates。
 
-Do Not Recreate：第二套 React frontend、第二 Router、client role DB、client authorization engine、production mock registry、前端 Billing/Settlement/Capacity/Trust truth engine、UI Node Runtime/Process Manager。
+Do Not Recreate：second frontend、second Router、client role DB、client authorization engine、frontend billing/revenue/settlement ledger、production mock source of truth。
 
 ### 5. Scope
 
-每个计划页只能授权一个页面或一个横切合同。缺失 backend domain 必须成为依赖/Blocker，不允许为了“让页面完成”扩大 UI Issue scope。
+每个计划页只能授权一个页面或一个横切合同。缺失 backend domain 进入依赖/Blocker；不能为了完成 UI 而扩大 scope。
 
 ### 6. Behavior Contract
 
-所有页面最少定义 Inputs / Outputs / Ownership / Side Effects；所有状态页必须定义 Loading / Empty / Partial Failure / Error / Recovered。所有 authenticated role pages 必须同时继承：
+所有受保护页面继承：
 
 ```text
-UI-003 Role/Auth Workspace
-UI-007 i18n Contract
-UI-008 Console Namespace + Route Authorization Contract
+AuthGate
+  ↓
+WorkspaceGate
+  ↓
+Canonical /console/* Page
+  ↓
+Management API
+  ↓
+Backend role/capability/tenant authorization
 ```
+
+页面最少定义 Inputs / Outputs / Ownership / Side Effects，并覆盖 Loading / Empty / Partial Failure / Error / Recovered。
 
 ### 7. Failure / Forbidden Fallbacks
 
-Forbidden globally：
-
 ```text
-mock as production truth
-URL grants role
-localStorage grants role
-hidden nav treated as authorization
-unknown role -> Admin
-unknown metric -> 0/Healthy/Ready
-legacy URL changes meaning by active role
-language changes path/permission
-translated model IDs/API paths/error codes
-second frontend/router
-UI direct Node runtime control
+forbidden:
+- root-level sensitive page remains active
+- legacy root URL reads data or invokes management action
+- URL grants role
+- localStorage grants role
+- hidden nav treated as authorization
+- unknown role -> Admin
+- legacy URL changes meaning by active role
+- /billing dynamically means Buyer or Admin based on role
+- language changes permission/path semantics
+- unknown metric -> 0/Healthy/Ready
+- mock as production truth
+- second frontend/router
 ```
 
 ### 8. Impact / Invariants
 
-UI migration may touch frontend navigation/presentation and approved backend projections, but不得改变 data-plane `/v1/*` 语义。保持 single Router、server-side tenant/role authorization、management namespace separation、i18n machine-identifier stability。
+新增硬约束：
+
+```text
+INV-UI-ROUTE-001
+Any production UI page requiring authentication, role, tenant or admin authority
+MUST have its canonical URL under /console/*.
+
+INV-UI-ROUTE-002
+Legacy UI URLs outside /console/* MAY exist only as redirect-only compatibility stubs.
+They MUST NOT render sensitive business pages, fetch protected data, or execute management actions.
+
+INV-UI-AUTH-001
+Backend Authorization is final authority; URL/Sidebar/Workspace preference are presentation only.
+
+INV-UI-BILLING-001
+Buyer Billing, Admin Billing, Admin Revenue and Admin Settlements are distinct business domains.
+```
+
+Data-plane `/v1/*` semantics不因 UI migration 改变。
 
 ### 9. Dependencies
-
-Foundation 顺序：
 
 ```text
 UI-001 + UI-002
@@ -249,27 +348,25 @@ UI-003
       ↓
 UI-008
       ↓
-Role Pages
+Buyer / Supplier / Admin Pages
       ↓
-UI-004 / UI-005
+UI-004 + UI-005
       ↓
 UI-006
 ```
-
-页面自身 backend blocker 仍需单独满足。
 
 ### 10. Stop Conditions
 
 ```text
 STOP IF:
-- current main disproves a material route/auth/i18n assumption
-- implementing a page requires client-side role/tenant authority
+- a protected business page must remain canonical outside /console/*
+- a legacy root URL must render sensitive content to preserve compatibility
 - /console/api or /console/internal can be swallowed by UI catch-all
-- legacy route must silently change business meaning
-- locale must become part of Console URL to proceed
-- machine identifiers must be translated
-- a missing backend fact would be filled with mock/client inference
-- a second frontend/router/source of truth is required
+- role must be inferred from URL
+- Buyer/Admin Billing must share one client-side truth model
+- legacy URL must change meaning by active role
+- missing backend fact would be filled with mock/client inference
+- second frontend/router/source of truth is required
 - meaningful auth/route/i18n/runtime verification cannot be performed
 ```
 
@@ -277,16 +374,18 @@ STOP IF:
 
 ## 第三层：验收层（Definition of Done）
 
-- [ ] 33 个计划单元均有独立 canonical plan page。
-- [ ] `/console` 成为 authenticated Console UI root contract。
-- [ ] Buyer/Supplier/Admin canonical paths 全部位于 `/console/{workspace}/*`。
-- [ ] `/console/api/*` 与 `/console/internal/*` 保持保留后端 namespace。
-- [ ] URL/Sidebar/localStorage 都不能授予角色。
-- [ ] 未登录 deep link 有安全 `return_to` 行为；无角色权限返回 explicit forbidden/unavailable。
-- [ ] i18n 至少覆盖 `en/zh/zh-TW/ja` contract，且 locale 不进入 Console URL。
-- [ ] machine identifiers/model IDs/API paths/error codes 不翻译。
-- [ ] Buyer/Supplier/Admin 页面使用真实 API 或 explicit Unknown。
-- [ ] Legacy 路由有唯一、语义稳定的 compatibility matrix。
+- [ ] 34 个计划单元均有独立或明确引用的 canonical plan contract。
+- [ ] `/console` 是 authenticated Console UI root。
+- [ ] Buyer/Supplier/Admin canonical pages 全部位于 `/console/{workspace}/*`。
+- [ ] `/console/api/*`、`/console/internal/*` 保持 reserved backend namespace。
+- [ ] 所有 root-level legacy UI URL 只做 redirect，不承载敏感业务。
+- [ ] `/models` redirect 到 Admin Models，不变成 Buyer Marketplace。
+- [ ] `/logs` redirect 到 Admin/legacy Logs，不变成 Buyer Logs。
+- [ ] `/billing` redirect 到 Buyer Billing；Admin Billing 独立使用 `/console/admin/billing`。
+- [ ] Buyer Billing / Admin Billing / Revenue / Settlements 职责不混。
+- [ ] URL/Sidebar/localStorage/locale 都不能授予角色。
+- [ ] i18n locale 不进入 Console canonical URL。
+- [ ] machine identifiers 不翻译。
 - [ ] Production 仍只有一套 Dioxus frontend / Router。
-- [ ] Web / Desktop / LiveView 关键路径可验证。
-- [ ] Golden Pages 与 auth/route/i18n matrix 纳入 Final Gate。
+- [ ] Web/Desktop/LiveView 关键路径和 root redirect matrix 可验证。
+- [ ] Golden Pages + auth/route/i18n matrix 纳入 Final Gate。
