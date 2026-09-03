@@ -58,36 +58,6 @@
   "missing_binary_entries": [],
   "http_routes": [
     {
-      "method": "GET",
-      "path": "/v1/models",
-      "entry": "GET /v1/models",
-      "file": "crates/router/src/lib.rs",
-      "line": 955,
-      "handlers": [
-        "models_handler"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/api/v1/usage",
-      "entry": "GET /api/v1/usage",
-      "file": "crates/router/src/lib.rs",
-      "line": 956,
-      "handlers": [
-        "usage_handler"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/api/v1/usage/models",
-      "entry": "GET /api/v1/usage/models",
-      "file": "crates/router/src/lib.rs",
-      "line": 957,
-      "handlers": [
-        "usage_models_handler"
-      ]
-    },
-    {
       "method": "UNKNOWN",
       "path": "/",
       "entry": "UNKNOWN /",
@@ -209,6 +179,36 @@
     },
     {
       "method": "GET",
+      "path": "/v1/models",
+      "entry": "GET /v1/models",
+      "file": "crates/router/src/lib.rs",
+      "line": 955,
+      "handlers": [
+        "models_handler"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/usage",
+      "entry": "GET /api/v1/usage",
+      "file": "crates/router/src/lib.rs",
+      "line": 956,
+      "handlers": [
+        "usage_handler"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/usage/models",
+      "entry": "GET /api/v1/usage/models",
+      "file": "crates/router/src/lib.rs",
+      "line": 957,
+      "handlers": [
+        "usage_models_handler"
+      ]
+    },
+    {
+      "method": "GET",
       "path": "/health",
       "entry": "GET /health",
       "file": "crates/server/src/lib.rs",
@@ -243,6 +243,286 @@
       "line": 673,
       "handlers": [
         "swagger_ui"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/channel",
+      "entry": "GET /console/api/channel",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 113,
+      "handlers": [
+        "create_channel",
+        "list_channels",
+        "update_channel"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/channel",
+      "entry": "POST /console/api/channel",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 113,
+      "handlers": [
+        "create_channel",
+        "list_channels",
+        "update_channel"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/console/api/channel",
+      "entry": "PUT /console/api/channel",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 113,
+      "handlers": [
+        "create_channel",
+        "list_channels",
+        "update_channel"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/channel/{id}",
+      "entry": "GET /console/api/channel/{id}",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 117,
+      "handlers": [
+        "delete_channel",
+        "get_channel"
+      ]
+    },
+    {
+      "method": "DELETE",
+      "path": "/console/api/channel/{id}",
+      "entry": "DELETE /console/api/channel/{id}",
+      "file": "crates/server/src/api/channel.rs",
+      "line": 117,
+      "handlers": [
+        "delete_channel",
+        "get_channel"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/register",
+      "entry": "POST /api/auth/register",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 80,
+      "handlers": [
+        "create_user"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/login",
+      "entry": "POST /api/auth/login",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 81,
+      "handlers": [
+        "login"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/forgot-password",
+      "entry": "POST /api/auth/forgot-password",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 82,
+      "handlers": [
+        "forgot_password"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/api/auth/reset-password",
+      "entry": "POST /api/auth/reset-password",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 83,
+      "handlers": [
+        "reset_password"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/google",
+      "entry": "GET /api/auth/google",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 84,
+      "handlers": [
+        "oauth_google"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/github",
+      "entry": "GET /api/auth/github",
+      "file": "crates/server/src/api/auth.rs",
+      "line": 85,
+      "handlers": [
+        "oauth_github"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/{*path}",
+      "entry": "GET /console/api/{*path}",
+      "file": "crates/server/src/api/mod.rs",
+      "line": 51,
+      "handlers": [
+        "api_not_found"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/user/recharges",
+      "entry": "GET /console/api/user/recharges",
+      "file": "crates/server/src/api/user.rs",
+      "line": 69,
+      "handlers": [
+        "list_recharges"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/list_users",
+      "entry": "GET /console/api/list_users",
+      "file": "crates/server/src/api/user.rs",
+      "line": 70,
+      "handlers": [
+        "list_users"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/user/register",
+      "entry": "POST /console/api/user/register",
+      "file": "crates/server/src/api/user.rs",
+      "line": 73,
+      "handlers": [
+        "register"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/user/login",
+      "entry": "POST /console/api/user/login",
+      "file": "crates/server/src/api/user.rs",
+      "line": 74,
+      "handlers": [
+        "login"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/user/topup",
+      "entry": "POST /console/api/user/topup",
+      "file": "crates/server/src/api/user.rs",
+      "line": 75,
+      "handlers": [
+        "topup"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/user/check_username",
+      "entry": "GET /console/api/user/check_username",
+      "file": "crates/server/src/api/user.rs",
+      "line": 76,
+      "handlers": [
+        "check_username"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor",
+      "entry": "GET /console/api/monitor",
+      "file": "crates/server/src/api/monitor.rs",
+      "line": 7,
+      "handlers": [
+        "get_system_metrics"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor/security",
+      "entry": "GET /console/api/monitor/security",
+      "file": "crates/server/src/api/security.rs",
+      "line": 99,
+      "handlers": [
+        "security_summary"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor/security/events",
+      "entry": "GET /console/api/monitor/security/events",
+      "file": "crates/server/src/api/security.rs",
+      "line": 100,
+      "handlers": [
+        "security_events"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor/security/filters",
+      "entry": "GET /console/api/monitor/security/filters",
+      "file": "crates/server/src/api/security.rs",
+      "line": 101,
+      "handlers": [
+        "security_filters_get",
+        "security_filters_put"
+      ]
+    },
+    {
+      "method": "PUT",
+      "path": "/console/api/monitor/security/filters",
+      "entry": "PUT /console/api/monitor/security/filters",
+      "file": "crates/server/src/api/security.rs",
+      "line": 101,
+      "handlers": [
+        "security_filters_get",
+        "security_filters_put"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/monitor/security/emergency-circuit-break",
+      "entry": "POST /console/api/monitor/security/emergency-circuit-break",
+      "file": "crates/server/src/api/security.rs",
+      "line": 105,
+      "handlers": [
+        "security_emergency_circuit_break"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/monitor/security/circuit-breaker-status",
+      "entry": "GET /console/api/monitor/security/circuit-breaker-status",
+      "file": "crates/server/src/api/security.rs",
+      "line": 109,
+      "handlers": [
+        "security_circuit_breaker_status"
+      ]
+    },
+    {
+      "method": "GET",
+      "path": "/console/api/cache/stats",
+      "entry": "GET /console/api/cache/stats",
+      "file": "crates/server/src/api/cache.rs",
+      "line": 31,
+      "handlers": [
+        "stats"
+      ]
+    },
+    {
+      "method": "POST",
+      "path": "/console/api/cache/clear",
+      "entry": "POST /console/api/cache/clear",
+      "file": "crates/server/src/api/cache.rs",
+      "line": 32,
+      "handlers": [
+        "clear"
       ]
     },
     {
@@ -345,206 +625,6 @@
     },
     {
       "method": "GET",
-      "path": "/console/api/{*path}",
-      "entry": "GET /console/api/{*path}",
-      "file": "crates/server/src/api/mod.rs",
-      "line": 51,
-      "handlers": [
-        "api_not_found"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/monitor",
-      "entry": "GET /console/api/monitor",
-      "file": "crates/server/src/api/monitor.rs",
-      "line": 7,
-      "handlers": [
-        "get_system_metrics"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/api/auth/register",
-      "entry": "POST /api/auth/register",
-      "file": "crates/server/src/api/auth.rs",
-      "line": 80,
-      "handlers": [
-        "create_user"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/api/auth/login",
-      "entry": "POST /api/auth/login",
-      "file": "crates/server/src/api/auth.rs",
-      "line": 81,
-      "handlers": [
-        "login"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/api/auth/forgot-password",
-      "entry": "POST /api/auth/forgot-password",
-      "file": "crates/server/src/api/auth.rs",
-      "line": 82,
-      "handlers": [
-        "forgot_password"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/api/auth/reset-password",
-      "entry": "POST /api/auth/reset-password",
-      "file": "crates/server/src/api/auth.rs",
-      "line": 83,
-      "handlers": [
-        "reset_password"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/api/auth/google",
-      "entry": "GET /api/auth/google",
-      "file": "crates/server/src/api/auth.rs",
-      "line": 84,
-      "handlers": [
-        "oauth_google"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/api/auth/github",
-      "entry": "GET /api/auth/github",
-      "file": "crates/server/src/api/auth.rs",
-      "line": 85,
-      "handlers": [
-        "oauth_github"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/monitor/security",
-      "entry": "GET /console/api/monitor/security",
-      "file": "crates/server/src/api/security.rs",
-      "line": 99,
-      "handlers": [
-        "security_summary"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/monitor/security/events",
-      "entry": "GET /console/api/monitor/security/events",
-      "file": "crates/server/src/api/security.rs",
-      "line": 100,
-      "handlers": [
-        "security_events"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/monitor/security/filters",
-      "entry": "GET /console/api/monitor/security/filters",
-      "file": "crates/server/src/api/security.rs",
-      "line": 101,
-      "handlers": [
-        "security_filters_get",
-        "security_filters_put"
-      ]
-    },
-    {
-      "method": "PUT",
-      "path": "/console/api/monitor/security/filters",
-      "entry": "PUT /console/api/monitor/security/filters",
-      "file": "crates/server/src/api/security.rs",
-      "line": 101,
-      "handlers": [
-        "security_filters_get",
-        "security_filters_put"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/console/api/monitor/security/emergency-circuit-break",
-      "entry": "POST /console/api/monitor/security/emergency-circuit-break",
-      "file": "crates/server/src/api/security.rs",
-      "line": 105,
-      "handlers": [
-        "security_emergency_circuit_break"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/monitor/security/circuit-breaker-status",
-      "entry": "GET /console/api/monitor/security/circuit-breaker-status",
-      "file": "crates/server/src/api/security.rs",
-      "line": 109,
-      "handlers": [
-        "security_circuit_breaker_status"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/channel",
-      "entry": "GET /console/api/channel",
-      "file": "crates/server/src/api/channel.rs",
-      "line": 113,
-      "handlers": [
-        "create_channel",
-        "list_channels",
-        "update_channel"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/console/api/channel",
-      "entry": "POST /console/api/channel",
-      "file": "crates/server/src/api/channel.rs",
-      "line": 113,
-      "handlers": [
-        "create_channel",
-        "list_channels",
-        "update_channel"
-      ]
-    },
-    {
-      "method": "PUT",
-      "path": "/console/api/channel",
-      "entry": "PUT /console/api/channel",
-      "file": "crates/server/src/api/channel.rs",
-      "line": 113,
-      "handlers": [
-        "create_channel",
-        "list_channels",
-        "update_channel"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/channel/{id}",
-      "entry": "GET /console/api/channel/{id}",
-      "file": "crates/server/src/api/channel.rs",
-      "line": 117,
-      "handlers": [
-        "delete_channel",
-        "get_channel"
-      ]
-    },
-    {
-      "method": "DELETE",
-      "path": "/console/api/channel/{id}",
-      "entry": "DELETE /console/api/channel/{id}",
-      "file": "crates/server/src/api/channel.rs",
-      "line": 117,
-      "handlers": [
-        "delete_channel",
-        "get_channel"
-      ]
-    },
-    {
-      "method": "GET",
       "path": "/console/api/logs",
       "entry": "GET /console/api/logs",
       "file": "crates/server/src/api/log.rs",
@@ -571,86 +651,6 @@
       "line": 51,
       "handlers": [
         "billing_summary_handler"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/user/recharges",
-      "entry": "GET /console/api/user/recharges",
-      "file": "crates/server/src/api/user.rs",
-      "line": 69,
-      "handlers": [
-        "list_recharges"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/list_users",
-      "entry": "GET /console/api/list_users",
-      "file": "crates/server/src/api/user.rs",
-      "line": 70,
-      "handlers": [
-        "list_users"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/console/api/user/register",
-      "entry": "POST /console/api/user/register",
-      "file": "crates/server/src/api/user.rs",
-      "line": 73,
-      "handlers": [
-        "register"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/console/api/user/login",
-      "entry": "POST /console/api/user/login",
-      "file": "crates/server/src/api/user.rs",
-      "line": 74,
-      "handlers": [
-        "login"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/console/api/user/topup",
-      "entry": "POST /console/api/user/topup",
-      "file": "crates/server/src/api/user.rs",
-      "line": 75,
-      "handlers": [
-        "topup"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/user/check_username",
-      "entry": "GET /console/api/user/check_username",
-      "file": "crates/server/src/api/user.rs",
-      "line": 76,
-      "handlers": [
-        "check_username"
-      ]
-    },
-    {
-      "method": "GET",
-      "path": "/console/api/cache/stats",
-      "entry": "GET /console/api/cache/stats",
-      "file": "crates/server/src/api/cache.rs",
-      "line": 31,
-      "handlers": [
-        "stats"
-      ]
-    },
-    {
-      "method": "POST",
-      "path": "/console/api/cache/clear",
-      "entry": "POST /console/api/cache/clear",
-      "file": "crates/server/src/api/cache.rs",
-      "line": 32,
-      "handlers": [
-        "clear"
       ]
     }
   ],
@@ -791,6 +791,11 @@
       "line": 100
     },
     {
+      "path": "/",
+      "file": "crates/client/src/bin/screenshot_gen.rs",
+      "line": 7
+    },
+    {
       "path": "/console/dashboard",
       "file": "crates/client/crates/client-shared/src/components/layout.rs",
       "line": 18
@@ -849,11 +854,6 @@
       "path": "/console/:..segments",
       "file": "crates/client/crates/client-shared/src/components/layout.rs",
       "line": 40
-    },
-    {
-      "path": "/",
-      "file": "crates/client/src/bin/screenshot_gen.rs",
-      "line": 7
     }
   ],
   "binaries": [
@@ -909,6 +909,24 @@
       "line": 31,
       "kind": "std::thread::spawn",
       "context": "[_] => { #[cfg(windows)] { std::thread::spawn(|| { let rt = tokio::runtime::Runtime::new().unwrap(); rt.block_on(async { let host = std::env::var(\"HOST\").u"
+    },
+    {
+      "file": "crates/service/crates/monitor/src/service.rs",
+      "line": 89,
+      "kind": "tokio::spawn",
+      "context": "t disk_collector = self.disk_collector.clone(); let cached_metrics = self.cached_metrics.clone(); let interval = self.update_interval; tokio::spawn(async move { let mut update_timer = tokio::time::interval(interval); loop { update_timer.tick().await; let result = Self::c"
+    },
+    {
+      "file": "crates/client/src/app.rs",
+      "line": 168,
+      "kind": "std::thread::spawn",
+      "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); use_effect(move || { let wi"
+    },
+    {
+      "file": "crates/router/src/exchange_rate.rs",
+      "line": 182,
+      "kind": "tokio::spawn",
+      "context": "pub fn start_sync_task(self: Arc<Self>) { tokio::spawn(async move { let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(SYNC_CHECK_INTERVAL_SECS)); loop { interval.tick().await;"
     },
     {
       "file": "crates/router/src/health_probe.rs",
@@ -971,22 +989,10 @@
       "context": "let detector = state.api_version_detector.clone(); let error_message_for_detector = error_message.to_string(); tokio::spawn(async move { match detector .detect_and_update( channel_id_for_detector, &e"
     },
     {
-      "file": "crates/router/src/exchange_rate.rs",
-      "line": 182,
-      "kind": "tokio::spawn",
-      "context": "pub fn start_sync_task(self: Arc<Self>) { tokio::spawn(async move { let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(SYNC_CHECK_INTERVAL_SECS)); loop { interval.tick().await;"
-    },
-    {
       "file": "crates/router/src/price_sync.rs",
       "line": 727,
       "kind": "tokio::spawn",
       "context": "price_cache: PriceCache, mut force_sync_rx: tokio::sync::mpsc::Receiver<tokio::sync::oneshot::Sender<SyncResult>>, ) -> tokio::task::JoinHandle<()> { tokio::spawn(async move { let mut service = match config { Some(cfg) => PriceSyncService::with_config(db.clone(), cfg), None => PriceSyncService::new(db.clone()), }; let mu"
-    },
-    {
-      "file": "crates/client/src/app.rs",
-      "line": 168,
-      "kind": "std::thread::spawn",
-      "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); use_effect(move || { let wi"
     },
     {
       "file": "crates/download/src/lib.rs",
@@ -999,12 +1005,6 @@
       "line": 616,
       "kind": "tokio::spawn",
       "context": "let instance = Arc::clone(&self.instance); let is_running = Arc::clone(&self.is_running); let config = self.config.clone(); tokio::spawn(async move { while is_running.load(Ordering::SeqCst) { tokio::time::sleep(Duration::from_millis(1000)).await; let need_restart = { let mut loc"
-    },
-    {
-      "file": "crates/service/crates/monitor/src/service.rs",
-      "line": 89,
-      "kind": "tokio::spawn",
-      "context": "t disk_collector = self.disk_collector.clone(); let cached_metrics = self.cached_metrics.clone(); let interval = self.update_interval; tokio::spawn(async move { let mut update_timer = tokio::time::interval(interval); loop { update_timer.tick().await; let result = Self::c"
     }
   ],
   "spawn_coverage": {
@@ -1015,6 +1015,27 @@
         "kind": "std::thread::spawn",
         "context": "[_] => { #[cfg(windows)] { std::thread::spawn(|| { let rt = tokio::runtime::Runtime::new().unwrap(); rt.block_on(async { let host = std::env::var(\"HOST\").u",
         "docid": "background/desktop-background-work/windows-background-server-thread"
+      },
+      {
+        "file": "crates/service/crates/monitor/src/service.rs",
+        "line": 89,
+        "kind": "tokio::spawn",
+        "context": "t disk_collector = self.disk_collector.clone(); let cached_metrics = self.cached_metrics.clone(); let interval = self.update_interval; tokio::spawn(async move { let mut update_timer = tokio::time::interval(interval); loop { update_timer.tick().await; let result = Self::c",
+        "docid": "background/long-running-jobs/system-monitor-auto-update"
+      },
+      {
+        "file": "crates/client/src/app.rs",
+        "line": 168,
+        "kind": "std::thread::spawn",
+        "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); use_effect(move || { let wi",
+        "docid": "background/desktop-background-work/windows-tray-thread"
+      },
+      {
+        "file": "crates/router/src/exchange_rate.rs",
+        "line": 182,
+        "kind": "tokio::spawn",
+        "context": "pub fn start_sync_task(self: Arc<Self>) { tokio::spawn(async move { let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(SYNC_CHECK_INTERVAL_SECS)); loop { interval.tick().await;",
+        "docid": "background/long-running-jobs/exchange-rate-sync"
       },
       {
         "file": "crates/router/src/health_probe.rs",
@@ -1087,25 +1108,11 @@
         "docid": "background/request-time-async-side-effects/api-version-detect-update"
       },
       {
-        "file": "crates/router/src/exchange_rate.rs",
-        "line": 182,
-        "kind": "tokio::spawn",
-        "context": "pub fn start_sync_task(self: Arc<Self>) { tokio::spawn(async move { let mut interval = tokio::time::interval(tokio::time::Duration::from_secs(SYNC_CHECK_INTERVAL_SECS)); loop { interval.tick().await;",
-        "docid": "background/long-running-jobs/exchange-rate-sync"
-      },
-      {
         "file": "crates/router/src/price_sync.rs",
         "line": 727,
         "kind": "tokio::spawn",
         "context": "price_cache: PriceCache, mut force_sync_rx: tokio::sync::mpsc::Receiver<tokio::sync::oneshot::Sender<SyncResult>>, ) -> tokio::task::JoinHandle<()> { tokio::spawn(async move { let mut service = match config { Some(cfg) => PriceSyncService::with_config(db.clone(), cfg), None => PriceSyncService::new(db.clone()), }; let mu",
         "docid": "background/long-running-jobs/price-sync"
-      },
-      {
-        "file": "crates/client/src/app.rs",
-        "line": 168,
-        "kind": "std::thread::spawn",
-        "context": "sktop::use_window(); let window_setup = window.clone(); use_effect(move || { window_setup.set_maximized(true); std::thread::spawn(move || { if let Err(e) = start_tray() { eprintln!(\"Failed to start tray: {}\", e); } }); }); use_effect(move || { let wi",
-        "docid": "background/desktop-background-work/windows-tray-thread"
       },
       {
         "file": "crates/download/src/lib.rs",
@@ -1120,13 +1127,6 @@
         "kind": "tokio::spawn",
         "context": "let instance = Arc::clone(&self.instance); let is_running = Arc::clone(&self.is_running); let config = self.config.clone(); tokio::spawn(async move { while is_running.load(Ordering::SeqCst) { tokio::time::sleep(Duration::from_millis(1000)).await; let need_restart = { let mut loc",
         "docid": "background/download-background-work/aria2-daemon-monitor"
-      },
-      {
-        "file": "crates/service/crates/monitor/src/service.rs",
-        "line": 89,
-        "kind": "tokio::spawn",
-        "context": "t disk_collector = self.disk_collector.clone(); let cached_metrics = self.cached_metrics.clone(); let interval = self.update_interval; tokio::spawn(async move { let mut update_timer = tokio::time::interval(interval); loop { update_timer.tick().await; let result = Self::c",
-        "docid": "background/long-running-jobs/system-monitor-auto-update"
       }
     ],
     "unmapped": []
