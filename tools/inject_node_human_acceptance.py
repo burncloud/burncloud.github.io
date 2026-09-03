@@ -82,7 +82,6 @@ def inject_issue_pages(registry: dict[str, tuple[str, str]]) -> None:
         text = path.read_text(encoding="utf-8")
         if HUMAN_MARKER in text:
             text = text.split(HUMAN_MARKER, 1)[0].rstrip()
-            # Remove the separator left immediately before the old marker.
             if text.endswith("---"):
                 text = text[:-3].rstrip()
 
@@ -111,7 +110,7 @@ def patch_sidebar() -> None:
 
     node003 = (
         "            {type:'doc', id:'burncloud-node/implementation-plan/node-003', "
-        "label:'NODE-003 组合现有 Server / Router'},\n"
+        "label:'NODE-003 复用 Server / Router'},\n"
     )
     node004 = (
         "            {type:'doc', id:'burncloud-node/implementation-plan/node-004', "
