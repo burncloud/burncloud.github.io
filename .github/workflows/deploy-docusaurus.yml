@@ -82,6 +82,9 @@ jobs:
       - name: Sanitize generated Markdown for MDX
         run: python3 tools/sanitize_mdx.py
 
+      - name: Inject and verify Node human acceptance
+        run: python3 tools/inject_node_human_acceptance.py
+
       - name: Verify source-deep documentation and zero coverage gaps
         run: |
           test -f docs/index.md
@@ -103,6 +106,13 @@ jobs:
           test -f docs/background/download-background-work/aria2-daemon-monitor.md
           test -f docs/background/desktop-background-work/windows-background-server-thread.md
           test -f docs/ui/console/console-dashboard.md
+          test -f docs/burncloud-node/implementation-plan/node-004.md
+          test -f docs/burncloud-node/implementation-plan/node-304.md
+          test -f docs/burncloud-node/implementation-plan/human-acceptance.md
+          grep -q '第四层：人类验收' docs/burncloud-node/implementation-plan/node-001.md
+          grep -q '第四层：人类验收' docs/burncloud-node/implementation-plan/node-004.md
+          grep -q '第四层：人类验收' docs/burncloud-node/implementation-plan/node-304.md
+          grep -q '第四层：人类验收' docs/burncloud-node/implementation-plan/node-503.md
           python3 - <<'PY'
           import json,re
           from pathlib import Path
@@ -135,6 +145,14 @@ jobs:
               checked += 1
           assert checked == pages, (checked,pages)
           assert call_expanded >= 100, (call_expanded,pages)
+
+          node_issue_pages=sorted(Path('docs/burncloud-node/implementation-plan').glob('node-[0-9][0-9][0-9].md'))
+          assert len(node_issue_pages) == 24, [p.name for p in node_issue_pages]
+          for f in node_issue_pages:
+              text=f.read_text(encoding='utf-8')
+              assert text.count('## 第四层：人类验收（Human Acceptance）') == 1, f
+              for needle in ['**验收者：**','**人工步骤：**','**人类通过标准：**','**人工判定失败：**','**建议证据：**']:
+                  assert needle in text, (f,needle)
 
           counts=census['counts']
           assert counts['http_missing_exact_matches'] == 0, census['missing_http_entries']
@@ -232,6 +250,7 @@ jobs:
 
           print('pages=',pages)
           print('function_call_expanded_pages=',call_expanded)
+          print('node_human_acceptance_pages=',len(node_issue_pages))
           print('coverage=',json.dumps(counts,ensure_ascii=False))
           PY
 
@@ -262,6 +281,13 @@ jobs:
           test -f site/build/cli/workspace-binaries/aria2-test/index.html
           test -f site/build/background/long-running-jobs/health-probe-scheduler/index.html
           test -f site/build/ui/console/console-dashboard/index.html
+          test -f site/build/burncloud-node/implementation-plan/node-004/index.html
+          test -f site/build/burncloud-node/implementation-plan/node-304/index.html
+          test -f site/build/burncloud-node/implementation-plan/human-acceptance/index.html
+          grep -q '第四层：人类验收' site/build/burncloud-node/implementation-plan/node-001/index.html
+          grep -q '第四层：人类验收' site/build/burncloud-node/implementation-plan/node-004/index.html
+          grep -q '第四层：人类验收' site/build/burncloud-node/implementation-plan/node-304/index.html
+          grep -q '第四层：人类验收' site/build/burncloud-node/implementation-plan/node-503/index.html
           grep -q '输入示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
           grep -q 'BillingService' site/build/http-api/billing-usage/get-api-billing-summary/index.html
