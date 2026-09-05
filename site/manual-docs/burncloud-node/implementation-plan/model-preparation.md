@@ -35,10 +35,10 @@ Inventory / Cache / Safe Delete
 
 本类别包括：
 
-- **[NODE-301](./node-301)**：Local Artifact State；
-- **[NODE-302](./node-302)**：后台 Prepare、磁盘准入与下载去重；
-- **[NODE-303](./node-303)**：Artifact 校验、失败与恢复；
-- **[NODE-304](./node-304)**：Artifact Inventory / Cache / Delete Lifecycle。
+- **[NODE-301](/burncloud-node/implementation-plan/node-301/)**：Local Artifact State；
+- **[NODE-302](/burncloud-node/implementation-plan/node-302/)**：后台 Prepare、磁盘准入与下载去重；
+- **[NODE-303](/burncloud-node/implementation-plan/node-303/)**：Artifact 校验、失败与恢复；
+- **[NODE-304](/burncloud-node/implementation-plan/node-304/)**：Artifact Inventory / Cache / Delete Lifecycle。
 
 NODE-304 补齐 `/burncloud-node/model-manager/` 已声明的 `list / cache / delete / status` 产品职责，但 v0.1 不建设复杂 LRU、自动空间调度或 warm-set 策略。
 
