@@ -139,10 +139,10 @@ Tests pass      != Human accepted
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
-| [NODE-001](./implementation-plan/node-001) | Node 一等启动入口与生命周期 | 无 | PLANNED |
-| [NODE-002](./implementation-plan/node-002) | NodeConfig + NodeContext | NODE-001 | PLANNED |
-| [NODE-003](./implementation-plan/node-003) | 复用现有 Server / Router 形成 Node 模式 | NODE-001, NODE-002 | PLANNED |
-| [NODE-004](./implementation-plan/node-004) | Gateway / Protocol Routing Compatibility Gate | NODE-003 | PLANNED |
+| [NODE-001](/burncloud-node/implementation-plan/node-001/) | Node 一等启动入口与生命周期 | 无 | PLANNED |
+| [NODE-002](/burncloud-node/implementation-plan/node-002/) | NodeConfig + NodeContext | NODE-001 | PLANNED |
+| [NODE-003](/burncloud-node/implementation-plan/node-003/) | 复用现有 Server / Router 形成 Node 模式 | NODE-001, NODE-002 | PLANNED |
+| [NODE-004](/burncloud-node/implementation-plan/node-004/) | Gateway / Protocol Routing Compatibility Gate | NODE-003 | PLANNED |
 
 NODE-004 是 Compatibility Gate，不是第二 Gateway / Router 的实现授权。
 
@@ -159,9 +159,9 @@ different protocol → Protocol Translator
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
-| [NODE-101](./implementation-plan/node-101) | canonical HardwareProfile | NODE-002 | PLANNED |
-| [NODE-102](./implementation-plan/node-102) | NVIDIA GPU / VRAM / Driver Detection | NODE-101 | PLANNED |
-| [NODE-103](./implementation-plan/node-103) | Runtime Compatibility + Resource Snapshot | NODE-101, NODE-102 | PLANNED |
+| [NODE-101](/burncloud-node/implementation-plan/node-101/) | canonical HardwareProfile | NODE-002 | PLANNED |
+| [NODE-102](/burncloud-node/implementation-plan/node-102/) | NVIDIA GPU / VRAM / Driver Detection | NODE-101 | PLANNED |
+| [NODE-103](/burncloud-node/implementation-plan/node-103/) | Runtime Compatibility + Resource Snapshot | NODE-101, NODE-102 | PLANNED |
 
 范围明确：
 
@@ -177,10 +177,10 @@ AMD / Apple Metal / others  = Future
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
-| [NODE-201](./implementation-plan/node-201) | Model Manifest + v0.1 curated catalog | NODE-101~103 | PLANNED |
-| [NODE-202](./implementation-plan/node-202) | Canonical Model ID / Alias | NODE-201 | PLANNED |
-| [NODE-203](./implementation-plan/node-203) | Hardware / Runtime 驱动 Variant 选择 | NODE-201, NODE-202, NODE-103 | PLANNED |
-| [NODE-204](./implementation-plan/node-204) | ResolvedModel / ResolutionFailure 合同 | NODE-203 | PLANNED |
+| [NODE-201](/burncloud-node/implementation-plan/node-201/) | Model Manifest + v0.1 curated catalog | NODE-101~103 | PLANNED |
+| [NODE-202](/burncloud-node/implementation-plan/node-202/) | Canonical Model ID / Alias | NODE-201 | PLANNED |
+| [NODE-203](/burncloud-node/implementation-plan/node-203/) | Hardware / Runtime 驱动 Variant 选择 | NODE-201, NODE-202, NODE-103 | PLANNED |
+| [NODE-204](/burncloud-node/implementation-plan/node-204/) | ResolvedModel / ResolutionFailure 合同 | NODE-203 | PLANNED |
 
 关键边界：
 
@@ -190,10 +190,10 @@ AMD / Apple Metal / others  = Future
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
-| [NODE-301](./implementation-plan/node-301) | Local Artifact State | NODE-204 | PLANNED |
-| [NODE-302](./implementation-plan/node-302) | Background Prepare / Disk Admission / Download Dedup | NODE-301, NODE-103, NODE-204 | PLANNED |
-| [NODE-303](./implementation-plan/node-303) | Artifact Verification / Failure / Recovery | NODE-302 | PLANNED |
-| [NODE-304](./implementation-plan/node-304) | Artifact Inventory / Cache / Safe Delete | NODE-301, NODE-303 | PLANNED |
+| [NODE-301](/burncloud-node/implementation-plan/node-301/) | Local Artifact State | NODE-204 | PLANNED |
+| [NODE-302](/burncloud-node/implementation-plan/node-302/) | Background Prepare / Disk Admission / Download Dedup | NODE-301, NODE-103, NODE-204 | PLANNED |
+| [NODE-303](/burncloud-node/implementation-plan/node-303/) | Artifact Verification / Failure / Recovery | NODE-302 | PLANNED |
+| [NODE-304](/burncloud-node/implementation-plan/node-304/) | Artifact Inventory / Cache / Safe Delete | NODE-301, NODE-303 | PLANNED |
 
 NODE-304 补齐 Model Manager 产品文档的：
 
@@ -210,11 +210,11 @@ status
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
-| [NODE-400](./implementation-plan/node-400) | llama.cpp Runtime 自动可用 | Hardware/Profile + Artifact facts | PLANNED |
-| [NODE-401](./implementation-plan/node-401) | llama.cpp Runtime Adapter + ProcessSpec | NODE-303, NODE-400 | PLANNED |
-| [NODE-402](./implementation-plan/node-402) | Resource Admission / Port / Spawn | NODE-401 | PLANNED |
-| [NODE-403](./implementation-plan/node-403) | Readiness / Health | NODE-402 | PLANNED |
-| [NODE-404](./implementation-plan/node-404) | Stop / Crash / Restart / Logs | NODE-402, NODE-403 | PLANNED |
+| [NODE-400](/burncloud-node/implementation-plan/node-400/) | llama.cpp Runtime 自动可用 | Hardware/Profile + Artifact facts | PLANNED |
+| [NODE-401](/burncloud-node/implementation-plan/node-401/) | llama.cpp Runtime Adapter + ProcessSpec | NODE-303, NODE-400 | PLANNED |
+| [NODE-402](/burncloud-node/implementation-plan/node-402/) | Resource Admission / Port / Spawn | NODE-401 | PLANNED |
+| [NODE-403](/burncloud-node/implementation-plan/node-403/) | Readiness / Health | NODE-402 | PLANNED |
+| [NODE-404](/burncloud-node/implementation-plan/node-404/) | Stop / Crash / Restart / Logs | NODE-402, NODE-403 | PLANNED |
 
 必须保持：
 
@@ -228,10 +228,10 @@ Process Spawned != Model READY
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
-| [NODE-501](./implementation-plan/node-501) | READY Runtime 自动注册 Local Channel / Ability | Runtime READY | PLANNED |
-| [NODE-502](./implementation-plan/node-502) | Health Linkage / Removal / Recovery | NODE-501, NODE-403/404 | PLANNED |
-| [NODE-504](./implementation-plan/node-504) | Model Demand Reconciliation | Resolver + Preparation + Runtime + Channel | PLANNED |
-| [NODE-503](./implementation-plan/node-503) | Demand-driven 本地推理完整 E2E | Node v0.1 全部前置 Issue | PLANNED |
+| [NODE-501](/burncloud-node/implementation-plan/node-501/) | READY Runtime 自动注册 Local Channel / Ability | Runtime READY | PLANNED |
+| [NODE-502](/burncloud-node/implementation-plan/node-502/) | Health Linkage / Removal / Recovery | NODE-501, NODE-403/404 | PLANNED |
+| [NODE-504](/burncloud-node/implementation-plan/node-504/) | Model Demand Reconciliation | Resolver + Preparation + Runtime + Channel | PLANNED |
+| [NODE-503](/burncloud-node/implementation-plan/node-503/) | Demand-driven 本地推理完整 E2E | Node v0.1 全部前置 Issue | PLANNED |
 
 当前请求仍由 Existing ModelRouter 决定：
 
