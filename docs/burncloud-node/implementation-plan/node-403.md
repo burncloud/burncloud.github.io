@@ -183,3 +183,25 @@ STOP IF：需要 Router mutation 才能表达 health、需要 restart 才能完�
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确 readiness endpoint / timeout / health ownership。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-403 — Readiness / Health
+
+**验收者：** 产品负责人 + Runtime 工程师。
+
+**人工步骤：**
+1. 启动一个加载需要时间的模型，观察 `spawned → starting → ready` 过程。
+2. 在 READY 前立即发真实请求，确认不会被路由进去。
+3. 模拟 health endpoint 失败/超时。
+
+**人类通过标准：** Readiness 成功后才 READY；Health 失败会明确降级/失败；真实流量永不进入未 READY Runtime。
+
+**人工判定失败：** PID 创建即 READY、固定 sleep 代替 readiness、health 失败仍保持 routable。
+
+**建议证据：** 状态时间线 + READY 前请求结果 + health failure 记录。

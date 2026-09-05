@@ -176,3 +176,25 @@ STOP IF：合同必须包含 PID/port/download/router state 才能工作、下�
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确真实下游字段需求。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-204 — ResolvedModel / ResolutionFailure 合同
+
+**验收者：** 架构负责人 + Runtime 工程师。
+
+**人工步骤：**
+1. 对一个可解析模型查看完整 ResolvedModel。
+2. 对多个失败场景查看 ResolutionFailure。
+3. 让后续 Preparation/Runtime 人工消费这些结果，确认无需重新猜 model/variant/runtime 事实。
+
+**人类通过标准：** 成功和失败都是稳定、结构化、可被下游直接理解的合同。
+
+**人工判定失败：** 下游必须重新解析文件名、重新检测硬件或解析自由文本才能继续。
+
+**建议证据：** 一份成功合同 + 至少两份失败合同。

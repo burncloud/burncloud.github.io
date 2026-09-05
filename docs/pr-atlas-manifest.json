@@ -4,6 +4,14 @@
   "pr_count": 50,
   "prs": [
     {
+      "number": 461,
+      "title": "feat: add standalone Leptos Rust UI project",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-09-04T14:39:55Z",
+      "changed_files": 13
+    },
+    {
       "number": 429,
       "title": "docs(agent): enforce canonical engineering issue standard",
       "state": "open",
@@ -394,14 +402,6 @@
       "merged_at": null,
       "created_at": "2026-07-29T04:38:21Z",
       "changed_files": 29
-    },
-    {
-      "number": 377,
-      "title": "Bugfix/monitor cpu parse log error",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T04:24:40Z",
-      "changed_files": 27
     }
   ]
 }

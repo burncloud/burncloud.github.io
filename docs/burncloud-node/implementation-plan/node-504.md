@@ -413,3 +413,27 @@ Decision required: ...
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确 demand observation point 与 state ownership。
 - [ ] 所有实现只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-504 — Model Demand Reconciliation
+
+**验收者：** 架构负责人 + 产品负责人。
+
+**人工步骤：**
+1. 对一个本地不存在的模型发送真实 `/v1` 请求。
+2. 观察请求产生一个非阻塞 model demand。
+3. 连续/并发重复请求，确认只存在一个 reconciliation pipeline。
+4. 在 Provider 可用和不可用两种情况下观察当前请求与后台准备互不阻塞。
+5. 重启 Node，确认 stale READY/Channel 不被盲目信任。
+
+**人类通过标准：** Reconciler 只协调未来本地现实，不替代 ModelRouter；同 demand 去重；状态和失败原因可解释；重启 fail closed。
+
+**人工判定失败：** Reconciler 自己选择当前 Channel、把下载/spawn 塞进 Router、Provider success 取消本地准备、或重启后信任不存在的进程。
+
+**建议证据：** demand registry/state trace + 并发记录 + 重启前后状态。

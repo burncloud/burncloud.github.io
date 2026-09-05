@@ -190,3 +190,25 @@ STOP IF：需要下载/process/router side effect、需要猜测未知兼容性�
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 锁定输入/输出/diagnostic contract。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-203 — Hardware/Runtime 驱动的 Variant 选择
+
+**验收者：** 模型负责人 + GPU/Runtime 工程师。
+
+**人工步骤：**
+1. 在至少两种资源档位上解析同一个逻辑模型。
+2. 确认选择的 Variant 与 HardwareProfile/Runtime 能力相符。
+3. 制造显存不足或 Runtime 不支持，确认返回结构化 reject reason。
+
+**人类通过标准：** 用户只选择模型，不选择 GGUF；可运行时选出可解释 Variant，不可运行时解释真实原因。
+
+**人工判定失败：** 任意挑最小 GGUF 兜底、资源不足仍输出可运行 Variant，或 Resolver 自己触发下载/启动。
+
+**建议证据：** 不同机器/资源档位的解析对比。

@@ -180,3 +180,25 @@ STOP IF：需要做 model-specific selection、需要隐藏 unknown、需要复�
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确真实 runtime capability evidence 来源。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-103 — Runtime Compatibility 与资源快照
+
+**验收者：** Runtime 工程师。
+
+**人工步骤：**
+1. 在同一台机器上先采集资源快照，再人为制造 RAM/VRAM/Disk 压力后重新采集。
+2. 确认动态可用资源会变化，而静态硬件身份保持稳定。
+3. 用一个明确支持和一个明确不支持的 Runtime 条件验证 compatibility 结果。
+
+**人类通过标准：** 资源快照反映当前现实；Runtime compatibility 有真实原因，不使用旧缓存假装可用。
+
+**人工判定失败：** 动态资源永远不变、资源不足仍显示 compatible、或不同模块自行重新解释硬件事实。
+
+**建议证据：** 压力前后快照 + compatibility 诊断。

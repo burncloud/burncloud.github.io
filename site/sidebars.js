@@ -4,10 +4,12 @@ module.exports = {
       {type:'category', label:'BurnCloud 节点', collapsed:true, link:{type:'doc', id:'burncloud-node/index'}, items:[
         {type:'category', label:'实施计划', collapsed:false, link:{type:'doc', id:'burncloud-node/implementation-plan'}, items:[
           {type:'doc', id:'burncloud-node/implementation-plan/issue-standard', label:'Issue 标准'},
+          {type:'doc', id:'burncloud-node/implementation-plan/human-acceptance', label:'人类验收标准'},
           {type:'category', label:'类别一：Node Core', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/node-core'}, items:[
             {type:'doc', id:'burncloud-node/implementation-plan/node-001', label:'NODE-001 启动入口与生命周期'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-002', label:'NODE-002 配置与共享上下文'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-003', label:'NODE-003 复用 Server / Router'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-004', label:'NODE-004 Gateway / Protocol Compatibility'},
           ]},
           {type:'category', label:'类别二：Hardware Profile', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/hardware-profile'}, items:[
             {type:'doc', id:'burncloud-node/implementation-plan/node-101', label:'NODE-101 canonical HardwareProfile'},
@@ -24,6 +26,7 @@ module.exports = {
             {type:'doc', id:'burncloud-node/implementation-plan/node-301', label:'NODE-301 Local Artifact State'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-302', label:'NODE-302 后台 Prepare / 磁盘准入 / 去重'},
             {type:'doc', id:'burncloud-node/implementation-plan/node-303', label:'NODE-303 校验与失败恢复'},
+            {type:'doc', id:'burncloud-node/implementation-plan/node-304', label:'NODE-304 Inventory / Cache / Delete'},
           ]},
           {type:'category', label:'类别五：Runtime 与 Process', collapsed:true, link:{type:'doc', id:'burncloud-node/implementation-plan/runtime-process'}, items:[
             {type:'doc', id:'burncloud-node/implementation-plan/node-400', label:'NODE-400 llama.cpp Runtime 自动可用'},
@@ -394,6 +397,7 @@ module.exports = {
             ]},
           ]},
       {type:'category', label:"PR 变更图谱（最近 50 条）", collapsed:true, items:[
+        {type:'doc', id:"pr/pr-461", label:"#461 feat: add standalone Leptos Rust UI project"},
         {type:'doc', id:"pr/pr-429", label:"#429 docs(agent): enforce canonical engineering issue standard"},
         {type:'doc', id:"pr/pr-428", label:"#428 feat(node): introduce Node hardware profile foundation"},
         {type:'doc', id:"pr/pr-427", label:"#427 feat: 更新首页内容"},
@@ -443,7 +447,6 @@ module.exports = {
         {type:'doc', id:"pr/pr-380", label:"#380 Bugfix/env http timeout default adjust"},
         {type:'doc', id:"pr/pr-379", label:"#379 Bugfix/env jwt secret warning enhance"},
         {type:'doc', id:"pr/pr-378", label:"#378 Bugfix/download parse log error"},
-        {type:'doc', id:"pr/pr-377", label:"#377 Bugfix/monitor cpu parse log error"},
       ]},
       // BURNCLOUD_TECHNICAL_REFERENCE_END
     ]},

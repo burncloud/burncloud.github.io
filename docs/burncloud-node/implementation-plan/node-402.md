@@ -177,3 +177,25 @@ STOP IF：实现需要复杂 GPU scheduler 才能成立、无法防止明显并�
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确最小 admission policy。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-402 — 资源准入 / 内部端口 / Spawn
+
+**验收者：** Runtime 工程师。
+
+**人工步骤：**
+1. 启动一个可运行模型，观察系统自动选择内部端口并 spawn。
+2. 再启动第二模型，确认端口不冲突。
+3. 制造资源不足和端口冲突场景。
+
+**人类通过标准：** 用户不提供内部端口；资源不足在 spawn 前被拒绝；spawn 成功只表示 STARTING，不直接显示 READY。
+
+**人工判定失败：** 固定端口撞车、资源不足仍 spawn、或 PID 出现就对外接流量。
+
+**建议证据：** 两模型端口/PID记录 + 资源不足/冲突失败。

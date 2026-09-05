@@ -193,3 +193,26 @@ STOP IF：必须创建第二套 downloader、必须阻塞 inference request、�
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确真实 downloader / disk state ownership。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-302 — 后台 Prepare / 磁盘准入 / 下载去重
+
+**验收者：** 产品负责人 + 下载/Runtime 工程师。
+
+**人工步骤：**
+1. 对同一未安装模型同时发起多次真实 model demand。
+2. 观察下载任务列表/日志，确认只有一个 active download/prepare。
+3. 在磁盘不足环境再次触发，确认下载在开始前被拒绝。
+4. 中断一次下载并恢复，确认复用现有可恢复任务。
+
+**人类通过标准：** 请求线程不等待大型下载；同 Artifact 只准备一次；磁盘不足不先下载再失败；可恢复下载不重新从零制造第二任务。
+
+**人工判定失败：** N 个请求产生 N 个下载、磁盘不足仍开下、Provider 响应等待本地下载、或新建第二套 downloader。
+
+**建议证据：** 并发请求记录 + 下载任务数 + 磁盘不足错误。

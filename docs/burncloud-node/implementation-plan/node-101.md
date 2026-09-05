@@ -241,3 +241,25 @@ STOP IF:
 - [ ] Engineering Issue 已通过 READY Gate。
 - [ ] Task Contract 明确 HardwareProfile 的真实归属位置。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-101 — Canonical HardwareProfile
+
+**验收者：** Runtime 工程师。
+
+**人工步骤：**
+1. 在一台已知硬件配置的机器上启动 HardwareProfile 采集。
+2. 手工用系统命令核对 OS、CPU、RAM、Disk 等关键字段。
+3. 重复读取 HardwareProfile，确认不同 Node 模块看到的是同一份权威事实来源。
+
+**人类通过标准：** 静态硬件字段与机器真实信息一致；不存在 Resolver、Runtime、UI 各自形成不同硬件画像。
+
+**人工判定失败：** 关键字段与系统事实不一致、同一进程出现两份互相冲突的 HardwareProfile，或未知值被伪造成 0/可用。
+
+**建议证据：** HardwareProfile 输出 + 系统命令对照。

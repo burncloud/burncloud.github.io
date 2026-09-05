@@ -179,3 +179,25 @@ STOP IF：必须创建第二套 model/download DB、必须用路径存在冒充 
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确真实 state source / persistence ownership。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-301 — Local Artifact State
+
+**验收者：** 模型/Runtime 工程师。
+
+**人工步骤：**
+1. 分别准备“不存在、下载中、已验证、失败/损坏”的 Artifact。
+2. 查看 Node 报告的 ABSENT/PREPARING/READY/FAILED 或等价状态。
+3. 重启 Node 后再次检查状态。
+
+**人类通过标准：** 文件存在不等于 READY；重启后可安全恢复或重新判定；状态与 Process READY 完全分离。
+
+**人工判定失败：** `.gguf` 文件一出现就 READY、stale 状态重启后继续伪装 READY、或 Artifact failure 直接污染 Runtime state。
+
+**建议证据：** 四种状态的人工检查记录 + 重启前后对比。

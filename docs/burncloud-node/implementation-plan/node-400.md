@@ -176,3 +176,25 @@ STOP IF：需要执行未验证二进制、需要构建通用 Runtime marketplac
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确 runtime distribution source / integrity mechanism。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-400 — llama.cpp Runtime 自动可用
+
+**验收者：** 产品负责人 + Runtime 工程师。
+
+**人工步骤：**
+1. 在没有手工配置 `llama-server` 路径的干净环境启动 Node。
+2. 触发一个需要 llama.cpp 的本地模型。
+3. 检查 Runtime 来源、版本、平台/backend、checksum/完整性和最终可用状态。
+
+**人类通过标准：** 正常用户不需要自己安装/寻找 llama-server；BurnCloud 能准备一个受管理、可验证的 Runtime。
+
+**人工判定失败：** 文档要求用户手工下载 binary、依赖 PATH 偶然存在的未知版本，或 Runtime 不匹配仍继续启动。
+
+**建议证据：** 干净环境运行记录 + Runtime 元数据。

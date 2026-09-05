@@ -169,3 +169,26 @@ STOP IF：必须 spawn 才能生成 spec、需要绕过 verified runtime/artifac
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 锁定 current llama-server CLI contract。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-401 — llama.cpp Runtime Adapter + ProcessSpec
+
+**验收者：** Runtime 工程师。
+
+**人工步骤：**
+1. 给 Adapter 一个 READY Artifact + HardwareProfile。
+2. 查看生成的 ProcessSpec。
+3. 确认用户没有提供 GGUF 绝对路径、gpu_layers、内部端口或原始 CLI 参数。
+4. 用明显非法配置验证明确失败。
+
+**人类通过标准：** ProcessSpec 可执行、参数可解释、由 Runtime contract 产生，不把 PID/Child ownership混进 Runtime Adapter。
+
+**人工判定失败：** 需要用户拼 CLI、Adapter 自己长期持有进程、或非法配置静默纠正成不可解释值。
+
+**建议证据：** 一份有效 ProcessSpec + 一份非法配置失败。

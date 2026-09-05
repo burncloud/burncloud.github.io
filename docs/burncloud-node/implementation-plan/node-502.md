@@ -201,3 +201,26 @@ STOP IF：必须修改 Provider failover/scorer、必须绕过 ChannelStateTrack
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确 availability integration 与 recovery policy。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-502 — Local Channel 健康联动 / 摘除 / 恢复
+
+**验收者：** Router/Runtime 工程师。
+
+**人工步骤：**
+1. 在 Local READY 时确认请求可正常路由。
+2. 人为让 Runtime unhealthy/crash。
+3. 立即再次请求，确认 Local 不再被当作健康候选。
+4. Runtime 恢复 READY 后确认 Local candidate 自动恢复。
+
+**人类通过标准：** Channel 的 routable 状态跟随真实 Runtime health；失败时 fail closed，恢复后可重新进入 Router。
+
+**人工判定失败：** Runtime 死掉后 Router 仍持续选 Local、需要人工删 Channel 才恢复，或恢复时创建重复 Channel。
+
+**建议证据：** health/route 状态时间线。

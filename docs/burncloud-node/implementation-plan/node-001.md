@@ -417,3 +417,26 @@ Decision required: ...
 - [ ] Task Contract 未获得比 Issue 更大的架构权限。
 - [ ] 没有未解决的 Stop Condition。
 - [ ] 所有实现通过 feature/fix branch + Pull Request 进入 `main`，没有直接提交实现到 `main`。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-001 — Node Core 启动入口与生命周期
+
+**验收者：** 产品负责人 + Runtime 工程师。
+
+**人工步骤：**
+1. 在可执行环境中直接运行 `burncloud node`。
+2. 确认它进入独立 Node runtime，而不是打印后偷偷转成 `burncloud server` / `burncloud router`。
+3. 发出正常停止信号（例如 Ctrl+C / SIGTERM）。
+4. 再分别启动现有 `burncloud server`、`burncloud router`，确认原行为没有被改坏。
+
+**人类通过标准：** Node 能明确启动、运行、停止；停止后没有由 Node Core 自己遗留的生命周期任务；现有 server/router 仍可正常启动。
+
+**人工判定失败：** Node 启动即静默 fallback 到其它模式、停止无响应、退出后仍残留 Node 自己创建的长期任务，或现有 server/router 行为变化。
+
+**建议证据：** 启动输出 + 停止输出 + 三种 runtime 的人工运行记录。

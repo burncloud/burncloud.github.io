@@ -163,3 +163,25 @@ STOP IF：必须创建 LocalRouter、必须绕过 ModelRouter、无法避免 dup
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 锁定 current Channel/priority semantics。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-501 — READY Runtime 自动注册 Local Channel
+
+**验收者：** Router 工程师 + 产品负责人。
+
+**人工步骤：**
+1. 让一个本地 Runtime 真正进入 READY。
+2. 查看现有 Channel/Ability 体系是否自动出现对应 Local candidate。
+3. 通过正常 `/v1` 请求验证 ModelRouter 能选中它。
+
+**人类通过标准：** Local 以现有 Channel/Ability 身份进入 Router，而不是旁路；未 READY 时绝不注册 routable candidate。
+
+**人工判定失败：** 直接从 Gateway 调 localhost runtime、重复 Local Channel、或 STARTING 状态就被 Router 选中。
+
+**建议证据：** READY 前后 Channel/Ability 对比 + `/v1` route trace。

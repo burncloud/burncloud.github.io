@@ -176,3 +176,25 @@ STOP IF：需要通过启动 Runtime 才能判断 Artifact 完整、需要跳过
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确 Manifest integrity requirements 与文件 ownership。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-303 — Artifact 校验 / 失败 / 恢复
+
+**验收者：** 模型/Runtime 工程师。
+
+**人工步骤：**
+1. 准备一个正确 Artifact、一个截断文件、一个 checksum 错误文件。
+2. 分别执行验证。
+3. 修复损坏文件后重新验证。
+
+**人类通过标准：** 只有满足 Manifest 要求的 Artifact 才 READY；损坏/部分文件有明确原因；修复后必须重新验证才能 READY。
+
+**人工判定失败：** checksum mismatch 只 warning 后继续、下载 complete 自动等于 READY、或通过“启动 llama-server 看看”替代 Artifact 校验。
+
+**建议证据：** valid/mismatch/partial/recovery 四组结果。

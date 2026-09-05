@@ -181,3 +181,25 @@ STOP IF：需要在 Resolver/Runtime 重复探测、需要把未知值猜成确�
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确真实 detection interface 与测试夹具。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-102 — NVIDIA GPU / VRAM / Driver Detection
+
+**验收者：** GPU/Runtime 工程师。
+
+**人工步骤：**
+1. 在 NVIDIA 机器上将 BurnCloud 检测结果与 `nvidia-smi` 或等价可信工具逐项对比 GPU 型号、数量、VRAM、Driver。
+2. 在驱动异常/不可访问环境中重复检测。
+3. 如果有多卡机器，确认每张卡不会被合并成虚假单卡事实。
+
+**人类通过标准：** NVIDIA 事实准确；驱动不可用时明确报不可用/未知，而不是假装没有 GPU 或填 0。
+
+**人工判定失败：** GPU 数量/显存错误、驱动错误被隐藏、不可访问 GPU 被当作可运行。
+
+**建议证据：** BurnCloud 输出与 `nvidia-smi` 对照截图/文本。

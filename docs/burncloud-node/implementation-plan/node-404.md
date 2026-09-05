@@ -167,3 +167,26 @@ STOP IF：需要无限 restart、需要 Router mutation 才能表达 crash、无
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 明确 restart/shutdown ownership。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-404 — Stop / Crash / Restart / Logs
+
+**验收者：** Runtime 工程师 + 运维负责人。
+
+**人工步骤：**
+1. 正常停止一个 managed Runtime，确认进程退出。
+2. 强制杀掉一个 managed Runtime，观察 crash 检测和 restart policy。
+3. 连续制造 crash 达到重启上限。
+4. 查看 runtime logs 是否足够定位 exit code/失败原因。
+
+**人类通过标准：** BurnCloud 对自己启动的模型进程负责清理；crash 可检测；restart 有上限；日志可诊断。
+
+**人工判定失败：** Node 退出后 orphan process、无限 crash loop、失败被吞掉、或日志找不到具体 runtime/process 身份。
+
+**建议证据：** process list 前后对比 + restart_count + 日志片段。

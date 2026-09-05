@@ -250,3 +250,26 @@ STOP IF:
 - [ ] Engineering Issue 已通过 READY Gate。
 - [ ] Task Contract 明确真实 Server / Router construction path。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-003 — 组合现有 Server / Router 为 Node 模式
+
+**验收者：** 产品负责人 + API/Router 工程师。
+
+**人工步骤：**
+1. 启动 `burncloud node`。
+2. 使用正常 BurnCloud credential 请求 `http://localhost:3000/v1/...`。
+3. 确认请求仍经过现有统一 Server / ModelRouter，而不是新的 NodeGateway/LocalRouter。
+4. 同时验证一个现有 Provider-only 请求仍可正常完成。
+
+**人类通过标准：** Node 只有一个外部 AI API 入口；Provider routing、Auth、Billing/Quota 的现有产品行为保持不变。
+
+**人工判定失败：** 出现第二端口/第二 Gateway、Local 绕过 ModelRouter、Provider-only 请求行为变化，或 Node 模式放松 Auth/Billing。
+
+**建议证据：** `/v1` 请求/响应 + Provider 请求记录 + 实际监听端口/启动日志。

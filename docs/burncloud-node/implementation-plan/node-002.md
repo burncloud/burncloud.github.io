@@ -272,3 +272,26 @@ STOP IF:
 - [ ] 对应 Engineering Issue 已通过 READY Gate。
 - [ ] 实现只通过分支 + Pull Request 进入 `main`。
 - [ ] PR 中能说明依赖所有权，没有靠隐藏 fallback 扩大范围。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-002 — Node 配置与共享上下文
+
+**验收者：** 架构负责人 + Runtime 工程师。
+
+**人工步骤：**
+1. 用一份最小合法 Node 配置启动 Node。
+2. 故意缺失一个必需配置，确认启动失败原因清晰。
+3. 查看运行诊断或调试输出，确认核心依赖来自同一个 NodeContext / composition root，而不是多个模块各自重新创建 Database / Router / Settings。
+4. 修改一个 Node 配置值并重启，确认所有依赖该值的模块看到一致结果。
+
+**人类通过标准：** 配置来源唯一、错误可解释、共享依赖只初始化一次，Context 不表现为业务逻辑容器。
+
+**人工判定失败：** 不同模块读到不同配置、缺失配置被隐藏默认值掩盖、出现第二份 Database/Router/Settings，或 Context 开始承担下载/路由/进程业务。
+
+**建议证据：** 正常启动记录 + 缺失配置错误 + 初始化日志/诊断。

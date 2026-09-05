@@ -170,3 +170,25 @@ STOP IF：必须把文件名当唯一身份、必须执行下载/Runtime 才能�
 - [ ] Engineering Issue 通过 READY Gate。
 - [ ] Task Contract 锁定 authoritative catalog location/versioning。
 - [ ] 只通过分支 + Pull Request 合并。
+
+
+---
+
+## 第四层：人类验收（Human Acceptance）
+
+> 本节由 [Node 人类验收标准](/burncloud-node/implementation-plan/human-acceptance/) 生成。机器测试、CI 或 AI Review 不能替代这里的人工验收。
+
+### NODE-201 — Model Manifest + Curated Catalog
+
+**验收者：** 模型产品负责人 + Runtime 工程师。
+
+**人工步骤：**
+1. 打开 v0.1 curated catalog，随机选择多个模型核对 canonical model、variant、runtime、artifact、资源要求、完整性字段。
+2. 故意引用一个 catalog 不存在的 model。
+3. 检查 Manifest 中是否存在需要运行时猜测的关键事实。
+
+**人类通过标准：** catalog 是显式、可审阅、有限集合；关键 Artifact/Runtime/资源事实可以由人核实；未知模型明确不存在。
+
+**人工判定失败：** 运行时通过文件名/网络搜索猜 Manifest、关键字段缺失却默认成功，或 catalog 与实际 Artifact 不一致。
+
+**建议证据：** curated catalog 条目抽检记录。
