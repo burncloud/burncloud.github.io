@@ -13,10 +13,10 @@ Node Core 只负责把现有 BurnCloud 能力组合成一个 Node 运行形态�
 
 | ID | 功能 | 依赖 | 状态 |
 |---|---|---|---|
-| [NODE-001](./node-001) | 建立 Node 启动入口与生命周期 | 无 | PLANNED |
-| [NODE-002](./node-002) | 建立 Node 配置与共享上下文 | NODE-001 | PLANNED |
-| [NODE-003](./node-003) | 组合现有 Server / Router 为 Node 模式 | NODE-001, NODE-002 | PLANNED |
-| [NODE-004](./node-004) | Gateway / Protocol Routing Compatibility Gate | NODE-003 | PLANNED |
+| [NODE-001](/burncloud-node/implementation-plan/node-001/) | 建立 Node 启动入口与生命周期 | 无 | PLANNED |
+| [NODE-002](/burncloud-node/implementation-plan/node-002/) | 建立 Node 配置与共享上下文 | NODE-001 | PLANNED |
+| [NODE-003](/burncloud-node/implementation-plan/node-003/) | 组合现有 Server / Router 为 Node 模式 | NODE-001, NODE-002 | PLANNED |
+| [NODE-004](/burncloud-node/implementation-plan/node-004/) | Gateway / Protocol Routing Compatibility Gate | NODE-003 | PLANNED |
 
 NODE-004 **不是**第二个 Gateway / Router 的实现 Issue。它只负责把以下已批准产品合同变成可验收的 compatibility matrix：
 
