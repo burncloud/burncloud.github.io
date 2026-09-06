@@ -1,0 +1,27 @@
+name: Verify BurnCloud UI Architecture Contract
+
+on:
+  pull_request:
+    paths:
+      - 'site/manual-docs/burncloud-ui/**'
+      - 'tools/verify_ui_architecture_contract.py'
+      - '.github/workflows/ui-architecture-contract.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'site/manual-docs/burncloud-ui/**'
+      - 'tools/verify_ui_architecture_contract.py'
+      - '.github/workflows/ui-architecture-contract.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-ui-architecture-contract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Verify Architecture Contract governance
+        run: python3 tools/verify_ui_architecture_contract.py
