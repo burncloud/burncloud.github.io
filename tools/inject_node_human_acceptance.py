@@ -8,6 +8,10 @@ Targets:
   docs/burncloud-node/implementation-plan/node-NNN.md
   site/sidebars.js (only to expose NODE-004 / NODE-304 / Human Acceptance Registry)
 
+Before Node acceptance injection, this build hook also runs the BurnCloud UI
+Architecture dependency/menu injector so every UI implementation page visibly
+inherits the mandatory Architecture Contract.
+
 The script is intentionally strict: every node-NNN page must have exactly one registry
 entry, and every registry entry must map to an existing node-NNN page. This makes
 "human acceptance missing" a documentation build failure instead of a review-time guess.
@@ -17,6 +21,8 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+
+from inject_ui_architecture_dependency import main as inject_ui_architecture_dependency
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "site/manual-docs/burncloud-node/implementation-plan/human-acceptance.md"
@@ -155,6 +161,7 @@ def verify(registry: dict[str, tuple[str, str]]) -> None:
 
 
 def main() -> None:
+    inject_ui_architecture_dependency()
     registry = parse_registry()
     inject_issue_pages(registry)
     patch_sidebar()

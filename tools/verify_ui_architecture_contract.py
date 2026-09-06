@@ -5,6 +5,8 @@ ROOT = Path(__file__).resolve().parents[1]
 UI = ROOT / "site" / "manual-docs" / "burncloud-ui"
 ARCH = UI / "architecture"
 PLAN = UI / "implementation-plan"
+UI_INJECTOR = ROOT / "tools" / "inject_ui_architecture_dependency.py"
+NODE_BUILD_HOOK = ROOT / "tools" / "inject_node_human_acceptance.py"
 
 REQUIRED_ARCH_DOCS = {
     "index.md",
@@ -66,6 +68,32 @@ for md in UI.rglob("*.md"):
     if title and title.startswith("UI-"):
         assert md.parent == PLAN, f"UI implementation issue outside governed directory: {md}"
 
+# The Docusaurus generation chain must make the parent Architecture Contract
+# visible on every implementation page and expose the full Architecture tree in
+# the BurnCloud UI menu before the Implementation Plan.
+assert UI_INJECTOR.is_file(), UI_INJECTOR
+injector = UI_INJECTOR.read_text(encoding="utf-8")
+for needle in [
+    "UI-ARCHITECTURE-DEPENDENCY: REQUIRED",
+    "Mandatory Architecture Dependency（强制）",
+    "burncloud-ui/architecture/index",
+    "架构规范（必读）",
+    "Allowed Paths / Conditional Paths / Forbidden Paths",
+    "STOP → Architecture Dependency / Foundation Issue",
+]:
+    assert needle in injector, (UI_INJECTOR, needle)
+
+for name in sorted(REQUIRED_ARCH_DOCS - {"index.md"}):
+    doc_id = "burncloud-ui/architecture/" + name.removesuffix(".md")
+    assert doc_id in injector, (UI_INJECTOR, doc_id)
+
+assert NODE_BUILD_HOOK.is_file(), NODE_BUILD_HOOK
+node_hook = NODE_BUILD_HOOK.read_text(encoding="utf-8")
+assert "from inject_ui_architecture_dependency import main as inject_ui_architecture_dependency" in node_hook
+assert "inject_ui_architecture_dependency()" in node_hook
+
 print(f"ui_architecture_docs={len(REQUIRED_ARCH_DOCS)}")
 print(f"governed_ui_issues={len(issues)}")
+print("ui_architecture_menu=REQUIRED")
+print("ui_issue_architecture_dependency=REQUIRED")
 print("ui_architecture_contract=OK")
