@@ -51,6 +51,33 @@ module.exports = {
         {type:'doc', id:'burncloud-node/process-manager', label:'进程管理'},
       ]},
       {type:'category', label:'BurnCloud 界面', collapsed:true, link:{type:'doc', id:'burncloud-ui/index'}, items:[
+        {type:'category', label:'架构规范（必读）', collapsed:false, link:{type:'doc', id:'burncloud-ui/architecture/index'}, items:[
+          {type:'doc', id:'burncloud-ui/architecture/overview', label:'Architecture Overview'},
+          {type:'category', label:'代码结构与边界', collapsed:true, items:[
+            {type:'doc', id:'burncloud-ui/architecture/directory-contract', label:'Directory Contract'},
+            {type:'doc', id:'burncloud-ui/architecture/dependency-rules', label:'Dependency Rules'},
+            {type:'doc', id:'burncloud-ui/architecture/code-ownership', label:'Code Ownership / 修改范围'},
+          ]},
+          {type:'category', label:'路由 / 权限 / API', collapsed:true, items:[
+            {type:'doc', id:'burncloud-ui/architecture/route-contract', label:'Route Contract'},
+            {type:'doc', id:'burncloud-ui/architecture/authorization-contract', label:'Authorization Contract'},
+            {type:'doc', id:'burncloud-ui/architecture/api-boundary', label:'API Boundary'},
+            {type:'doc', id:'burncloud-ui/architecture/state-truth-contract', label:'State Truth Contract'},
+          ]},
+          {type:'category', label:'UI 基础设施', collapsed:true, items:[
+            {type:'doc', id:'burncloud-ui/architecture/shared-component-rules', label:'Shared Component Rules'},
+            {type:'doc', id:'burncloud-ui/architecture/design-system', label:'Design System'},
+            {type:'doc', id:'burncloud-ui/architecture/i18n-contract', label:'i18n Contract'},
+            {type:'doc', id:'burncloud-ui/architecture/css-contract', label:'CSS Contract'},
+            {type:'doc', id:'burncloud-ui/architecture/platform-contract', label:'Platform Contract'},
+            {type:'doc', id:'burncloud-ui/architecture/testing-contract', label:'Testing Contract'},
+          ]},
+          {type:'category', label:'AI 与治理', collapsed:true, items:[
+            {type:'doc', id:'burncloud-ui/architecture/ai-coding-boundaries', label:'AI Coding Boundaries'},
+            {type:'doc', id:'burncloud-ui/architecture/architecture-lint', label:'Architecture Lint'},
+            {type:'doc', id:'burncloud-ui/architecture/migration-plan', label:'Migration Plan'},
+          ]},
+        ]},
         {type:'category', label:'实施计划', collapsed:false, link:{type:'doc', id:'burncloud-ui/implementation-plan'}, items:[
           {type:'category', label:'Foundation', collapsed:true, items:[
             {type:'doc', id:'burncloud-ui/implementation-plan/ui-001', label:'UI-001 Target → Production Contract'},
