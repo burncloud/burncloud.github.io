@@ -2,7 +2,7 @@
 """Expose the BurnCloud UI Architecture Contract and bind every UI plan to it.
 
 This runs after `tools/sanitize_mdx.py` has copied the hand-written BurnCloud UI
-manual docs into `docs/` and generated `site/sidebars.js`.
+manual docs into `docs/` and generated/localized `site/sidebars.js`.
 
 It performs two governance operations:
 
@@ -104,14 +104,19 @@ def inject_plan_pages() -> list[Path]:
 
 def patch_sidebar() -> None:
     text = SIDEBAR.read_text(encoding="utf-8")
-    ui_start = "      {type:'category', label:'BurnCloud UI'"
+    ui_start_candidates = (
+        "      {type:'category', label:'BurnCloud UI'",
+        "      {type:'category', label:'BurnCloud 界面'",
+    )
     plan_anchor = (
         "        {type:'category', label:'实施计划', collapsed:false, "
         "link:{type:'doc', id:'burncloud-ui/implementation-plan'}, items:[\n"
     )
 
-    if ui_start not in text:
-        raise RuntimeError("BurnCloud UI sidebar category not found")
+    # sanitize_mdx localizes BurnCloud UI -> BurnCloud 界面 before this injector
+    # runs, so accept both canonical pre-localization and generated localized forms.
+    if not any(candidate in text for candidate in ui_start_candidates):
+        raise RuntimeError("BurnCloud UI/BurnCloud 界面 sidebar category not found")
     if plan_anchor not in text:
         raise RuntimeError("BurnCloud UI implementation-plan sidebar anchor not found")
 
