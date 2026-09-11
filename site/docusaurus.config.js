@@ -18,7 +18,7 @@ module.exports = {
       docs: {
         path: '../docs',
         routeBasePath: '/',
-        sidebarPath: require.resolve('./sidebars.js'),
+        sidebarPath: require.resolve('./sidebars.composed.js'),
         editUrl: 'https://github.com/burncloud/burncloud.github.io/edit/main/docs/',
         showLastUpdateAuthor: true,
         showLastUpdateTime: true,

@@ -36,6 +36,16 @@ BurnCloud Network 是建立在 BurnCloud Node 之上的网络能力。
 
 **先阅读：** [BurnCloud Network](/burncloud-network/)
 
+## 工程架构（开发必读）
+
+如果你要修改 BurnCloud 源码，先阅读仓库级 [工程架构](/architecture/) 和 [目录规则](/architecture/directory-rules/)。
+
+目录规则用四句话约束长期代码归属：
+
+> **领域决定归属。功能决定目录。复杂度决定层级。接口决定边界。**
+
+它用于回答新代码应该放在哪里、一个功能如何继续向下拆分、测试跟谁走，以及跨领域代码允许如何协作。
+
 ## 推荐阅读顺序
 
 ```text
@@ -49,7 +59,9 @@ Node 的六个核心功能
    ↓
 BurnCloud Network
    ↓
+工程架构（开发者）
+   ↓
 Technical Reference / Source Atlas
 ```
 
-如果你的目标只是先理解 BurnCloud，不需要一开始阅读 Technical Reference。只有在需要核对真实 API、CLI、后台任务、调用链或 Rust 源码时，再进入后面的技术参考树。
+如果你的目标只是先理解 BurnCloud，不需要一开始阅读 Technical Reference。开发或重构 BurnCloud 源码时，应先阅读工程架构；只有在需要核对真实 API、CLI、后台任务、调用链或 Rust 源码时，再进入后面的技术参考树。
