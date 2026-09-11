@@ -424,6 +424,7 @@ module.exports = {
             ]},
           ]},
       {type:'category', label:"PR 变更图谱（最近 50 条）", collapsed:true, items:[
+        {type:'doc', id:"pr/pr-462", label:"#462 feat(client): migrate Buyer Overview to modular Dioxus"},
         {type:'doc', id:"pr/pr-461", label:"#461 feat: add standalone Leptos Rust UI project"},
         {type:'doc', id:"pr/pr-429", label:"#429 docs(agent): enforce canonical engineering issue standard"},
         {type:'doc', id:"pr/pr-428", label:"#428 feat(node): introduce Node hardware profile foundation"},
@@ -473,7 +474,6 @@ module.exports = {
         {type:'doc', id:"pr/pr-381", label:"#381 Bugfix/env pool idle timeout add comment"},
         {type:'doc', id:"pr/pr-380", label:"#380 Bugfix/env http timeout default adjust"},
         {type:'doc', id:"pr/pr-379", label:"#379 Bugfix/env jwt secret warning enhance"},
-        {type:'doc', id:"pr/pr-378", label:"#378 Bugfix/download parse log error"},
       ]},
       // BURNCLOUD_TECHNICAL_REFERENCE_END
     ]},

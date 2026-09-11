@@ -4,6 +4,14 @@
   "pr_count": 50,
   "prs": [
     {
+      "number": 462,
+      "title": "feat(client): migrate Buyer Overview to modular Dioxus",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-09-09T08:12:12Z",
+      "changed_files": 336
+    },
+    {
       "number": 461,
       "title": "feat: add standalone Leptos Rust UI project",
       "state": "open",
@@ -394,14 +402,6 @@
       "merged_at": null,
       "created_at": "2026-07-29T04:47:35Z",
       "changed_files": 30
-    },
-    {
-      "number": 378,
-      "title": "Bugfix/download parse log error",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T04:38:21Z",
-      "changed_files": 29
     }
   ]
 }
