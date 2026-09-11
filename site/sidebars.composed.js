@@ -16,6 +16,7 @@ const architectureCategory = {
   link: {type: 'doc', id: 'architecture/index'},
   items: [
     {type: 'doc', id: 'architecture/directory-rules', label: '目录规则'},
+    {type: 'doc', id: 'architecture/module-boundary-rules', label: '模块边界与依赖规则'},
   ],
 };
 
