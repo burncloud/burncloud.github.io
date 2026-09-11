@@ -20,6 +20,10 @@ BurnCloud 当前采用以下最小原则：
 > **复杂度决定层级。**  
 > **接口决定边界。**
 
+模块协作遵守：
+
+> **DDD 定责任，模块化单体定依赖，公开接口定协作，编译边界禁止越界。**
+
 ## `crates/` 一级领域
 
 ```text
@@ -87,6 +91,7 @@ Billing 内部需要数据库、缓存或 HTTP 时，再在自己的边界内组
 
 ## 文档
 
-- [目录规则](/architecture/directory-rules/)：定义目录归属、增长、测试和跨领域边界。
+- [目录规则](/architecture/directory-rules/)：定义代码放哪里、目录如何增长。
+- [模块边界与依赖规则](/architecture/module-boundary-rules/)：定义谁负责谁、谁能依赖谁、跨模块怎么协作、什么禁止越界。
 
-后续依赖规则、Code Ownership、crate 拆分标准等仓库级规范都放在本栏目。
+后续 Code Ownership、crate 拆分标准等仓库级规范都放在本栏目。
