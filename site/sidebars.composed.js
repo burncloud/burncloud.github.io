@@ -93,7 +93,14 @@ const architecture = {
           ],
         },
         doc('architecture/crates/trust/index', 'Trust'),
-        doc('architecture/crates/platform/index', 'Platform'),
+        {
+          type: 'category',
+          label: 'Platform',
+          link: {type: 'doc', id: 'architecture/crates/platform/index'},
+          items: [
+            doc('architecture/crates/platform/cache', 'Cache'),
+          ],
+        },
         {
           type: 'category',
           label: 'Interfaces',
