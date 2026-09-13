@@ -39,3 +39,7 @@ platform/
 
 正确：Platform 提供存储和消息能力。  
 错误：Platform 根据客户等级决定是否允许扣费。
+
+## 已定义子规则
+
+- [Cache 规则](/architecture/crates/platform/cache/)：负责通用缓存技术能力，不拥有被缓存的业务真相。
