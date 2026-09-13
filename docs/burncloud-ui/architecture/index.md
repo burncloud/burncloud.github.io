@@ -5,7 +5,7 @@ slug: /burncloud-ui/architecture/
 
 # UI 架构规则已迁移
 
-<!-- ARCHITECTURE-CONTRACT: REQUIRED -->
+&lt;!-- ARCHITECTURE-CONTRACT: REQUIRED --&gt;
 
 本 URL 为兼容入口，继续保留，不再维护第二套规则正文。
 
