@@ -1,13 +1,13 @@
 # burncloud.github.io
 
-BurnCloud 的单页 **Entry Point Atlas**。
+BurnCloud 的 Docusaurus 技术文档站点，包含源码入口 Atlas、产品/实施文档和按目标 `crates/` 业务目录展开的代码规则。
 
-文档不再按旧的 Runtime Atlas / Commit Atlas 拆成大量页面。当前站点只有一个文档源：
+架构规则的手工源文件位于：
 
-- `docs/index.md` — 从可执行入口理解整个 BurnCloud：HTTP/API、CLI、Background Jobs、Startup、UI-only Actions。
+- `site/manual-docs/architecture/`
 
-站点使用 Docusaurus 构建，`docs/index.md` 映射到站点根路径 `/`。
+构建时会同步到 `docs/architecture/`，并由 `site/sidebars.composed.js` 组成左侧目录。
 
-## Truth source
+## 规则与源码
 
-页面内容以 `burncloud/burncloud` 当前源码为依据。文档内记录审计时使用的源码 commit；源码行为发生变化后，应重新核对入口表，而不是沿用旧描述。
+架构规则定义目标边界，不代表现有源码已经完成迁移。源码行为发生变化后，应重新核对技术参考；目录迁移则应通过独立 Issue 逐步完成。

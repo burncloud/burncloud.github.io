@@ -1,55 +1,39 @@
 ---
-title: "Kernel规则"
+title: "kernel"
 slug: /architecture/crates/kernel/
-sidebar_label: "Kernel"
 ---
 
-# Kernel 总体规则
+# `crates/kernel`
 
-继承：[基础规则](/architecture/base-rules/)。
+## 负责什么
 
-## 1. 负责什么
+保存全系统最小、最稳定、没有单一业务领域归属的基础语义，例如强类型 ID、Money、Currency 和时间抽象。
 
-`kernel` 只负责全局最小、稳定、与具体业务无关的基础类型和契约。
+## 不负责什么
 
-## 2. 不负责什么
+不保存 User、Provider、Route、Invoice、Billing、Audit 等具体业务；不成为新的 `common` 或 `utils`。
 
-不放用户、Provider、Routing、Billing、Audit 等业务规则；不放数据库、网络、缓存等基础设施实现；不成为新的 `common`。
+## 依赖
 
-## 3. 可以依赖什么
+只能依赖 Rust 标准库和极少数经过批准的基础库，不能依赖其他 BurnCloud 业务领域。
 
-只依赖语言标准能力和确有必要的通用第三方能力。
+## 目录
 
-## 4. 禁止依赖什么
-
-禁止依赖 `identity`、`supply`、`traffic`、`commerce`、`trust`、`platform`、`interfaces`。
-
-## 5. 目录和文件
-
-只按真实的最小职责拆分。某个类型如果只有一个领域使用，应留在该领域，不上提到 `kernel`。
-
-## 6. 代码要求
-
-API 必须极小、稳定、业务中立；新增内容必须能说明为什么多个领域都需要它。
-
-## 7. 可复用规则
-
-Rust 代码引用 [Rust通用规则](/architecture/reusable/rust/)。
-
-## 8. 独有测试
-
-重点验证基础类型的不变量和公开契约；不得通过测试引入业务依赖。
-
-## 9. 正确示例
+按稳定基础概念组织，例如：
 
 ```text
-多个领域共同使用、没有业务归属的稳定 Value Type → kernel
+kernel/
+├── identifiers/
+├── money/
+├── time/
+└── error/
 ```
 
-## 10. 错误示例
+## 代码与测试
 
-```text
-BillingPrice → kernel     ❌
-ProviderConfig → kernel   ❌
-“暂时不知道放哪” → kernel ❌
-```
+类型必须小、无 IO、无数据库、无网络副作用。测试聚焦转换、边界值和类型不变量。
+
+## 正确与错误
+
+正确：`TenantId`、`Money`。  
+错误：`BillingService`、`ProviderRepository`、万能 `helpers.rs`。

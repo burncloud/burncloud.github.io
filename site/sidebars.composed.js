@@ -1,66 +1,153 @@
-const generated = require('./sidebars.js');
+const sidebars = require('./sidebars.js');
 
-const docsSidebar = generated.docsSidebar;
-const burncloud = docsSidebar.find(
-  (item) => item && item.type === 'category' && item.label === 'BurnCloud',
-);
+const doc = (id, label) => ({type: 'doc', id, label});
 
-if (!burncloud || !Array.isArray(burncloud.items)) {
-  throw new Error('BurnCloud sidebar category not found');
-}
-
-const architectureCategory = {
+const architecture = {
   type: 'category',
-  label: '工程架构（必读）',
-  collapsed: false,
+  label: '代码规则（必读）',
   link: {type: 'doc', id: 'architecture/index'},
   items: [
-    {type: 'doc', id: 'architecture/base-rules', label: '1. 基础规则'},
+    doc('architecture/foundation', '基础规则'),
     {
       type: 'category',
-      label: '2. 可复用规则',
-      collapsed: false,
-      link: {type: 'doc', id: 'architecture/reusable/index'},
+      label: '可复用规则',
+      link: {type: 'doc', id: 'architecture/reusable-rules/index'},
       items: [
-        {type: 'doc', id: 'architecture/reusable/rust', label: 'Rust通用规则'},
-        {type: 'doc', id: 'architecture/reusable/ui', label: 'UI规则'},
-        {type: 'doc', id: 'architecture/reusable/database', label: 'Database规则'},
-        {type: 'doc', id: 'architecture/reusable/http-api', label: 'HTTP API规则'},
-        {type: 'doc', id: 'architecture/reusable/download', label: 'Download规则'},
-        {type: 'doc', id: 'architecture/reusable/upload', label: 'Upload规则'},
-        {type: 'doc', id: 'architecture/reusable/p2p', label: 'P2P规则'},
-        {type: 'doc', id: 'architecture/reusable/streaming', label: 'Streaming规则'},
-        {type: 'doc', id: 'architecture/reusable/background-job', label: 'Background Job规则'},
-        {type: 'doc', id: 'architecture/reusable/migration', label: 'Migration规则'},
+        doc('architecture/reusable-rules/rust', 'Rust 通用规则'),
+        {
+          type: 'category',
+          label: 'UI 规则',
+          link: {type: 'doc', id: 'architecture/reusable-rules/ui/index'},
+          items: [
+            doc('architecture/reusable-rules/ui/state', '状态与业务真相'),
+            doc('architecture/reusable-rules/ui/shared-components', '共享组件'),
+            doc('architecture/reusable-rules/ui/design-system', 'Design System'),
+            doc('architecture/reusable-rules/ui/i18n', 'i18n'),
+            doc('architecture/reusable-rules/ui/css', 'CSS'),
+            doc('architecture/reusable-rules/ui/testing', 'UI 测试'),
+          ],
+        },
+        doc('architecture/reusable-rules/database', 'Database 规则'),
+        doc('architecture/reusable-rules/http-api', 'HTTP API 规则'),
+        doc('architecture/reusable-rules/download', 'Download 规则'),
+        doc('architecture/reusable-rules/upload', 'Upload 规则'),
+        doc('architecture/reusable-rules/p2p', 'P2P 规则'),
+        doc('architecture/reusable-rules/streaming', 'Streaming 规则'),
+        doc('architecture/reusable-rules/background-job', 'Background Job 规则'),
+        doc('architecture/reusable-rules/migration', 'Migration 规则'),
       ],
     },
     {
       type: 'category',
-      label: '3. Crates目录规则',
-      collapsed: false,
+      label: 'Crates 目录规则',
       link: {type: 'doc', id: 'architecture/crates/index'},
       items: [
-        {type: 'doc', id: 'architecture/crates/kernel', label: 'Kernel'},
-        {type: 'doc', id: 'architecture/crates/identity', label: 'Identity'},
-        {type: 'doc', id: 'architecture/crates/supply', label: 'Supply'},
-        {type: 'doc', id: 'architecture/crates/traffic', label: 'Traffic'},
-        {type: 'doc', id: 'architecture/crates/commerce', label: 'Commerce'},
-        {type: 'doc', id: 'architecture/crates/trust', label: 'Trust'},
-        {type: 'doc', id: 'architecture/crates/platform', label: 'Platform'},
-        {type: 'doc', id: 'architecture/crates/interfaces', label: 'Interfaces'},
+        doc('architecture/crates/kernel', 'Kernel'),
+        doc('architecture/crates/identity/index', 'Identity'),
+        doc('architecture/crates/supply/index', 'Supply'),
+        {
+          type: 'category',
+          label: 'Traffic',
+          link: {type: 'doc', id: 'architecture/crates/traffic/index'},
+          items: [
+            doc('architecture/crates/traffic/gateway', 'Gateway'),
+            doc('architecture/crates/traffic/routing', 'Routing'),
+            doc('architecture/crates/traffic/execution', 'Execution'),
+            doc('architecture/crates/traffic/rate-limit', 'Rate Limit'),
+            doc('architecture/crates/traffic/failover', 'Failover'),
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Commerce',
+          link: {type: 'doc', id: 'architecture/crates/commerce/index'},
+          items: [
+            doc('architecture/crates/commerce/metering', 'Metering'),
+            doc('architecture/crates/commerce/pricing', 'Pricing'),
+            doc('architecture/crates/commerce/balance', 'Balance'),
+            {
+              type: 'category',
+              label: 'Billing',
+              link: {
+                type: 'doc',
+                id: 'architecture/crates/commerce/billing/index',
+              },
+              items: [
+                {
+                  type: 'category',
+                  label: 'Invoice',
+                  link: {
+                    type: 'doc',
+                    id: 'architecture/crates/commerce/billing/invoice/index',
+                  },
+                  items: [
+                    doc(
+                      'architecture/crates/commerce/billing/invoice/download',
+                      'Invoice Download',
+                    ),
+                  ],
+                },
+              ],
+            },
+            doc('architecture/crates/commerce/settlement', 'Settlement'),
+          ],
+        },
+        doc('architecture/crates/trust/index', 'Trust'),
+        doc('architecture/crates/platform/index', 'Platform'),
+        {
+          type: 'category',
+          label: 'Interfaces',
+          link: {type: 'doc', id: 'architecture/crates/interfaces/index'},
+          items: [
+            doc('architecture/crates/interfaces/http', 'HTTP'),
+            {
+              type: 'category',
+              label: 'Web UI',
+              link: {type: 'doc', id: 'architecture/crates/interfaces/web-ui/index'},
+              items: [
+                doc('architecture/crates/interfaces/web-ui/directory', '目录结构'),
+                doc('architecture/crates/interfaces/web-ui/dependencies', '依赖规则'),
+                doc('architecture/crates/interfaces/web-ui/route', 'Route'),
+                doc('architecture/crates/interfaces/web-ui/authorization', 'Authorization'),
+                doc('architecture/crates/interfaces/web-ui/api-boundary', 'API Boundary'),
+                doc('architecture/crates/interfaces/web-ui/platform', '多平台边界'),
+                doc('architecture/crates/interfaces/web-ui/change-scope', '修改范围'),
+                doc('architecture/crates/interfaces/web-ui/migration', '迁移规则'),
+              ],
+            },
+            doc('architecture/crates/interfaces/cli', 'CLI'),
+            doc('architecture/crates/interfaces/websocket', 'WebSocket'),
+          ],
+        },
       ],
     },
   ],
 };
 
-const existingIndex = burncloud.items.findIndex(
-  (item) => item && item.type === 'category' && item.label === '工程架构（必读）',
+const burnCloud = sidebars.docsSidebar.find(
+  (item) => item.type === 'category' && item.label === 'BurnCloud',
 );
 
-if (existingIndex >= 0) {
-  burncloud.items[existingIndex] = architectureCategory;
-} else {
-  burncloud.items.push(architectureCategory);
+const burnCloudUi = burnCloud?.items.find(
+  (item) => item.type === 'category' && item.label === 'BurnCloud 界面',
+);
+
+const legacyUiArchitectureIndex = burnCloudUi?.items.findIndex(
+  (item) => item.type === 'category' && item.label === '架构规范（必读）',
+);
+
+if (legacyUiArchitectureIndex >= 0) {
+  burnCloudUi.items.splice(
+    legacyUiArchitectureIndex,
+    1,
+    doc('burncloud-ui/architecture/index', '架构规则（已迁移）'),
+  );
 }
 
-module.exports = {docsSidebar};
+if (burnCloud && !burnCloud.items.some(
+  (item) => item.type === 'category' && item.label === architecture.label,
+)) {
+  burnCloud.items.push(architecture);
+}
+
+module.exports = sidebars;

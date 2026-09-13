@@ -1,37 +1,38 @@
 ---
-title: "Crates目录规则"
+title: "Crates 目录规则"
 slug: /architecture/crates/
-sidebar_label: "3. Crates目录规则"
-description: "BurnCloud crates/ 一级领域职责与逐级规则入口。"
 ---
 
 # Crates 目录规则
 
-`crates/` 第一层只定义长期稳定的领域归属：
+`crates/` 第一层只允许八个长期稳定的领域空间：
 
-```text
-crates/
-├── kernel/
-├── identity/
-├── supply/
-├── traffic/
-├── commerce/
-├── trust/
-├── platform/
-└── interfaces/
-```
-
-| 目录 | 核心职责 |
+| 目录 | 唯一问题 |
 | --- | --- |
-| `kernel` | 全局最小类型与契约 |
-| `identity` | 用户、组织、Tenant、认证与授权 |
-| `supply` | 模型、Provider、Channel、Credential、供给能力 |
-| `traffic` | 请求、路由、调度、执行与失败恢复 |
-| `commerce` | 用量、额度、价格、账单与结算 |
-| `trust` | 审计、证明、合规与风控 |
-| `platform` | 通用数据库、缓存、网络、消息、配置、观测等基础设施能力 |
-| `interfaces` | HTTP、UI、CLI、SDK、Webhook 等对外入口 |
+| [kernel](./kernel.md) | 全系统最小、最稳定的基础语义是什么？ |
+| [identity](./identity/index.md) | 谁在使用 BurnCloud，有什么身份和权限？ |
+| [supply](./supply/index.md) | BurnCloud 有什么模型、Provider 和供应能力？ |
+| [traffic](./traffic/index.md) | 请求怎样进入、选择、执行和返回？ |
+| [commerce](./commerce/index.md) | 用了多少、多少钱、怎样记账和结算？ |
+| [trust](./trust/index.md) | 事情怎样被审计、证明和合规处理？ |
+| [platform](./platform/index.md) | 通用技术能力怎样提供？ |
+| [interfaces](./interfaces/index.md) | 外部怎样与 BurnCloud 交互？ |
 
-这些页面只写一级目录自己的新增规则，全部继承 [基础规则](/architecture/base-rules/)。
+## 每个 crate 的 10 个问题
 
-下一层只有在真实代码目录和职责确认后才创建。例如 Commerce 的 Metering、Pricing、Billing 等，必须先与实际目录一致，再逐级补规则；不在本页提前虚构未来子目录。
+每一级目录只回答上级尚未回答的部分：
+
+1. Owner 是谁？这个 crate 负责什么？
+2. 不负责什么？拥有哪些业务真相和数据？
+3. 对外提供哪些公开契约？
+4. 可以依赖谁？谁可以依赖它？
+5. 禁止哪些依赖、访问和越界行为？
+6. 目录和文件怎样组织？
+7. 代码应该怎样写？有哪些特殊错误、日志和安全要求？
+8. 继承哪些上级规则和可复用规则？
+9. 有哪些独有测试、状态、失败和迁移要求？
+10. 完整正确示例和完整错误示例是什么？
+
+普通功能必须先归入其中一个一级目录，不能直接增加新的一级 crate。
+
+新增一级领域必须证明：现有八个目录都无法自然容纳，并且它拥有独立业务语言、状态生命周期、Owner 和长期边界。
