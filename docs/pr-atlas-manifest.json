@@ -4,6 +4,94 @@
   "pr_count": 50,
   "prs": [
     {
+      "number": 489,
+      "title": "cleanup(docs): remove shared agent context",
+      "state": "closed",
+      "merged_at": "2026-09-14T08:46:16Z",
+      "created_at": "2026-09-14T08:44:45Z",
+      "changed_files": 43
+    },
+    {
+      "number": 488,
+      "title": "test(ui): remove retired cache admin contracts",
+      "state": "closed",
+      "merged_at": "2026-09-14T08:44:45Z",
+      "created_at": "2026-09-14T08:39:56Z",
+      "changed_files": 1
+    },
+    {
+      "number": 486,
+      "title": "cleanup(cache): remove empty cache subsystem",
+      "state": "closed",
+      "merged_at": "2026-09-14T08:49:09Z",
+      "created_at": "2026-09-14T07:18:34Z",
+      "changed_files": 7
+    },
+    {
+      "number": 484,
+      "title": "cleanup(interfaces): retire cache admin UI and routes",
+      "state": "closed",
+      "merged_at": "2026-09-14T07:15:49Z",
+      "created_at": "2026-09-14T06:51:59Z",
+      "changed_files": 6
+    },
+    {
+      "number": 481,
+      "title": "cleanup(cache): remove unused error variants",
+      "state": "closed",
+      "merged_at": "2026-09-14T06:44:25Z",
+      "created_at": "2026-09-14T06:26:21Z",
+      "changed_files": 1
+    },
+    {
+      "number": 479,
+      "title": "cleanup(cache): remove unused direct dependencies",
+      "state": "closed",
+      "merged_at": "2026-09-14T06:25:01Z",
+      "created_at": "2026-09-14T05:18:37Z",
+      "changed_files": 1
+    },
+    {
+      "number": 477,
+      "title": "cleanup(cache): remove unused price cache API",
+      "state": "closed",
+      "merged_at": "2026-09-14T05:17:18Z",
+      "created_at": "2026-09-14T05:16:04Z",
+      "changed_files": 2
+    },
+    {
+      "number": 475,
+      "title": "cleanup(cache): remove unused quota cache API",
+      "state": "closed",
+      "merged_at": "2026-09-14T05:13:22Z",
+      "created_at": "2026-09-14T03:10:58Z",
+      "changed_files": 2
+    },
+    {
+      "number": 473,
+      "title": "cleanup(cache): remove unused token cache API",
+      "state": "closed",
+      "merged_at": "2026-09-14T03:00:01Z",
+      "created_at": "2026-09-14T02:42:15Z",
+      "changed_files": 2
+    },
+    {
+      "number": 471,
+      "title": "cleanup(cache): remove unused channel cache API",
+      "state": "closed",
+      "merged_at": "2026-09-14T02:35:51Z",
+      "created_at": "2026-09-14T02:30:35Z",
+      "changed_files": 2
+    },
+    {
+      "number": 469,
+      "title": "security(cache): redact Redis credentials from logs and errors",
+      "state": "closed",
+      "merged_at": "2026-09-14T02:05:36Z",
+      "created_at": "2026-09-13T17:50:59Z",
+      "changed_files": 2
+    },
+    {
       "number": 462,
       "title": "feat(client): migrate Buyer Overview to modular Dioxus",
       "state": "open",
@@ -314,94 +402,6 @@
       "merged_at": null,
       "created_at": "2026-07-29T07:05:17Z",
       "changed_files": 36
-    },
-    {
-      "number": 389,
-      "title": "Bugfix/cli plan arg validate",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T06:32:24Z",
-      "changed_files": 36
-    },
-    {
-      "number": 388,
-      "title": "Bugfix/cli subscription arg validate",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T06:31:54Z",
-      "changed_files": 35
-    },
-    {
-      "number": 387,
-      "title": "Bugfix/download default dir warn log（顺便提交了未修改bug，主要是设计耦合，数据库，业务等等）",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T05:54:47Z",
-      "changed_files": 34
-    },
-    {
-      "number": 386,
-      "title": "Bugfix/server logging dir create error tip",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T05:35:35Z",
-      "changed_files": 34
-    },
-    {
-      "number": 385,
-      "title": "Bugfix/server api env log add debug log",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T05:33:50Z",
-      "changed_files": 33
-    },
-    {
-      "number": 384,
-      "title": "Bugfix/service alert email stub mark deprecated",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T05:24:49Z",
-      "changed_files": 33
-    },
-    {
-      "number": 383,
-      "title": "Bugfix/common jwt hardcode secret doc enhance",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T05:13:44Z",
-      "changed_files": 31
-    },
-    {
-      "number": 382,
-      "title": "Bugfix/env test OpenAI key placeholder fix",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T05:12:41Z",
-      "changed_files": 30
-    },
-    {
-      "number": 381,
-      "title": "Bugfix/env pool idle timeout add comment",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T05:01:44Z",
-      "changed_files": 30
-    },
-    {
-      "number": 380,
-      "title": "Bugfix/env http timeout default adjust",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T04:51:40Z",
-      "changed_files": 30
-    },
-    {
-      "number": 379,
-      "title": "Bugfix/env jwt secret warning enhance",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T04:47:35Z",
-      "changed_files": 30
     }
   ]
 }

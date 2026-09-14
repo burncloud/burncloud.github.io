@@ -43,3 +43,4 @@ platform/
 ## 已定义子规则
 
 - [Cache 规则](/architecture/crates/platform/cache/)：负责通用缓存技术能力，不拥有被缓存的业务真相。
+- [Configuration 规则](/architecture/crates/platform/configuration/)：负责配置来源、合并、解析与技术校验，不拥有业务策略。
