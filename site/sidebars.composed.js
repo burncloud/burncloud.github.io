@@ -99,6 +99,7 @@ const architecture = {
           link: {type: 'doc', id: 'architecture/crates/platform/index'},
           items: [
             doc('architecture/crates/platform/cache', 'Cache'),
+            doc('architecture/crates/platform/configuration', 'Configuration'),
           ],
         },
         {
