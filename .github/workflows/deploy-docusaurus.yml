@@ -1,326 +1,64 @@
-name: Generate, audit, build, and publish BurnCloud Source Atlas
+name: Build and deploy Docusaurus
 
 on:
   pull_request:
     paths:
       - 'docs/**'
       - 'site/**'
-      - 'tools/**'
       - '.github/workflows/deploy-docusaurus.yml'
   push:
     branches: [main]
     paths:
       - 'docs/**'
       - 'site/**'
-      - 'tools/**'
       - '.github/workflows/deploy-docusaurus.yml'
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
-  group: burncloud-source-atlas-${{ github.ref }}
+  group: pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  generate-audit-build-publish:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Atlas repository
+      - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Checkout audited BurnCloud source
-        uses: actions/checkout@v4
-        with:
-          repository: burncloud/burncloud
-          ref: aa54e21393c6d46a6b09555ffd3661c1f22484f3
-          path: .source/burncloud
-          fetch-depth: 1
-
-      - name: Generate base Chinese atlas
-        run: python3 tools/generate_atlas.py
-
-      - name: Add census-discovered executable entrypoints
-        run: python3 tools/augment_discovered_entries.py
-
-      - name: Add census-discovered background entrypoints
-        run: python3 tools/augment_background_entries.py
-
-      - name: Generate detailed E2E and input examples
-        run: python3 tools/enrich_atlas_v2.py
-
-      - name: Add output examples
-        run: python3 tools/add_result_examples.py
-
-      - name: Deepen census-discovered flows
-        run: python3 tools/fix_discovered_flows.py
-
-      - name: Remove PHASE labels and deepen core source traversal
-        run: python3 tools/enrich_source_traversal.py --source .source/burncloud
-
-      - name: Deepen remaining service database CLI UI and startup traversal
-        run: python3 tools/enrich_source_traversal_v3.py --source .source/burncloud
-
-      - name: Replace generic source-index labels with concrete symbols
-        run: python3 tools/refine_source_symbols.py
-
-      - name: Enforce Rust-safe Execution Truth V4 call chains
-        run: python3 tools/enrich_execution_truth_v4_safe.py --source .source/burncloud
-
-      - name: Restore branch-sensitive direct runtime modes
-        run: python3 tools/enforce_direct_mode_truth.py --source .source/burncloud
-
-      - name: Census real source entrypoints and coverage
-        run: python3 tools/census_entrypoints.py --source .source/burncloud
-
-      - name: Map runtime spawn sites to Background Atlas pages
-        run: python3 tools/map_spawn_coverage.py
-
-      - name: Sanitize generated Markdown for MDX
-        run: python3 tools/sanitize_mdx.py
-
-      - name: Inject and verify Node human acceptance
-        run: python3 tools/inject_node_human_acceptance.py
-
-      - name: Verify source-deep documentation and zero coverage gaps
-        run: |
-          test -f docs/index.md
-          test -f docs/atlas-manifest.json
-          test -f docs/entrypoint-census.json
-          test -f docs/coverage-report.md
-          test -f docs/http-api/ai-api-data-plane/get-v1-models.md
-          test -f docs/http-api/ai-api-data-plane/post-v1-chat-completions.md
-          test -f docs/http-api/channel-management/get-console-api-channel.md
-          test -f docs/http-api/billing-usage/get-api-billing-summary.md
-          test -f docs/http-api/monitoring-security/get-console-api-monitor.md
-          test -f docs/http-api/cache/get-console-api-cache-stats.md
-          test -f docs/cli/burncloud/server.md
-          test -f docs/cli/burncloud/router.md
-          test -f docs/cli/burncloud/client.md
-          test -f docs/cli/burncloud/price/list.md
-          test -f docs/cli/workspace-binaries/aria2-test.md
-          test -f docs/background/long-running-jobs/health-probe-scheduler.md
-          test -f docs/background/download-background-work/aria2-daemon-monitor.md
-          test -f docs/background/desktop-background-work/windows-background-server-thread.md
-          test -f docs/ui/console/console-dashboard.md
-          test -f docs/burncloud-node/implementation-plan/node-004.md
-          test -f docs/burncloud-node/implementation-plan/node-304.md
-          test -f docs/burncloud-node/implementation-plan/human-acceptance.md
-          grep -q '第四层：人类验收' docs/burncloud-node/implementation-plan/node-001.md
-          grep -q '第四层：人类验收' docs/burncloud-node/implementation-plan/node-004.md
-          grep -q '第四层：人类验收' docs/burncloud-node/implementation-plan/node-304.md
-          grep -q '第四层：人类验收' docs/burncloud-node/implementation-plan/node-503.md
-          python3 - <<'PY'
-          import json,re
-          from pathlib import Path
-          manifest=json.loads(Path('docs/atlas-manifest.json').read_text(encoding='utf-8'))
-          census=json.loads(Path('docs/entrypoint-census.json').read_text(encoding='utf-8'))
-          pages=manifest['page_count']
-          assert pages >= 204, pages
-          checked=0
-          call_expanded=0
-          for p in manifest['pages']:
-              f=Path('docs')/(p['docid']+'.md')
-              text=f.read_text(encoding='utf-8')
-              assert '## End-to-End Request Flow + ICFG' in text, f
-              assert '## 输入示例' in text, f
-              assert '## 返回结果示例' in text, f
-              assert '## 穿过的源码文件（详细）' in text, f
-              assert '[PHASE ' not in text, f
-              assert 'DECISION:' in text, f
-              assert '见上方 E2E 对应' not in text, f
-              assert 'Source Traversal V4' in text, f
-              if '源码函数展开（静态扫描确认）' in text:
-                  call_expanded += 1
-              rows=re.findall(r'\|\s*\d+\s*\|\s*`([^`]+)`\s*\|', text)
-              assert rows, f
-              for rel in rows:
-                  if rel.endswith('/*'):
-                      assert (Path('.source/burncloud')/rel[:-2]).is_dir(), (f,rel)
-                  else:
-                      assert (Path('.source/burncloud')/rel).is_file(), (f,rel)
-              checked += 1
-          assert checked == pages, (checked,pages)
-          assert call_expanded >= 100, (call_expanded,pages)
-
-          node_issue_pages=sorted(Path('docs/burncloud-node/implementation-plan').glob('node-[0-9][0-9][0-9].md'))
-          assert len(node_issue_pages) == 24, [p.name for p in node_issue_pages]
-          for f in node_issue_pages:
-              text=f.read_text(encoding='utf-8')
-              assert text.count('## 第四层：人类验收（Human Acceptance）') == 1, f
-              for needle in ['**验收者：**','**人工步骤：**','**人类通过标准：**','**人工判定失败：**','**建议证据：**']:
-                  assert needle in text, (f,needle)
-
-          counts=census['counts']
-          assert counts['http_missing_exact_matches'] == 0, census['missing_http_entries']
-          assert counts['ui_missing_exact_matches'] == 0, census['missing_main_ui_routes']
-          assert counts['binary_missing_source_matches'] == 0, census['missing_binary_entries']
-          assert counts['runtime_spawn_unmapped'] == 0, census['spawn_coverage']['unmapped']
-          assert counts['runtime_spawn_mapped'] == counts['runtime_spawn_sites'], counts
-
-          server=Path('docs/cli/burncloud/server.md').read_text(encoding='utf-8')
-          assert 'src/cli/commands.rs' not in server
-          assert 'Clap parse' not in server
-          assert 'database=ready' not in server
-          assert 'router=ready' not in server
-          for needle in [
-              'run_async_server()',
-              'FILE: crates/server/src/logging.rs',
-              'FILE: crates/server/src/lib.rs',
-              'FILE: crates/database/src/database.rs',
-              'Database::initialize()',
-              'FILE: crates/database/src/migration/mod.rs',
-              'MigrationRunner::run()',
-              'FILE: crates/database/src/schema/mod.rs',
-              'Schema::init()',
-              'FILE: crates/database/crates/router/src/lib.rs',
-              'FILE: crates/database/crates/user/src/lib.rs',
-              'FILE: crates/service/crates/monitor/src/service.rs',
-              'FILE: crates/service/crates/cache/src/service.rs',
-              'FILE: crates/router/src/lib.rs',
-              'create_router_app(db)',
-              'start_price_sync_task',
-              'FILE: crates/server/src/api/mod.rs',
-              '[REGISTER ONLY]',
-              'FILE: crates/client/src/lib.rs',
-              'TcpListener::bind',
-              'axum::serve',
-              'Unified Gateway listening on 127.0.0.1:3000',
-          ]:
-              assert needle in server, needle
-
-          router=Path('docs/cli/burncloud/router.md').read_text(encoding='utf-8')
-          assert 'src/cli/commands.rs' not in router
-          for needle in ['run_async_server()','start_server(host, port, enable_liveview=true)','create_router_app(db)','当前源码中 `server` 与 `router` 都走同一个 run_async_server()']:
-              assert needle in router, needle
-
-          client=Path('docs/cli/burncloud/client.md').read_text(encoding='utf-8')
-          assert 'src/cli/commands.rs' not in client
-          for needle in ['DECISION: target_os == windows?','launch_gui_with_tray()','AppWithTray()','use_init_i18n()','Router<Route>','Desktop GUI is only available on Windows.']:
-              assert needle in client, needle
-
-          bare=Path('docs/cli/burncloud/burncloud.md').read_text(encoding='utf-8')
-          for needle in ['std::thread::spawn(background server thread)','start_server(host, port, false)','burncloud_client::launch_gui_with_tray()','run_async_server()','Starting BurnCloud Server with LiveView (Headless Mode)...']:
-              assert needle in bare, needle
-
-          channel=Path('docs/http-api/channel-management/get-console-api-channel.md').read_text(encoding='utf-8')
-          for needle in ['FILE: crates/service/crates/channel/src/lib.rs','FILE: crates/database/crates/channel/src/channel_provider.rs','FILE: crates/database/crates/user/src/lib.rs','ChannelService::list()','ChannelProviderModel::list()']:
-              assert needle in channel, needle
-
-          billing=Path('docs/http-api/billing-usage/get-api-billing-summary.md').read_text(encoding='utf-8')
-          for needle in ['FILE: crates/service/crates/router-log/src/lib.rs','FILE: crates/database/crates/router/src/log.rs','BillingService::get_billing_summary_for_user']:
-              assert needle in billing, needle
-
-          monitor=Path('docs/http-api/monitoring-security/get-console-api-monitor.md').read_text(encoding='utf-8')
-          for needle in ['FILE: crates/service/crates/monitor/src/service.rs','collectors/cpu.rs','collectors/memory.rs','collectors/disk.rs']:
-              assert needle in monitor, needle
-
-          cache=Path('docs/http-api/cache/get-console-api-cache-stats.md').read_text(encoding='utf-8')
-          assert 'FILE: crates/service/crates/cache/src/service.rs' in cache
-
-          token=Path('docs/http-api/token/get-console-api-tokens.md').read_text(encoding='utf-8')
-          assert 'crates/service/crates/token/src/lib.rs' in token
-          assert 'crates/database/crates/router/src/token.rs' in token
-
-          chat=Path('docs/http-api/ai-api-data-plane/post-v1-chat-completions.md').read_text(encoding='utf-8')
-          for needle in ['FILE: crates/router/src/model_router.rs','FILE: crates/service/crates/user/src/lib.rs','FILE: crates/service/crates/billing/src/calculator.rs','FILE: crates/database/crates/router/src/log.rs','ModelRouter::route_with_scheduler()']:
-              assert needle in chat, needle
-          assert 'RoutingDecision::route_with_scheduler()' not in chat
-          assert 'CALL → ok() @ crates/server/src/api/response.rs' not in chat
-          assert 'build_response_with_header()\n│    │    │    └─ CALL → PriceCache::empty()' not in chat
-
-          price=Path('docs/cli/burncloud/price/list.md').read_text(encoding='utf-8')
-          assert 'FILE: crates/database/crates/billing/src/billing_price.rs' in price
-          assert 'BillingPriceModel' in price
-
-          dashboard=Path('docs/ui/console/console-dashboard.md').read_text(encoding='utf-8')
-          assert 'FILE: crates/client/src/pages/dashboard.rs' in dashboard
-          assert 'crates/client/crates/client-dashboard/src/lib.rs' in dashboard
-
-          aria=Path('docs/cli/workspace-binaries/aria2-test.md').read_text(encoding='utf-8')
-          for needle in ['quick_start()','Aria2RpcClient::add_uri()','Aria2Manager::shutdown()']:
-              assert needle in aria, needle
-
-          health=Path('docs/background/long-running-jobs/health-probe-scheduler.md').read_text(encoding='utf-8')
-          assert 'ProbeScheduler::start()' in health
-          assert 'NOT implemented' in health
-
-          print('pages=',pages)
-          print('function_call_expanded_pages=',call_expanded)
-          print('node_human_acceptance_pages=',len(node_issue_pages))
-          print('coverage=',json.dumps(counts,ensure_ascii=False))
-          PY
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: npm
+          cache-dependency-path: site/package-lock.json
 
-      - name: Install Docusaurus
+      - name: Install dependencies
         working-directory: site
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Build Docusaurus
         working-directory: site
         run: npm run build
 
-      - name: Verify representative Docusaurus output
-        run: |
-          test -f site/build/index.html
-          test -f site/build/coverage-report/index.html
-          test -f site/build/http-api/ai-api-data-plane/get-v1-models/index.html
-          test -f site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
-          test -f site/build/http-api/channel-management/get-console-api-channel/index.html
-          test -f site/build/http-api/billing-usage/get-api-billing-summary/index.html
-          test -f site/build/cli/burncloud/server/index.html
-          test -f site/build/cli/burncloud/router/index.html
-          test -f site/build/cli/burncloud/client/index.html
-          test -f site/build/cli/workspace-binaries/aria2-test/index.html
-          test -f site/build/background/long-running-jobs/health-probe-scheduler/index.html
-          test -f site/build/ui/console/console-dashboard/index.html
-          test -f site/build/burncloud-node/implementation-plan/node-004/index.html
-          test -f site/build/burncloud-node/implementation-plan/node-304/index.html
-          test -f site/build/burncloud-node/implementation-plan/human-acceptance/index.html
-          grep -q '第四层：人类验收' site/build/burncloud-node/implementation-plan/node-001/index.html
-          grep -q '第四层：人类验收' site/build/burncloud-node/implementation-plan/node-004/index.html
-          grep -q '第四层：人类验收' site/build/burncloud-node/implementation-plan/node-304/index.html
-          grep -q '第四层：人类验收' site/build/burncloud-node/implementation-plan/node-503/index.html
-          grep -q '输入示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
-          grep -q '返回结果示例' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
-          grep -q 'BillingService' site/build/http-api/billing-usage/get-api-billing-summary/index.html
-          grep -q 'client-dashboard' site/build/ui/console/console-dashboard/index.html
-          grep -q 'run_async_server' site/build/cli/burncloud/server/index.html
-          grep -q 'Database::initialize' site/build/cli/burncloud/server/index.html
-          grep -q 'REGISTER ONLY' site/build/cli/burncloud/server/index.html
-          grep -q 'Unified Gateway listening on 127.0.0.1:3000' site/build/cli/burncloud/server/index.html
-          ! grep -q 'src/cli/commands.rs' site/build/cli/burncloud/server/index.html
-          ! grep -q 'RoutingDecision::route_with_scheduler' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
-          ! grep -q 'CALL → ok() @ crates/server/src/api/response.rs' site/build/http-api/ai-api-data-plane/post-v1-chat-completions/index.html
-          ! grep -q 'PHASE 0' site/build/http-api/channel-management/get-console-api-channel/index.html
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site/build
 
-      - name: Remove audited source checkout before publishing
-        run: rm -rf .source/burncloud
-
-      - name: Replace Pages output with current Docusaurus build
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        run: |
-          find . -mindepth 1 -maxdepth 1 \
-            ! -name '.git' ! -name '.github' \
-            ! -name 'docs' ! -name 'site' ! -name 'tools' \
-            ! -name 'README.md' ! -name '.gitignore' ! -name '.source' \
-            -exec rm -rf {} +
-          cp -a site/build/. .
-          touch .nojekyll
-
-      - name: Commit generated Atlas and Pages output
-        if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          if git diff --cached --quiet; then exit 0; fi
-          git commit -m "Publish BurnCloud Rust-safe Execution Truth V4 Atlas [skip ci]"
-          git push origin HEAD:main
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
