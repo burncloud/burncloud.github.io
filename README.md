@@ -1,13 +1,20 @@
 # burncloud.github.io
 
-BurnCloud 的 Docusaurus 技术文档站点，包含源码入口 Atlas、产品/实施文档和按目标 `crates/` 业务目录展开的代码规则。
+BurnCloud 的 Docusaurus 文档站点。
 
-架构规则的手工源文件位于：
+仓库只维护两类源码：
 
-- `site/manual-docs/architecture/`
+- `docs/`：唯一文档内容源；
+- `site/`：Docusaurus 工程、导航、样式和依赖。
 
-构建时会同步到 `docs/architecture/`，并由 `site/sidebars.composed.js` 组成左侧目录。
+GitHub Pages 由 `.github/workflows/deploy-docusaurus.yml` 构建并直接部署 `site/build` artifact。生成后的 HTML、JS、CSS 不提交回 `main`。
 
-## 规则与源码
+## 本地构建
 
-架构规则定义目标边界，不代表现有源码已经完成迁移。源码行为发生变化后，应重新核对技术参考；目录迁移则应通过独立 Issue 逐步完成。
+```bash
+cd site
+npm ci
+npm run build
+```
+
+Docusaurus 直接读取 `../docs`。
