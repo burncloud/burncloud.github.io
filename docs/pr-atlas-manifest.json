@@ -4,6 +4,366 @@
   "pr_count": 50,
   "prs": [
     {
+      "number": 563,
+      "title": "feat(node): close live request lifecycle gaps",
+      "state": "open",
+      "merged_at": null,
+      "created_at": "2026-09-18T13:56:32Z",
+      "changed_files": 5
+    },
+    {
+      "number": 562,
+      "title": "feat: add bundle.rs",
+      "state": "closed",
+      "merged_at": "2026-09-18T09:05:07Z",
+      "created_at": "2026-09-18T09:04:58Z",
+      "changed_files": 55
+    },
+    {
+      "number": 561,
+      "title": "fix(client): support Dioxus 0.7.5 icon API",
+      "state": "closed",
+      "merged_at": "2026-09-18T07:33:44Z",
+      "created_at": "2026-09-18T05:42:54Z",
+      "changed_files": 2
+    },
+    {
+      "number": 560,
+      "title": "feat(traffic): define local route preference contract",
+      "state": "closed",
+      "merged_at": null,
+      "created_at": "2026-09-17T19:06:32Z",
+      "changed_files": 2
+    },
+    {
+      "number": 559,
+      "title": "feat(traffic): define local route preference contract",
+      "state": "closed",
+      "merged_at": null,
+      "created_at": "2026-09-17T18:53:59Z",
+      "changed_files": 2
+    },
+    {
+      "number": 558,
+      "title": "refactor(node): keep route preference owned by Traffic",
+      "state": "closed",
+      "merged_at": "2026-09-17T18:52:18Z",
+      "created_at": "2026-09-17T18:40:25Z",
+      "changed_files": 1
+    },
+    {
+      "number": 557,
+      "title": "feat(node): define MODEL_PREPARING request contract",
+      "state": "closed",
+      "merged_at": "2026-09-17T18:39:39Z",
+      "created_at": "2026-09-17T17:03:14Z",
+      "changed_files": 2
+    },
+    {
+      "number": 556,
+      "title": "feat(node): compose ready runtime with existing router attachment",
+      "state": "closed",
+      "merged_at": "2026-09-17T16:59:34Z",
+      "created_at": "2026-09-17T16:24:19Z",
+      "changed_files": 1
+    },
+    {
+      "number": 555,
+      "title": "feat(node): settle unsupported local demand",
+      "state": "closed",
+      "merged_at": "2026-09-17T16:22:11Z",
+      "created_at": "2026-09-17T16:11:43Z",
+      "changed_files": 3
+    },
+    {
+      "number": 554,
+      "title": "feat(node): define runtime-owned process plan contract",
+      "state": "closed",
+      "merged_at": "2026-09-17T16:09:59Z",
+      "created_at": "2026-09-17T14:36:07Z",
+      "changed_files": 5
+    },
+    {
+      "number": 553,
+      "title": "feat(client): add interactive buyer playground and desktop chrome polish",
+      "state": "closed",
+      "merged_at": "2026-09-18T01:24:36Z",
+      "created_at": "2026-09-17T10:54:12Z",
+      "changed_files": 20
+    },
+    {
+      "number": 552,
+      "title": "fix(node): disambiguate failed reconcile transition",
+      "state": "closed",
+      "merged_at": "2026-09-17T11:19:13Z",
+      "created_at": "2026-09-17T10:53:13Z",
+      "changed_files": 1
+    },
+    {
+      "number": 551,
+      "title": "feat(node): skip local work when machine cannot run model",
+      "state": "closed",
+      "merged_at": "2026-09-17T10:52:28Z",
+      "created_at": "2026-09-17T10:03:04Z",
+      "changed_files": 5
+    },
+    {
+      "number": 550,
+      "title": "chore(router): clean up compiler warnings",
+      "state": "closed",
+      "merged_at": "2026-09-17T10:09:50Z",
+      "created_at": "2026-09-17T09:52:29Z",
+      "changed_files": 5
+    },
+    {
+      "number": 549,
+      "title": "fix(cli): initialize required runtime secrets",
+      "state": "closed",
+      "merged_at": "2026-09-17T09:28:32Z",
+      "created_at": "2026-09-17T07:40:25Z",
+      "changed_files": 1
+    },
+    {
+      "number": 548,
+      "title": "test(node): prove framework-owned fake lifecycle",
+      "state": "closed",
+      "merged_at": "2026-09-17T09:28:30Z",
+      "created_at": "2026-09-17T06:05:40Z",
+      "changed_files": 2
+    },
+    {
+      "number": 547,
+      "title": "feat(node): gate recovery on unhealthy route detachment",
+      "state": "closed",
+      "merged_at": "2026-09-17T06:04:18Z",
+      "created_at": "2026-09-17T05:54:41Z",
+      "changed_files": 1
+    },
+    {
+      "number": 546,
+      "title": "feat(node): dispatch reconcile actions through owner ports",
+      "state": "closed",
+      "merged_at": "2026-09-17T05:52:38Z",
+      "created_at": "2026-09-17T05:24:04Z",
+      "changed_files": 1
+    },
+    {
+      "number": 545,
+      "title": "feat(node): define desired model demand input",
+      "state": "closed",
+      "merged_at": "2026-09-17T05:22:59Z",
+      "created_at": "2026-09-17T04:47:52Z",
+      "changed_files": 1
+    },
+    {
+      "number": 544,
+      "title": "feat(node): add application-level orchestration root",
+      "state": "closed",
+      "merged_at": "2026-09-17T04:47:14Z",
+      "created_at": "2026-09-17T04:23:22Z",
+      "changed_files": 3
+    },
+    {
+      "number": 543,
+      "title": "feat(node): complete machine capability composition root",
+      "state": "closed",
+      "merged_at": "2026-09-17T04:21:17Z",
+      "created_at": "2026-09-17T03:15:56Z",
+      "changed_files": 3
+    },
+    {
+      "number": 542,
+      "title": "test(node): close fake golden path with supply resolver",
+      "state": "closed",
+      "merged_at": "2026-09-17T02:16:03Z",
+      "created_at": "2026-09-17T02:06:20Z",
+      "changed_files": 2
+    },
+    {
+      "number": 541,
+      "title": "feat(supply): add model resolver contract and fake",
+      "state": "closed",
+      "merged_at": "2026-09-17T02:05:41Z",
+      "created_at": "2026-09-17T02:01:41Z",
+      "changed_files": 4
+    },
+    {
+      "number": 540,
+      "title": "test(node): wire fake preparation capabilities into golden path",
+      "state": "closed",
+      "merged_at": "2026-09-17T02:00:17Z",
+      "created_at": "2026-09-17T01:30:39Z",
+      "changed_files": 8
+    },
+    {
+      "number": 539,
+      "title": "feat(node): add missing fakeable preparation capability ports",
+      "state": "closed",
+      "merged_at": "2026-09-17T01:28:47Z",
+      "created_at": "2026-09-16T20:05:35Z",
+      "changed_files": 3
+    },
+    {
+      "number": 538,
+      "title": "test(node): complete Phase-0 existing-router acceptance",
+      "state": "closed",
+      "merged_at": "2026-09-16T19:32:34Z",
+      "created_at": "2026-09-16T19:32:20Z",
+      "changed_files": 3
+    },
+    {
+      "number": 537,
+      "title": "fix(node): make runtime invariant crate documentation",
+      "state": "closed",
+      "merged_at": "2026-09-16T19:28:58Z",
+      "created_at": "2026-09-16T19:28:50Z",
+      "changed_files": 1
+    },
+    {
+      "number": 536,
+      "title": "feat(router): identify Node route attachments by channel id",
+      "state": "closed",
+      "merged_at": "2026-09-16T19:28:27Z",
+      "created_at": "2026-09-16T19:22:43Z",
+      "changed_files": 3
+    },
+    {
+      "number": 535,
+      "title": "feat(router): attach ready Node endpoints to existing routing truth",
+      "state": "closed",
+      "merged_at": "2026-09-16T19:21:51Z",
+      "created_at": "2026-09-16T19:08:53Z",
+      "changed_files": 2
+    },
+    {
+      "number": 534,
+      "title": "feat(router): define Node local attachment boundary",
+      "state": "closed",
+      "merged_at": "2026-09-16T19:07:41Z",
+      "created_at": "2026-09-16T19:02:07Z",
+      "changed_files": 2
+    },
+    {
+      "number": 533,
+      "title": "test(node): prove phase-0 fake golden path",
+      "state": "closed",
+      "merged_at": "2026-09-16T19:00:54Z",
+      "created_at": "2026-09-16T18:57:52Z",
+      "changed_files": 1
+    },
+    {
+      "number": 532,
+      "title": "feat(node): add machine-level composition root",
+      "state": "closed",
+      "merged_at": "2026-09-16T18:57:03Z",
+      "created_at": "2026-09-16T18:52:44Z",
+      "changed_files": 3
+    },
+    {
+      "number": 531,
+      "title": "feat(node): add demand reconciler skeleton",
+      "state": "closed",
+      "merged_at": "2026-09-16T18:51:36Z",
+      "created_at": "2026-09-16T18:49:26Z",
+      "changed_files": 6
+    },
+    {
+      "number": 530,
+      "title": "feat(node): define runtime convergence state model",
+      "state": "closed",
+      "merged_at": "2026-09-16T18:47:45Z",
+      "created_at": "2026-09-16T18:44:36Z",
+      "changed_files": 3
+    },
+    {
+      "number": 529,
+      "title": "feat(node): add reusable fake platform capabilities",
+      "state": "closed",
+      "merged_at": "2026-09-16T18:43:52Z",
+      "created_at": "2026-09-16T18:34:04Z",
+      "changed_files": 3
+    },
+    {
+      "number": 528,
+      "title": "feat(node): define machine-level capability contracts",
+      "state": "closed",
+      "merged_at": "2026-09-16T18:33:27Z",
+      "created_at": "2026-09-16T13:43:02Z",
+      "changed_files": 4
+    },
+    {
+      "number": 524,
+      "title": "feat(node): add minimal Node runtime skeleton",
+      "state": "closed",
+      "merged_at": "2026-09-16T13:08:34Z",
+      "created_at": "2026-09-16T12:50:31Z",
+      "changed_files": 7
+    },
+    {
+      "number": 523,
+      "title": "feat(client): replace Dioxus client with burncloud-web UI",
+      "state": "closed",
+      "merged_at": "2026-09-16T12:51:46Z",
+      "created_at": "2026-09-15T08:14:34Z",
+      "changed_files": 328
+    },
+    {
+      "number": 522,
+      "title": "refactor: migrate crates into domain directories",
+      "state": "closed",
+      "merged_at": "2026-09-15T04:25:03Z",
+      "created_at": "2026-09-15T04:22:16Z",
+      "changed_files": 478
+    },
+    {
+      "number": 521,
+      "title": "security(installer): validate npm mirror arguments",
+      "state": "closed",
+      "merged_at": "2026-09-15T01:54:53Z",
+      "created_at": "2026-09-15T01:11:47Z",
+      "changed_files": 2
+    },
+    {
+      "number": 519,
+      "title": "cleanup(observability): retire unwired metrics module",
+      "state": "closed",
+      "merged_at": "2026-09-15T01:55:06Z",
+      "created_at": "2026-09-15T01:10:02Z",
+      "changed_files": 4
+    },
+    {
+      "number": 515,
+      "title": "cleanup(observability): retire unused alert crate",
+      "state": "closed",
+      "merged_at": "2026-09-15T01:07:38Z",
+      "created_at": "2026-09-15T01:03:21Z",
+      "changed_files": 12
+    },
+    {
+      "number": 499,
+      "title": "docs(config): correct fresh database safety guidance",
+      "state": "closed",
+      "merged_at": "2026-09-14T16:28:57Z",
+      "created_at": "2026-09-14T16:28:16Z",
+      "changed_files": 1
+    },
+    {
+      "number": 495,
+      "title": "security(internal): inject one validated secret source",
+      "state": "closed",
+      "merged_at": "2026-09-14T16:26:11Z",
+      "created_at": "2026-09-14T15:24:18Z",
+      "changed_files": 8
+    },
+    {
+      "number": 493,
+      "title": "security(jwt): require one injected secret source",
+      "state": "closed",
+      "merged_at": "2026-09-14T15:01:42Z",
+      "created_at": "2026-09-14T12:59:22Z",
+      "changed_files": 14
+    },
+    {
       "number": 489,
       "title": "cleanup(docs): remove shared agent context",
       "state": "closed",
@@ -42,366 +402,6 @@
       "merged_at": "2026-09-14T06:44:25Z",
       "created_at": "2026-09-14T06:26:21Z",
       "changed_files": 1
-    },
-    {
-      "number": 479,
-      "title": "cleanup(cache): remove unused direct dependencies",
-      "state": "closed",
-      "merged_at": "2026-09-14T06:25:01Z",
-      "created_at": "2026-09-14T05:18:37Z",
-      "changed_files": 1
-    },
-    {
-      "number": 477,
-      "title": "cleanup(cache): remove unused price cache API",
-      "state": "closed",
-      "merged_at": "2026-09-14T05:17:18Z",
-      "created_at": "2026-09-14T05:16:04Z",
-      "changed_files": 2
-    },
-    {
-      "number": 475,
-      "title": "cleanup(cache): remove unused quota cache API",
-      "state": "closed",
-      "merged_at": "2026-09-14T05:13:22Z",
-      "created_at": "2026-09-14T03:10:58Z",
-      "changed_files": 2
-    },
-    {
-      "number": 473,
-      "title": "cleanup(cache): remove unused token cache API",
-      "state": "closed",
-      "merged_at": "2026-09-14T03:00:01Z",
-      "created_at": "2026-09-14T02:42:15Z",
-      "changed_files": 2
-    },
-    {
-      "number": 471,
-      "title": "cleanup(cache): remove unused channel cache API",
-      "state": "closed",
-      "merged_at": "2026-09-14T02:35:51Z",
-      "created_at": "2026-09-14T02:30:35Z",
-      "changed_files": 2
-    },
-    {
-      "number": 469,
-      "title": "security(cache): redact Redis credentials from logs and errors",
-      "state": "closed",
-      "merged_at": "2026-09-14T02:05:36Z",
-      "created_at": "2026-09-13T17:50:59Z",
-      "changed_files": 2
-    },
-    {
-      "number": 462,
-      "title": "feat(client): migrate Buyer Overview to modular Dioxus",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-09-09T08:12:12Z",
-      "changed_files": 336
-    },
-    {
-      "number": 461,
-      "title": "feat: add standalone Leptos Rust UI project",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-09-04T14:39:55Z",
-      "changed_files": 13
-    },
-    {
-      "number": 429,
-      "title": "docs(agent): enforce canonical engineering issue standard",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-09-01T01:51:47Z",
-      "changed_files": 5
-    },
-    {
-      "number": 428,
-      "title": "feat(node): introduce Node hardware profile foundation",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-31T16:52:36Z",
-      "changed_files": 6
-    },
-    {
-      "number": 427,
-      "title": "feat: 更新首页内容",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-26T13:44:42Z",
-      "changed_files": 5
-    },
-    {
-      "number": 426,
-      "title": "[codex] import BurnCloud UI and buyer catalog",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-26T09:27:01Z",
-      "changed_files": 135
-    },
-    {
-      "number": 425,
-      "title": "chore: temporary BurnCloud site screenshots",
-      "state": "closed",
-      "merged_at": null,
-      "created_at": "2026-08-24T16:42:16Z",
-      "changed_files": 1
-    },
-    {
-      "number": 424,
-      "title": "feat(ui): rebuild buyer-overview",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-21T04:33:35Z",
-      "changed_files": 15
-    },
-    {
-      "number": 423,
-      "title": "Run Graphs migration for Overview",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-15T05:03:10Z",
-      "changed_files": 3
-    },
-    {
-      "number": 422,
-      "title": "Define the trust-first product text prototype",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-14T14:54:43Z",
-      "changed_files": 4
-    },
-    {
-      "number": 421,
-      "title": "Align Overview with the canonical product flow",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-14T13:31:40Z",
-      "changed_files": 2
-    },
-    {
-      "number": 420,
-      "title": "Define the canonical Console product flow",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-14T13:23:32Z",
-      "changed_files": 4
-    },
-    {
-      "number": 419,
-      "title": "Polish Guardrails around truthful protection signals",
-      "state": "closed",
-      "merged_at": "2026-08-14T13:13:50Z",
-      "created_at": "2026-08-14T13:06:45Z",
-      "changed_files": 2
-    },
-    {
-      "number": 418,
-      "title": "Polish Team around the real console admin boundary",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-14T12:50:47Z",
-      "changed_files": 3
-    },
-    {
-      "number": 417,
-      "title": "Polish Customers account and funding workflow",
-      "state": "closed",
-      "merged_at": "2026-08-14T10:56:25Z",
-      "created_at": "2026-08-14T10:18:08Z",
-      "changed_files": 2
-    },
-    {
-      "number": 416,
-      "title": "Polish API key lifecycle around secure management refs",
-      "state": "closed",
-      "merged_at": "2026-08-14T10:07:43Z",
-      "created_at": "2026-08-14T05:34:40Z",
-      "changed_files": 5
-    },
-    {
-      "number": 415,
-      "title": "Fix token management contract after secret redaction",
-      "state": "closed",
-      "merged_at": "2026-08-14T05:18:27Z",
-      "created_at": "2026-08-14T03:12:31Z",
-      "changed_files": 7
-    },
-    {
-      "number": 414,
-      "title": "Polish Billing spend hierarchy",
-      "state": "closed",
-      "merged_at": "2026-08-14T03:01:38Z",
-      "created_at": "2026-08-14T02:56:24Z",
-      "changed_files": 1
-    },
-    {
-      "number": 413,
-      "title": "Polish Evaluation observed evidence",
-      "state": "closed",
-      "merged_at": "2026-08-14T02:55:01Z",
-      "created_at": "2026-08-14T02:48:27Z",
-      "changed_files": 1
-    },
-    {
-      "number": 412,
-      "title": "Polish Logs operational triage",
-      "state": "closed",
-      "merged_at": "2026-08-14T02:46:36Z",
-      "created_at": "2026-08-14T02:37:49Z",
-      "changed_files": 2
-    },
-    {
-      "number": 411,
-      "title": "Polish Playground end-to-end verification",
-      "state": "closed",
-      "merged_at": null,
-      "created_at": "2026-08-14T02:30:48Z",
-      "changed_files": 3
-    },
-    {
-      "number": 410,
-      "title": "Polish Playground smoke test workflow",
-      "state": "closed",
-      "merged_at": "2026-08-14T02:35:23Z",
-      "created_at": "2026-08-14T02:30:17Z",
-      "changed_files": 2
-    },
-    {
-      "number": 409,
-      "title": "Polish Routes model-aware resilience",
-      "state": "closed",
-      "merged_at": "2026-08-14T02:27:12Z",
-      "created_at": "2026-08-14T02:22:22Z",
-      "changed_files": 2
-    },
-    {
-      "number": 408,
-      "title": "Polish Models availability workflow",
-      "state": "closed",
-      "merged_at": "2026-08-14T02:18:50Z",
-      "created_at": "2026-08-14T02:13:02Z",
-      "changed_files": 2
-    },
-    {
-      "number": 407,
-      "title": "Polish Providers operator workflow",
-      "state": "closed",
-      "merged_at": "2026-08-14T02:10:59Z",
-      "created_at": "2026-08-14T02:06:44Z",
-      "changed_files": 2
-    },
-    {
-      "number": 406,
-      "title": "Establish Phase 2 visual system",
-      "state": "closed",
-      "merged_at": "2026-08-14T02:01:23Z",
-      "created_at": "2026-08-13T10:31:50Z",
-      "changed_files": 10
-    },
-    {
-      "number": 405,
-      "title": "Polish Overview visual hierarchy and readiness states",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-13T10:02:03Z",
-      "changed_files": 3
-    },
-    {
-      "number": 404,
-      "title": "Secure zero-config first-admin setup and close public registration by default",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-08-13T08:24:49Z",
-      "changed_files": 12
-    },
-    {
-      "number": 400,
-      "title": "Make BurnCloud product UI human-usable and truthful",
-      "state": "closed",
-      "merged_at": null,
-      "created_at": "2026-08-13T04:50:52Z",
-      "changed_files": 32
-    },
-    {
-      "number": 399,
-      "title": "Fix P0 security and billing invariants",
-      "state": "closed",
-      "merged_at": "2026-08-13T08:26:03Z",
-      "created_at": "2026-08-12T17:03:26Z",
-      "changed_files": 17
-    },
-    {
-      "number": 398,
-      "title": "Define BurnCloud agent docs v1",
-      "state": "closed",
-      "merged_at": "2026-08-12T14:14:18Z",
-      "created_at": "2026-08-12T14:09:16Z",
-      "changed_files": 13
-    },
-    {
-      "number": 397,
-      "title": "Add fast local BurnCloud staging browser audit",
-      "state": "closed",
-      "merged_at": null,
-      "created_at": "2026-08-12T13:36:10Z",
-      "changed_files": 7
-    },
-    {
-      "number": 396,
-      "title": "Refine BurnCloud console UX around operator workflows",
-      "state": "closed",
-      "merged_at": "2026-08-12T13:19:54Z",
-      "created_at": "2026-08-12T12:34:39Z",
-      "changed_files": 17
-    },
-    {
-      "number": 395,
-      "title": "docs: add repository-local runtime atlas for chat completions",
-      "state": "closed",
-      "merged_at": "2026-08-11T04:00:43Z",
-      "created_at": "2026-08-11T03:12:59Z",
-      "changed_files": 5
-    },
-    {
-      "number": 394,
-      "title": "Rebuild client UI in Dioxus from burncloud-ui",
-      "state": "closed",
-      "merged_at": "2026-08-12T11:48:41Z",
-      "created_at": "2026-08-10T12:26:15Z",
-      "changed_files": 224
-    },
-    {
-      "number": 393,
-      "title": "docs: replace legacy docs with AI agent engineering harness",
-      "state": "closed",
-      "merged_at": "2026-08-10T12:01:39Z",
-      "created_at": "2026-08-10T10:30:59Z",
-      "changed_files": 51
-    },
-    {
-      "number": 392,
-      "title": "Bugfix/main runtime unwrap safe",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T07:07:28Z",
-      "changed_files": 37
-    },
-    {
-      "number": 391,
-      "title": "Bugfix/monitor cpu unsafe safety comment",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T07:06:39Z",
-      "changed_files": 36
-    },
-    {
-      "number": 390,
-      "title": "Bugfix/router metrics expect safe",
-      "state": "open",
-      "merged_at": null,
-      "created_at": "2026-07-29T07:05:17Z",
-      "changed_files": 36
     }
   ]
 }

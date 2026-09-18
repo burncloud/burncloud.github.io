@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="generator" content="Docusaurus v3.10.1">
 <title data-rh="true">基础规则 | BurnCloud Documentation</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:url" content="https://burncloud.github.io/architecture/foundation/"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="基础规则 | BurnCloud Documentation"><meta data-rh="true" name="description" content="所有 BurnCloud 代码共同遵守的最小规则。"><meta data-rh="true" property="og:description" content="所有 BurnCloud 代码共同遵守的最小规则。"><link data-rh="true" rel="canonical" href="https://burncloud.github.io/architecture/foundation/"><link data-rh="true" rel="alternate" href="https://burncloud.github.io/architecture/foundation/" hreflang="en"><link data-rh="true" rel="alternate" href="https://burncloud.github.io/architecture/foundation/" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"BurnCloud","item":"https://burncloud.github.io/"},{"@type":"ListItem","position":2,"name":"代码规则（必读）","item":"https://burncloud.github.io/architecture/"},{"@type":"ListItem","position":3,"name":"基础规则","item":"https://burncloud.github.io/architecture/foundation/"}]}</script><link rel="stylesheet" href="/assets/css/styles.e84a9a0d.css">
-<script src="/assets/js/runtime~main.cc532fac.js" defer="defer"></script>
-<script src="/assets/js/main.95f40e9f.js" defer="defer"></script>
+<script src="/assets/js/runtime~main.ff83a911.js" defer="defer"></script>
+<script src="/assets/js/main.6f7e9481.js" defer="defer"></script>
 </head>
 <body>
 <svg style="display: none;"><defs>
@@ -43,19 +43,35 @@
 <p>默认不允许，明确授权后才允许。外部输入先验证再使用；每个调用方只获得完成工作需要的最小权限。</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-变更原则">10. 变更原则<a href="#10-变更原则" class="hash-link" aria-label="Direct link to 10. 变更原则" title="Direct link to 10. 变更原则" translate="no">​</a></h2>
 <p>一个 Issue 只完成一件事，并有一个主要 Owner。跨领域需求拆成多个 Issue；普通重构不得顺便改变公开接口、数据和业务规则。</p>
-<p>每个 Issue 必须明确：</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="开工前置条件">开工前置条件<a href="#开工前置条件" class="hash-link" aria-label="Direct link to 开工前置条件" title="Direct link to 开工前置条件" translate="no">​</a></h3>
+<p>任何代码修改开始前，必须先完成本 Issue 的 Task Contract。没有 Task Contract，不得开始编码。</p>
+<p>Task Contract 至少包含：</p>
+<ol>
+<li class=""><strong>ASCII 影响图</strong>：画清楚本次涉及的主要组件、调用关系和影响范围，让人和 AI 都能快速看懂“这次碰哪里、不碰哪里”。</li>
+<li class=""><strong>BDD / Acceptance Criteria</strong>：写清楚本次必须实现的行为、验收条件和完成条件。验收条件只描述当前 Issue，不得把新发现的问题继续并入。</li>
+<li class=""><strong>Paths</strong>：明确本次允许和禁止修改的代码范围。</li>
+</ol>
+<p>其中 Paths 必须明确：</p>
 <ul>
 <li class=""><strong>Allowed Paths</strong>：可以修改的目录；</li>
 <li class=""><strong>Conditional Paths</strong>：说明理由并获得对应 Owner 同意后才能修改的目录；</li>
 <li class=""><strong>Forbidden Paths</strong>：当前 Issue 禁止修改的目录；</li>
 <li class=""><strong>Protected Zone</strong>：路由核心、认证核心、公开契约、账务核心、迁移历史等需要独立变更的区域。</li>
 </ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="编码与收口">编码与收口<a href="#编码与收口" class="hash-link" aria-label="Direct link to 编码与收口" title="Direct link to 编码与收口" translate="no">​</a></h3>
+<p>编码只能围绕 Task Contract 中已经定义的目标、行为和路径进行。</p>
+<ul>
+<li class="">发现与当前验收条件无关的问题，只记录或另开 Issue，不得顺手修复、重构、清理或扩展。</li>
+<li class="">需要增加新的验收行为、修改新的目录或触碰新的 Owner 时，必须先停止当前实现，更新或拆分 Issue 后再继续。</li>
+<li class="">BDD / Acceptance Criteria 全部满足、相关测试通过且实际修改未超出 Paths 后，当前 Issue 即完成，必须停止。</li>
+<li class="">完成条件满足后，不得因为“顺便优化”“以后可能需要”或“代码可以更漂亮”继续扩大修改。</li>
+</ul>
 <p>出现以下情况必须停止并拆分或升级 Issue：需要跨领域修改内部代码、需要改变公开契约、需要修改其他 Owner 的业务真相，或者需要触碰未授权的 Protected Zone。</p>
 <h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="每个-crate-必须回答的问题">每个 crate 必须回答的问题<a href="#每个-crate-必须回答的问题" class="hash-link" aria-label="Direct link to 每个 crate 必须回答的问题" title="Direct link to 每个 crate 必须回答的问题" translate="no">​</a></h2>
 <ol>
 <li class="">Owner 是谁？这个 crate 负责什么？</li>
 <li class="">不负责什么？拥有哪些业务真相和数据？</li>
-<li class="">对外提供哪些公开契约？</li>
+<li class="">对外提供哪些公开契约  ？</li>
 <li class="">可以依赖谁？谁可以依赖它？</li>
 <li class="">禁止哪些依赖、访问和越界行为？</li>
 <li class="">目录和文件怎样组织？</li>
@@ -64,6 +80,6 @@
 <li class="">有哪些独有测试、状态、失败和迁移要求？</li>
 <li class="">完整正确示例和完整错误示例是什么？</li>
 </ol>
-<p>已经由上级回答的内容，直接引用，不再复制。</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/architecture/foundation.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><span class="theme-last-updated">Last updated<!-- --> on <b><time datetime="2026-09-13T08:23:26.000Z" itemprop="dateModified">Sep 13, 2026</time></b> by <b>BurnCloud.com</b></span></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/architecture/"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">规则文档</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/architecture/reusable-rules/"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">可复用 规则</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#规则继承与优先级" class="table-of-contents__link toc-highlight">规则继承与优先级</a></li><li><a href="#1-目录与职责" class="table-of-contents__link toc-highlight">1. 目录与职责</a></li><li><a href="#2-领域边界" class="table-of-contents__link toc-highlight">2. 领域边界</a></li><li><a href="#3-模块依赖" class="table-of-contents__link toc-highlight">3. 模块依赖</a></li><li><a href="#4-公开契约" class="table-of-contents__link toc-highlight">4. 公开契约</a></li><li><a href="#5-基础代码规范" class="table-of-contents__link toc-highlight">5. 基础代码规范</a></li><li><a href="#6-基础错误处理" class="table-of-contents__link toc-highlight">6. 基础错误处理</a></li><li><a href="#7-基础日志规范" class="table-of-contents__link toc-highlight">7. 基础日志规范</a></li><li><a href="#8-基础测试原则" class="table-of-contents__link toc-highlight">8. 基础测试原则</a></li><li><a href="#9-安全底线" class="table-of-contents__link toc-highlight">9. 安全底线</a></li><li><a href="#10-变更原则" class="table-of-contents__link toc-highlight">10. 变更原则</a></li><li><a href="#每个-crate-必须回答的问题" class="table-of-contents__link toc-highlight">每个 crate 必须回答的问题</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">BurnCloud Documentation · Concept → Flow → Interface → Source</div></div></div></footer></div>
+<p>已经由上级回答的内容，直接引用，不再复制。</p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/burncloud/burncloud.github.io/edit/main/docs/../docs/architecture/foundation.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"><span class="theme-last-updated">Last updated<!-- --> on <b><time datetime="2026-09-18T16:26:11.000Z" itemprop="dateModified">Sep 18, 2026</time></b> by <b>BurnCloud.com</b></span></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/architecture/"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">规则文档</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/architecture/reusable-rules/"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">可复用规则</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#规则继承与优先级" class="table-of-contents__link toc-highlight">规则继承与优先级</a></li><li><a href="#1-目录与职责" class="table-of-contents__link toc-highlight">1. 目录与职责</a></li><li><a href="#2-领域边界" class="table-of-contents__link toc-highlight">2. 领域边界</a></li><li><a href="#3-模块依赖" class="table-of-contents__link toc-highlight">3. 模块依赖</a></li><li><a href="#4-公开契约" class="table-of-contents__link toc-highlight">4. 公开契约</a></li><li><a href="#5-基础代码规范" class="table-of-contents__link toc-highlight">5. 基础代码规范</a></li><li><a href="#6-基础错误处理" class="table-of-contents__link toc-highlight">6. 基础错误处理</a></li><li><a href="#7-基础日志规范" class="table-of-contents__link toc-highlight">7. 基础日志规范</a></li><li><a href="#8-基础测试原则" class="table-of-contents__link toc-highlight">8. 基础测试原则</a></li><li><a href="#9-安全底线" class="table-of-contents__link toc-highlight">9. 安全底线</a></li><li><a href="#10-变更原则" class="table-of-contents__link toc-highlight">10. 变更原则</a><ul><li><a href="#开工前置条件" class="table-of-contents__link toc-highlight">开工前置条件</a></li><li><a href="#编码与收口" class="table-of-contents__link toc-highlight">编码与收口</a></li></ul></li><li><a href="#每个-crate-必须回答的问题" class="table-of-contents__link toc-highlight">每个 crate 必须回答的问题</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="footer__bottom text--center"><div class="footer__copyright">BurnCloud Documentation · Concept → Flow → Interface → Source</div></div></div></footer></div>
 </body>
 </html>
