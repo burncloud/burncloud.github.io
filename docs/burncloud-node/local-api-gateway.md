@@ -5,7 +5,9 @@ slug: /burncloud-node/local-api-gateway
 
 # Local API Gateway
 
-Local API Gateway 是应用进入 BurnCloud Node 的稳定 HTTP 入口。
+Local API Gateway 是应用进入 BurnCloud Node 的稳定 HTTP 入口，但它**不是 Node 新建的第二个 Gateway**。
+
+Node 复用现有 BurnCloud Server 和 Existing ModelRouter；同一个 BurnCloud 进程继续监听现有 API 地址，Node 只把 READY 的本地能力注册成 Existing Router 可见的 Local Channel。
 
 ```text
 http://localhost:3000
@@ -29,11 +31,11 @@ curl http://localhost:3000/v1/chat/completions \
 
 ```mermaid
 flowchart LR
-    REQ["HTTP Request"] --> VALIDATE["Auth / HTTP validation"]
-    VALIDATE --> DETECT["URL / Protocol Detection"]
-    DETECT --> MODEL["Read model_id"]
-    MODEL --> ROUTE["Route Engine"]
-    ROUTE --> PROXY["Raw Proxy / Translator"]
+    REQ["HTTP Request"] --> SERVER["Existing BurnCloud Server"]
+    SERVER --> VALIDATE["Auth / HTTP validation"]
+    VALIDATE --> MODEL["Read model_id"]
+    MODEL --> ROUTE["Existing ModelRouter"]
+    ROUTE --> PROXY["Existing Provider / READY Local Channel"]
     PROXY --> RESP["Client Response"]
 ```
 
