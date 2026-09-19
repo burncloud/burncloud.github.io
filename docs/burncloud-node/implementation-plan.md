@@ -151,7 +151,7 @@ NODE-503 final E2E
 
 负责把以上七个能力收敛成“User declares intent; BurnCloud manages reality”。
 
-## 15. Issue Standard 与人类验收
+## 5. Issue Standard 与人类验收
 
 所有 NODE Issue 继承：
 
@@ -175,7 +175,7 @@ CI green        != Human accepted
 Tests pass      != Human accepted
 ```
 
-## 5. Phase 1 — Node Core + Data Plane Compatibility
+## 6. Phase 1 — Node Core + Data Plane Compatibility
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -195,7 +195,7 @@ same protocol      → Raw Proxy First
 different protocol → Protocol Translator
 ```
 
-## 6. Phase 2 — Hardware Profile
+## 7. Phase 2 — Hardware Profile
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -213,7 +213,7 @@ AMD / Apple Metal / others  = Future
 
 未实现某 GPU Vendor 检测时必须表达 `unsupported / unknown`，不能伪造成“没有 GPU”或填 0。
 
-## 7. Phase 3 — Model Resolver
+## 8. Phase 3 — Model Resolver
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -226,7 +226,7 @@ AMD / Apple Metal / others  = Future
 
 > **Resolver 负责选择，不负责下载、不负责启动、不负责当前请求路由。**
 
-## 8. Phase 4 — Model Preparation / Artifact Lifecycle
+## 9. Phase 4 — Model Preparation / Artifact Lifecycle
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -246,7 +246,7 @@ status
 
 但 v0.1 不建设复杂 LRU、自动容量调度、历史 demand warm-set 或任意文件系统清理器。
 
-## 9. Phase 5 — Runtime + Process
+## 10. Phase 5 — Runtime + Process
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -264,7 +264,7 @@ Process Spawned != Model READY
 
 只有 readiness / health 成功后才能产生 routable Local Channel。
 
-## 10. Phase 6 — Local Channel + Demand Reconciliation
+## 11. Phase 6 — Local Channel + Demand Reconciliation
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -295,7 +295,7 @@ Resolve → Prepare → Runtime → READY → Local Channel
 
 Reconciler 不是第二个 Router。
 
-## 11. Node v0.1 明确不实施
+## 12. Node v0.1 明确不实施
 
 为了控制边界，以下能力不作为 v0.1 完成条件：
 
@@ -331,7 +331,7 @@ Existing ModelRouter
 
 Network 未来接入现有 Router，不改变 `URL → Protocol → model_id → Route Engine → Raw Proxy / Translator` 的数据面边界。
 
-## 12. Node v0.1 完成定义
+## 13. Node v0.1 完成定义
 
 ### 机器闭环
 
@@ -411,7 +411,7 @@ download task ID
 manual start/stop command
 ```
 
-## 13. 执行顺序
+## 14. 执行顺序
 
 ```text
 NODE-001 → 002 → 003 → 004
@@ -451,7 +451,7 @@ Human Acceptance
 DONE
 ```
 
-## 14. 实施边界
+## 15. 实施边界
 
 任何新增实现都先回答：
 
