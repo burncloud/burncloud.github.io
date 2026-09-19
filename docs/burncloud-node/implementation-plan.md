@@ -14,6 +14,8 @@ hide_table_of_contents: false
 
 > **复用现有 BurnCloud，补齐本地 AI Runtime 链；每一个 Node 产品功能都必须能追溯到明确 Issue；每一个 Issue 最终必须通过机器验收 + 人类验收。**
 
+> 当前状态：**Node Framework baseline 已实现并完成框架收口；下面的 Implementation Plan 继续用于真实 Production Adapters 与产品验收。** 框架与产品完成度不要混为一谈。详见 [BurnCloud Node 框架状态](/burncloud-node/framework-status/)。
+
 ## 1. Node v0.1 的产品目标
 
 用户只声明正常 AI 请求与 `model`：
@@ -86,7 +88,45 @@ Auto Update
 第二套模型 / Cache 真相
 ```
 
-## 3. 七个产品功能与 Issue 覆盖矩阵
+## 3. 当前 Framework Baseline
+
+已经完成的框架能力：
+
+```text
+Node Runtime attachment
+Machine capability ports
+Fake capabilities
+NodeState + DemandReconciler
+Node Application Orchestrator
+Supply ModelResolver contract
+RuntimeAdapter + ProcessPlan
+Existing Router Local Channel attachment
+Exact detach + recovery receipt
+Fake end-to-end acceptance
+LocalUnsupported convergence
+MODEL_PREPARING request contract
+NodeRequestState synchronization
+true route miss gating
+```
+
+这些完成的是“房间、插座、电线和总配电箱”。
+
+以下仍属于真实产品实现：
+
+```text
+real HardwareProbe
+real ArtifactPreparer
+real RuntimePreparer
+real RuntimeAdapter
+real ProcessManager
+real Readiness / Health Probe
+production NodeOrchestrator composition
+real ModelDemand source
+```
+
+因此 Issue 表中的 `PLANNED` 仍表示对应**真实产品能力尚未完成**，不代表 Framework baseline 未建立。
+
+## 4. 七个产品功能与 Issue 覆盖矩阵
 
 BurnCloud Node 首页定义七个核心产品功能。v0.1 Implementation Plan 必须做到 1:1 可追溯，而不能用“现有代码应该已经有”代替验收责任。
 
@@ -111,7 +151,7 @@ NODE-503 final E2E
 
 负责把以上七个能力收敛成“User declares intent; BurnCloud manages reality”。
 
-## 4. Issue Standard 与人类验收
+## 5. Issue Standard 与人类验收
 
 所有 NODE Issue 继承：
 
@@ -135,7 +175,7 @@ CI green        != Human accepted
 Tests pass      != Human accepted
 ```
 
-## 5. Phase 1 — Node Core + Data Plane Compatibility
+## 6. Phase 1 — Node Core + Data Plane Compatibility
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -155,7 +195,7 @@ same protocol      → Raw Proxy First
 different protocol → Protocol Translator
 ```
 
-## 6. Phase 2 — Hardware Profile
+## 7. Phase 2 — Hardware Profile
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -173,7 +213,7 @@ AMD / Apple Metal / others  = Future
 
 未实现某 GPU Vendor 检测时必须表达 `unsupported / unknown`，不能伪造成“没有 GPU”或填 0。
 
-## 7. Phase 3 — Model Resolver
+## 8. Phase 3 — Model Resolver
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -186,7 +226,7 @@ AMD / Apple Metal / others  = Future
 
 > **Resolver 负责选择，不负责下载、不负责启动、不负责当前请求路由。**
 
-## 8. Phase 4 — Model Preparation / Artifact Lifecycle
+## 9. Phase 4 — Model Preparation / Artifact Lifecycle
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -206,7 +246,7 @@ status
 
 但 v0.1 不建设复杂 LRU、自动容量调度、历史 demand warm-set 或任意文件系统清理器。
 
-## 9. Phase 5 — Runtime + Process
+## 10. Phase 5 — Runtime + Process
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -224,7 +264,7 @@ Process Spawned != Model READY
 
 只有 readiness / health 成功后才能产生 routable Local Channel。
 
-## 10. Phase 6 — Local Channel + Demand Reconciliation
+## 11. Phase 6 — Local Channel + Demand Reconciliation
 
 | ID | 目标 | 依赖 | 状态 |
 |---|---|---|---|
@@ -255,7 +295,7 @@ Resolve → Prepare → Runtime → READY → Local Channel
 
 Reconciler 不是第二个 Router。
 
-## 11. Node v0.1 明确不实施
+## 12. Node v0.1 明确不实施
 
 为了控制边界，以下能力不作为 v0.1 完成条件：
 
@@ -291,7 +331,7 @@ Existing ModelRouter
 
 Network 未来接入现有 Router，不改变 `URL → Protocol → model_id → Route Engine → Raw Proxy / Translator` 的数据面边界。
 
-## 12. Node v0.1 完成定义
+## 13. Node v0.1 完成定义
 
 ### 机器闭环
 
@@ -371,7 +411,7 @@ download task ID
 manual start/stop command
 ```
 
-## 13. 执行顺序
+## 14. 执行顺序
 
 ```text
 NODE-001 → 002 → 003 → 004
@@ -411,7 +451,7 @@ Human Acceptance
 DONE
 ```
 
-## 14. 实施边界
+## 15. 实施边界
 
 任何新增实现都先回答：
 
