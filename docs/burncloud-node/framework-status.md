@@ -8,30 +8,108 @@ hide_table_of_contents: false
 
 BurnCloud Node 的**整体框架骨架已经实现**。当前完成的是生命周期、边界、组合关系和请求侧收口，不代表真实 GPU 探测、模型下载、Runtime 安装和本地推理执行已经全部产品化。
 
-## 当前已经闭环的框架
+## 当前已经闭环的整体流程
+
+下面这张图是当前 **现有 BurnCloud + BurnCloud Node Framework** 的完整主链。主图使用 Mermaid `flowchart LR`，因为它最适合表达请求链、后台准备链、状态同步和异常恢复之间的关系。
 
 ```mermaid
 flowchart LR
-    REQ["Client Request"] --> ROUTER["Existing ModelRouter"]
-    ROUTER --> HAS{"Usable Candidate?"}
+    subgraph REQUEST["同步请求链（Existing Data Plane）"]
+        CLIENT["Client Request"] --> SERVER["Existing BurnCloud Server"]
+        SERVER --> MODEL["Read model_id"]
+        MODEL --> ROUTER["Existing ModelRouter"]
+        ROUTER --> HAS{"Usable Candidate?"}
 
-    HAS -->|Yes| SCHED["Existing Scheduler"]
-    SCHED --> TARGET["Provider / READY Local Channel"]
+        HAS -->|Yes| SCHED["Existing Scheduler"]
+        SCHED --> TARGET["Provider / READY Local Channel"]
+        TARGET --> RESP["Client Response"]
 
-    HAS -->|No: true route miss| STATE["NodeRequestState"]
-    STATE --> PREP{"Local model preparing?"}
-    PREP -->|Yes| MP["503 MODEL_PREPARING"]
-    PREP -->|No| UNAVAILABLE["Existing unavailable response"]
+        HAS -->|No: true route miss| REQSTATE["NodeRequestState"]
+        REQSTATE --> PREPARING{"Node actively preparing this model?"}
+        PREPARING -->|Yes| MP["503 MODEL_PREPARING<br/>Retry-After: 5"]
+        PREPARING -->|No| UNAVAILABLE["Existing unavailable response"]
+    end
 
-    DEMAND["ModelDemand"] --> RESOLVE["Resolve"]
-    RESOLVE --> ART["Prepare Artifact"]
-    ART --> RT["Prepare Runtime"]
-    RT --> PROC["Start Process"]
-    PROC --> READY["Wait READY"]
-    READY --> ATTACH["Attach to Existing Router"]
-    ATTACH --> LOCAL["Routable Local Channel"]
-    LOCAL --> ROUTER
+    subgraph NODE["后台 Node 准备链（Control Plane）"]
+        DEMAND["ModelDemand"] --> RESOLVE["Resolve<br/>Hardware + Supply"]
+        RESOLVE --> LOCALOK{"Local supported?"}
+
+        LOCALOK -->|No| UNSUPPORTED["LocalUnsupported"]
+        LOCALOK -->|Yes| ART["Prepare Artifact"]
+        ART --> ARTREADY["ArtifactReady"]
+        ARTREADY --> RT["Prepare Runtime"]
+        RT --> START["Start Process"]
+        START --> WAIT["WaitingReady"]
+        WAIT --> READY["Ready"]
+        READY --> ATTACH["ExistingRouterLocalAttacher"]
+        ATTACH --> ROUTABLE["Routable Local Channel"]
+        ROUTABLE --> ROUTER
+    end
+
+    subgraph STATE["请求可见状态同步"]
+        RESOLVE -.->|"publish state"| REQSTATE
+        ART -.->|"publish state"| REQSTATE
+        ARTREADY -.->|"publish state"| REQSTATE
+        RT -.->|"publish state"| REQSTATE
+        START -.->|"publish state"| REQSTATE
+        WAIT -.->|"publish state"| REQSTATE
+        READY -.->|"publish state"| REQSTATE
+        ROUTABLE -.->|"publish state"| REQSTATE
+        UNSUPPORTED -.->|"publish state"| REQSTATE
+        FAILED["Failed"] -.->|"publish state"| REQSTATE
+        UNHEALTHY["Unhealthy"] -.->|"publish state"| REQSTATE
+        RECOVERING["Starting / Recovering"] -.->|"publish state"| REQSTATE
+    end
+
+    subgraph FAILURE["失败与恢复链"]
+        RESOLVE -->|error| FAILED
+        ART -->|error| FAILED
+        RT -->|error| FAILED
+        START -->|error| FAILED
+        WAIT -->|readiness / health error| FAILED
+
+        ROUTABLE -->|health failure| UNHEALTHY
+        UNHEALTHY --> DETACH["Detach exact attachment_id"]
+        DETACH --> RECEIPT["DetachedRoute receipt"]
+        RECEIPT --> RECOVERING
+        RECOVERING --> WAIT
+    end
 ```
+
+这张图需要同时读懂四件事：
+
+```text
+1. 请求链
+   Existing ModelRouter 有 Candidate
+   → 完全继续 Existing Scheduler / Router
+
+2. 真正没路
+   Existing ModelRouter 真正 0 Candidate
+   → 才查询 NodeRequestState
+   → Preparing 才返回 MODEL_PREPARING
+
+3. 后台准备
+   ModelDemand
+   → Resolve
+   → Artifact
+   → Runtime
+   → Process
+   → READY
+   → Attach
+   → Routable
+
+4. 异常恢复
+   Routable
+   → Unhealthy
+   → 精确 Detach
+   → Recovery
+   → READY
+   → Reattach
+```
+
+特别注意：
+
+> **protocol/path 后续过滤为空，不等于 Existing ModelRouter 真正 route miss。只有 Router 自己返回 0 Candidate 时，才允许查询 NodeRequestState。**
 
 框架已经明确：
 
