@@ -2,6 +2,7 @@ module.exports = {
   docsSidebar: [
     {type:'category', label:'BurnCloud', collapsed:false, link:{type:'doc', id:'index'}, items:[
       {type:'category', label:'BurnCloud 节点', collapsed:true, link:{type:'doc', id:'burncloud-node/index'}, items:[
+        {type:'doc', id:'burncloud-node/framework-status', label:'框架状态'},
         {type:'category', label:'实施计划', collapsed:false, link:{type:'doc', id:'burncloud-node/implementation-plan'}, items:[
           {type:'doc', id:'burncloud-node/implementation-plan/issue-standard', label:'Issue 标准'},
           {type:'doc', id:'burncloud-node/implementation-plan/human-acceptance', label:'人类验收标准'},
