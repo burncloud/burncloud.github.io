@@ -39,21 +39,25 @@ flowchart LR
 ## 一次请求的目标流程
 
 ```mermaid
-flowchart TD
-    A["Client Request"] --> B["Local API Gateway"]
-    B --> C["URL / Protocol Detection"]
-    C --> D["Read model_id"]
-    D --> E["Route Engine"]
-    E --> F{"Same protocol upstream?"}
-    F -->|Yes| RAW["Raw Proxy"]
-    F -->|No| TRANS["Protocol Translator"]
-    E -->|Prepare local| H["Hardware Detection"]
-    H --> I["Model Resolver"]
-    I --> J["Model Manager"]
-    J --> K["Runtime + Process Manager"]
-    K --> F
-    RAW --> Z["Client Response"]
-    TRANS --> Z
+flowchart LR
+    A["Client Request"] --> B["Existing BurnCloud Server"]
+    B --> C["Read model_id"]
+    C --> D["Existing ModelRouter"]
+    D --> E{"Usable Candidate?"}
+    E -->|Yes| F["Existing Scheduler"]
+    F --> G["Provider / READY Local Channel"]
+    E -->|No: true route miss| H["NodeRequestState"]
+    H --> I{"Preparing?"}
+    I -->|Yes| J["503 MODEL_PREPARING"]
+    I -->|No| K["Existing unavailable response"]
+
+    L["ModelDemand"] --> M["Resolve"]
+    M --> N["Prepare Artifact"]
+    N --> O["Prepare Runtime"]
+    O --> P["Start Process"]
+    P --> Q["Wait READY"]
+    Q --> R["Attach Local Channel"]
+    R --> D
 ```
 
 ## 最重要的四个原则
