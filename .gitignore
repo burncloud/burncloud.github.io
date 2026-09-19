@@ -1,0 +1,4 @@
+site/node_modules/
+site/build/
+site/.docusaurus/
+.source/
