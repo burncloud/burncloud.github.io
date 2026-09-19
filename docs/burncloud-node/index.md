@@ -6,7 +6,9 @@ hide_table_of_contents: false
 
 # BurnCloud Node
 
-BurnCloud Node 是 BurnCloud 的本地运行节点。对应用来说，它首先暴露稳定的 AI API 入口，再根据 URL、协议和 Model ID 决定请求最终走向，同时尽可能保持客户端原始请求不变。
+BurnCloud Node 是 BurnCloud 的本地运行节点。它**复用现有 BurnCloud Server、ModelRouter 和 Scheduler**，在同一进程内补齐本地模型准备、Runtime 生命周期和 Local Channel 接入能力。
+
+当前整体框架骨架已经实现，真实 GPU / 下载 / Runtime / Process 适配仍属于下一阶段。详见 [框架状态](./framework-status/)。
 
 ```text
 http://localhost:3000
@@ -14,13 +16,12 @@ http://localhost:3000
 
 ```mermaid
 flowchart LR
-    APP["Your Application"] --> API["BurnCloud Node API"]
-    API --> PROTOCOL["URL / Protocol Detection"]
-    PROTOCOL --> MODEL["Read model_id"]
-    MODEL --> ROUTE["Route Engine"]
-    ROUTE --> LOCAL["Local Model"]
-    ROUTE -.-> NETWORK["BurnCloud Network"]
-    ROUTE -.-> PROVIDER["Provider"]
+    APP["Your Application"] --> API["Existing BurnCloud Server"]
+    API --> MODEL["Read model_id"]
+    MODEL --> ROUTE["Existing ModelRouter"]
+    ROUTE --> PROVIDER["Provider Candidate"]
+    ROUTE --> LOCAL["READY Local Channel"]
+    ROUTE -.-> NETWORK["Future: BurnCloud Network"]
 ```
 
 ## Node 的七个核心功能
@@ -96,7 +97,9 @@ Protocol Translator
 
 ## 当前实现与 Node v0.1
 
-- **✅ Current**：当前 BurnCloud 源码已经存在统一数据面、多个协议入口、Router、下载等基础能力。
-- **🎯 Node v0.1**：把请求链明确为 URL → Protocol → Model ID → Route Engine → Raw Proxy / Protocol Translator，并继续完善硬件画像、本地 Variant 自动解析和 Runtime 生命周期。
+- **✅ Framework implemented**：Node Runtime attachment、machine capability ports、NodeState、DemandReconciler、NodeOrchestrator、ModelResolver contract、ProcessPlan、Local Channel attachment、detach/recovery、Fake E2E、`MODEL_PREPARING` request contract 已完成。
+- **✅ Existing routing preserved**：有 Candidate 时继续完全使用 Existing ModelRouter / Scheduler；Node 不定义 LocalFirst。
+- **🚧 Production adapters pending**：真实 GPU Probe、Artifact 下载、Runtime 准备、Process 管理、Readiness / Health 和真实 ModelDemand 触发仍待实施。
+- **🚧 Node v0.1 product completion**：只有真实 adapters + 对应人类验收完成后，才能声明 Node v0.1 产品完成。
 
-建议按左侧菜单依次阅读七个功能页面。
+先阅读 [框架状态](./framework-status/)，再按左侧菜单查看七个产品功能。
