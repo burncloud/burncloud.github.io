@@ -10,6 +10,8 @@ BurnCloud Node 是 BurnCloud 的本地运行节点。它**复用现有 BurnCloud
 
 当前整体框架骨架已经实现，真实 GPU / 下载 / Runtime / Process 适配仍属于下一阶段。详见 [框架状态](./framework-status/)。
 
+现有公开接口的 Owner、输入输出、禁止职责和停止条件统一记录在 [Node 框架合同](./contracts/)；开始任何 Production Adapter 之前必须先核对对应 Contract。
+
 ```text
 http://localhost:3000
 ```
@@ -106,4 +108,4 @@ Protocol Translator
 - **🚧 Production adapters pending**：真实 GPU Probe、Artifact 下载、Runtime 准备、Process 管理、Readiness / Health 和真实 ModelDemand 触发仍待实施。
 - **🚧 Node v0.1 product completion**：只有真实 adapters + 对应人类验收完成后，才能声明 Node v0.1 产品完成。
 
-先阅读 [框架状态](./framework-status/)，再按左侧菜单查看七个产品功能。
+先阅读 [框架状态](./framework-status/) 和 [Node 框架合同](./contracts/)，再按左侧菜单查看七个产品功能。
