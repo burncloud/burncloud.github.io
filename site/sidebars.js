@@ -3,6 +3,17 @@ module.exports = {
     {type:'category', label:'BurnCloud', collapsed:false, link:{type:'doc', id:'index'}, items:[
       {type:'category', label:'BurnCloud 节点', collapsed:true, link:{type:'doc', id:'burncloud-node/index'}, items:[
         {type:'doc', id:'burncloud-node/framework-status', label:'框架状态'},
+        {type:'category', label:'框架合同', collapsed:false, link:{type:'doc', id:'burncloud-node/contracts/index'}, items:[
+          {type:'doc', id:'burncloud-node/contracts/model-resolver', label:'ModelResolver'},
+          {type:'doc', id:'burncloud-node/contracts/hardware-probe', label:'HardwareProbe'},
+          {type:'doc', id:'burncloud-node/contracts/artifact-preparer', label:'ArtifactPreparer'},
+          {type:'doc', id:'burncloud-node/contracts/runtime-preparer', label:'RuntimePreparer'},
+          {type:'doc', id:'burncloud-node/contracts/runtime-adapter', label:'RuntimeAdapter'},
+          {type:'doc', id:'burncloud-node/contracts/process-manager', label:'ProcessManager'},
+          {type:'doc', id:'burncloud-node/contracts/readiness-probe', label:'ReadinessProbe'},
+          {type:'doc', id:'burncloud-node/contracts/health-probe', label:'HealthProbe'},
+          {type:'doc', id:'burncloud-node/contracts/local-route-attachment', label:'Local Route Attachment'},
+        ]},
         {type:'category', label:'实施计划', collapsed:false, link:{type:'doc', id:'burncloud-node/implementation-plan'}, items:[
           {type:'doc', id:'burncloud-node/implementation-plan/issue-standard', label:'Issue 标准'},
           {type:'doc', id:'burncloud-node/implementation-plan/human-acceptance', label:'人类验收标准'},

@@ -214,6 +214,8 @@ NodeRequestState = Failed
 
 ## 已实现的框架合同
 
+各 Contract 的代码位置、Owner、输入输出、禁止职责和停止条件详见 [Node 框架合同](/burncloud-node/contracts/)。
+
 | 能力 | 当前框架状态 |
 |---|---|
 | Node Runtime attachment | 已完成 |
