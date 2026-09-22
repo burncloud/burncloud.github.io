@@ -117,6 +117,18 @@ Routable
 | `HealthProbe` | 当前 healthy/unhealthy | 路由注册或摘除 |
 | Local Route Attachment | `LocalRouteAttachmentId` / `DetachedRoute` | Runtime 和进程事实 |
 
+## 示例使用规则
+
+每份 Contract 页面都提供具体的 Fake 输入、成功输出和失败输出。示例用于确认字段和 Receipt 传递关系，不定义生产策略。
+
+```text
+示例中的路径、PID、端口、摘要和硬件数值
+├─ 只用于解释 Contract
+├─ 可以出现在 Fake 和测试中
+├─ 不代表生产默认值
+└─ 不得被 Orchestrator 写成固定策略
+```
+
 ## 共同禁止项
 
 ```text
@@ -153,4 +165,3 @@ crates/interfaces/server/src/node_attachment.rs
                  ↓
               不用文档为越界代码背书
 ```
-

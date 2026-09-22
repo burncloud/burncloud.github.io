@@ -35,6 +35,33 @@ RuntimePreparer
         └─ RuntimePrepareError
 ```
 
+## 具体示例
+
+输入：
+
+```text
+RuntimeRequest
+├─ runtime: "llama.cpp"
+└─ version: Some("fake-v0")
+```
+
+成功输出：
+
+```text
+PreparedRuntime
+└─ executable: "/fake/runtime/llama.cpp/server"
+```
+
+失败输出：
+
+```text
+RuntimePrepareError::PrepareFailed(
+    "requested runtime version is unavailable"
+)
+```
+
+示例中的 Runtime 名称、版本和路径不构成生产默认值；成功输出也不代表进程已经启动。
+
 ## 不负责什么
 
 ```text
@@ -63,4 +90,3 @@ Scenario: Runtime preparation succeeds
 ## 停止条件
 
 如果实现开始理解模型路径、服务端口、健康地址或路由规则，立即停止；这些分别属于 `RuntimeAdapter`、Probe 和 Route Attachment。
-

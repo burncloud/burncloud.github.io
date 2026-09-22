@@ -32,6 +32,37 @@ HealthProbe
 
 二者可以使用同一个 `ReadinessTarget`，但不能因此合并职责。
 
+## 具体示例
+
+输入：
+
+```text
+ReadinessTarget
+└─ endpoint: "http://127.0.0.1:39122/health"
+```
+
+健康输出：
+
+```text
+Ok(true)
+```
+
+不健康输出：
+
+```text
+Ok(false)
+```
+
+检查失败：
+
+```text
+HealthError::CheckFailed(
+    "health endpoint unreachable"
+)
+```
+
+`Ok(false)` 是有效健康事实；`Err` 表示无法完成检查，两者都不能由 Probe 自己转换成重启或路由操作。
+
 ## 不负责什么
 
 ```text
@@ -59,4 +90,3 @@ Scenario: A routable runtime becomes unhealthy
 ## 停止条件
 
 如果健康检查实现开始直接重启进程、操作 Router 或决定调度优先级，立即停止并交回对应 Owner。
-

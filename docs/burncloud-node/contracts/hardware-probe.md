@@ -30,6 +30,34 @@ HardwareProbe.inspect()
         └─ Err(HardwareProbeError)
 ```
 
+## 具体示例
+
+输入：无参数，只检查当前机器。
+
+成功输出：
+
+```text
+HardwareProfile
+├─ cpu_threads: 32
+├─ memory_bytes: 68719476736
+├─ disk_available_bytes: 549755813888
+└─ accelerators
+   └─ AcceleratorProfile
+      ├─ kind: Nvidia
+      ├─ name: "Fake GPU"
+      └─ memory_bytes: Some(25769803776)
+```
+
+失败输出：
+
+```text
+HardwareProbeError::DetectionFailed(
+    "GPU driver unavailable"
+)
+```
+
+这些硬件值只用于 Fake 示例，不是最低配置或生产准入标准。
+
 ## 不负责什么
 
 ```text
@@ -59,4 +87,3 @@ Scenario: Hardware inspection succeeds
 ## 停止条件
 
 如果实现需要知道模型价格、客户身份、Provider 或 Route，说明职责已经越界，应停止并上升架构审查。
-

@@ -32,6 +32,31 @@ ReadinessProbe.wait_ready(plan.readiness)
         └─ Err → Failed → 不得注册 Route
 ```
 
+## 具体示例
+
+输入：
+
+```text
+ReadinessTarget
+└─ endpoint: "http://127.0.0.1:39122/health"
+```
+
+成功输出：
+
+```text
+Ok(())
+```
+
+失败输出：
+
+```text
+ReadinessError::CheckFailed(
+    "readiness timeout"
+)
+```
+
+示例 endpoint 来自 Fake `ProcessPlan`，不定义生产端口或健康路径。
+
 ## 不负责什么
 
 ```text
@@ -59,4 +84,3 @@ Scenario: Runtime never becomes ready
 ## 停止条件
 
 如果 Probe 需要理解模型、Runtime 安装、路由或计费，立即停止。若目标缺少必要信息，创建 `CONTRACT_GAP`，不要在 Probe 内猜测。
-

@@ -38,6 +38,42 @@ RuntimeAdapter.plan(...)
         └─ RuntimeAdapterError
 ```
 
+## 具体示例
+
+输入：
+
+```text
+PreparedRuntime
+└─ executable: "/fake/runtime/llama.cpp/server"
+
+PreparedArtifact
+├─ local_path: "/fake/artifacts/qwen-4b_fake.gguf"
+└─ verified: true
+```
+
+成功输出：
+
+```text
+ProcessPlan
+├─ process
+│  ├─ program: "/fake/runtime/llama.cpp/server"
+│  └─ args
+│     └─ "/fake/artifacts/qwen-4b_fake.gguf"
+├─ readiness
+│  └─ endpoint: "http://127.0.0.1:39122/health"
+└─ local_endpoint: "http://127.0.0.1:39122"
+```
+
+失败输出：
+
+```text
+RuntimeAdapterError::PlanFailed(
+    "prepared artifact is not verified"
+)
+```
+
+示例只展示 `FakeRuntimeAdapter` 的 Receipt 形状，不要求生产实现采用该命令格式、端口或路径。
+
 ## 为什么需要它
 
 `RuntimePreparer` 只证明 Runtime 可用；`ProcessManager` 只执行 `ProcessSpec`。具体 Runtime 的启动格式必须被隔离在二者之间，不能泄漏进 Orchestrator。
@@ -95,4 +131,3 @@ Scenario: Framework uses the injected adapter
 ```
 
 如果现有 `ProcessPlan` 无法表达已证明的生产需求，停止实现并创建 `CONTRACT_GAP`；不能顺手扩大接口。
-

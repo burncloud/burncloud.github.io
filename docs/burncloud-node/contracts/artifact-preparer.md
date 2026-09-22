@@ -46,6 +46,34 @@ ArtifactPreparer
         └─ ArtifactPrepareError
 ```
 
+## 具体示例
+
+输入：
+
+```text
+ArtifactRequest
+├─ source: "qwen-4b/fake.gguf"
+└─ expected_digest: Some("sha256:fake")
+```
+
+成功输出：
+
+```text
+PreparedArtifact
+├─ local_path: "/fake/artifacts/qwen-4b_fake.gguf"
+└─ verified: true
+```
+
+失败输出：
+
+```text
+ArtifactPrepareError::PrepareFailed(
+    "artifact digest mismatch"
+)
+```
+
+失败时不得返回一个被当作成功使用的 `PreparedArtifact`，也不得继续启动 Runtime 或进程。
+
 ## 不负责什么
 
 ```text
@@ -77,4 +105,3 @@ Scenario: Artifact cannot be verified
 ## 停止条件
 
 如果需要修改模型选择、Runtime、进程或路由才能完成 Artifact 准备，立即停止并拆分为其他 Owner 的任务。
-

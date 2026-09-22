@@ -59,6 +59,50 @@ begin_detached_route_recovery
 
 把已经 Ready 的本地 endpoint 接入 Existing ModelRouter，并用精确 Receipt 保证注册、隔离、摘除和恢复的顺序。
 
+## 具体示例
+
+注册输入：
+
+```text
+model: "qwen-4b"
+local_endpoint: "http://127.0.0.1:39122"
+```
+
+注册成功 Receipt：
+
+```text
+LocalRouteAttachmentId(101)
+```
+
+精确摘除输入：
+
+```text
+model: "qwen-4b"
+attachment_id: LocalRouteAttachmentId(101)
+```
+
+摘除成功 Receipt：
+
+```text
+DetachedRoute
+├─ model: "qwen-4b"
+└─ attachment_id: LocalRouteAttachmentId(101)
+```
+
+失败示例：
+
+```text
+attach side effect returns Error
+        ↓
+workload becomes Failed
+        ↓
+no LocalRouteAttachmentId is invented
+        ↓
+Routable is not published
+```
+
+示例 ID 和 endpoint 只解释 Receipt 的对应关系，不是生产固定值。
+
 ## 不负责什么
 
 ```text
@@ -102,4 +146,3 @@ Scenario: Attachment side effect fails
 ## 停止条件
 
 如果接线需要创建第二套路由、修改 Scheduler、直接访问 Traffic 内部数据表，或无法取得精确 attachment Receipt，立即停止并上升 Traffic Contract 审查。
-

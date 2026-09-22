@@ -31,6 +31,42 @@ ProcessHandle { pid }
 Ok / ProcessError
 ```
 
+## 具体示例
+
+输入：
+
+```text
+ProcessSpec
+├─ program: "/fake/runtime/llama.cpp/server"
+└─ args
+   └─ "/fake/artifacts/qwen-4b_fake.gguf"
+```
+
+成功输出：
+
+```text
+ProcessHandle
+└─ pid: 42
+```
+
+启动失败：
+
+```text
+ProcessError::StartFailed(
+    "process could not be started"
+)
+```
+
+停止失败：
+
+```text
+ProcessError::StopFailed(
+    "process could not be stopped"
+)
+```
+
+`pid: 42` 是 Fake Receipt；取得 PID 只证明启动步骤成功，不证明服务已经 Ready。
+
 ## 不负责什么
 
 ```text
@@ -59,4 +95,3 @@ Scenario: Start succeeds
 ## 停止条件
 
 如果 ProcessManager 需要根据 Runtime 名称、模型格式、客户或路由规则改变参数，说明 `RuntimeAdapter` 或上层策略存在缺口，应立即停止。
-

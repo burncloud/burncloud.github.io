@@ -38,6 +38,49 @@ ModelResolver
 
 `ResolvedModel` 拥有模型准备所需的 Supply 事实：模型名、Artifact 来源与摘要、Runtime 名称与版本。`Unsupported` 是正常业务结果，不是路由失败，也不是基础设施异常。
 
+## 具体示例
+
+以下数值都是 Fake 示例。
+
+输入：
+
+```text
+ModelResolutionRequest
+├─ model: "qwen-4b"
+└─ accelerator_memory_bytes: 25769803776
+```
+
+成功输出：
+
+```text
+ModelResolutionOutcome::Local
+└─ ResolvedModel
+   ├─ model: "qwen-4b"
+   ├─ artifact_source: "qwen-4b/fake.gguf"
+   ├─ artifact_digest: Some("sha256:fake")
+   ├─ runtime: "llama.cpp"
+   └─ runtime_version: Some("fake-v0")
+```
+
+本机不支持：
+
+```text
+ModelResolutionOutcome::Unsupported
+└─ LocalModelUnsupported
+   ├─ model: "qwen-72b"
+   └─ reason: InsufficientAcceleratorMemory
+      ├─ required_bytes: 51539607552
+      └─ available_bytes: Some(25769803776)
+```
+
+基础设施失败：
+
+```text
+ModelResolutionError::ResolutionFailed(
+    "model catalog unavailable"
+)
+```
+
 ## 不负责什么
 
 ```text
@@ -70,4 +113,3 @@ Scenario: This machine has no compatible local variant
 ## 停止条件
 
 如果解析需要 Provider 售卖策略、客户余额、最终 Route 优先级或真实下载状态，立即停止：这些事实不属于 `ModelResolver`。
-
