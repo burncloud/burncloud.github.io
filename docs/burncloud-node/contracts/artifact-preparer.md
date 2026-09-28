@@ -38,22 +38,35 @@ async fn prepare(
 
 ```text
 ArtifactRequest
-├─ source
-└─ expected_digest
+├─ source: ArtifactSource
+│   ├─ File(PathBuf)   // 本地路径
+│   ├─ Http(Url)       // http 地址
+│   └─ Oci(String)     // 镜像仓库链接
+└─ expected_digest: Option<Digest>   // 摘要算法 + 十六进制摘要
         ↓
 ArtifactPreparer
         ├─ PreparedArtifact { local_path, verified }
         └─ ArtifactPrepareError
 ```
 
+`source` 是强类型来源，编译器据此区分本地文件、HTTP 地址与镜像仓库链接；`expected_digest` 是结构化摘要，包含校检算法与规范化摘要。`DigestAlgorithm` 支持 `Sha1`、`Sha256`、`Sha384`、`Sha512` 与 `Md5`，摘要值在创建时校验并规范化为小写十六进制，非法格式在解析阶段即被拒绝，不会进入准备流程。
+
 ## 具体示例
 
-输入：
+输入（复用已存在的本地 Artifact）：
 
 ```text
 ArtifactRequest
-├─ source: "qwen-4b/fake.gguf"
-└─ expected_digest: Some("sha256:fake")
+├─ source: ArtifactSource::File(PathBuf::from("/fake/artifacts/qwen-4b_fake.gguf"))
+└─ expected_digest: Some(Digest::parse("sha256:6d82e5c3a7f1b90284d0f6e1ab93cd2715f64a08b3c9d7e0f4a35b6c8d1029e4").unwrap())
+```
+
+输入（经 HTTP 下载）：
+
+```text
+ArtifactRequest
+├─ source: ArtifactSource::Http(Url::parse("https://fake.example.com/qwen-4b/fake.gguf").unwrap())
+└─ expected_digest: Some(Digest::parse("sha256:6d82e5c3a7f1b90284d0f6e1ab93cd2715f64a08b3c9d7e0f4a35b6c8d1029e4").unwrap())
 ```
 
 成功输出：
@@ -64,12 +77,18 @@ PreparedArtifact
 └─ verified: true
 ```
 
-失败输出：
+失败输出（校验不匹配）：
 
 ```text
 ArtifactPrepareError::PrepareFailed(
     "artifact digest mismatch"
 )
+```
+
+失败输出（摘要非法，如算法不受支持或非十六进制）：
+
+```text
+DigestError::UnsupportedAlgorithm("md6")
 ```
 
 失败时不得返回一个被当作成功使用的 `PreparedArtifact`，也不得继续启动 Runtime 或进程。
