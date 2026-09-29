@@ -39,21 +39,20 @@ async fn prepare(
 ```text
 ArtifactRequest
 ├─ source: ArtifactSource
-│   ├─ File(PathBuf)   // 本地路径
-│   ├─ Http(Url)       // http 地址
-│   └─ Oci(String)     // 镜像仓库链接
-└─ expected_digest: Option<Digest>   // 摘要算法 + 十六进制摘要
+│   ├─ File(PathBuf)   // 本地文件路径
+│   └─ Http(Url)       // http 或 https 地址
+└─ expected_digest: Option<Digest>   // 摘要算法 + 规范化摘要
         ↓
 ArtifactPreparer
-        ├─ PreparedArtifact { local_path, verified }
+        ├─ PreparedArtifact { local_path, verification_status }
         └─ ArtifactPrepareError
 ```
 
-`source` 是强类型来源，编译器据此区分本地文件、HTTP 地址与镜像仓库链接；`expected_digest` 是结构化摘要，包含校检算法与规范化摘要。`DigestAlgorithm` 支持 `Sha1`、`Sha256`、`Sha384`、`Sha512` 与 `Md5`，摘要值在创建时校验并规范化为小写十六进制，非法格式在解析阶段即被拒绝，不会进入准备流程。
+`source` 是强类型来源，编译器据此区分本地文件与 HTTP 地址。`File(PathBuf)` 接收按当前部署系统适配的绝对路径、相对路径与 `file://` 路径；`Http(Url)` 只接收 `http` 与 `https` 两种协议，协议名不区分大小写，其他协议在来源解析阶段即被拒绝。`expected_digest` 是结构化摘要，包含校验算法与规范化摘要。`DigestAlgorithm` 支持 `Sha1`、`Sha256`、`Sha384`、`Sha512` 与 `Md5`，摘要值在创建时校验并规范化为小写十六进制，非法格式在摘要解析阶段即被拒绝，不会进入准备流程。`PreparedArtifact` 的 `local_path` 保存当前项目部署系统的绝对路径，`verification_status` 区分校验成功、校验失败与未要求校验三种状态。
 
 ## 具体示例
 
-输入（复用已存在的本地 Artifact）：
+输入（复用已存在的本地 Artifact，校验一致）：
 
 ```text
 ArtifactRequest
@@ -61,7 +60,17 @@ ArtifactRequest
 └─ expected_digest: Some(Digest::parse("sha256:6d82e5c3a7f1b90284d0f6e1ab93cd2715f64a08b3c9d7e0f4a35b6c8d1029e4").unwrap())
 ```
 
-输入（经 HTTP 下载）：
+`File(PathBuf)` 接收按当前部署系统适配的绝对路径、相对路径与 `file://` 路径；经 `PreparedArtifact` 保存后，`local_path` 一定是当前系统格式的绝对路径。
+
+输出：
+
+```text
+PreparedArtifact
+├─ local_path: "/fake/artifacts/qwen-4b_fake.gguf"
+└─ verification_status: ArtifactVerificationStatus::Verified
+```
+
+输入（经 HTTP 下载，下载成功但校验与期望摘要不一致）：
 
 ```text
 ArtifactRequest
@@ -69,26 +78,53 @@ ArtifactRequest
 └─ expected_digest: Some(Digest::parse("sha256:6d82e5c3a7f1b90284d0f6e1ab93cd2715f64a08b3c9d7e0f4a35b6c8d1029e4").unwrap())
 ```
 
-成功输出：
+输出：
+
+```text
+PreparedArtifact
+├─ local_path: "/data/cache/qwen-4b_fake.gguf"
+└─ verification_status: ArtifactVerificationStatus::Failed
+```
+
+`Http(Url)` 只接收 `http` 与 `https` 协议，协议名不区分大小写。
+
+输入（未要求校验）：
+
+```text
+ArtifactRequest
+├─ source: ArtifactSource::File(PathBuf::from("/fake/artifacts/qwen-4b_fake.gguf"))
+└─ expected_digest: None
+```
+
+输出：
 
 ```text
 PreparedArtifact
 ├─ local_path: "/fake/artifacts/qwen-4b_fake.gguf"
-└─ verified: true
+└─ verification_status: ArtifactVerificationStatus::NotRequired
 ```
 
-失败输出（校验不匹配）：
+校验不一致不是错误，而是正常的业务结果，返回 `Ok(PreparedArtifact)`，其中 `verification_status` 为 `Failed`；未要求校验时返回 `NotRequired`。只有来源不存在、不可读或网络下载失败等基础错误才返回 `Err(ArtifactPrepareError)`。
+
+错误输出（本地路径不存在或下载失败）：
 
 ```text
 ArtifactPrepareError::PrepareFailed(
-    "artifact digest mismatch"
+    "source file not found"
 )
 ```
 
-失败输出（摘要非法，如算法不受支持或非十六进制）：
+摘要解析阶段的失败输出（算法不受支持）：
 
 ```text
-DigestError::UnsupportedAlgorithm("md6")
+DigestError::UnsupportedAlgorithm("sha3")
+```
+
+摘要解析阶段的失败输出（长度不正确或含非十六进制字符）：
+
+```text
+DigestError::BadLength { expected: 64, actual: 7 }
+DigestError::NotHex
 ```
 
 失败时不得返回一个被当作成功使用的 `PreparedArtifact`，也不得继续启动 Runtime 或进程。
