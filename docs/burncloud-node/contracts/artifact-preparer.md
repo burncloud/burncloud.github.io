@@ -16,34 +16,35 @@ Fake: FakeArtifactPreparer
 
 ## 名称边界
 
-Integration Queue 可以把这类伙伴代码归到 “Artifact Downloader”，但代码中的公开 Contract 是 `ArtifactPreparer`。
+Integration Queue 可以把这类伙伴代码归到 “Artifact Downloader”，但代码中的公开 Contract 是 `ArtifactPreparation`，真实实现是 `ArtifactPreparer`。
 
 ```text
 ArtifactPreparer
-├─ 可以通过下载准备 Artifact
-├─ 也可以复用已经存在的本地 Artifact
-└─ 因此不能收窄成只允许下载
+├─ 从受支持的远程来源下载 Artifact
+├─ 计算并校验 Artifact 摘要
+└─ 返回本地 PreparedArtifact 回执
 ```
 
 ## 唯一职责
 
-把 `ArtifactRequest` 转换成经过准备和验证的本地 `PreparedArtifact`。
+把受支持的远程 URL 转换成经过摘要校验的本地 `PreparedArtifact`。
 
 ```rust
 async fn prepare(
     &self,
-    request: ArtifactRequest,
+    url: Url,
+    expected_digest: Digest,
 ) -> Result<PreparedArtifact, ArtifactPrepareError>;
 ```
 
-该 trait 通过 `#[async_trait]` 声明，并要求实现满足 `Send + Sync`。准备的落点只有两个：`Ok(PreparedArtifact)` 或 `Err(ArtifactPrepareError)`；校验不一致属于前者。
+`ArtifactPreparation` 通过 `#[async_trait]` 声明并要求实现满足 `Send + Sync`；`ArtifactPreparer` 是 Node 组合根使用的真实实现。准备的落点只有两个：`Ok(PreparedArtifact)` 或 `Err(ArtifactPrepareError)`；摘要不一致属于前者。
 
 ## 类型清单
 
 ```text
 crates/platform/node/src/preparation/
-├─ artifact_preparer.rs            → ArtifactPreparer
-├─ artifact_request.rs             → ArtifactRequest
+├─ preparation.rs                  → 模块根，统一 re-export
+├─ artifact_preparer.rs            → ArtifactPreparation / ArtifactPreparer
 ├─ artifact_source.rs              → ArtifactSource
 ├─ artifact_source_error.rs        → ArtifactSourceError
 ├─ artifact_verification_status.rs → ArtifactVerificationStatus
@@ -51,48 +52,46 @@ crates/platform/node/src/preparation/
 ├─ artifact_prepare_error.rs       → ArtifactPrepareError
 ├─ digest.rs                       → Digest
 ├─ digest_algorithm.rs             → DigestAlgorithm
-└─ digest_error.rs                 → DigestError
+├─ digest_error.rs                 → DigestError
+└─ artifact_request.rs             → ArtifactRequest（crate 内部，不对外导出）
 ```
+
+`ArtifactRequest` 只把来源与期望摘要组装给实现内部使用，不属于公开 Contract；调用方只接触 `prepare(url, expected_digest)`。
 
 ## 输入与输出
 
 ```text
-ArtifactRequest
-├─ source: ArtifactSource
-│   ├─ File(PathBuf)   // 当前部署系统的本地文件路径
-│   └─ Http(Url)       // http 或 https 地址
-└─ expected_digest: Option<Digest>
-    └─ Digest { algorithm: DigestAlgorithm, value: String }
+prepare(url: Url, expected_digest: Digest)
+├─ url             // 必须是 http/https，且主机名属于受支持来源
+└─ expected_digest // 必填：DigestAlgorithm + 规范化十六进制摘要
         ↓
 ArtifactPreparer
-        ├─ PreparedArtifact { local_path: PathBuf, verification_status }
-        └─ ArtifactPrepareError
+        ├─ Ok(PreparedArtifact { local_path, verification_status })
+        └─ Err(ArtifactPrepareError::PrepareFailed)
 ```
 
-`ArtifactRequest::new(source, expected_digest)` 是唯一构造入口，`source()` 与 `expected_digest()` 只返回只读引用，调用方不能替换请求中的来源或摘要。`Display` 在无摘要时只输出来源，有摘要时追加 `(expected digest: sha256:...)`。
-
 ## 来源解析
+
+`ArtifactSource` 当前只有 `Http(Url)` 一个变体：
 
 ```text
 ArtifactSource 入口
 ├─ ArtifactSource::parse(&str) / FromStr
-├─ From<&Path>
 └─ TryFrom<&Url>
 ```
 
 ```text
-字符串输入
-├─ 空或只含空白 → ArtifactSourceError::Empty
-├─ Windows 盘符路径（如 C:\models\model.gguf）→ File(PathBuf)
-├─ 含 :// 但无法被 URL 解析 → ArtifactSourceError::InvalidUrl
-├─ http / https（协议名大小写不敏感）→ Http(Url)
-├─ file:// → Url::to_file_path() 转化为 File(PathBuf)，转换失败 → InvalidFileUrl
-├─ 其他协议（oci://、ftp:// 等）→ ArtifactSourceError::UnsupportedScheme
-├─ 不含 :// 但被 URL 解析器识别出协议名 → ArtifactSourceError::UnsupportedScheme
-└─ 其余输入按文件路径处理；含空字节或不含合法路径 → InvalidFilePath
+输入
+├─ 空或只含空白 ──────────────────→ ArtifactSourceError::Empty
+├─ 无法被 URL 解析 ───────────────→ ArtifactSourceError::InvalidUrl
+├─ http / https（大小写不敏感）───→ 继续校验主机名
+├─ 其他协议（oci://、ftp:// 等）─→ ArtifactSourceError::UnsupportedScheme
+└─ 主机名不在允许列表 ───────────→ ArtifactSourceError::UnsupportedHost
 ```
 
-字符串解析路径上的协议白名单在来源解析阶段完成，非法来源不会进入准备流程；`From<&Path>` 与枚举变体直接构造属于调用方已持有合法路径的场景，不再重复校验。访问器 `as_file_path()` / `as_http()` / `is_file_path()` / `is_http()` 用于在实现中区分分支，`Display` 对 `File` 使用宿主平台的路径格式，对 `Http` 保留 URL 格式。
+- 允许的主机名精确匹配 `modelscope.cn`、`hf-mirror.com`、`huggingface.com`、`huggingface.co`；子域名不与父域自动匹配。
+- 来源校验在获取下载管理器之前完成，非法来源不会启动下载器。
+- `ArtifactSource::parse` 会先去除输入首尾空白，再执行上述校验。
 
 ## 摘要
 
@@ -105,86 +104,109 @@ DigestAlgorithm
 └─ Sha512  → 64 字节，128 个十六进制字符
 ```
 
-算法名解析忽略大小写与连字符，`sha256`、`SHA256`、`sha-256` 与 `SHA-256` 解析为同一算法；`name()` 始终返回规范化名称（`md5`、`sha1`、`sha256`、`sha384`、`sha512`）。
+算法名解析忽略大小写与连字符，`sha256`、`SHA256`、`sha-256` 与 `SHA-256` 解析为同一算法；`name()` 始终返回规范化名称。
 
 ```text
 Digest 构造
-├─ Digest::new(algorithm, value)   // 先校验长度，再校验字符集，通过后统一转小写
+├─ Digest::new(algorithm, value)          // 先校验长度，再校验字符集，通过后转小写
 ├─ Digest::parse("algorithm:digest") / FromStr
-└─ Digest::algorithm() / value()   // 只读访问器；Display 输出规范化 algorithm:digest
+└─ Digest::algorithm() / value()          // 只读访问器；Display 输出规范化 algorithm:digest
 ```
 
-`Digest::new` 先按算法期望长度校验（`BadLength { expected, actual }`），再校验是否全部为 ASCII 十六进制字符（`NotHex`）；`Digest::parse` 在缺少 `:` 分隔符时返回 `MissingAlgorithm`，算法名不受支持时返回 `UnsupportedAlgorithm`。摘要非法只会在解析阶段失败，不会作为准备阶段的错误出现。
+`Digest::new` 先按算法期望长度校验（`BadLength { expected, actual }`），再校验是否全部为 ASCII 十六进制字符（`NotHex`）；`Digest::parse` 在缺少 `:` 分隔符时返回 `MissingAlgorithm`，算法名不受支持时返回 `UnsupportedAlgorithm`。摘要非法只会在解析阶段失败，不会进入准备流程。
+
+## `PreparedArtifact` 回执
+
+```rust
+PreparedArtifact::new(
+    local_path: impl AsRef<Path>,
+    verification_status: ArtifactVerificationStatus,
+) -> io::Result<Self>
+```
+
+```text
+PreparedArtifact
+├─ local_path()            // Verified 时一定是绝对路径；Failed 时为空
+├─ verification_status()   // Verified / Failed
+├─ is_verified()           // 仅 Verified 为 true
+└─ Display                 // "<local_path> (verification: verified|failed)"
+```
+
+回执不变量：
+
+- `Verified` 必须携带非空路径；相对路径按进程当前工作目录转换为绝对路径。
+- `Failed` 必须携带空路径，任何非空路径都会被构造函数拒绝。
+- `ArtifactVerificationStatus` 只有 `Verified` 与 `Failed`；摘要校验是强制步骤，不存在 “未要求校验” 状态。
 
 ## 具体示例
 
-输入（复用已存在的本地 Artifact，校验一致）：
+输入（下载并校验成功）：
 
 ```text
-ArtifactRequest
-├─ source: ArtifactSource::parse("/fake/artifacts/qwen-4b_fake.gguf").unwrap()
-└─ expected_digest: Some(Digest::parse("sha256:6d82e5c3a7f1b90284d0f6e1ab93cd2715f64a08b3c9d7e0f4a35b6c8d1029e4").unwrap())
+prepare(
+  url = Url::parse(
+      "https://modelscope.cn/models/AI-ModelScope/bge-small-zh-v1.5/resolve/master/model.safetensors"
+  )?,
+  expected_digest = Digest::parse(
+      "sha256:354763b9b1357bc9c44f62c6be2276321081ed2567773608c0d0785b61d5a026"
+  )?,
+)
 ```
 
 输出：
 
 ```text
-PreparedArtifact
-├─ local_path: "/fake/artifacts/qwen-4b_fake.gguf"   // 绝对路径
-└─ verification_status: ArtifactVerificationStatus::Verified
+Ok(PreparedArtifact {
+    local_path: <绝对路径>/models/<下载文件>,
+    verification_status: ArtifactVerificationStatus::Verified,
+})
 ```
 
-输入（经 HTTP 下载，下载成功但校验与期望摘要不一致）：
+输入（两次下载校验均不一致）：
 
 ```text
-ArtifactRequest
-├─ source: ArtifactSource::Http(Url::parse("https://fake.example.com/qwen-4b/fake.gguf").unwrap())
-└─ expected_digest: Some(Digest::parse("sha256:6d82e5c3a7f1b90284d0f6e1ab93cd2715f64a08b3c9d7e0f4a35b6c8d1029e4").unwrap())
+prepare(
+  url = Url::parse(
+      "https://modelscope.cn/models/AI-ModelScope/bge-small-en-v1.5/resolve/master/model.safetensors"
+  )?,
+  expected_digest = Digest::parse(
+      "sha256:0000000000000000000000000000000000000000000000000000000000000000"
+  )?,
+)
 ```
 
 输出：
 
 ```text
-PreparedArtifact
-├─ local_path: "/data/cache/qwen-4b_fake.gguf"
-└─ verification_status: ArtifactVerificationStatus::Failed
+Ok(PreparedArtifact {
+    local_path: "",
+    verification_status: ArtifactVerificationStatus::Failed,
+})
 ```
 
-输入（未要求校验）：
+摘要不一致不是错误，而是正常业务结果：第一次校验失败会删除下载文件并重新下载校验一次；第二次仍失败则删除文件，返回 `Ok(PreparedArtifact)` 且 `local_path` 为空。不会进行第三次尝试。
 
-```text
-ArtifactRequest
-├─ source: ArtifactSource::parse("/fake/artifacts/qwen-4b_fake.gguf").unwrap()
-└─ expected_digest: None
-```
-
-输出：
-
-```text
-PreparedArtifact
-├─ local_path: "/fake/artifacts/qwen-4b_fake.gguf"
-└─ verification_status: ArtifactVerificationStatus::NotRequired
-```
-
-示例中的路径统一使用 POSIX 写法，实际输出的 `local_path` 是当前部署系统的绝对路径（Windows 上带盘符与反斜杠分隔符）。
-
-校验不一致不是错误，而是正常的业务结果，返回 `Ok(PreparedArtifact)`，其中 `verification_status` 为 `Failed`；未要求校验时返回 `NotRequired`。只有来源不存在、不可读或网络下载失败等基础错误才返回 `Err(ArtifactPrepareError)`。
-
-错误输出（本地路径不存在或下载失败）：
+错误输出（来源被拒绝）：
 
 ```text
 ArtifactPrepareError::PrepareFailed(
-    "source file not found"
+    "unsupported artifact source host: example.com"
 )
+```
+
+错误输出（下载管理器启动、下载或文件读写失败）：
+
+```text
+ArtifactPrepareError::PrepareFailed("...")
 ```
 
 来源解析阶段的失败输出：
 
 ```text
 ArtifactSourceError::Empty
+ArtifactSourceError::InvalidUrl("...")
 ArtifactSourceError::UnsupportedScheme("oci")
-ArtifactSourceError::InvalidFileUrl("file://host/share/model.gguf")
-ArtifactSourceError::InvalidFilePath("models/\0model.gguf")
+ArtifactSourceError::UnsupportedHost("example.com")
 ```
 
 摘要解析阶段的失败输出：
@@ -196,26 +218,19 @@ DigestError::BadLength { expected: 64, actual: 7 }
 DigestError::NotHex
 ```
 
-失败时不得返回一个被当作成功使用的 `PreparedArtifact`，也不得继续启动 Runtime 或进程。
+`Err(ArtifactPrepareError::PrepareFailed)` 只用于来源被拒绝、下载管理器启动失败、下载失败以及文件读取或删除失败；摘要不匹配始终以 `Failed` 回执表达。失败时不得返回一个被当作成功使用的 `PreparedArtifact`，也不得继续启动 Runtime 或进程。
 
-## `PreparedArtifact` 契约
-
-```rust
-PreparedArtifact::new(
-    local_path: impl AsRef<Path>,
-    verification_status: ArtifactVerificationStatus,
-) -> io::Result<Self>
-```
+## 下载器生命周期
 
 ```text
-PreparedArtifact
-├─ local_path()            // 一定是绝对路径
-├─ verification_status()   // Verified / Failed / NotRequired
-├─ is_verified()           // Verified 或 NotRequired 为 true，Failed 为 false
-└─ Display                 // "<local_path> (verification: verified|failed|not required)"
+ArtifactPreparer::new()
+├─ 初始 ref_count = 0，无 DownloadManager
+├─ 首个 prepare 请求启动 DownloadManager（ref_count = 1）
+├─ 并发请求复用同一个 DownloadManager 并递增引用计数
+└─ 最后一个请求释放后 ref_count = 0，DownloadManager 被丢弃并停止
 ```
 
-构造函数会把相对路径按进程当前工作目录解析为绝对路径，使回执不随之后的工作目录变化而指向其他位置；解析失败时通过 `io::Result` 返回错误，由实现映射为 `ArtifactPrepareError::PrepareFailed`。`is_verified()` 是布尔映射而非“是否校验通过”的唯一判据，判断是否继续启动需要同时看 `verification_status()`。
+下载按 `models` 类别落盘，返回路径必须为非空绝对路径，否则准备失败。校验以 64 KiB 缓冲区流式读取文件并计算摘要。
 
 ## Fake 行为
 
@@ -226,7 +241,7 @@ FakeArtifactPreparer
 └─ verification_status 恒为 Verified
 ```
 
-Fake 只证明 Contract 可以被装配，不证明真实校验已经实现。示例中的 `Failed` 与 `NotRequired` 描述 Contract 允许的三态，Fake 目前只产生 `Verified`。
+Fake 只证明 Contract 可以被装配，不证明真实校验已经实现。
 
 ## 不负责什么
 
@@ -242,17 +257,18 @@ ArtifactPreparer 不负责
 
 ## 必须保持的真相
 
-- `local_path` 一定是绝对路径，是后续步骤可使用的本地位置 Receipt。
-- `is_verified() == true` 才能继续准备流程；`NotRequired` 也映射为 `true`，`Failed` 必须阻止后续启动。
-- 校验不一致返回 `Ok` + `Failed`，只有来源缺失、不可读或下载失败等基础错误才返回 `Err`。
-- 下载、缓存、断点续传和校验方式属于实现内部，不进入 Orchestrator。
+- 只有 `verification_status == Verified` 时 `local_path` 才非空，它是后续步骤可使用的本地位置 Receipt。
+- `is_verified()` 为 `true` 才能继续准备流程。
+- 摘要不一致返回 `Ok` + `Failed` + 空路径；只有来源被拒绝、下载失败或文件读写失败才返回 `Err`。
+- 失败回执不能携带下载路径；未通过校验的下载文件在返回前已被删除。
+- 下载、缓存、重试与校验方式属于实现内部，不进入 Orchestrator。
 
 ## BDD 边界
 
 ```gherkin
 Scenario: Artifact cannot be verified
   When ArtifactPreparer prepares the request
-  Then it returns an error or an unverified receipt
+  Then it returns an error or a Failed receipt with an empty local path
   And RuntimePreparer is not treated as proof that the artifact is valid
   And no process is started
 ```
