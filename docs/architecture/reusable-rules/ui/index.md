@@ -13,7 +13,9 @@ UI 负责展示、输入、交互和对服务端事实的投影。UI 不拥有�
 
 ## 共同规则
 
-- 页面必须明确 Loading、Success、Empty、Error 和 Forbidden 状态。
+- 页面必须明确 Loading、Success、Empty、Error 和 Forbidden 状态。Empty 与正常状态都要单独处理。
+- 组件职责单一。业务规则不藏在纯展示组件中。
+- 权限控制不能只依赖“隐藏按钮”；服务端仍必须执行真实授权。
 - Unknown、Pending、Failed 不能显示成成功。
 - 页面专属组件留在页面附近；只有真正无业务身份的组件才能进入 `shared/`。
 - 请求通过统一的类型化 API 边界，不能在页面和组件中散落传输细节。

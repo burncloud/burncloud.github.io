@@ -8,6 +8,8 @@ description: "规定 BurnCloud Kernel 的准入条件、职责、依赖、代码
 
 Kernel 是 BurnCloud 最底层、最小、最稳定的代码地基。它不是业务领域，也不是把暂时不知道放哪里的代码集中起来的公共目录。
 
+2026-10-25 的 `burncloud/burncloud` main（`15ee06fce4c469e510d0c7b335578f4159e846ed`）没有 `crates/kernel/`。本页仍是准入规则。目录还不存在，不表示可以把代码放进 `common`。
+
 > **Kernel 必须少而稳定。不能确定是否属于 Kernel 时，默认不放入 Kernel。**
 
 继承[基础规则](../foundation.md)和 [Rust 通用规则](../reusable-rules/rust.md)。

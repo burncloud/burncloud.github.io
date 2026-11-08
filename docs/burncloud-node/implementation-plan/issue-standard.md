@@ -130,11 +130,11 @@ RUNTIME VERIFIED
 ```text
 CLI: burncloud node
 Route: POST /v1/chat/completions
-Source: src/main.rs :: main
-Source: crates/server/src/lib.rs :: start_server
+Source: crates/interfaces/cli/src/main.rs :: main
+Source: crates/interfaces/server/src/lib.rs :: start_server
 ```
 
-不要求计划阶段提前写完整调用链，但必须防止 Agent 无边界猜测。
+不要求计划阶段提前写完整调用链，但必须防止 Agent 无边界猜测。示例里的路径必须是当时 main 上真实存在的文件。`src/main.rs` 和 `crates/server` 是领域目录迁移前的路径，不能再当作当前入口。
 
 ### 4.4 Reuse Targets / Do Not Recreate
 

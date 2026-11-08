@@ -87,9 +87,9 @@ STATIC CONFIRMED：
 READY Audit 重新检查：
 
 ```text
-crates/server/src/lib.rs
-crates/router/src/lib.rs
-crates/router/src/model_router.rs
+crates/interfaces/server/src/lib.rs
+crates/traffic/router/src/lib.rs
+crates/traffic/router/src/model_router.rs
 existing /v1 and protocol-specific route registration
 existing raw proxy path
 existing protocol translator path

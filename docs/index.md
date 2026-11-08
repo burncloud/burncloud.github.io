@@ -38,7 +38,7 @@ BurnCloud Network 是建立在 BurnCloud Node 之上的网络能力。
 
 ## 工程架构（开发必读）
 
-修改 BurnCloud 源码前，先阅读 [规则文档](/architecture/) 和 [基础规则](/architecture/base-rules/)。
+修改 BurnCloud 源码前，先阅读 [规则文档](/architecture/) 和 [基础规则](/architecture/foundation/)。
 
 规则只分三类：
 
@@ -68,4 +68,6 @@ BurnCloud Network
 Technical Reference / Source Atlas
 ```
 
-如果你的目标只是先理解 BurnCloud，不需要一开始阅读 Technical Reference。开发或重构 BurnCloud 源码时，应先阅读规则文档；只有在需要核对真实 API、CLI、后台任务、调用链或 Rust 源码时，再进入后面的技术参考树。
+如果你的目标只是先理解 BurnCloud，不需要一开始阅读 Technical Reference。开发或重构 BurnCloud 源码时，应先阅读规则文档；只有在需要核对某一次审计留下的 API、CLI、后台任务或调用链记录时，再进入后面的技术参考树。
+
+技术参考树和 [入口普查](/coverage-report/) 记录的是 `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`（2026-08-11，领域目录迁移前）。其中的 `crates/server`、`crates/router`、`crates/client` 和仓库根目录 `src/main.rs` 在 2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上已经不存在。对应实现现在位于 `crates/interfaces/server`、`crates/traffic/router`、`crates/interfaces/client` 和 `crates/interfaces/cli`。这些页面没有按当前 main 重新扫描，不能当成现行源码地图。

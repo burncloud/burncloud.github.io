@@ -69,7 +69,7 @@ NODE-003 不创建新的请求数据面。
 
 #### STATIC CONFIRMED — Server 已是统一 Axum application
 
-`crates/server/src/lib.rs :: create_app` 当前组合：
+2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上，`crates/interfaces/server/src/lib.rs :: create_app` 仍组合：
 
 - `/health`；
 - Management API；
@@ -83,9 +83,9 @@ NODE-003 不创建新的请求数据面。
 
 `create_app()` 在统一 Router 外层应用 `security_boundary_middleware`，显式路由与 data-plane fallback 都在同一安全边界下。
 
-#### STATIC CONFIRMED — Router 已是现有数据面权威
+#### STATIC CONFIRMED — Router 仍是现有数据面类型
 
-`ModelRouter` 从 `channel_abilities` 获取候选，继续执行 availability、OrderType、Affinity、Scorer 和 failover 排序。NODE-003 不得建立平行 route engine。
+`crates/traffic/router/src/model_router.rs` 仍有 `ModelRouter`、`get_candidates` 和 `route_with_scheduler`。`crates/traffic/router/src/lib.rs` 仍有 `create_router_app`。这次文档核对没有逐行重审 availability、OrderType、Affinity、Scorer 和 failover 的当前实现。NODE-003 仍然不得建立平行 route engine。旧路径 `crates/router` 已不存在。
 
 #### STATIC CONFIRMED — `start_server()` 当前负责创建 Database 并启动统一 App
 
@@ -96,12 +96,15 @@ Node profile 如何复用这条 construction path，必须在 READY Audit 中根
 重新调查：
 
 ```text
-src/main.rs :: burncloud node dispatch
-crates/server/src/lib.rs :: start_server
-crates/server/src/lib.rs :: create_app
-crates/router/src/lib.rs :: create_router_app
-crates/router/src/model_router.rs :: ModelRouter
+crates/interfaces/cli/src/main.rs
+crates/interfaces/server/src/lib.rs :: start_server
+crates/interfaces/server/src/lib.rs :: create_app
+crates/traffic/router/src/lib.rs :: create_router_app
+crates/traffic/router/src/model_router.rs :: ModelRouter
+crates/platform/node
 ```
+
+该提交的 CLI 没有 `node` 子命令，仓库根目录也没有 `src/main.rs`。`create_router_app` 与 `ModelRouter` 仍在 `crates/traffic/router`。旧的 `crates/server` 与 `crates/router` 路径已不存在。
 
 ### 4. Reuse Targets / Do Not Recreate
 

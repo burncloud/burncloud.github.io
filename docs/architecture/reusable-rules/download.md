@@ -5,7 +5,7 @@ slug: /architecture/reusable-rules/download/
 
 # Download 规则
 
-- 下载前由资源 Owner 判断调用方是否有权访问。
+- 下载前由资源 Owner 判断调用方是否有权访问。下载逻辑只负责通用传输规则；某个业务对象能否下载，由所属业务规则决定。例如 Invoice Download 只补充“只能下载当前 Tenant 拥有的 Invoice”，不重复本页。
 - 使用资源 ID，不直接相信调用方提交的文件系统路径。
 - 大文件通过 Streaming 处理，不一次性读入内存。
 - 文件名、路径和响应头在使用前验证。

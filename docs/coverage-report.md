@@ -5,7 +5,19 @@ slug: /coverage-report
 
 # BurnCloud Entry Point Census
 
-> 源码基线：`burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`。本页由 CI 从真实源码扫描生成；HTTP、主 Dioxus 路由、Binary 的缺失数量必须为 0 才允许发布。
+> **这不是当前 main 的覆盖证明。** 下面的数字和路径只属于 `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`（2026-08-11）。HTTP、Dioxus 路由和 Binary 的 “Missing = 0” 只表示那次扫描相对当时的源码没有缺页。
+
+2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 已经不能用这页核对：
+
+- 仓库根目录没有 `src/main.rs`。`crates/server`、`crates/router`、`crates/client`、`crates/service`、`crates/database`、`crates/download`、`crates/loops` 也不存在。
+- `crates/` 第一层是 `commerce`、`identity`、`interfaces`、`platform`、`supply`、`traffic`、`trust`。没有 `kernel/`。
+- 当时的 Server、Router、Dioxus 客户端和 CLI 入口，现在分别在 `crates/interfaces/server`、`crates/traffic/router`、`crates/interfaces/client`、`crates/interfaces/cli/src/main.rs`。文件内部也有后续改动，不能只把旧路径前缀替换成新路径。
+- 当时的主 Dioxus 路由表在 `crates/client/src/app.rs`。当前路由在 `crates/interfaces/client/src/app/router/routes.rs`，并且包含 `/buyer`、`/supplier`、`/landing` 等这页没有列出的路由。
+- `SystemMetrics` 仍在 `crates/platform/observability/monitor/src/types.rs`，字段仍是 `cpu`、`memory`、`disks`、`timestamp`。这只说明监控类型还在，不表示本页的 spawn 行号或调用链仍然有效。
+
+本页保留当时的普查结果，供对照旧 Atlas。它没有按当前 main 重新扫描，所以不能从 “Missing = 0” 推出当前文档已经覆盖现行代码。
+
+> 源码基线：`burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`。下表是该提交的扫描结果。
 
 ## 汇总
 

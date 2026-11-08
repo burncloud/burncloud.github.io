@@ -4,6 +4,9 @@ slug: /http-api/web-ui-liveview-websocket/get-console-path
 hide_table_of_contents: true
 ---
 
+> **历史源码图谱。** 路径和调用链记录的是 `burncloud/burncloud@aa54e21393c6d46a6b09555ffd3661c1f22484f3`（2026-08-11，领域目录迁移前）。不要把它当成当前 main 的文件位置。当前 crate 布局和本页数字的适用范围见 [入口普查](/coverage-report/)。
+
+
 # GET /console/&#123;*path&#125;
 
 **树路径：** `BurnCloud → HTTP / API → Web UI / LiveView / WebSocket → GET /console/{*path}`
