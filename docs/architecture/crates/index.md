@@ -10,8 +10,6 @@ slug: /architecture/crates/
 | 目录 | 唯一问题 |
 | --- | --- |
 | [kernel](./kernel.md) | 全系统最小、最稳定的基础语义是什么？ |
-
-`kernel/` 是规则允许的第一层目录。2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上还没有这个目录。没有目录时，不要把暂时无处安放的代码放进 `common`。
 | [identity](./identity/index.md) | 谁在使用 BurnCloud，有什么身份和权限？ |
 | [supply](./supply/index.md) | BurnCloud 有什么模型、Provider 和供应能力？ |
 | [traffic](./traffic/index.md) | 请求怎样进入、选择、执行和返回？ |
@@ -19,6 +17,8 @@ slug: /architecture/crates/
 | [trust](./trust/index.md) | 事情怎样被审计、证明和合规处理？ |
 | [platform](./platform/index.md) | 通用技术能力怎样提供？ |
 | [interfaces](./interfaces/index.md) | 外部怎样与 BurnCloud 交互？ |
+
+`kernel/` 是规则允许的第一层目录。2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上还没有这个目录。没有目录时，不要把暂时无处安放的代码放进 `common`。
 
 ## 每个 crate 的 10 个问题
 
