@@ -518,7 +518,7 @@ button.ghost, a.ghost {
     <section class="pane is-on" data-pane="overview">
       <h2>先看整条主线</h2>
       <p>这次请求没有自己的路由登记。数据面 <code>create_router_app_with_route_miss()</code> 把 <code>/v1/chat/completions</code> 和其它没单独登记的路径一起交给 <code>.fallback(proxy_handler)</code>。这是有意的设计。</p>
-      <p>trust 领域不在这九步里。它的唯一 crate 是本地推理进程管理，只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖。素材对这一点的标注是直读，并含推断。<a href="l1.html#trust">到 L1 看 trust</a>。</p>
+      <p>trust 领域不在这九步里。它的唯一 crate 是本地推理进程管理，只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖。这一点是直读。<a href="l1.html#trust">到 L1 看 trust</a>。</p>
       <p class="note">点上面任意一步、客户、上游或本机节点，这里会换成它的路径和函数。</p>
     </section>
 
@@ -543,7 +543,7 @@ button.ghost, a.ghost {
       <h3>路径与函数</h3>
       <ul>
         <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/lib.rs"><code>crates/interfaces/server/src/lib.rs</code></a> · <code>start_server()</code> → <code>create_app()</code> → <code>create_app_with_node_request_state()</code></li>
-        <li>依次做：<code>create_default_database()</code>、<code>RouterDatabase::init</code>、启动 <code>NodeRuntime</code>、<code>TcpListener::bind</code>，最后 <code>axum::serve</code>。</li>
+        <li>依次做：<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>create_default_database()</code></a>（<code>crates/platform/storage/database/src/database.rs</code> 第 324 行）、<code>RouterDatabase::init</code>、启动 <code>NodeRuntime</code>、<code>TcpListener::bind</code>，最后 <code>axum::serve</code>。</li>
       </ul>
     </section>
 
@@ -689,7 +689,7 @@ button.ghost, a.ghost {
         <h3>GPU / Token 交易市场</h3>
         <p>只在客户端 UI 里出现：<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client/src/domains/buyer/marketplace"><code>crates/interfaces/client/src/domains/buyer/marketplace/</code></a>（page、state、model、actions 等），路由 <code>/buyer/marketplace</code> 和 <code>/marketplace</code>（<code>app/router/routes.rs</code>），以及 i18n 文案。</p>
         <p><code>/marketplace</code> 渲染的是 <code>PlaceholderPage { title: "Marketplace" }</code>。</p>
-        <p><span class="badge infer">推断 · 待确认</span> <code>marketplace/model.rs</code> 里的模型列表是 7 个写死的 <code>&amp;'static str</code> 结构体字面量，所以是静态演示数据。</p>
+        <p><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client/src/domains/buyer/marketplace/model.rs#L80"><code>crates/interfaces/client/src/domains/buyer/marketplace/model.rs</code> 第 80 行</a>是 <code>pub const MODEL_CATALOG: [MarketplaceModel; 6]</code>，6 个模型写死在客户端常量里。直读。<span class="badge infer">推断 · 待确认</span> 这 6 个模型是静态演示数据。</p>
         <p>客户端以外只有 <code>crates/traffic/router/src/order_type.rs</code> 的注释用到 “Market order”，那是订单类型（Enterprise = 偏稳定），和交易市场无关。没有找到交易市场的后端 API。</p>
       </article>
     </div>
@@ -702,7 +702,7 @@ button.ghost, a.ghost {
       <li><code>burncloud client</code>：桌面 GUI，只支持 Windows / macOS。</li>
       <li>不带参数：GUI + 后台 server，或无界面 LiveView server。见步骤 01 的 <code>launch_gui_with_tray()</code>。</li>
       <li>其余子命令在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/cli/src/cli/commands.rs"><code>crates/interfaces/cli/src/cli/commands.rs</code></a>：<code>code</code>、<code>update</code>、<code>install</code>、<code>bundle</code>、<code>channel</code>、<code>price</code>、<code>token</code>、<code>protocol</code>、<code>currency</code>、<code>user</code>、<code>log</code>、<code>monitor</code> 等。</li>
-      <li>环境变量 <code>BURNCLOUD_NODE_TEST_API</code> 打开时会额外挂载测试用的 Node 路由（<code>node_test.rs</code>）。素材没有写这个文件的目录。</li>
+      <li>环境变量 <code>BURNCLOUD_NODE_TEST_API</code> 打开时会额外挂载测试用的 Node 路由（<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/node_test.rs"><code>crates/interfaces/server/src/node_test.rs</code></a>）。</li>
     </ul>
   </section>
 

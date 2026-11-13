@@ -312,7 +312,7 @@ tr.is-on, tr.is-hover { background: var(--soft); }
         <span class="card-title">入口</span>
         <span class="hint">CLI、Server、客户端、公共常量。点此看路径。</span>
         <ul class="names">
-          <li>burncloud</li>
+          <li>burncloud（根包）</li>
           <li>burncloud-server</li>
           <li>burncloud-client</li>
           <li>burncloud-common</li>
@@ -325,7 +325,7 @@ tr.is-on, tr.is-hover { background: var(--soft); }
         <span class="badge aside">不在请求主线</span>
         <span class="eyebrow">trust · 1</span>
         <span class="card-title">本地推理</span>
-        <span class="hint">llama-server 等进程。直读，并含推断。</span>
+        <span class="hint">llama-server 等进程。直读。</span>
         <ul class="names"><li>burncloud-service-inference</li></ul>
       </button>
 
@@ -414,7 +414,7 @@ tr.is-on, tr.is-hover { background: var(--soft); }
     <h2>先看分工，再看箭头</h2>
     <p>上排 interfaces 是入口。中间四个领域里，traffic 的 router 是依赖最多的枢纽：它直接依赖 identity、supply、commerce、platform，以及 interfaces 里的 common。这条 common 边是反向的，在图上用虚线单独画出来。</p>
     <p>platform 在最下面，没有指向其他领域的普通依赖。<code>burncloud-database</code> 的 Cargo.toml 注释写明它刻意不依赖 identity-user / supply-channel，并由 <code>deny.toml</code> 强制禁止。</p>
-    <p>trust 画在旁边：唯一的 crate 管本地推理进程，只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖。当前请求主线上看不到它。这一点是直读，并含推断。<a href="l0.html">回 L0 看那一次请求</a>。</p>
+    <p>trust 画在旁边：唯一的 crate 管本地推理进程，只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖。当前请求主线上看不到它。这一点是直读。<a href="l0.html">回 L0 看那一次请求</a>。</p>
     <p class="note">素材这一层按 crate 和 Cargo.toml 依赖来写，没有给每个领域单独的函数名。请求主线上点过名的函数，写在各领域说明里，并链回 L0。</p>
   </div>
 
@@ -426,10 +426,10 @@ tr.is-on, tr.is-hover { background: var(--soft); }
       <summary>interfaces · 入口 · 6 个 crate</summary>
       <div class="about-body">
         <p class="badge infer" hidden>直读</p>
-        <p>根 package 和入口层。service 只做再导出，没有其他 crate 依赖它。</p>
+        <p>根包和入口层。service 只做再导出，没有其他 crate 依赖它。</p>
         <h3>crate</h3>
         <ul>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/cli"><code>crates/interfaces/cli</code></a> · <code>burncloud</code>（根 package 的 bin）</li>
+          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/cli"><code>crates/interfaces/cli</code></a> · <code>burncloud</code>（根包的 bin）</li>
           <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server"><code>crates/interfaces/server</code></a> · <code>burncloud-server</code></li>
           <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client"><code>crates/interfaces/client</code></a> · <code>burncloud-client</code></li>
           <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/common"><code>crates/interfaces/common</code></a> · <code>burncloud-common</code></li>
@@ -532,7 +532,8 @@ tr.is-on, tr.is-hover { background: var(--soft); }
     <details class="about" id="about-trust">
       <summary>trust · 本地推理 · 1 个 crate · 不在请求主线</summary>
       <div class="about-body">
-        <p><span class="badge infer">推断 · 待确认</span> 素材的标注是「直读 + 推断」：唯一 crate 是本地推理进程管理；当前请求主线上看不到 trust 参与。</p>
+        <p class="badge read">直读</p>
+        <p>唯一 crate 是本地推理进程管理。它只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖，所以当前请求主线上看不到 trust。</p>
         <h3>crate</h3>
         <ul>
           <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/trust/inference"><code>crates/trust/inference</code></a> · <code>burncloud-service-inference</code>。注释说明：本地推理服务管理，负责 llama-server 等进程。</li>
@@ -574,8 +575,8 @@ tr.is-on, tr.is-hover { background: var(--soft); }
         </ul>
         <h3>没有画的模板</h3>
         <p><code>crates/platform/templates/client-module</code> 是模板（package 名是 <code>{{crate_name}}</code>），不在 workspace members 里。</p>
-        <h3>L0 里提到、但没有改派定义处的调用</h3>
-        <p>Server 启动会启动 <code>NodeRuntime</code>。同一步里的 <code>create_default_database()</code> 和 <code>RouterDatabase::init</code>，素材没有把函数定义写到某一个 platform 文件上，所以这里不把它们算成 platform 的函数。</p>
+        <h3>L0 步骤 02 里的调用</h3>
+        <p>Server 启动会启动 <code>NodeRuntime</code>。<code>create_default_database()</code> 定义在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>crates/platform/storage/database/src/database.rs</code> 第 324 行</a>。同一步还调用 <code>RouterDatabase::init</code>。</p>
       </div>
     </details>
   </section>
@@ -732,7 +733,7 @@ tr.is-on, tr.is-hover { background: var(--soft); }
   </section>
 
   <footer class="foot">
-    <p>架构事实只来自 burncloud/burncloud 的 main 提交 <a href="https://github.com/burncloud/burncloud/commit/879e5276b0ed24c3164ec05750d4f44339e92663"><code>879e5276b0ed24c3164ec05750d4f44339e92663</code></a>。图上共 29 个 crate：根 package <code>burncloud</code>，加上素材表格里的 workspace members。模板 crate 不在内。标注「推断 · 待确认」的句子不是已经核对过的事实。</p>
+    <p>架构事实只来自 burncloud/burncloud 的 main 提交 <a href="https://github.com/burncloud/burncloud/commit/879e5276b0ed24c3164ec05750d4f44339e92663"><code>879e5276b0ed24c3164ec05750d4f44339e92663</code></a>。图上共 29 个 crate：28 个成员 crate + 1 个根包 <code>burncloud</code>。模板 crate 不在内。标注「推断 · 待确认」的句子不是已经核对过的事实。</p>
   </footer>
 </div>
 <script>
