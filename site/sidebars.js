@@ -173,6 +173,7 @@ module.exports = {
       {type:'doc', id:'burncloud-network/index', label:'BurnCloud 网络'},
     ]},
     {type:'category', label:'技术参考', collapsed:true, items:[
+      {type:'doc', id:'coverage-report', label:'入口普查（历史基线）'},
       // BURNCLOUD_TECHNICAL_REFERENCE_START
       {type:'category', label:"HTTP / API", collapsed:true, items:[
             {type:'category', label:"AI API / 数据面", collapsed:true, items:[

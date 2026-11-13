@@ -8,7 +8,9 @@ hide_table_of_contents: false
 
 BurnCloud 界面是 BurnCloud 产品层的目标 UI / UX 文档域。
 
-> **`rustburn/burncloud-ui` 定义目标产品、Page Contracts 与 Golden Pages；`burncloud/burncloud/crates/client` 是生产 Dioxus 实现。**
+> **`rustburn/burncloud-ui` 定义目标产品、Page Contracts 与 Golden Pages；`burncloud/burncloud/crates/interfaces/client` 是生产 Dioxus 实现。**
+
+2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上没有 `crates/client`。生产 UI 在 `crates/interfaces/client`。
 
 迁移的是产品合同、信息架构、设计语言、页面状态和交互语义，不是把 React/Vite/Tailwind 代码复制进 BurnCloud。
 
@@ -49,7 +51,7 @@ Implementation Plan
         ↓
 Production Implementation
 burncloud/burncloud
-└── crates/client (Dioxus)
+└── crates/interfaces/client (Dioxus)
 ```
 
 - **Target truth**：批准后的 BurnCloud UI Standard / Page Contract。

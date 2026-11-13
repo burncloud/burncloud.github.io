@@ -72,7 +72,7 @@ Resolver / Runtime consumers
 ```text
 NODE-101 HardwareProfile
 NODE-102 NVIDIA facts
-crates/service/crates/monitor/src/types.rs
+crates/platform/observability/monitor/src/types.rs
 current llama.cpp/runtime capability representation, if any
 ```
 

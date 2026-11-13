@@ -18,6 +18,8 @@ slug: /architecture/crates/
 | [platform](./platform/index.md) | 通用技术能力怎样提供？ |
 | [interfaces](./interfaces/index.md) | 外部怎样与 BurnCloud 交互？ |
 
+`kernel/` 是规则允许的第一层目录。2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上还没有这个目录。没有目录时，不要把暂时无处安放的代码放进 `common`。
+
 ## 每个 crate 的 10 个问题
 
 每一级目录只回答上级尚未回答的部分：

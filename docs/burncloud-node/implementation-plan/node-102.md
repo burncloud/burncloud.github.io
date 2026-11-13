@@ -61,8 +61,8 @@ canonical HardwareProfile
 
 ### 2. Evidence
 
-- `crates/service/crates/monitor/src/types.rs` 当前 `SystemMetrics` 仅有 CPU、Memory、Disks、timestamp，没有 GPU。
-- `crates/server/src/lib.rs` 已共享 `SystemMonitorService`，所以 NODE-102 应作为现有硬件事实链的扩展，而不是新建第二套 System Monitor。
+- 2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上，`crates/platform/observability/monitor/src/types.rs` 的 `SystemMetrics` 仍只有 CPU、Memory、Disks、timestamp，没有 GPU。旧路径 `crates/service/crates/monitor` 已不存在。
+- `crates/interfaces/server/src/lib.rs` 的 `AppState` 持有 `SystemMonitorService`。NODE-102 应作为现有硬件事实链的扩展，而不是新建第二套 System Monitor。
 - 当前本地推理原型 `InferenceConfig` 只有 `gpu_layers` 参数，并不提供 authoritative GPU detection。
 
 ### 3. Entry / Starting Point
@@ -70,7 +70,7 @@ canonical HardwareProfile
 实现前重新检查：
 
 ```text
-crates/service/crates/monitor/
+crates/platform/observability/monitor/
 NODE-101 HardwareProfile
 platform-specific command/runtime helpers already present in current main
 ```

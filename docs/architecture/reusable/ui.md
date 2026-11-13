@@ -1,16 +1,9 @@
 ---
-title: "UI规则"
+title: "UI 规则（旧入口）"
 slug: /architecture/reusable/ui/
-sidebar_label: "UI规则"
+unlisted: true
 ---
 
-# UI 规则
+# UI 规则已合并
 
-适用于所有 UI 功能；继承 [基础规则](/architecture/base-rules/)。
-
-- 页面必须明确处理 Loading、Empty、Error 和正常状态。
-- 组件职责要单一；业务规则不应藏在纯展示组件中。
-- UI 只通过公开接口使用业务能力，不直接访问数据库或业务内部实现。
-- 权限控制不能只依赖“隐藏按钮”；服务端仍必须执行真实授权。
-
-具体页面只补充自己的交互和业务限制。
+请阅读 [UI 可复用规则](../reusable-rules/ui/index.md)。“不能只靠隐藏按钮完成授权”和“展示组件不藏业务规则”已并入该页。

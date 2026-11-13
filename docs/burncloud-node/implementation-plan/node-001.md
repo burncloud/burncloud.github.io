@@ -76,11 +76,11 @@ NODE-001 只授权 Node runtime entry 与生命周期编排。
 
 ### 2. Evidence
 
-以下证据基于当前 `burncloud/burncloud/main`。
+以下证据核对的是 2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed`，不是领域目录迁移前的路径。
 
 #### STATIC CONFIRMED — 顶层 CLI 已有统一入口
 
-`src/main.rs :: main` 是当前可执行程序入口，并统一完成：
+`crates/interfaces/cli/src/main.rs :: main` 是当前可执行程序入口，并统一完成：
 
 - `.env` 加载；
 - `MASTER_KEY` 检查 / 生成；
@@ -91,7 +91,7 @@ NODE-001 只授权 Node runtime entry 与生命周期编排。
 
 #### STATIC CONFIRMED — `server` 与 `router` 共享 Server startup
 
-`src/main.rs :: main` 将 `server` 与 `router` 分发到 `run_async_server()`，后者调用：
+`crates/interfaces/cli/src/main.rs :: main` 将 `server` 与 `router` 分发到 `run_async_server()`，后者调用：
 
 ```text
 burncloud_server::start_server(...)
@@ -99,27 +99,19 @@ burncloud_server::start_server(...)
 
 对应：`INV-RUNTIME-001`。
 
-#### STATIC CONFIRMED — 当前没有一等 Node runtime 分支
+#### STATIC CONFIRMED — 顶层 dispatch 仍没有与 server 同级的 `node` 子命令
 
-当前顶层 runtime dispatch 明确处理：
+2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上，进程入口是 `crates/interfaces/cli/src/main.rs`，不再是仓库根目录的 `src/main.rs`。该文件仍分派 `client`、`server`、`router`。`crates/interfaces/cli/src/cli/mod.rs` 没有 `node` 模块。
 
-```text
-client
-server
-router
-```
+#### STATIC CONFIRMED — 没有顶层 `crates/node`，但已有 `crates/platform/node`
 
-不存在与 `server` / `router` 同级的 Node lifecycle entry。
+该提交没有 `crates/node`。Node runtime crate 在 `crates/platform/node`，包名 `burncloud-node-runtime`。它的 README 写明只拥有本机 runtime orchestration，并且不得创建第二个 HTTP server 或 ModelRouter。
 
-#### STATIC CONFIRMED — 当前 workspace 没有 `crates/node`
-
-当前 `crates/` 已有 Server、Router、Database、Download、Service 等 crate，但没有 `crates/node`。
-
-此事实**不构成创建 `crates/node` 的预先授权**。实现位置必须在 READY Issue / Task Contract 阶段根据当时源码确定；如新增 `crates/node`，其职责只能是薄的 orchestration / lifecycle 层。
+这**不构成**在本 Issue 里继续新建另一套 Node crate 的授权。
 
 #### STATIC CONFIRMED — Server 已是统一 Axum App
 
-`crates/server/src/lib.rs :: create_app` 已组合 management routes、internal routes、可选 LiveView 与 data-plane router fallback。
+`crates/interfaces/server/src/lib.rs :: create_app` 仍组合 `/health`、internal routes、可选 LiveView，并把 data-plane router 作为 `fallback_service`。外层使用 `security_boundary_middleware`。旧路径 `crates/server/src/lib.rs` 已不存在。
 
 对应：`INV-RUNTIME-002`。
 
@@ -130,9 +122,11 @@ NODE-001 不得重建或改变该 Server 结构。
 当前调查起点：
 
 ```text
-src/main.rs :: main
-src/main.rs :: run_async_server
-src/main.rs :: run_async_cli
+crates/interfaces/cli/src/main.rs :: main
+crates/interfaces/cli/src/main.rs :: run_async_server
+crates/interfaces/cli/src/main.rs :: run_async_cli
+crates/interfaces/server/src/lib.rs :: create_app
+crates/platform/node/src/lib.rs
 ```
 
 目标产品入口：
@@ -141,7 +135,7 @@ src/main.rs :: run_async_cli
 burncloud node
 ```
 
-实现前必须先从 `src/main.rs :: main` 重新确认 current-main CLI dispatch。
+实现前必须先从 `crates/interfaces/cli/src/main.rs :: main` 重新确认 current-main CLI dispatch。仓库根目录的 `src/main.rs` 已不存在。
 
 ### 4. Reuse Targets / Do Not Recreate
 

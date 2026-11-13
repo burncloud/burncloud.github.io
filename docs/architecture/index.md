@@ -64,6 +64,10 @@ crates/
 └── interfaces/
 ```
 
-这是一套目标目录契约。现有代码迁入该结构时，应通过独立 Issue 逐步完成，不能只修改文档就声称源码已经符合。
+这是职责契约，不是 `burncloud/burncloud` main 的文件清单。
+
+2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上，`crates/` 第一层实际是 `commerce`、`identity`、`interfaces`、`platform`、`supply`、`traffic`、`trust`。没有 `kernel/`。领域目录迁移（PR #522）写明不创建空的 Kernel crate。Kernel 规则仍然有效，只是还没有对应目录。
+
+下级目录名也还不是这份规则树的逐项落地。例如当前源码有 `traffic/router`、`interfaces/server`、`interfaces/client`，本规则则按 gateway、routing、http、web-ui 这类职责来写。文档里有某个子目录，不表示 main 上已经有同名 crate。
 
 > **从基础规则开始，沿目录逐级向下；共同规则只写一次，具体 crate 只写自己的差异。**

@@ -17,11 +17,11 @@ slug: /architecture/crates/interfaces/web-ui/change-scope/
 Web UI Protected Zone：
 
 ```text
-crates/client/src/app/**
-crates/client/src/auth/**
-crates/client/src/api/client.rs
-crates/client/src/design/**
-crates/client/src/shared/layout/**
+crates/interfaces/client/src/app/**
+crates/interfaces/client/src/auth/**
+crates/interfaces/client/src/api/client.rs
+crates/interfaces/client/src/design/**
+crates/interfaces/client/src/shared/layout/**
 ```
 
 页面 Issue 如果必须修改 Protected Zone，应该停止并建立依赖 Issue，不能扩大当前 PR。

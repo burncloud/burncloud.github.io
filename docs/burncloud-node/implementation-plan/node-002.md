@@ -73,29 +73,30 @@ NODE-002 只授权配置与依赖组合，不授权任何具体 Node 业务能�
 
 #### STATIC CONFIRMED — 顶层 bootstrap 已统一处理进程级环境
 
-`src/main.rs :: main` 已负责 `.env`、`MASTER_KEY`、logging 和 CLI dispatch。NodeConfig 不得复制这套 bootstrap。
+2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上，`crates/interfaces/cli/src/main.rs :: main` 负责 `.env`、`MASTER_KEY`（`ensure_runtime_secrets`）、logging 和 CLI dispatch。仓库根目录的 `src/main.rs` 已不存在。Node 配置不得复制这套 bootstrap。
 
 #### STATIC CONFIRMED — Server 已有共享 AppState 模式
 
-`crates/server/src/lib.rs` 中 `AppState` 已持有 `Database`、`SystemMonitorService`、`UserService`、Cache 和 data-plane Router 等共享对象，证明现有系统已经使用显式共享状态，而不是要求每个 handler 自行创建依赖。
+`crates/interfaces/server/src/lib.rs` 的 `AppState` 持有 `Database`、`NodeContext`、`NodeRequestState`、`SystemMonitorService`、`UserService`、JWT 与 internal secret，以及 data-plane `Router`。该结构体上没有单独的 Cache 字段。旧路径 `crates/server/src/lib.rs` 已不存在。
 
 #### STATIC CONFIRMED — 现有 Server startup 会创建 Database / Router
 
-`burncloud_server::start_server()` 创建默认 Database，随后 `create_app()` 组合 Router 和其它服务。NodeContext 应优先组合/复用现有能力，不能平行创建 NodeDatabase / NodeRouter。
+`burncloud_server::start_server()` 仍在 `crates/interfaces/server/src/lib.rs`，并调用 `create_app()`。不能平行创建 NodeDatabase 或 NodeRouter。
 
-#### PLANNED GAP — 当前没有 Node 专用的统一配置与组合根
+#### 需要按当前源码重读的缺口
 
-当前 main 尚无 `NodeConfig` / `NodeContext` 作为 Node 子系统统一依赖边界。具体代码位置必须在 READY Audit 时决定。
+本页原先写“main 尚无 `NodeContext`”。该提交的 `crates/platform/node` 已经导出 `NodeContext` 和 `NodeComposition`，并且 `AppState` 持有 `node_context`。`crates/platform/node/src/lib.rs` 的公开导出里没有名为 `NodeConfig` 的类型。是否还缺一份统一配置类型，必须对照当时 main 重新审计，不能继续沿用“NodeContext 不存在”。
 
 ### 3. Entry / Starting Point
 
 实现前至少重新检查：
 
 ```text
-src/main.rs :: main
-src/main.rs :: run_async_server
-crates/server/src/lib.rs :: AppState
-crates/server/src/lib.rs :: start_server / create_app
+crates/interfaces/cli/src/main.rs :: main
+crates/interfaces/cli/src/main.rs :: run_async_server
+crates/interfaces/server/src/lib.rs :: AppState
+crates/interfaces/server/src/lib.rs :: start_server / create_app
+crates/platform/node/src/lib.rs :: NodeContext
 ```
 
 以及当时 workspace 中已经存在的 Settings / Database / Service construction path。

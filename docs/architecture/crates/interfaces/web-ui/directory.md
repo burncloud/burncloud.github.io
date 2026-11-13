@@ -5,10 +5,12 @@ slug: /architecture/crates/interfaces/web-ui/directory/
 
 # Web UI 目录结构
 
-Production Dioxus UI 第一阶段保持单一 `crates/client`，先建立模块边界，不为了目录整洁提前拆成大量 Cargo crate。
+Production Dioxus UI 保持单一客户端 crate，先建立模块边界，不为了目录整洁提前拆成大量 Cargo crate。2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上，这个 crate 是 `crates/interfaces/client`。仓库里已经没有 `crates/client`。
+
+下面的树对应该提交里的 `crates/interfaces/client/src/`。其中 `assets/styles/` 在该提交中不存在；样式文件目前能核对到的是 `src/desktop_chrome.css`。
 
 ```text
-crates/client/src/
+crates/interfaces/client/src/
 ├── app/
 │   ├── mod.rs
 │   ├── app.rs

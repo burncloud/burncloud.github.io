@@ -69,7 +69,7 @@ Resolver / Runtime consumers
 
 #### STATIC CONFIRMED — 现有 Monitor 已有 CPU / Memory / Disk 类型
 
-`crates/service/crates/monitor/src/types.rs` 当前定义 `CpuInfo`、`MemoryInfo`、`DiskInfo` 和 `SystemMetrics`，其中包含 CPU core/brand/frequency、RAM total/used/available、disk total/used/available 等数据。
+2026-10-25 的 main `15ee06fce4c469e510d0c7b335578f4159e846ed` 上，这些类型在 `crates/platform/observability/monitor/src/types.rs`，不再位于 `crates/service/crates/monitor/src/types.rs`。该文件定义 `CpuInfo`、`MemoryInfo`、`DiskInfo` 和 `SystemMetrics`。
 
 #### STATIC CONFIRMED — Monitor 当前公共合同没有 GPU 字段
 
@@ -77,21 +77,21 @@ Resolver / Runtime consumers
 
 #### STATIC CONFIRMED — Server 已持有共享 SystemMonitorService
 
-`crates/server/src/lib.rs :: AppState` 当前共享 `SystemMonitorService`，说明 Node 应复用现有监控能力，不建立第二套 CPU/RAM/Disk collector。
+`crates/interfaces/server/src/lib.rs :: AppState` 持有 `Arc<SystemMonitorService>`。Node 应复用现有监控能力，不建立第二套 CPU/RAM/Disk collector。
 
-#### PLANNED GAP — canonical Node hardware contract 尚不存在
+#### 需要按当前源码重读的缺口
 
-当前 main 尚无一份同时服务 Resolver / Runtime 的 Node 级 HardwareProfile。
+本页原先写“main 尚无 Node 级 HardwareProfile”。该提交的 `crates/platform/node/src/contracts.rs` 已有 `HardwareProfile` 和 `AcceleratorProfile`，并由 `crates/platform/node/src/lib.rs` 导出。这不自动表示 GPU 字段已经进入 `SystemMetrics`。`SystemMetrics` 仍然只有 `cpu`、`memory`、`disks`、`timestamp`。
 
 ### 3. Entry / Starting Point
 
 实现前重新检查：
 
 ```text
-crates/service/crates/monitor/src/lib.rs
-crates/service/crates/monitor/src/types.rs
-crates/service/crates/monitor/src/service.rs
-NODE-002 NodeContext wiring
+crates/platform/observability/monitor/src/lib.rs
+crates/platform/observability/monitor/src/types.rs
+crates/platform/observability/monitor/src/service.rs
+crates/platform/node/src/contracts.rs :: HardwareProfile
 ```
 
 ### 4. Reuse Targets / Do Not Recreate
