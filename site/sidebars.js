@@ -1,6 +1,7 @@
 module.exports = {
   docsSidebar: [
     {type:'category', label:'BurnCloud', collapsed:false, link:{type:'doc', id:'index'}, items:[
+      {type:'doc', id:'architecture-flow', label:'架构流程图'},
       {type:'category', label:'BurnCloud 节点', collapsed:true, link:{type:'doc', id:'burncloud-node/index'}, items:[
         {type:'doc', id:'burncloud-node/framework-status', label:'框架状态'},
         {type:'category', label:'框架合同', collapsed:false, link:{type:'doc', id:'burncloud-node/contracts/index'}, items:[
