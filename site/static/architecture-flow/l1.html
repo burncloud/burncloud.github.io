@@ -576,7 +576,7 @@ tr.is-on, tr.is-hover { background: var(--soft); }
         <h3>没有画的模板</h3>
         <p><code>crates/platform/templates/client-module</code> 是模板（package 名是 <code>{{crate_name}}</code>），不在 workspace members 里。</p>
         <h3>L0 步骤 02 里的调用</h3>
-        <p>Server 启动会启动 <code>NodeRuntime</code>。<code>create_default_database()</code> 定义在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>crates/platform/storage/database/src/database.rs</code> 第 324 行</a>。同一步还调用 <code>RouterDatabase::init</code>。</p>
+        <p>Server 启动会启动 <code>NodeRuntime</code>。<code>create_default_database()</code> 定义在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>crates/platform/storage/database/src/database.rs</code> 第 324 行</a>。同一步还调用 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/storage/mod.rs#L67"><code>RouterDatabase::init</code></a>（定义在 traffic/router，<code>crates/traffic/router/src/storage/mod.rs</code> 第 67 行）。</p>
       </div>
     </details>
   </section>

@@ -543,7 +543,7 @@ button.ghost, a.ghost {
       <h3>路径与函数</h3>
       <ul>
         <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/lib.rs"><code>crates/interfaces/server/src/lib.rs</code></a> · <code>start_server()</code> → <code>create_app()</code> → <code>create_app_with_node_request_state()</code></li>
-        <li>依次做：<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>create_default_database()</code></a>（<code>crates/platform/storage/database/src/database.rs</code> 第 324 行）、<code>RouterDatabase::init</code>、启动 <code>NodeRuntime</code>、<code>TcpListener::bind</code>，最后 <code>axum::serve</code>。</li>
+        <li>依次做：<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>create_default_database()</code></a>（<code>crates/platform/storage/database/src/database.rs</code> 第 324 行）、<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/storage/mod.rs#L67"><code>RouterDatabase::init</code></a>（<code>crates/traffic/router/src/storage/mod.rs</code> 第 67 行）、启动 <code>NodeRuntime</code>、<code>TcpListener::bind</code>，最后 <code>axum::serve</code>。</li>
       </ul>
     </section>
 
