@@ -181,7 +181,13 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
 }
 .changes button:hover { color: var(--accent); }
 .changes .n { display: inline-block; min-width: 1.7em; font-weight: 700; }
+.diagram-block { position: relative; }
 .sheet { min-width: 0; }
+html[data-view="pr"] .wrap { margin-left: 0; margin-right: 0; }
+html[data-view="pr"] .diagram-scroll { max-width: none; }
+html[data-view="pr"] .scroll-hint {
+  position: absolute; left: 0; right: 0; bottom: 100%; margin: 0 0 8px; z-index: 5;
+}
 html[data-view="pr"] .sheet {
   display: flex; align-items: flex-start; gap: 72px; width: max-content; min-width: 100%;
 }
@@ -325,7 +331,8 @@ html[data-view="base"] .overlay { display: none !important; }
     </div>
   </section>
 
-  <p class="scroll-hint">左右滑动看完整流程图</p>
+  <div class="diagram-block">
+  <p class="scroll-hint">往右滑，最右边是 PR 948 新增的部署</p>
   <div class="diagram-scroll" id="diagram-scroll">
   <div class="sheet" id="sheet">
   <div class="cols" id="cols">
@@ -571,6 +578,7 @@ html[data-view="base"] .overlay { display: none !important; }
         <span class="line">等就绪可以到不健康，不健康可以直接回到就绪。原来的准备不走这两条。失败不能直接回到就绪。</span>
       </button>
     </section>
+  </div>
   </div>
   </div>
   <p class="domains overlay">这次动到的是入口里的服务，以及底座里的本机节点。</p>
@@ -1239,10 +1247,35 @@ html[data-view="base"] .overlay { display: none !important; }
   function sizeCols() {
     var scroll = document.getElementById("diagram-scroll");
     var cols = document.getElementById("cols");
-    if (!scroll || !cols) return;
-    var w = Math.max(scroll.clientWidth || 0, 1120);
-    var next = w + "px";
-    if (cols.style.width !== next) cols.style.width = next;
+    var wrap = document.querySelector(".wrap");
+    if (!scroll || !cols || !wrap) return;
+    var pr = root.getAttribute("data-view") !== "base";
+    var cs = window.getComputedStyle(wrap);
+    var pad = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+    var capped = Math.min(wrap.clientWidth, 1360) - pad;
+    var w = Math.max(capped, 1120);
+    if (cols.style.width !== w + "px") cols.style.width = w + "px";
+    if (!pr) {
+      scroll.style.width = "";
+      scroll.style.maxWidth = "";
+      return;
+    }
+    var left = scroll.getBoundingClientRect().left;
+    var view = document.documentElement.clientWidth;
+    scroll.style.width = Math.max(view - left, w) + "px";
+  }
+  function updateHint() {
+    var scroll = document.getElementById("diagram-scroll");
+    var hint = document.querySelector(".scroll-hint");
+    if (!scroll || !hint) return;
+    var pr = root.getAttribute("data-view") !== "base";
+    if (!pr) {
+      hint.textContent = "左右滑动看完整流程图";
+      hint.style.display = "";
+      return;
+    }
+    hint.textContent = "往右滑，最右边是 PR 948 新增的部署";
+    hint.style.display = scroll.scrollWidth > scroll.clientWidth + 1 ? "block" : "none";
   }
   function drawLane() {
     var stage = document.getElementById("lane-stage");
@@ -1252,10 +1285,11 @@ html[data-view="base"] .overlay { display: none !important; }
     while (svgL.firstChild) svgL.removeChild(svgL.firstChild);
     labelLayer.replaceChildren();
     if (stage.getClientRects().length === 0) return;
-    svgL.setAttribute("width", stage.scrollWidth);
-    svgL.setAttribute("height", stage.scrollHeight);
-    svgL.style.width = stage.scrollWidth + "px";
-    svgL.style.height = stage.scrollHeight + "px";
+    var stageBox = stage.getBoundingClientRect();
+    svgL.setAttribute("width", stageBox.width);
+    svgL.setAttribute("height", stageBox.height);
+    svgL.style.width = stageBox.width + "px";
+    svgL.style.height = stageBox.height + "px";
     var defs = document.createElementNS(ns, "defs");
     defs.innerHTML = '<marker id="arrow-lane" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 4 L0 8 z"></path></marker>';
     svgL.appendChild(defs);
@@ -1334,10 +1368,11 @@ html[data-view="base"] .overlay { display: none !important; }
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     labelLayer.replaceChildren();
     var cols = document.getElementById("cols");
-    svg.setAttribute("width", cols.scrollWidth);
-    svg.setAttribute("height", cols.scrollHeight);
-    svg.style.width = cols.scrollWidth + "px";
-    svg.style.height = cols.scrollHeight + "px";
+    var colsBox = cols.getBoundingClientRect();
+    svg.setAttribute("width", colsBox.width);
+    svg.setAttribute("height", colsBox.height);
+    svg.style.width = colsBox.width + "px";
+    svg.style.height = colsBox.height + "px";
     var defs = document.createElementNS(ns, "defs");
     defs.innerHTML = '<marker id="arrow" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 4 L0 8 z"></path></marker>';
     svg.appendChild(defs);
@@ -1382,6 +1417,7 @@ html[data-view="base"] .overlay { display: none !important; }
     });
     drawLane();
     applyFilter(filter);
+    updateHint();
   }
   var queued = false;
   function schedule() {
