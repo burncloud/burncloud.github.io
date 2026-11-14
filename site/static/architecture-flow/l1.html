@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>L1 领域与依赖 · BurnCloud 架构洋葱</title>
+<title>七个领域，谁用到了谁 · BurnCloud</title>
 <script>
 (function () {
   try {
@@ -15,232 +15,157 @@
 <style>
 :root {
   color-scheme: light;
-  --paper: #e7eef4;
-  --sheet: #f8fafc;
-  --ink: #17202b;
-  --muted: #4c6070;
-  --line: #c5d3df;
-  --accent: #1d4ed8;
-  --accent-2: #1e3a8a;
-  --soft: #e7effc;
-  --warn: #6b450c;
-  --warn-bg: #f4ecdc;
-  --shadow: 0 1px 0 rgba(23, 32, 43, 0.04);
-  --serif: "Liberation Serif", "Noto Serif", Palatino, "Palatino Linotype", Georgia, serif;
-  --sans: "WenQuanYi Micro Hei", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "Noto Sans", sans-serif;
-  --mono: "JetBrains Mono", "Cascadia Mono", "WenQuanYi Micro Hei Mono", ui-monospace, monospace;
+  --ground: #e6e2da;
+  --card: #f7f5f1;
+  --panel: #f7f5f1;
+  --card-on: #efeae3;
+  --ink: #1c1b19;
+  --muted: #5c574f;
+  --line: #cfc8bc;
+  --group-line: rgba(28, 27, 25, 0.38);
+  --wire: #5c574f;
+  --accent: #c24d28;
+  --warn: #7a5620;
+  --warn-bg: #f3ead6;
+  --shadow: 0 16px 40px rgba(28, 27, 25, 0.12);
+  --sans: "WenQuanYi Micro Hei", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --serif: "Palatino Linotype", Palatino, "Songti SC", "Noto Serif CJK SC", "WenQuanYi Micro Hei", Georgia, serif;
+  --mono: "WenQuanYi Micro Hei Mono", ui-monospace, "Sarasa Mono SC", monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --paper: #10161c;
-    --sheet: #18222c;
-    --ink: #e6eef4;
-    --muted: #9aafbf;
-    --line: #314352;
-    --accent: #8eb0f5;
-    --accent-2: #d5e4ff;
-    --soft: #243246;
-    --warn: #f0d7a2;
-    --warn-bg: #3a2e1c;
-    --shadow: none;
+    --ground: #121212;
+    --card: #1c1c1c;
+    --panel: #1a1a1a;
+    --card-on: #262320;
+    --ink: #eceae7;
+    --muted: #9c968d;
+    --line: #3a3835;
+    --group-line: rgba(236, 234, 231, 0.32);
+    --wire: #b7b1a8;
+    --accent: #e07a45;
+    --warn: #d4b483;
+    --warn-bg: #2a2418;
+    --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
   }
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --paper: #e7eef4;
-  --sheet: #f8fafc;
-  --ink: #17202b;
-  --muted: #4c6070;
-  --line: #c5d3df;
-  --accent: #1d4ed8;
-  --accent-2: #1e3a8a;
-  --soft: #e7effc;
-  --warn: #6b450c;
-  --warn-bg: #f4ecdc;
-  --shadow: 0 1px 0 rgba(23, 32, 43, 0.04);
+  --ground: #e6e2da; --card: #f7f5f1; --panel: #f7f5f1; --card-on: #efeae3;
+  --ink: #1c1b19; --muted: #5c574f; --line: #cfc8bc; --group-line: rgba(28, 27, 25, 0.38);
+  --wire: #5c574f; --accent: #c24d28; --warn: #7a5620; --warn-bg: #f3ead6;
+  --shadow: 0 16px 40px rgba(28, 27, 25, 0.12);
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #10161c;
-  --sheet: #18222c;
-  --ink: #e6eef4;
-  --muted: #9aafbf;
-  --line: #314352;
-  --accent: #8eb0f5;
-  --accent-2: #d5e4ff;
-  --soft: #243246;
-  --warn: #f0d7a2;
-  --warn-bg: #3a2e1c;
-  --shadow: none;
+  --ground: #121212; --card: #1c1c1c; --panel: #1a1a1a; --card-on: #262320;
+  --ink: #eceae7; --muted: #9c968d; --line: #3a3835; --group-line: rgba(236, 234, 231, 0.32);
+  --wire: #b7b1a8; --accent: #e07a45; --warn: #d4b483; --warn-bg: #2a2418;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
 }
 * { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--sans);
-  font-size: 16px;
-  line-height: 1.55;
-}
-a { color: var(--accent-2); }
+body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.5; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.skip { position: absolute; left: 12px; top: -40px; background: var(--sheet); padding: 6px 10px; z-index: 5; }
+.skip { position: absolute; left: 12px; top: -40px; background: var(--card); padding: 6px 10px; z-index: 40; }
 .skip:focus { top: 8px; }
-.wrap { max-width: 1120px; margin: 0 auto; padding: 28px 20px 72px; }
-.mast { display: flex; justify-content: space-between; gap: 20px; align-items: flex-end; flex-wrap: wrap; }
-.kicker { margin: 0 0 6px; font-family: var(--serif); font-style: italic; font-size: 0.95rem; color: var(--accent-2); }
-h1 { margin: 0; font-size: 1.85rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; text-wrap: balance; }
-.tools { display: flex; gap: 8px; align-items: center; }
-button.ghost, a.ghost {
-  font: inherit;
-  background: var(--sheet);
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 6px 10px;
-  text-decoration: none;
-  cursor: pointer;
+.wrap { max-width: 1360px; margin: 0 auto; padding: 22px 22px 88px; }
+.top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 14px 24px; }
+h1 { margin: 0; font-family: var(--serif); font-size: 1.7rem; font-weight: 560; letter-spacing: -0.02em; line-height: 1.25; text-wrap: balance; }
+.intro { margin: 6px 0 0; max-width: 40rem; color: var(--muted); font-size: 0.95rem; }
+.top-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pills button, .links a, .ghost, .text-btn {
+  font: inherit; font-size: 0.82rem; border-radius: 999px; border: 1px solid var(--line);
+  background: transparent; color: var(--muted); padding: 4px 11px; text-decoration: none; cursor: pointer;
 }
-.layers { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 18px 0 8px; padding: 0; list-style: none; }
-.layers a, .layers span { font-size: 0.92rem; }
-.layers span { color: var(--muted); }
-.layers a[aria-current="page"] { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--accent); }
-.lead { max-width: 44rem; margin: 8px 0 12px; }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0 0 14px; padding: 0; list-style: none; color: var(--muted); font-size: 0.88rem; }
-.legend li { display: flex; align-items: center; gap: 8px; }
-.swatch { width: 22px; height: 0; border-top: 2px solid var(--ink); display: inline-block; }
+.pills button[aria-checked="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.links { display: flex; flex-wrap: wrap; gap: 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; list-style: none; margin: 14px 0 8px; padding: 0; color: var(--muted); font-size: 0.8rem; }
+.legend li { display: flex; align-items: center; gap: 7px; }
+.swatch { width: 22px; height: 0; border-top: 1.5px solid var(--wire); display: inline-block; position: relative; }
+.swatch::after { content: ""; position: absolute; right: -1px; top: -4px; border: 4px solid transparent; border-left: 6px solid var(--wire); }
 .swatch.rev { border-top-style: dashed; border-top-color: var(--warn); }
+.swatch.rev::after { border-left-color: var(--warn); }
 .swatch.con { border-top-style: dotted; }
-.swatch.aside { width: 14px; height: 10px; border: 1px dashed var(--warn); border-top-style: dashed; }
-.scroller { overflow-x: auto; max-width: 100%; margin: 0 0 8px; padding: 4px 2px 10px; }
-.canvas { position: relative; }
-.wires { position: absolute; left: 0; top: 0; z-index: 1; overflow: visible; }
-.edge { fill: none; stroke: var(--ink); stroke-width: 1.45; pointer-events: stroke; }
-.edge.contract { stroke-dasharray: 1.4 3.2; }
-.edge.reverse { stroke-dasharray: 6 4; stroke: var(--warn); }
-.wires marker path { fill: context-stroke; }
-.canvas.is-filtering .edge { opacity: 0.22; }
-.canvas.is-filtering .edge.is-hot,
-.edge.is-hover { opacity: 1; stroke-width: 2.3; }
+.swatch.hot { width: 14px; height: 10px; border: 1.5px solid var(--accent); border-radius: 3px; }
+.swatch.hot::after { display: none; }
+.filter-note { display: none; margin: 8px 0 12px; color: var(--muted); font-size: 0.88rem; }
+.filter-note.is-on { display: block; }
+#host { position: relative; width: 100%; overflow: hidden; }
+#stage { position: absolute; left: 0; top: 0; width: 1120px; height: 760px; }
+#wires { position: absolute; inset: 0; width: 1120px; height: 760px; overflow: visible; }
+.edge { fill: none; stroke: var(--wire); stroke-width: 1.35; pointer-events: none; }
+.edge.rev { stroke: var(--warn); stroke-dasharray: 5 4; }
+.edge.con { stroke-dasharray: 1.5 3.5; }
+.hit { fill: none; stroke: transparent; stroke-width: 12; pointer-events: stroke; cursor: pointer; }
+#wires marker path { fill: context-stroke; }
 .card {
-  z-index: 2;
-  display: block;
-  margin: 0;
-  text-align: left;
-  font: inherit;
-  color: inherit;
-  background: var(--sheet);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  box-shadow: var(--shadow);
-  padding: 8px 10px 10px;
-  cursor: pointer;
-  line-height: 1.35;
+  position: absolute; margin: 0; text-align: left; font: inherit; color: inherit;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px 11px; cursor: pointer; line-height: 1.4;
 }
-.card[aria-pressed="true"] { background: var(--soft); border-color: var(--accent); }
-.canvas.is-filtering .card { opacity: 0.5; }
-.canvas.is-filtering .card.is-hot { opacity: 1; }
-.eyebrow { display: block; font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.04em; color: var(--accent-2); }
-.card-title { display: block; font-weight: 600; font-size: 1rem; }
-.card .hint { display: block; color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
-.names { list-style: none; margin: 6px 0 0; padding: 0; font-family: var(--mono); font-size: 10.5px; line-height: 1.35; }
-.names li { margin: 0 0 2px; overflow-wrap: anywhere; }
-.c-interfaces .names { display: flex; flex-wrap: wrap; gap: 2px 14px; }
-.c-interfaces .names li { margin: 0; }
-.cols { columns: 3; column-gap: 16px; }
-.cols li { break-inside: avoid; }
-.badge {
-  display: inline-block;
-  font-size: 0.72rem;
-  line-height: 1.3;
-  padding: 1px 6px;
-  border-radius: 2px;
-  margin-bottom: 4px;
+.card-title { display: block; font-weight: 650; font-size: 1rem; }
+.line { display: block; margin-top: 3px; color: var(--muted); font-size: 0.78rem; line-height: 1.45; }
+.card.accent { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.card.aside { border-style: dashed; border-color: var(--warn); }
+.card[aria-pressed="true"] { background: var(--card-on); border-color: var(--ink); }
+.card.accent[aria-pressed="true"] { border-color: var(--accent); }
+.badge { display: inline-block; margin: 0 0 6px; padding: 0 6px; border: 1px dashed var(--warn); border-radius: 999px; color: var(--warn); font-size: 0.68rem; line-height: 1.6; }
+.is-dim { opacity: 0.2; }
+.card.is-dim:focus-visible { opacity: 1; }
+#chip {
+  position: absolute; z-index: 5; display: none; margin: 0; padding: 2px 6px;
+  background: var(--ground); color: var(--ink); border: 1px solid var(--line); border-radius: 999px;
+  font-size: 0.72rem; pointer-events: none; white-space: nowrap;
 }
-.badge.infer { color: var(--warn); background: var(--warn-bg); }
-.badge.aside { color: var(--warn); background: transparent; border: 1px dashed var(--warn); }
-.c-trust { border-style: dashed; border-color: var(--warn); }
-.c-traffic { box-shadow: inset 0 0 0 1px var(--accent); }
-.pill {
-  position: absolute;
-  z-index: 3;
-  width: 22px;
-  height: 22px;
-  transform: translate(-50%, -50%);
-  border-radius: 2px;
-  border: 1px solid var(--ink);
-  background: var(--sheet);
-  color: var(--ink);
-  font-family: var(--mono);
-  font-size: 10px;
-  font-variant-numeric: tabular-nums;
-  padding: 0;
-  cursor: pointer;
-  display: grid;
-  place-items: center;
+.tag-label {
+  position: absolute; z-index: 4; margin: 0; padding: 0 4px; background: var(--ground);
+  color: var(--warn); font-size: 0.68rem; border: 0; cursor: pointer;
 }
-.pill::before { content: attr(data-edge); }
-.pill.rev { border-style: dashed; color: var(--warn); border-color: var(--warn); }
-.pill.con { border-radius: 11px; }
-.pill.is-on, .pill:hover { background: var(--soft); border-color: var(--accent); color: var(--ink); }
-.narrow-hint { display: none; color: var(--muted); font-size: 0.9rem; margin: 0 0 10px; }
-#detail {
-  background: var(--sheet);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 14px 16px 6px;
-  margin: 14px 0 22px;
-  min-height: 7rem;
+.stack { display: none; }
+.stack-card, .edge-btn {
+  display: block; width: 100%; text-align: left; font: inherit; color: inherit;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px; margin: 0 0 8px; cursor: pointer;
 }
-#detail h2, .about h2, .section h2 { font-size: 1.15rem; margin: 0 0 8px; }
-#detail h3, .about h3 { font-size: 0.95rem; margin: 14px 0 6px; }
-#detail ul, .about ul { margin: 4px 0 10px; padding-left: 1.15rem; }
-#detail li, .about li { margin: 3px 0; }
-code, .mono { font-family: var(--mono); font-size: 0.84em; overflow-wrap: anywhere; }
-.note { color: var(--muted); font-size: 0.92rem; }
-.section { margin: 26px 0; }
-.about { background: var(--sheet); border: 1px solid var(--line); border-radius: 2px; padding: 8px 12px; margin: 8px 0; }
-.about summary { cursor: pointer; font-weight: 600; }
-.table-wrap { overflow-x: auto; max-width: 100%; border: 1px solid var(--line); background: var(--sheet); }
-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-caption { text-align: left; padding: 10px 12px 0; font-weight: 600; }
-th, td { border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; padding: 8px 10px; }
-thead th { color: var(--muted); font-weight: 600; font-size: 0.82rem; }
-tbody th { font-weight: 500; white-space: nowrap; }
-td ul { margin: 0; padding-left: 1.1rem; }
-tr.is-on, tr.is-hover { background: var(--soft); }
-.rowhit {
-  font: inherit;
-  background: transparent;
-  border: 0;
-  color: var(--accent-2);
-  cursor: pointer;
-  padding: 0;
-  text-align: left;
+.stack-card.accent { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.stack-card.aside { border-style: dashed; border-color: var(--warn); }
+.edge-btn { background: transparent; border-radius: 8px; padding: 7px 10px; }
+.edge-btn .meta { color: var(--warn); font-size: 0.75rem; margin-left: 6px; }
+.stack h2 { font-size: 0.95rem; margin: 16px 0 8px; }
+#panel {
+  position: fixed; right: 16px; bottom: 16px; width: min(420px, calc(100vw - 24px));
+  max-height: min(72vh, 640px); overflow: auto; z-index: 30; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 14px 16px 18px;
 }
-.tag { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); }
-.tag.rev, .tag.con { color: var(--warn); }
-.foot { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.88rem; }
-@media (min-width: 861px) {
-  .canvas { width: 1048px; height: 830px; }
-  .card { position: absolute; overflow: hidden; }
-  .c-interfaces { left: 176px; top: 12px; width: 760px; height: 116px; }
-  .c-trust { left: 8px; top: 198px; width: 148px; height: 214px; }
-  .c-identity { left: 176px; top: 198px; width: 156px; height: 214px; }
-  .c-traffic { left: 364px; top: 184px; width: 196px; height: 228px; }
-  .c-supply { left: 592px; top: 198px; width: 160px; height: 214px; }
-  .c-commerce { left: 784px; top: 198px; width: 152px; height: 214px; }
-  .c-platform { left: 176px; top: 616px; width: 760px; height: 198px; }
-  .wires { width: 1048px; height: 830px; }
+#panel[hidden] { display: none; }
+.panel-bar { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; position: sticky; top: 0; background: var(--panel); padding-bottom: 8px; z-index: 1; }
+#panel-title { margin: 0; font-size: 1.05rem; font-weight: 650; line-height: 1.35; text-wrap: balance; }
+#panel-close { font: inherit; font-size: 0.8rem; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 3px 10px; cursor: pointer; }
+#panel-body { font-size: 0.92rem; }
+#panel-body p { margin: 0 0 8px; }
+#panel-body a { color: var(--ink); }
+.dev { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+.dev h3 { margin: 0 0 6px; font-size: 0.72rem; letter-spacing: 0.14em; font-weight: 650; }
+.dev h4 { margin: 12px 0 4px; font-size: 0.78rem; color: var(--ink); }
+.dev ul, .dev ol { margin: 4px 0 8px; padding-left: 1.15rem; }
+.dev li { margin: 3px 0; }
+.dev a { color: var(--muted); }
+code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
+#library { display: none; }
+.foot { margin-top: 18px; color: var(--muted); font-size: 0.78rem; }
+.foot a, .foot button { color: var(--muted); }
+.foot button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+@media (min-width: 901px) {
+  .stack { display: none !important; }
 }
-@media (max-width: 860px) {
-  .canvas { display: flex; flex-direction: column; gap: 10px; width: auto; height: auto; }
-  .wires, .pill { display: none; }
-  .narrow-hint { display: block; }
-  .card { position: static; width: auto; height: auto; overflow: visible; }
-  .cols { columns: 2; }
-  h1 { font-size: 1.45rem; }
+@media (max-width: 900px) {
+  #host { display: none; }
+  .stack { display: block; }
+  h1 { font-size: 1.4rem; }
+  .wrap { padding: 14px 12px 108px; }
+  #panel { left: 12px; right: 12px; width: auto; max-height: 54vh; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -248,494 +173,298 @@ tr.is-on, tr.is-hover { background: var(--soft); }
 </style>
 </head>
 <body>
-<a class="skip" href="#detail">跳到说明</a>
+<a class="skip" href="#interfaces">跳到图</a>
 <div class="wrap">
-  <header class="mast">
+  <header class="top">
     <div>
-      <p class="kicker">L1 · 架构洋葱</p>
-      <h1>七个领域，谁依赖谁</h1>
+      <h1>七个领域，谁用到了谁</h1>
+      <p class="intro">箭头从使用者指向被用到的一方。点方块或箭头看它具体做了什么。</p>
     </div>
-    <div class="tools">
-      <button type="button" class="ghost" id="theme">切换深色</button>
-      <a class="ghost" href="l0.html">返回 L0</a>
-      <a class="ghost" href="/architecture-flow/">返回文档</a>
+    <div class="top-actions">
+      <div class="pills" role="radiogroup" aria-label="看哪一部分">
+        <button type="button" role="radio" data-filter="all" aria-checked="true">全部</button>
+        <button type="button" role="radio" data-filter="request" aria-checked="false">一次请求</button>
+        <button type="button" role="radio" data-filter="billing" aria-checked="false">计费</button>
+        <button type="button" role="radio" data-filter="wip" aria-checked="false">开发中</button>
+      </div>
+      <nav class="links" aria-label="页面">
+        <a href="l0.html">一次请求</a>
+        <a href="/architecture-flow/">返回文档</a>
+        <button type="button" class="ghost" id="theme">深色</button>
+      </nav>
     </div>
   </header>
-  <nav aria-label="架构层次">
-    <ul class="layers">
-      <li><a href="l0.html">L0 一次请求</a></li>
-      <li><a href="l1.html" aria-current="page">L1 领域与依赖</a></li>
-      <li><span>L2 模块 · 稍后</span></li>
-      <li><span>L3 关键流程 · 稍后</span></li>
-    </ul>
-  </nav>
-  <p class="lead">这一层看的是 Cargo.toml 里的普通依赖，不是一次请求的先后顺序。箭头从依赖方指向被依赖方。点领域或编号，看支撑这条边的 crate；完整名单在图下面，不靠悬停。</p>
-  <ul class="legend">
-    <li><span class="swatch" aria-hidden="true"></span>实线：普通依赖</li>
-    <li><span class="swatch rev" aria-hidden="true"></span>虚线：反向，traffic 依赖 interfaces/common</li>
-    <li><span class="swatch con" aria-hidden="true"></span>点线，编号是圆的：只依赖契约 crate</li>
-    <li><span class="swatch aside" aria-hidden="true"></span>trust 用虚线框，不在当前请求主线上</li>
-    <li>交叉的地方线会断开，表示穿过，不是接在一起</li>
+  <ul class="legend" aria-label="怎么看这张图">
+    <li><span class="swatch" aria-hidden="true"></span>实线：用到了</li>
+    <li><span class="swatch rev" aria-hidden="true"></span>虚线：方向反了，转发用到入口里的公共部分</li>
+    <li><span class="swatch con" aria-hidden="true"></span>点线：只借用一份约定，没有用到具体实现</li>
+    <li><span class="swatch hot" aria-hidden="true"></span>暖色框是转发，它用到的地方最多</li>
   </ul>
-  <p class="narrow-hint">屏幕较窄时不画连线，避免编号和领域名叠在一起。依赖关系在下方的表里，逐条写了支撑的 crate。</p>
+  <p class="filter-note" id="filter-note">开发中的三件事不是这七个领域。它们没有画成已经接通的流程，在 <a href="l0.html">一次请求</a> 那页单独放着。</p>
 
-  <div class="scroller">
-    <div class="canvas" id="map">
-      <svg class="wires" viewBox="0 0 1048 830" aria-hidden="true">
-        <defs>
-          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-            <path d="M 0 0 L 10 5 L 0 10 z"></path>
-          </marker>
-        </defs>
-        <path class="edge" data-edge="1" data-from="interfaces" data-to="traffic" d="M 462 128 L 462 184" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="2" data-from="interfaces" data-to="identity" d="M 254 128 L 254 198" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="3" data-from="interfaces" data-to="supply" d="M 672 128 L 672 198" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="4" data-from="interfaces" data-to="commerce" d="M 860 128 L 860 198" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="5" data-from="interfaces" data-to="trust" d="M 176 70 L 82 70 L 82 198" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="6" data-from="interfaces" data-to="platform" d="M 936 70 L 1000 70 L 1000 715 L 936 715" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="7" data-from="traffic" data-to="supply" d="M 560 292 L 592 292" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="8" data-from="traffic" data-to="identity" d="M 364 272 L 332 272" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="9" data-from="traffic" data-to="commerce" d="M 560 412 L 560 468 L 616 468 M 632 468 L 664 468 M 680 468 L 860 468 L 860 412" marker-end="url(#arrow)"></path>
-        <path class="edge reverse" data-edge="10" data-from="traffic" data-to="interfaces" d="M 498 184 L 498 128" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="11" data-from="traffic" data-to="platform" d="M 462 412 L 462 616" marker-end="url(#arrow)"></path>
-        <path class="edge contract" data-edge="12" data-from="identity" data-to="traffic" d="M 332 332 L 364 332" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="13" data-from="identity" data-to="platform" d="M 254 412 L 254 616" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="14" data-from="supply" data-to="platform" d="M 672 412 L 672 616" marker-end="url(#arrow)"></path>
-        <path class="edge contract" data-edge="15" data-from="commerce" data-to="supply" d="M 784 332 L 752 332" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="16" data-from="commerce" data-to="platform" d="M 908 412 L 908 616" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="17" data-from="trust" data-to="supply" d="M 156 300 L 166 300 L 166 548 L 246 548 M 262 548 L 454 548 M 470 548 L 624 548 L 624 412" marker-end="url(#arrow)"></path>
-        <path class="edge" data-edge="18" data-from="trust" data-to="platform" d="M 82 412 L 82 715 L 176 715" marker-end="url(#arrow)"></path>
-      </svg>
-
-      <button type="button" class="card c-interfaces" id="interfaces" data-domain="interfaces" aria-pressed="false" aria-controls="detail">
-        <span class="eyebrow">interfaces · 6</span>
+  <div id="host">
+    <div id="stage">
+      <svg id="wires" aria-hidden="true"></svg>
+      <p id="chip"></p>
+      <button type="button" class="card" id="interfaces" data-tags="request" style="left:300px;top:18px;width:520px" aria-pressed="false" aria-controls="panel">
         <span class="card-title">入口</span>
-        <span class="hint">CLI、Server、客户端、公共常量。点此看路径。</span>
-        <ul class="names">
-          <li>burncloud（根包）</li>
-          <li>burncloud-server</li>
-          <li>burncloud-client</li>
-          <li>burncloud-common</li>
-          <li>burncloud-service</li>
-          <li>burncloud-tests</li>
-        </ul>
+        <span class="line">程序、控制台和命令行从这里启动。</span>
       </button>
-
-      <button type="button" class="card c-trust" id="trust" data-domain="trust" aria-pressed="false" aria-controls="detail">
-        <span class="badge aside">不在请求主线</span>
-        <span class="eyebrow">trust · 1</span>
+      <button type="button" class="card aside" id="trust" data-tags="aside" style="left:8px;top:210px;width:196px" aria-pressed="false" aria-controls="panel">
+        <span class="badge">不在这次请求的主线上</span>
         <span class="card-title">本地推理</span>
-        <span class="hint">llama-server 等进程。直读。</span>
-        <ul class="names"><li>burncloud-service-inference</li></ul>
+        <span class="line">管理本机上的推理进程。</span>
       </button>
-
-      <button type="button" class="card c-identity" id="identity" data-domain="identity" aria-pressed="false" aria-controls="detail">
-        <span class="eyebrow">identity · 2</span>
+      <button type="button" class="card" id="identity" data-tags="request" style="left:220px;top:220px;width:196px" aria-pressed="false" aria-controls="panel">
         <span class="card-title">身份</span>
-        <ul class="names">
-          <li>burncloud-identity-token</li>
-          <li>burncloud-identity-user</li>
-        </ul>
+        <span class="line">核对调用方是谁，并记下还能用多少额度。</span>
       </button>
-
-      <button type="button" class="card c-traffic" id="traffic" data-domain="traffic" aria-pressed="false" aria-controls="detail">
-        <span class="eyebrow">traffic · 枢纽 · 3</span>
+      <button type="button" class="card accent" id="traffic" data-tags="request" style="left:432px;top:200px;width:230px" aria-pressed="false" aria-controls="panel">
         <span class="card-title">转发</span>
-        <span class="hint">router 直接依赖五处。</span>
-        <ul class="names">
-          <li>burncloud-router</li>
-          <li>burncloud-traffic-contracts</li>
-          <li>burncloud-router-aws</li>
-        </ul>
+        <span class="line">一次请求的中转：挑上游、改格式、把请求送出去。</span>
       </button>
-
-      <button type="button" class="card c-supply" id="supply" data-domain="supply" aria-pressed="false" aria-controls="detail">
-        <span class="eyebrow">supply · 3</span>
+      <button type="button" class="card" id="supply" data-tags="request" style="left:678px;top:220px;width:196px" aria-pressed="false" aria-controls="panel">
         <span class="card-title">供给</span>
-        <ul class="names">
-          <li>burncloud-supply-contracts</li>
-          <li>burncloud-supply-channel</li>
-          <li>burncloud-supply-model</li>
-        </ul>
+        <span class="line">登记有哪些上游、各自能做哪个模型。</span>
       </button>
-
-      <button type="button" class="card c-commerce" id="commerce" data-domain="commerce" aria-pressed="false" aria-controls="detail">
-        <span class="eyebrow">commerce · 2</span>
+      <button type="button" class="card" id="commerce" data-tags="request billing" style="left:890px;top:220px;width:200px" aria-pressed="false" aria-controls="panel">
         <span class="card-title">计费</span>
-        <ul class="names">
-          <li>burncloud-commerce-billing</li>
-          <li>burncloud-commerce-contracts</li>
-        </ul>
+        <span class="line">查定价，并按用量算出费用。</span>
       </button>
-
-      <button type="button" class="card c-platform" id="platform" data-domain="platform" aria-pressed="false" aria-controls="detail">
-        <span class="eyebrow">platform · 最底层 · 12</span>
+      <button type="button" class="card" id="platform" data-tags="request billing" style="left:220px;top:560px;width:860px" aria-pressed="false" aria-controls="panel">
         <span class="card-title">底座</span>
-        <span class="hint">没有指向其他领域的普通依赖。</span>
-        <ul class="names cols">
-          <li>burncloud-database</li>
-          <li>burncloud-database-sys</li>
-          <li>burncloud-download</li>
-          <li>burncloud-download-aria2</li>
-          <li>burncloud-service-setting</li>
-          <li>burncloud-service-ip</li>
-          <li>burncloud-service-monitor</li>
-          <li>burncloud-installer</li>
-          <li>burncloud-auto-update</li>
-          <li>burncloud-loops</li>
-          <li>burncloud-node-runtime</li>
-          <li>burncloud-code</li>
-        </ul>
+        <span class="line">数据库、下载、安装和监控这些垫底的能力，不再去用上面的领域。</span>
       </button>
-
-      <button type="button" class="pill" style="left:438px;top:156px" data-edge="1" aria-label="1 interfaces 依赖 traffic"></button>
-      <button type="button" class="pill" style="left:230px;top:162px" data-edge="2" aria-label="2 interfaces 依赖 identity"></button>
-      <button type="button" class="pill" style="left:648px;top:162px" data-edge="3" aria-label="3 interfaces 依赖 supply"></button>
-      <button type="button" class="pill" style="left:836px;top:162px" data-edge="4" aria-label="4 interfaces 依赖 commerce"></button>
-      <button type="button" class="pill" style="left:108px;top:156px" data-edge="5" aria-label="5 interfaces 依赖 trust。只有 service 到 service-inference 这一条"></button>
-      <button type="button" class="pill" style="left:976px;top:400px" data-edge="6" aria-label="6 interfaces 依赖 platform"></button>
-      <button type="button" class="pill" style="left:576px;top:274px" data-edge="7" aria-label="7 traffic 依赖 supply"></button>
-      <button type="button" class="pill" style="left:348px;top:254px" data-edge="8" aria-label="8 traffic 依赖 identity"></button>
-      <button type="button" class="pill" style="left:780px;top:448px" data-edge="9" aria-label="9 traffic 依赖 commerce"></button>
-      <button type="button" class="pill rev" style="left:522px;top:156px" data-edge="10" aria-label="10 反向：traffic 依赖 interfaces 的 common"></button>
-      <button type="button" class="pill" style="left:486px;top:500px" data-edge="11" aria-label="11 traffic 依赖 platform"></button>
-      <button type="button" class="pill con" style="left:348px;top:350px" data-edge="12" aria-label="12 仅契约：identity 依赖 traffic-contracts"></button>
-      <button type="button" class="pill" style="left:278px;top:500px" data-edge="13" aria-label="13 identity 依赖 platform"></button>
-      <button type="button" class="pill" style="left:696px;top:530px" data-edge="14" aria-label="14 supply 依赖 platform"></button>
-      <button type="button" class="pill con" style="left:768px;top:314px" data-edge="15" aria-label="15 仅契约：commerce 依赖 supply-contracts"></button>
-      <button type="button" class="pill" style="left:930px;top:510px" data-edge="16" aria-label="16 commerce 依赖 platform"></button>
-      <button type="button" class="pill" style="left:530px;top:530px" data-edge="17" aria-label="17 trust 依赖 supply"></button>
-      <button type="button" class="pill" style="left:108px;top:560px" data-edge="18" aria-label="18 trust 依赖 platform"></button>
     </div>
   </div>
-  <p class="note">宽屏上的编号和表里的编号是同一条边。上下方向键在领域之间移动。Esc 回到总览。</p>
 
-  <div id="detail" aria-live="polite">
-    <h2>先看分工，再看箭头</h2>
-    <p>上排 interfaces 是入口。中间四个领域里，traffic 的 router 是依赖最多的枢纽：它直接依赖 identity、supply、commerce、platform，以及 interfaces 里的 common。这条 common 边是反向的，在图上用虚线单独画出来。</p>
-    <p>platform 在最下面，没有指向其他领域的普通依赖。<code>burncloud-database</code> 的 Cargo.toml 注释写明它刻意不依赖 identity-user / supply-channel，并由 <code>deny.toml</code> 强制禁止。</p>
-    <p>trust 画在旁边：唯一的 crate 管本地推理进程，只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖。当前请求主线上看不到它。这一点是直读。<a href="l0.html">回 L0 看那一次请求</a>。</p>
-    <p class="note">素材这一层按 crate 和 Cargo.toml 依赖来写，没有给每个领域单独的函数名。请求主线上点过名的函数，写在各领域说明里，并链回 L0。</p>
+  <div class="stack" id="stack">
+    <button type="button" class="stack-card" data-open="interfaces" data-tags="request"><span class="card-title">入口</span><span class="line">程序、控制台和命令行从这里启动。</span></button>
+    <button type="button" class="stack-card" data-open="identity" data-tags="request"><span class="card-title">身份</span><span class="line">核对调用方是谁，并记下还能用多少额度。</span></button>
+    <button type="button" class="stack-card accent" data-open="traffic" data-tags="request"><span class="card-title">转发</span><span class="line">一次请求的中转：挑上游、改格式、把请求送出去。</span></button>
+    <button type="button" class="stack-card" data-open="supply" data-tags="request"><span class="card-title">供给</span><span class="line">登记有哪些上游、各自能做哪个模型。</span></button>
+    <button type="button" class="stack-card" data-open="commerce" data-tags="request billing"><span class="card-title">计费</span><span class="line">查定价，并按用量算出费用。</span></button>
+    <button type="button" class="stack-card aside" data-open="trust" data-tags="aside"><span class="badge">不在这次请求的主线上</span><span class="card-title">本地推理</span><span class="line">管理本机上的推理进程。</span></button>
+    <button type="button" class="stack-card" data-open="platform" data-tags="request billing"><span class="card-title">底座</span><span class="line">数据库、下载、安装和监控这些垫底的能力，不再去用上面的领域。</span></button>
+    <h2>谁用到了谁</h2>
+    <div id="edge-list"></div>
   </div>
-
-  <section class="section" aria-labelledby="about-title">
-    <h2 id="about-title">每个领域的路径</h2>
-    <p class="note">这是图上每个方块的文字版。crate 路径都可以在上面的提交里打开。</p>
-
-    <details class="about" id="about-interfaces">
-      <summary>interfaces · 入口 · 6 个 crate</summary>
-      <div class="about-body">
-        <p class="badge infer" hidden>直读</p>
-        <p>根包和入口层。service 只做再导出，没有其他 crate 依赖它。</p>
-        <h3>crate</h3>
-        <ul>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/cli"><code>crates/interfaces/cli</code></a> · <code>burncloud</code>（根包的 bin）</li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server"><code>crates/interfaces/server</code></a> · <code>burncloud-server</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client"><code>crates/interfaces/client</code></a> · <code>burncloud-client</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/common"><code>crates/interfaces/common</code></a> · <code>burncloud-common</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/service"><code>crates/interfaces/service</code></a> · <code>burncloud-service</code>。只做再导出，没有其他 crate 依赖它。</li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/tests"><code>crates/interfaces/tests</code></a> · <code>burncloud-tests</code></li>
-        </ul>
-        <h3>领域内部依赖</h3>
-        <ul>
-          <li>burncloud (cli) → server、client、common</li>
-          <li>server → client、common</li>
-          <li>client → common</li>
-          <li>tests → common</li>
-        </ul>
-        <h3>记录，不另画方块</h3>
-        <p><code>crates/interfaces/service/src/lib.rs</code> 里有一行注释：<code>// pub use burncloud_supply_model as models; // TEMP: broken dep chain</code>。素材说这只是记录，不影响画图。</p>
-        <h3>L0 请求主线上点过名的函数</h3>
-        <ul>
-          <li><code>main()</code>、<code>run_async_server()</code>、<code>ensure_runtime_secrets()</code>、<code>launch_gui_with_tray()</code>、<code>DEFAULT_PORT</code></li>
-          <li><code>start_server()</code> → <code>create_app()</code> → <code>create_app_with_node_request_state()</code></li>
-          <li><code>security_boundary_middleware</code>、<code>liveview_router</code>、<code>route_miss_response()</code></li>
-          <li><code>SetRequestIdLayer</code>、<code>PropagateRequestIdLayer</code></li>
-        </ul>
-      </div>
-    </details>
-
-    <details class="about" id="about-identity">
-      <summary>identity · 身份 · 2 个 crate</summary>
-      <div class="about-body">
-        <h3>crate</h3>
-        <ul>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/identity/token"><code>crates/identity/token</code></a> · <code>burncloud-identity-token</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/identity/user"><code>crates/identity/user</code></a> · <code>burncloud-identity-user</code>（lib 名是 <code>burncloud_service_user</code>）</li>
-        </ul>
-        <h3>领域内部依赖</h3>
-        <p>素材列出的领域内部依赖里没有 identity。</p>
-        <h3>L0 请求主线上点过名的函数</h3>
-        <ul>
-          <li><code>TokenService::active_api_key_identity</code>（鉴权）</li>
-          <li><code>TokenService::deduct_quota</code>（扣额度）</li>
-        </ul>
-      </div>
-    </details>
-
-    <details class="about" id="about-supply">
-      <summary>supply · 供给 · 3 个 crate</summary>
-      <div class="about-body">
-        <h3>crate</h3>
-        <ul>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/supply/contracts"><code>crates/supply/contracts</code></a> · <code>burncloud-supply-contracts</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/supply/channel"><code>crates/supply/channel</code></a> · <code>burncloud-supply-channel</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/supply/model"><code>crates/supply/model</code></a> · <code>burncloud-supply-model</code></li>
-        </ul>
-        <h3>领域内部依赖</h3>
-        <ul><li>supply-channel → supply-contracts</li></ul>
-        <h3>L0 请求主线上点过名的函数</h3>
-        <p><code>ChannelService</code> 查 <code>channel_abilities</code>。代码注释原话：Supply 拥有查询，Traffic 拥有路由决策。</p>
-      </div>
-    </details>
-
-    <details class="about" id="about-traffic">
-      <summary>traffic · 转发 · 3 个 crate</summary>
-      <div class="about-body">
-        <p>router 是依赖最多的枢纽，直接依赖 identity、supply、commerce、platform、interfaces/common 五处。</p>
-        <h3>crate</h3>
-        <ul>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/contracts"><code>crates/traffic/contracts</code></a> · <code>burncloud-traffic-contracts</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router"><code>crates/traffic/router</code></a> · <code>burncloud-router</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router-aws"><code>crates/traffic/router-aws</code></a> · <code>burncloud-router-aws</code>。没有依赖任何内部 crate，也没有被依赖。</li>
-        </ul>
-        <h3>领域内部依赖</h3>
-        <ul><li>router → traffic-contracts</li></ul>
-        <h3>L0 请求主线上点过名的函数</h3>
-        <ul>
-          <li><code>create_router_app_with_route_miss()</code>、<code>proxy_handler()</code>、<code>proxy_logic()</code></li>
-          <li><code>route_for_dispatch()</code>、<code>route_with_scheduler()</code></li>
-          <li><code>get_adaptor(...)</code>、<code>build_gemini_passthrough_url</code>、<code>req_builder.send()</code></li>
-          <li><code>LocalExchange</code>、<code>UnifiedTokenCounter</code>、<code>insert_log</code></li>
-        </ul>
-      </div>
-    </details>
-
-    <details class="about" id="about-commerce">
-      <summary>commerce · 计费 · 2 个 crate</summary>
-      <div class="about-body">
-        <h3>crate</h3>
-        <ul>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/commerce/contracts"><code>crates/commerce/contracts</code></a> · <code>burncloud-commerce-contracts</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/commerce/billing"><code>crates/commerce/billing</code></a> · <code>burncloud-commerce-billing</code></li>
-        </ul>
-        <h3>领域内部依赖</h3>
-        <ul><li>commerce-billing → commerce-contracts</li></ul>
-        <h3>L0 请求主线上点过名的函数</h3>
-        <ul>
-          <li><code>CostCalculator::preflight(model, None)</code></li>
-          <li><code>cost_calculator.calculate(...)</code></li>
-        </ul>
-      </div>
-    </details>
-
-    <details class="about" id="about-trust">
-      <summary>trust · 本地推理 · 1 个 crate · 不在请求主线</summary>
-      <div class="about-body">
-        <p class="badge read">直读</p>
-        <p>唯一 crate 是本地推理进程管理。它只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖，所以当前请求主线上看不到 trust。</p>
-        <h3>crate</h3>
-        <ul>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/trust/inference"><code>crates/trust/inference</code></a> · <code>burncloud-service-inference</code>。注释说明：本地推理服务管理，负责 llama-server 等进程。</li>
-        </ul>
-        <h3>领域内部依赖</h3>
-        <p>素材列出的领域内部依赖里没有 trust。</p>
-        <p>跨领域只有一条进来：interfaces 的 service → service-inference，而且 <code>burncloud-service</code> 没有被任何 crate 依赖。trust 自己依赖 supply 和 platform。</p>
-        <h3>L0 请求主线</h3>
-        <p>未找到调用点。<a href="l0.html">L0 九步里没有 trust。</a></p>
-      </div>
-    </details>
-
-    <details class="about" id="about-platform">
-      <summary>platform · 底座 · 12 个 crate</summary>
-      <div class="about-body">
-        <p>最底层。没有指向其他领域的普通依赖。</p>
-        <h3>crate</h3>
-        <ul>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database"><code>crates/platform/storage/database</code></a> · <code>burncloud-database</code>。Cargo.toml 注释写明它刻意不依赖 identity-user / supply-channel，并由 <code>deny.toml</code> 强制禁止。</li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database-sys"><code>crates/platform/storage/database-sys</code></a> · <code>burncloud-database-sys</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/download"><code>crates/platform/storage/download</code></a> · <code>burncloud-download</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/download-aria2"><code>crates/platform/storage/download-aria2</code></a> · <code>burncloud-download-aria2</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/configuration/setting"><code>crates/platform/configuration/setting</code></a> · <code>burncloud-service-setting</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/observability/ip"><code>crates/platform/observability/ip</code></a> · <code>burncloud-service-ip</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/observability/monitor"><code>crates/platform/observability/monitor</code></a> · <code>burncloud-service-monitor</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/lifecycle/installer"><code>crates/platform/lifecycle/installer</code></a> · <code>burncloud-installer</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/lifecycle/update"><code>crates/platform/lifecycle/update</code></a> · <code>burncloud-auto-update</code></li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/lifecycle/loops"><code>crates/platform/lifecycle/loops</code></a> · <code>burncloud-loops</code>。没有内部依赖，也没有被依赖。</li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/node"><code>crates/platform/node</code></a> · <code>burncloud-node-runtime</code>。注释：不监听端口、不起第二个 HTTP server，只负责本机 Node 的运行时生命周期。</li>
-          <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/code"><code>crates/platform/code</code></a> · <code>burncloud-code</code></li>
-        </ul>
-        <h3>领域内部依赖</h3>
-        <ul>
-          <li>database-sys → database</li>
-          <li>download → database、database-sys、download-aria2</li>
-          <li>node-runtime → download</li>
-          <li>service-ip → service-setting</li>
-          <li>service-setting → database-sys</li>
-        </ul>
-        <h3>没有画的模板</h3>
-        <p><code>crates/platform/templates/client-module</code> 是模板（package 名是 <code>{{crate_name}}</code>），不在 workspace members 里。</p>
-        <h3>L0 步骤 02 里的调用</h3>
-        <p>Server 启动会启动 <code>NodeRuntime</code>。<code>create_default_database()</code> 定义在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>crates/platform/storage/database/src/database.rs</code> 第 324 行</a>。同一步还调用 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/storage/mod.rs#L67"><code>RouterDatabase::init</code></a>（定义在 traffic/router，<code>crates/traffic/router/src/storage/mod.rs</code> 第 67 行）。</p>
-      </div>
-    </details>
-  </section>
-
-  <section class="section" aria-labelledby="edge-title">
-    <h2 id="edge-title">跨领域依赖</h2>
-    <p class="note">18 条都来自各 crate Cargo.toml 的 <code>[dependencies]</code>。dev-dependencies 不在这张表里。</p>
-    <div class="table-wrap">
-      <table>
-        <caption>领域到领域的普通依赖，以及支撑它的 crate</caption>
-        <thead>
-          <tr>
-            <th scope="col">依赖</th>
-            <th scope="col">标记</th>
-            <th scope="col">支撑的 crate</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="edge-1" data-from="interfaces" data-to="traffic">
-            <th scope="row"><button type="button" class="rowhit" data-edge="1"><span class="edge-name">1 · interfaces 依赖 traffic</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul>
-              <li>server → router</li>
-              <li>service → router</li>
-              <li>burncloud (cli) → router</li>
-              <li>common → traffic-contracts</li>
-            </ul></td>
-          </tr>
-          <tr id="edge-2" data-from="interfaces" data-to="identity">
-            <th scope="row"><button type="button" class="rowhit" data-edge="2"><span class="edge-name">2 · interfaces 依赖 identity</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul>
-              <li>server → identity-token、identity-user</li>
-              <li>service → identity-token</li>
-              <li>burncloud (cli) → identity-user</li>
-            </ul></td>
-          </tr>
-          <tr id="edge-3" data-from="interfaces" data-to="supply">
-            <th scope="row"><button type="button" class="rowhit" data-edge="3"><span class="edge-name">3 · interfaces 依赖 supply</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul>
-              <li>server → supply-channel、supply-model</li>
-              <li>common → supply-contracts</li>
-              <li>burncloud (cli) → supply-channel、supply-contracts</li>
-            </ul></td>
-          </tr>
-          <tr id="edge-4" data-from="interfaces" data-to="commerce">
-            <th scope="row"><button type="button" class="rowhit" data-edge="4"><span class="edge-name">4 · interfaces 依赖 commerce</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul>
-              <li>common → commerce-contracts</li>
-              <li>burncloud (cli) → commerce-billing、commerce-contracts</li>
-            </ul></td>
-          </tr>
-          <tr id="edge-5" data-from="interfaces" data-to="trust">
-            <th scope="row"><button type="button" class="rowhit" data-edge="5"><span class="edge-name">5 · interfaces 依赖 trust</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul>
-              <li>service → service-inference。只有这一条，而且 burncloud-service 没有被任何 crate 依赖。</li>
-            </ul></td>
-          </tr>
-          <tr id="edge-6" data-from="interfaces" data-to="platform">
-            <th scope="row"><button type="button" class="rowhit" data-edge="6"><span class="edge-name">6 · interfaces 依赖 platform</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul>
-              <li>server → database、node-runtime、service-monitor</li>
-              <li>client → database（只在 liveview feature 下）</li>
-              <li>service → service-ip、service-monitor</li>
-              <li>burncloud (cli) → database、database-sys、auto-update、installer、code</li>
-              <li>tests → database</li>
-            </ul></td>
-          </tr>
-          <tr id="edge-7" data-from="traffic" data-to="supply">
-            <th scope="row"><button type="button" class="rowhit" data-edge="7"><span class="edge-name">7 · traffic 依赖 supply</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul><li>router → supply-channel、supply-contracts、supply-model</li></ul></td>
-          </tr>
-          <tr id="edge-8" data-from="traffic" data-to="identity">
-            <th scope="row"><button type="button" class="rowhit" data-edge="8"><span class="edge-name">8 · traffic 依赖 identity</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul><li>router → identity-token、identity-user</li></ul></td>
-          </tr>
-          <tr id="edge-9" data-from="traffic" data-to="commerce">
-            <th scope="row"><button type="button" class="rowhit" data-edge="9"><span class="edge-name">9 · traffic 依赖 commerce</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul><li>router → commerce-billing、commerce-contracts</li></ul></td>
-          </tr>
-          <tr id="edge-10" data-from="traffic" data-to="interfaces">
-            <th scope="row"><button type="button" class="rowhit" data-edge="10"><span class="edge-name">10 · traffic 依赖 interfaces</span></button></th>
-            <td><span class="tag rev">反向</span></td>
-            <td class="edge-body"><ul><li>router → common。router 用了 <code>burncloud_common::constants</code> 等。</li></ul></td>
-          </tr>
-          <tr id="edge-11" data-from="traffic" data-to="platform">
-            <th scope="row"><button type="button" class="rowhit" data-edge="11"><span class="edge-name">11 · traffic 依赖 platform</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul><li>router → database</li></ul></td>
-          </tr>
-          <tr id="edge-12" data-from="identity" data-to="traffic">
-            <th scope="row"><button type="button" class="rowhit" data-edge="12"><span class="edge-name">12 · identity 依赖 traffic</span></button></th>
-            <td><span class="tag con">仅契约</span></td>
-            <td class="edge-body"><ul><li>identity-user → traffic-contracts</li></ul></td>
-          </tr>
-          <tr id="edge-13" data-from="identity" data-to="platform">
-            <th scope="row"><button type="button" class="rowhit" data-edge="13"><span class="edge-name">13 · identity 依赖 platform</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul>
-              <li>identity-token → database</li>
-              <li>identity-user → database</li>
-            </ul></td>
-          </tr>
-          <tr id="edge-14" data-from="supply" data-to="platform">
-            <th scope="row"><button type="button" class="rowhit" data-edge="14"><span class="edge-name">14 · supply 依赖 platform</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul>
-              <li>supply-channel → database</li>
-              <li>supply-model → database、node-runtime、service-ip、service-setting</li>
-            </ul></td>
-          </tr>
-          <tr id="edge-15" data-from="commerce" data-to="supply">
-            <th scope="row"><button type="button" class="rowhit" data-edge="15"><span class="edge-name">15 · commerce 依赖 supply</span></button></th>
-            <td><span class="tag con">仅契约</span></td>
-            <td class="edge-body"><ul><li>commerce-billing → supply-contracts</li></ul></td>
-          </tr>
-          <tr id="edge-16" data-from="commerce" data-to="platform">
-            <th scope="row"><button type="button" class="rowhit" data-edge="16"><span class="edge-name">16 · commerce 依赖 platform</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul><li>commerce-billing → database</li></ul></td>
-          </tr>
-          <tr id="edge-17" data-from="trust" data-to="supply">
-            <th scope="row"><button type="button" class="rowhit" data-edge="17"><span class="edge-name">17 · trust 依赖 supply</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul><li>service-inference → supply-channel、supply-contracts</li></ul></td>
-          </tr>
-          <tr id="edge-18" data-from="trust" data-to="platform">
-            <th scope="row"><button type="button" class="rowhit" data-edge="18"><span class="edge-name">18 · trust 依赖 platform</span></button></th>
-            <td><span class="tag">普通</span></td>
-            <td class="edge-body"><ul><li>service-inference → database</li></ul></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="section">
-    <h2>测试依赖，没有画进主图</h2>
-    <ul>
-      <li>tests → identity-user、router、server、supply-channel</li>
-      <li>service-inference → router</li>
-      <li>node-runtime → supply-model</li>
-      <li>service-setting → database</li>
-      <li>service-ip → database</li>
-    </ul>
-    <p class="note">这些是 dev-dependencies，只用于测试。</p>
-  </section>
 
   <footer class="foot">
-    <p>架构事实只来自 burncloud/burncloud 的 main 提交 <a href="https://github.com/burncloud/burncloud/commit/879e5276b0ed24c3164ec05750d4f44339e92663"><code>879e5276b0ed24c3164ec05750d4f44339e92663</code></a>。图上共 29 个 crate：28 个成员 crate + 1 个根包 <code>burncloud</code>。模板 crate 不在内。标注「推断 · 待确认」的句子不是已经核对过的事实。</p>
+    <p>事实来自 burncloud/burncloud 的 main 提交 <a href="https://github.com/burncloud/burncloud/commit/879e5276b0ed24c3164ec05750d4f44339e92663"><code>879e5276b0ed24c3164ec05750d4f44339e92663</code></a>。图上 7 个领域，背后是 29 个包：28 个成员加根包 <code>burncloud</code>。模板包不在内。</p>
+    <p><button type="button" id="open-devdeps">测试用的依赖，没有画进图</button></p>
   </footer>
 </div>
+
+<aside id="panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" hidden>
+  <div class="panel-bar">
+    <h2 id="panel-title"></h2>
+    <button type="button" id="panel-close">关闭</button>
+  </div>
+  <div id="panel-body" aria-live="polite"></div>
+</aside>
+<div id="library">
+  <article id="fact-interfaces" data-title="入口">
+    <p>程序、网页控制台和命令行从这里启动，再去用身份、转发、供给、计费、本地推理和底座。</p>
+    <p><a href="l0.html">回一次请求那页</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p>对应领域：interfaces。根包和入口层。service 只做再导出，没有其他 crate 依赖它。</p>
+      <h4>crate</h4>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/cli"><code>crates/interfaces/cli</code></a> · <code>burncloud</code>（根包的 bin）</li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server"><code>crates/interfaces/server</code></a> · <code>burncloud-server</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client"><code>crates/interfaces/client</code></a> · <code>burncloud-client</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/common"><code>crates/interfaces/common</code></a> · <code>burncloud-common</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/service"><code>crates/interfaces/service</code></a> · <code>burncloud-service</code>。只做再导出，没有其他 crate 依赖它。</li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/tests"><code>crates/interfaces/tests</code></a> · <code>burncloud-tests</code></li>
+      </ul>
+      <h4>领域内部依赖</h4>
+      <ul>
+        <li>burncloud (cli) → server、client、common</li>
+        <li>server → client、common</li>
+        <li>client → common</li>
+        <li>tests → common</li>
+      </ul>
+      <h4>记录，不另画方块</h4>
+      <p><code>crates/interfaces/service/src/lib.rs</code> 里有一行注释：<code>// pub use burncloud_supply_model as models; // TEMP: broken dep chain</code>。素材说这只是记录，不影响画图。</p>
+      <h4>一次请求里点过名的函数</h4>
+      <ul>
+        <li><code>main()</code>、<code>run_async_server()</code>、<code>ensure_runtime_secrets()</code>、<code>launch_gui_with_tray()</code>、<code>DEFAULT_PORT</code></li>
+        <li><code>start_server()</code> → <code>create_app()</code> → <code>create_app_with_node_request_state()</code></li>
+        <li><code>security_boundary_middleware</code>、<code>liveview_router</code>、<code>route_miss_response()</code></li>
+        <li><code>SetRequestIdLayer</code>、<code>PropagateRequestIdLayer</code></li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-identity" data-title="身份">
+    <p>管调用方的密钥和额度：核对是谁，还能用多少。它用到底座来存放这些，也只借用了转发的一份约定。</p>
+    <p><a href="l0.html">回一次请求那页</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p>对应领域：identity。</p>
+      <h4>crate</h4>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/identity/token"><code>crates/identity/token</code></a> · <code>burncloud-identity-token</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/identity/user"><code>crates/identity/user</code></a> · <code>burncloud-identity-user</code>（lib 名是 <code>burncloud_service_user</code>）</li>
+      </ul>
+      <h4>领域内部依赖</h4>
+      <p>素材列出的领域内部依赖里没有 identity。</p>
+      <h4>一次请求里点过名的函数</h4>
+      <ul>
+        <li><code>TokenService::active_api_key_identity</code>（鉴权）</li>
+        <li><code>TokenService::deduct_quota</code>（扣额度）</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-supply" data-title="供给">
+    <p>登记有哪些上游、各自能做哪个模型。转发来问它，再自己决定用哪一个。</p>
+    <p><a href="l0.html">回一次请求那页</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p>对应领域：supply。</p>
+      <h4>crate</h4>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/supply/contracts"><code>crates/supply/contracts</code></a> · <code>burncloud-supply-contracts</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/supply/channel"><code>crates/supply/channel</code></a> · <code>burncloud-supply-channel</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/supply/model"><code>crates/supply/model</code></a> · <code>burncloud-supply-model</code></li>
+      </ul>
+      <h4>领域内部依赖</h4>
+      <ul><li>supply-channel → supply-contracts</li></ul>
+      <h4>一次请求里点过名的函数</h4>
+      <p><code>ChannelService</code> 查 <code>channel_abilities</code>。代码注释原话：Supply 拥有查询，Traffic 拥有路由决策。</p>
+    </div>
+  </article>
+  <article id="fact-traffic" data-title="转发">
+    <p>一次请求的中转站。它用到的地方最多：身份、供给、计费、底座，还有入口里的公共部分。</p>
+    <p><a href="l0.html">回一次请求那页</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p>对应领域：traffic。router 是依赖最多的枢纽，直接依赖 identity、supply、commerce、platform、interfaces/common 五处。</p>
+      <h4>crate</h4>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/contracts"><code>crates/traffic/contracts</code></a> · <code>burncloud-traffic-contracts</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router"><code>crates/traffic/router</code></a> · <code>burncloud-router</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router-aws"><code>crates/traffic/router-aws</code></a> · <code>burncloud-router-aws</code>。没有依赖任何内部 crate，也没有被依赖。</li>
+      </ul>
+      <h4>领域内部依赖</h4>
+      <ul><li>router → traffic-contracts</li></ul>
+      <h4>一次请求里点过名的函数</h4>
+      <ul>
+        <li><code>create_router_app_with_route_miss()</code>、<code>proxy_handler()</code>、<code>proxy_logic()</code></li>
+        <li><code>route_for_dispatch()</code>、<code>route_with_scheduler()</code></li>
+        <li><code>get_adaptor(...)</code>、<code>build_gemini_passthrough_url</code>、<code>req_builder.send()</code></li>
+        <li><code>LocalExchange</code>、<code>UnifiedTokenCounter</code>、<code>insert_log</code></li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-commerce" data-title="计费">
+    <p>查这个模型有没有定价，并按用了多少算出费用。它用底座存数据，也只借用供给的一份约定。</p>
+    <p><a href="l0.html">回一次请求那页</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p>对应领域：commerce。</p>
+      <h4>crate</h4>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/commerce/contracts"><code>crates/commerce/contracts</code></a> · <code>burncloud-commerce-contracts</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/commerce/billing"><code>crates/commerce/billing</code></a> · <code>burncloud-commerce-billing</code></li>
+      </ul>
+      <h4>领域内部依赖</h4>
+      <ul><li>commerce-billing → commerce-contracts</li></ul>
+      <h4>一次请求里点过名的函数</h4>
+      <ul>
+        <li><code>CostCalculator::preflight(model, None)</code></li>
+        <li><code>cost_calculator.calculate(...)</code></li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-trust" data-title="本地推理">
+    <p>管理本机上的推理进程。当前这一次对话请求的主线上看不到它。它用到供给和底座，但入口里只有一个没人再去用的包指向它。</p>
+    <p><a href="l0.html">一次请求的步骤里没有本地推理。</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>对应领域：trust。唯一 crate 是本地推理进程管理。它只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖，所以当前请求主线上看不到 trust。</p>
+      <h4>crate</h4>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/trust/inference"><code>crates/trust/inference</code></a> · <code>burncloud-service-inference</code>。注释说明：本地推理服务管理，负责 llama-server 等进程。</li>
+      </ul>
+      <h4>领域内部依赖</h4>
+      <p>素材列出的领域内部依赖里没有 trust。</p>
+      <p>跨领域只有一条进来：interfaces 的 service → service-inference，而且 <code>burncloud-service</code> 没有被任何 crate 依赖。trust 自己依赖 supply 和 platform。</p>
+      <h4>一次请求</h4>
+      <p>未找到调用点。<a href="l0.html">一次请求的步骤里没有 trust。</a></p>
+    </div>
+  </article>
+  <article id="fact-platform" data-title="底座">
+    <p>最底下的一层。数据库、下载、安装、监控都在这里。它没有再去用其他领域。</p>
+    <p><a href="l0.html">回一次请求那页</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p>对应领域：platform。最底层。没有指向其他领域的普通依赖。</p>
+      <h4>crate</h4>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database"><code>crates/platform/storage/database</code></a> · <code>burncloud-database</code>。Cargo.toml 注释写明它刻意不依赖 identity-user / supply-channel，并由 <code>deny.toml</code> 强制禁止。</li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database-sys"><code>crates/platform/storage/database-sys</code></a> · <code>burncloud-database-sys</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/download"><code>crates/platform/storage/download</code></a> · <code>burncloud-download</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/download-aria2"><code>crates/platform/storage/download-aria2</code></a> · <code>burncloud-download-aria2</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/configuration/setting"><code>crates/platform/configuration/setting</code></a> · <code>burncloud-service-setting</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/observability/ip"><code>crates/platform/observability/ip</code></a> · <code>burncloud-service-ip</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/observability/monitor"><code>crates/platform/observability/monitor</code></a> · <code>burncloud-service-monitor</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/lifecycle/installer"><code>crates/platform/lifecycle/installer</code></a> · <code>burncloud-installer</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/lifecycle/update"><code>crates/platform/lifecycle/update</code></a> · <code>burncloud-auto-update</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/lifecycle/loops"><code>crates/platform/lifecycle/loops</code></a> · <code>burncloud-loops</code>。没有内部依赖，也没有被依赖。</li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/node"><code>crates/platform/node</code></a> · <code>burncloud-node-runtime</code>。注释：不监听端口、不起第二个 HTTP server，只负责本机 Node 的运行时生命周期。</li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/code"><code>crates/platform/code</code></a> · <code>burncloud-code</code></li>
+      </ul>
+      <h4>领域内部依赖</h4>
+      <ul>
+        <li>database-sys → database</li>
+        <li>download → database、database-sys、download-aria2</li>
+        <li>node-runtime → download</li>
+        <li>service-ip → service-setting</li>
+        <li>service-setting → database-sys</li>
+      </ul>
+      <h4>没有画的模板</h4>
+      <p><code>crates/platform/templates/client-module</code> 是模板（package 名是 <code>{{crate_name}}</code>），不在 workspace members 里。</p>
+      <h4>一次请求启动时的调用</h4>
+      <p>Server 启动会启动 <code>NodeRuntime</code>。<code>create_default_database()</code> 定义在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>crates/platform/storage/database/src/database.rs</code> 第 324 行</a>。同一步还调用 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/storage/mod.rs#L67"><code>RouterDatabase::init</code></a>（定义在 traffic/router，<code>crates/traffic/router/src/storage/mod.rs</code> 第 67 行）。</p>
+    </div>
+  </article>
+  <article id="fact-edge-1" data-title="入口用到了转发"><p>程序入口、服务和公共部分，会去用转发来处理请求。</p><div class="dev"><h3>给开发者看</h3><p>interfaces → traffic。普通依赖。</p><ul><li>server → router</li><li>service → router</li><li>burncloud (cli) → router</li><li>common → traffic-contracts</li></ul></div></article>
+  <article id="fact-edge-2" data-title="入口用到了身份"><p>入口要核对调用方、也要管理人，所以用到身份。</p><div class="dev"><h3>给开发者看</h3><p>interfaces → identity。普通依赖。</p><ul><li>server → identity-token、identity-user</li><li>service → identity-token</li><li>burncloud (cli) → identity-user</li></ul></div></article>
+  <article id="fact-edge-3" data-title="入口用到了供给"><p>入口会去看有哪些上游、哪些模型。</p><div class="dev"><h3>给开发者看</h3><p>interfaces → supply。普通依赖。</p><ul><li>server → supply-channel、supply-model</li><li>common → supply-contracts</li><li>burncloud (cli) → supply-channel、supply-contracts</li></ul></div></article>
+  <article id="fact-edge-4" data-title="入口用到了计费"><p>入口会去查价格、算费用。</p><div class="dev"><h3>给开发者看</h3><p>interfaces → commerce。普通依赖。</p><ul><li>common → commerce-contracts</li><li>burncloud (cli) → commerce-billing、commerce-contracts</li></ul></div></article>
+  <article id="fact-edge-5" data-title="入口用到了本地推理"><p>只有入口里一个没人再引用的包，指向本地推理。这次对话请求的主线上看不到它。</p><div class="dev"><h3>给开发者看</h3><p>interfaces → trust。普通依赖。</p><ul><li>service → service-inference。只有这一条，而且 burncloud-service 没有被任何 crate 依赖。</li></ul></div></article>
+  <article id="fact-edge-6" data-title="入口用到了底座"><p>入口用底座来放数据、管本机节点、做安装和更新。</p><div class="dev"><h3>给开发者看</h3><p>interfaces → platform。普通依赖。</p><ul><li>server → database、node-runtime、service-monitor</li><li>client → database（只在 liveview feature 下）</li><li>service → service-ip、service-monitor</li><li>burncloud (cli) → database、database-sys、auto-update、installer、code</li><li>tests → database</li></ul></div></article>
+  <article id="fact-edge-7" data-title="转发用到了供给"><p>转发问供给：谁能做这个模型。决定用哪一个，仍是转发的事。</p><div class="dev"><h3>给开发者看</h3><p>traffic → supply。普通依赖。</p><ul><li>router → supply-channel、supply-contracts、supply-model</li></ul></div></article>
+  <article id="fact-edge-8" data-title="转发用到了身份"><p>转发核对密钥、扣额度时，用到身份。</p><div class="dev"><h3>给开发者看</h3><p>traffic → identity。普通依赖。</p><ul><li>router → identity-token、identity-user</li></ul></div></article>
+  <article id="fact-edge-9" data-title="转发用到了计费"><p>转发在发出去之前查标价，回来之后算费用，都用到计费。</p><div class="dev"><h3>给开发者看</h3><p>traffic → commerce。普通依赖。</p><ul><li>router → commerce-billing、commerce-contracts</li></ul></div></article>
+  <article id="fact-edge-10" data-title="转发用到了入口"><p>这是反过来的。转发用了入口里的公共常量，所以用虚线单独标出。</p><div class="dev"><h3>给开发者看</h3><p>traffic → interfaces。反向。</p><ul><li>router → common。router 用了 <code>burncloud_common::constants</code> 等。</li></ul></div></article>
+  <article id="fact-edge-11" data-title="转发用到了底座"><p>转发把路由记录写进底座的库。</p><div class="dev"><h3>给开发者看</h3><p>traffic → platform。普通依赖。</p><ul><li>router → database</li></ul></div></article>
+  <article id="fact-edge-12" data-title="身份用到了转发"><p>只用了一份约定，没有用到转发的具体实现。图上是点线。</p><div class="dev"><h3>给开发者看</h3><p>identity → traffic。仅契约。</p><ul><li>identity-user → traffic-contracts</li></ul></div></article>
+  <article id="fact-edge-13" data-title="身份用到了底座"><p>密钥和用户记在底座的库里。</p><div class="dev"><h3>给开发者看</h3><p>identity → platform。普通依赖。</p><ul><li>identity-token → database</li><li>identity-user → database</li></ul></div></article>
+  <article id="fact-edge-14" data-title="供给用到了底座"><p>上游和模型的登记，放在底座的库里，也用到本机节点和一些设置。</p><div class="dev"><h3>给开发者看</h3><p>supply → platform。普通依赖。</p><ul><li>supply-channel → database</li><li>supply-model → database、node-runtime、service-ip、service-setting</li></ul></div></article>
+  <article id="fact-edge-15" data-title="计费用到了供给"><p>只用了一份约定，没有用到供给的具体实现。图上是点线。</p><div class="dev"><h3>给开发者看</h3><p>commerce → supply。仅契约。</p><ul><li>commerce-billing → supply-contracts</li></ul></div></article>
+  <article id="fact-edge-16" data-title="计费用到了底座"><p>价格和账记在底座的库里。</p><div class="dev"><h3>给开发者看</h3><p>commerce → platform。普通依赖。</p><ul><li>commerce-billing → database</li></ul></div></article>
+  <article id="fact-edge-17" data-title="本地推理用到了供给"><p>本地推理进程管理会用到供给里的上游登记。它不在这次对话请求的主线上。</p><div class="dev"><h3>给开发者看</h3><p>trust → supply。普通依赖。</p><ul><li>service-inference → supply-channel、supply-contracts</li></ul></div></article>
+  <article id="fact-edge-18" data-title="本地推理用到了底座"><p>本地推理把需要记住的东西放进底座的库。它不在这次对话请求的主线上。</p><div class="dev"><h3>给开发者看</h3><p>trust → platform。普通依赖。</p><ul><li>service-inference → database</li></ul></div></article>
+  <article id="fact-devdeps" data-title="测试用的依赖">
+    <p>这些只在测试里用到，没有画进上面的图。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p>dev-dependencies，只用于测试。</p>
+      <ul>
+        <li>tests → identity-user、router、server、supply-channel</li>
+        <li>service-inference → router</li>
+        <li>node-runtime → supply-model</li>
+        <li>service-setting → database</li>
+        <li>service-ip → database</li>
+      </ul>
+    </div>
+  </article>
+</div>
+<noscript><style>#library{display:block !important}#library article{display:block;margin:14px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--card)}</style></noscript>
 <script>
 (function () {
   var root = document.documentElement;
@@ -745,9 +474,7 @@ tr.is-on, tr.is-hover { background: var(--soft); }
     if (set === "light" || set === "dark") return set;
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
-  function paintTheme() {
-    themeBtn.textContent = effective() === "dark" ? "切换浅色" : "切换深色";
-  }
+  function paintTheme() { themeBtn.textContent = effective() === "dark" ? "浅色" : "深色"; }
   themeBtn.addEventListener("click", function () {
     var next = effective() === "dark" ? "light" : "dark";
     root.setAttribute("data-theme", next);
@@ -756,127 +483,348 @@ tr.is-on, tr.is-hover { background: var(--soft); }
   });
   paintTheme();
 
-  var map = document.getElementById("map");
-  var detail = document.getElementById("detail");
-  var overview = detail.innerHTML;
-  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
-  var pills = Array.prototype.slice.call(document.querySelectorAll(".pill"));
-  var rows = Array.prototype.slice.call(document.querySelectorAll("tbody tr"));
-  var edges = Array.prototype.slice.call(document.querySelectorAll(".edge"));
+  var EDGES = [
+    { id: "1", from: "interfaces", to: "traffic", title: "入口用到了转发", kind: "main", tags: "request" },
+    { id: "2", from: "interfaces", to: "identity", title: "入口用到了身份", kind: "main", tags: "request" },
+    { id: "3", from: "interfaces", to: "supply", title: "入口用到了供给", kind: "main", tags: "request" },
+    { id: "4", from: "interfaces", to: "commerce", title: "入口用到了计费", kind: "main", tags: "request billing" },
+    { id: "5", from: "interfaces", to: "trust", title: "入口用到了本地推理", kind: "main", tags: "aside" },
+    { id: "6", from: "interfaces", to: "platform", title: "入口用到了底座", kind: "main", tags: "request billing" },
+    { id: "7", from: "traffic", to: "supply", title: "转发用到了供给", kind: "main", tags: "request" },
+    { id: "8", from: "traffic", to: "identity", title: "转发用到了身份", kind: "main", tags: "request" },
+    { id: "9", from: "traffic", to: "commerce", title: "转发用到了计费", kind: "main", tags: "request billing" },
+    { id: "10", from: "traffic", to: "interfaces", title: "转发用到了入口", kind: "rev", tags: "request", mark: "反向" },
+    { id: "11", from: "traffic", to: "platform", title: "转发用到了底座", kind: "main", tags: "request" },
+    { id: "12", from: "identity", to: "traffic", title: "身份用到了转发", kind: "con", tags: "request", mark: "只是约定" },
+    { id: "13", from: "identity", to: "platform", title: "身份用到了底座", kind: "main", tags: "request" },
+    { id: "14", from: "supply", to: "platform", title: "供给用到了底座", kind: "main", tags: "request" },
+    { id: "15", from: "commerce", to: "supply", title: "计费用到了供给", kind: "con", tags: "billing", mark: "只是约定" },
+    { id: "16", from: "commerce", to: "platform", title: "计费用到了底座", kind: "main", tags: "billing" },
+    { id: "17", from: "trust", to: "supply", title: "本地推理用到了供给", kind: "main", tags: "aside" },
+    { id: "18", from: "trust", to: "platform", title: "本地推理用到了底座", kind: "main", tags: "aside" }
+  ];
+
+  var list = document.getElementById("edge-list");
+  EDGES.forEach(function (e) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "edge-btn";
+    b.setAttribute("data-tags", e.tags);
+    b.setAttribute("data-open-edge", e.id);
+    b.innerHTML = e.title + (e.mark ? '<span class="meta">' + e.mark + "</span>" : "");
+    list.appendChild(b);
+  });
+
+  var panel = document.getElementById("panel");
+  var panelTitle = document.getElementById("panel-title");
+  var panelBody = document.getElementById("panel-body");
+  var lastFocus = null;
+  var cards = Array.prototype.slice.call(document.querySelectorAll("#stage .card"));
   var order = ["interfaces", "trust", "identity", "traffic", "supply", "commerce", "platform"];
-
-  function clearHot() {
-    map.classList.remove("is-filtering");
-    cards.forEach(function (c) { c.classList.remove("is-hot"); c.setAttribute("aria-pressed", "false"); });
-    edges.forEach(function (e) { e.classList.remove("is-hot", "is-hover"); });
-    pills.forEach(function (p) { p.classList.remove("is-on"); });
-    rows.forEach(function (r) { r.classList.remove("is-on", "is-hover"); });
+  function park() {
+    if (panel.hidden || window.innerWidth >= 901) document.body.style.paddingBottom = "";
+    else document.body.style.paddingBottom = (panel.offsetHeight + 28) + "px";
   }
-  function edgeById(id) {
-    return edges.filter(function (e) { return e.getAttribute("data-edge") === id; });
+  function show(id) {
+    var src = document.getElementById(id);
+    if (!src) return;
+    lastFocus = document.activeElement;
+    panelTitle.textContent = src.getAttribute("data-title") || "";
+    var clone = src.cloneNode(true);
+    clone.removeAttribute("id");
+    panelBody.replaceChildren(clone);
+    panel.hidden = false;
+    park();
   }
-  function rowById(id) { return document.getElementById("edge-" + id); }
-  function showOverview() {
-    clearHot();
-    detail.innerHTML = overview;
+  function closePanel() {
+    panel.hidden = true;
+    cards.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+    park();
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
   }
-  function showNode(node) {
-    detail.replaceChildren();
-    detail.appendChild(node);
+  function mark(id) {
+    cards.forEach(function (c) { c.setAttribute("aria-pressed", c.id === id ? "true" : "false"); });
   }
-  function selectDomain(id) {
-    clearHot();
-    map.classList.add("is-filtering");
-    cards.forEach(function (c) {
-      var on = c.getAttribute("data-domain") === id;
-      c.classList.toggle("is-hot", on);
-      c.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-    edges.forEach(function (e) {
-      var hot = e.getAttribute("data-from") === id || e.getAttribute("data-to") === id;
-      e.classList.toggle("is-hot", hot);
-      if (hot) {
-        var pill = document.querySelector('.pill[data-edge="' + e.getAttribute("data-edge") + '"]');
-        if (pill) pill.classList.add("is-on");
-        var row = rowById(e.getAttribute("data-edge"));
-        if (row) row.classList.add("is-on");
-      }
-    });
-    var body = document.querySelector("#about-" + id + " .about-body");
-    if (body) showNode(body.cloneNode(true));
-  }
-  function selectEdge(id) {
-    clearHot();
-    map.classList.add("is-filtering");
-    var row = rowById(id);
-    if (!row) return;
-    row.classList.add("is-on");
-    var from = row.getAttribute("data-from");
-    var to = row.getAttribute("data-to");
-    cards.forEach(function (c) {
-      var name = c.getAttribute("data-domain");
-      var on = name === from || name === to;
-      c.classList.toggle("is-hot", on);
-      c.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-    edgeById(id).forEach(function (e) { e.classList.add("is-hot"); });
-    var pill = document.querySelector('.pill[data-edge="' + id + '"]');
-    if (pill) pill.classList.add("is-on");
-    var wrap = document.createElement("div");
-    var h = document.createElement("h2");
-    h.textContent = row.querySelector(".edge-name").textContent;
-    var tag = row.querySelector(".tag");
-    var p = document.createElement("p");
-    p.textContent = tag ? tag.textContent : "";
-    wrap.appendChild(h);
-    if (tag) wrap.appendChild(p);
-    wrap.appendChild(row.querySelector(".edge-body").cloneNode(true));
-    showNode(wrap);
-  }
-  function hoverEdge(id, on) {
-    edgeById(id).forEach(function (e) { e.classList.toggle("is-hover", on); });
-    var row = rowById(id);
-    if (row) row.classList.toggle("is-hover", on);
-  }
-
+  document.getElementById("panel-close").addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !panel.hidden) closePanel();
+  });
   cards.forEach(function (card) {
-    card.addEventListener("click", function () { selectDomain(card.getAttribute("data-domain")); });
+    card.addEventListener("click", function () { mark(card.id); show("fact-" + card.id); });
     card.addEventListener("keydown", function (e) {
       if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       e.preventDefault();
-      var id = card.getAttribute("data-domain");
-      var i = order.indexOf(id);
+      var i = order.indexOf(card.id);
       var n = (e.key === "ArrowDown" || e.key === "ArrowRight") ? i + 1 : i - 1;
       if (n < 0 || n >= order.length) return;
       var next = document.getElementById(order[n]);
       next.focus();
-      selectDomain(order[n]);
+      mark(order[n]);
+      show("fact-" + order[n]);
     });
   });
-  function bindEdge(el) {
-    var id = el.getAttribute("data-edge");
-    el.addEventListener("click", function () { selectEdge(id); });
-    el.addEventListener("mouseenter", function () { hoverEdge(id, true); });
-    el.addEventListener("mouseleave", function () { hoverEdge(id, false); });
-    el.addEventListener("focus", function () { hoverEdge(id, true); });
-    el.addEventListener("blur", function () { hoverEdge(id, false); });
+  document.getElementById("stack").addEventListener("click", function (e) {
+    var t = e.target.closest("[data-open],[data-open-edge]");
+    if (!t) return;
+    if (t.getAttribute("data-open")) show("fact-" + t.getAttribute("data-open"));
+    if (t.getAttribute("data-open-edge")) show("fact-edge-" + t.getAttribute("data-open-edge"));
+  });
+  document.getElementById("open-devdeps").addEventListener("click", function () { show("fact-devdeps"); });
+
+  var filter = "all";
+  var pills = Array.prototype.slice.call(document.querySelectorAll(".pills button"));
+  var note = document.getElementById("filter-note");
+  function applyFilter(name) {
+    filter = name;
+    pills.forEach(function (p) {
+      p.setAttribute("aria-checked", p.getAttribute("data-filter") === name ? "true" : "false");
+    });
+    note.classList.toggle("is-on", name === "wip");
+    document.querySelectorAll("[data-tags]").forEach(function (el) {
+      var tags = (el.getAttribute("data-tags") || "").split(/\s+/);
+      var on = name === "all" || name === "wip" || tags.indexOf(name) !== -1;
+      if (name === "wip") on = false;
+      el.classList.toggle("is-dim", !on && name !== "all");
+    });
+    if (name === "wip") {
+      document.querySelectorAll("[data-tags]").forEach(function (el) { el.classList.add("is-dim"); });
+    }
   }
-  pills.forEach(bindEdge);
-  document.querySelectorAll(".rowhit").forEach(bindEdge);
-  edges.forEach(function (e) {
-    e.addEventListener("click", function () { selectEdge(e.getAttribute("data-edge")); });
-    e.addEventListener("mouseenter", function () { hoverEdge(e.getAttribute("data-edge"), true); });
-    e.addEventListener("mouseleave", function () { hoverEdge(e.getAttribute("data-edge"), false); });
+  pills.forEach(function (p, i) {
+    p.addEventListener("click", function () { applyFilter(p.getAttribute("data-filter")); });
+    p.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      e.preventDefault();
+      var n = e.key === "ArrowRight" ? i + 1 : i - 1;
+      if (n < 0 || n >= pills.length) return;
+      pills[n].focus();
+      applyFilter(pills[n].getAttribute("data-filter"));
+    });
   });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") showOverview();
-  });
+
+  function isWide() { return window.matchMedia("(min-width: 901px)").matches; }
+  function box(el) {
+    return { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight,
+      r: el.offsetLeft + el.offsetWidth, b: el.offsetTop + el.offsetHeight,
+      cx: el.offsetLeft + el.offsetWidth / 2, cy: el.offsetTop + el.offsetHeight / 2 };
+  }
+  function pathOf(pts) {
+    if (!pts || pts.length < 2) return "";
+    var r = 10;
+    var d = "M " + pts[0].x.toFixed(1) + " " + pts[0].y.toFixed(1);
+    for (var i = 1; i < pts.length - 1; i++) {
+      var prev = pts[i - 1], cur = pts[i], next = pts[i + 1];
+      var v1x = cur.x - prev.x, v1y = cur.y - prev.y;
+      var v2x = next.x - cur.x, v2y = next.y - cur.y;
+      var l1 = Math.hypot(v1x, v1y) || 1;
+      var l2 = Math.hypot(v2x, v2y) || 1;
+      var rr = Math.min(r, l1 / 2, l2 / 2);
+      if (rr < 2) { d += " L " + cur.x.toFixed(1) + " " + cur.y.toFixed(1); continue; }
+      d += " L " + (cur.x - v1x / l1 * rr).toFixed(1) + " " + (cur.y - v1y / l1 * rr).toFixed(1);
+      d += " Q " + cur.x.toFixed(1) + " " + cur.y.toFixed(1) + " " + (cur.x + v2x / l2 * rr).toFixed(1) + " " + (cur.y + v2y / l2 * rr).toFixed(1);
+    }
+    var last = pts[pts.length - 1];
+    d += " L " + last.x.toFixed(1) + " " + last.y.toFixed(1);
+    return d;
+  }
+  var chip = document.getElementById("chip");
+  function placeChip(text, x, y) {
+    chip.textContent = text;
+    chip.style.display = "block";
+    chip.style.left = x + "px";
+    chip.style.top = (y - 18) + "px";
+  }
+  function hideChip() { chip.style.display = "none"; }
+
+  function layout() {
+    var mids = ["trust", "identity", "traffic", "supply", "commerce"].map(function (id) { return document.getElementById(id); });
+    var bottom = 0;
+    mids.forEach(function (el) { bottom = Math.max(bottom, el.offsetTop + el.offsetHeight); });
+    var plat = document.getElementById("platform");
+    plat.style.top = (bottom + 128) + "px";
+    var stage = document.getElementById("stage");
+    stage.style.height = (plat.offsetTop + plat.offsetHeight + 24) + "px";
+  }
+  function fit() {
+    var host = document.getElementById("host");
+    var stage = document.getElementById("stage");
+    if (!isWide()) { host.style.height = ""; return; }
+    var scale = Math.min(1, host.clientWidth / 1120);
+    stage.style.transform = "scale(" + scale + ")";
+    stage.style.transformOrigin = "top left";
+    stage.style.left = Math.max(0, (host.clientWidth - 1120 * scale) / 2) + "px";
+    host.style.height = (stage.offsetHeight * scale + 4) + "px";
+  }
+
+  var svg = document.getElementById("wires");
+  var ns = "http://www.w3.org/2000/svg";
+  function draw() {
+    layout();
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var stage = document.getElementById("stage");
+    svg.setAttribute("width", 1120);
+    svg.setAttribute("height", stage.offsetHeight);
+    svg.style.height = stage.offsetHeight + "px";
+    var defs = document.createElementNS(ns, "defs");
+    defs.innerHTML = '<marker id="arrow" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 4 L0 8 z"></path></marker>';
+    svg.appendChild(defs);
+    var B = {};
+    order.forEach(function (id) { B[id] = box(document.getElementById(id)); });
+    var topGap = (B.identity.y + B.interfaces.b) / 2;
+    var low = Math.max(B.trust.b, B.identity.b, B.traffic.b, B.supply.b, B.commerce.b);
+    var ch1 = low + 36;
+    var ch2 = low + 72;
+    function add(edge, pts, withMarker) {
+      if (withMarker === undefined) withMarker = true;
+      var d = pathOf(pts);
+      if (!d) return;
+      var hit = document.createElementNS(ns, "path");
+      hit.setAttribute("d", d);
+      hit.setAttribute("class", "hit");
+      hit.setAttribute("tabindex", "0");
+      hit.setAttribute("role", "button");
+      hit.setAttribute("aria-label", edge.title);
+      hit.setAttribute("data-tags", edge.tags);
+      hit.addEventListener("click", function () { mark(edge.from); mark(edge.to); document.getElementById(edge.from).setAttribute("aria-pressed", "true"); document.getElementById(edge.to).setAttribute("aria-pressed", "true"); show("fact-edge-" + edge.id); });
+      hit.addEventListener("keydown", function (e) {
+        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); hit.dispatchEvent(new Event("click")); }
+      });
+      hit.addEventListener("focus", function () { placeChip(edge.title, pts[0].x, pts[0].y); });
+      hit.addEventListener("blur", hideChip);
+      hit.addEventListener("mouseenter", function () { placeChip(edge.title, (pts[0].x + pts[pts.length - 1].x) / 2, (pts[0].y + pts[pts.length - 1].y) / 2); });
+      hit.addEventListener("mouseleave", hideChip);
+      svg.appendChild(hit);
+      var vis = document.createElementNS(ns, "path");
+      vis.setAttribute("d", d);
+      vis.setAttribute("class", "edge" + (edge.kind === "rev" ? " rev" : edge.kind === "con" ? " con" : ""));
+      if (withMarker) vis.setAttribute("marker-end", "url(#arrow)");
+      vis.setAttribute("data-tags", edge.tags);
+      svg.appendChild(vis);
+      if (edge.mark && withMarker) {
+        var lab = document.createElement("button");
+        lab.type = "button";
+        lab.className = "tag-label";
+        lab.textContent = edge.mark;
+        lab.setAttribute("data-tags", edge.tags);
+        if (edge.kind === "con") {
+          var from = B[edge.from], to = B[edge.to];
+          lab.style.left = ((Math.min(from.r, to.r) + Math.max(from.x, to.x)) / 2) + "px";
+          lab.style.top = (Math.max(from.b, to.b) + 10) + "px";
+          lab.style.transform = "translateX(-50%)";
+        } else {
+          var mid = pts[Math.floor(pts.length / 2)];
+          lab.style.left = (mid.x + 8) + "px";
+          lab.style.top = (mid.y - 8) + "px";
+        }
+        lab.addEventListener("click", function () { show("fact-edge-" + edge.id); });
+        stage.appendChild(lab);
+      }
+    }
+    function clearMarks() {
+      stage.querySelectorAll(".tag-label").forEach(function (n) { n.remove(); });
+    }
+    clearMarks();
+    add(EDGES[1], [{ x: B.identity.cx, y: B.interfaces.b }, { x: B.identity.cx, y: B.identity.y }]);
+    add(EDGES[0], [{ x: B.traffic.cx - 16, y: B.interfaces.b }, { x: B.traffic.cx - 16, y: B.traffic.y }]);
+    add(EDGES[9], [{ x: B.traffic.cx + 16, y: B.traffic.y }, { x: B.traffic.cx + 16, y: B.interfaces.b }]);
+    add(EDGES[2], [{ x: B.supply.cx, y: B.interfaces.b }, { x: B.supply.cx, y: topGap }, { x: B.supply.cx, y: B.supply.y }]);
+    add(EDGES[3], [
+      { x: B.interfaces.r - 30, y: B.interfaces.b },
+      { x: B.interfaces.r - 30, y: topGap },
+      { x: B.commerce.cx, y: topGap },
+      { x: B.commerce.cx, y: B.commerce.y }
+    ]);
+    add(EDGES[4], [
+      { x: B.interfaces.x + 36, y: B.interfaces.b },
+      { x: B.interfaces.x + 36, y: topGap },
+      { x: B.trust.cx, y: topGap },
+      { x: B.trust.cx, y: B.trust.y }
+    ]);
+    add(EDGES[7], [
+      { x: B.traffic.x, y: B.traffic.cy - 14 },
+      { x: B.identity.r, y: B.traffic.cy - 14 }
+    ]);
+    add(EDGES[11], [
+      { x: B.identity.r, y: B.identity.cy + 16 },
+      { x: B.traffic.x, y: B.identity.cy + 16 }
+    ]);
+    add(EDGES[6], [
+      { x: B.traffic.r, y: B.traffic.cy - 16 },
+      { x: B.supply.x, y: B.traffic.cy - 16 }
+    ]);
+    add(EDGES[14], [
+      { x: B.commerce.x, y: B.commerce.cy + 18 },
+      { x: B.supply.r, y: B.commerce.cy + 18 }
+    ]);
+    add(EDGES[8], [
+      { x: B.traffic.cx + 40, y: B.traffic.b },
+      { x: B.traffic.cx + 40, y: ch1 },
+      { x: B.commerce.cx, y: ch1 },
+      { x: B.commerce.cx, y: B.commerce.b }
+    ]);
+    add(EDGES[16], [
+      { x: B.trust.cx, y: B.trust.b },
+      { x: B.trust.cx, y: ch2 },
+      { x: B.supply.cx - 30, y: ch2 },
+      { x: B.supply.cx - 30, y: B.supply.b }
+    ]);
+    function downToPlat(edge, x, yStart) {
+      var yEnd = B.platform.y;
+      var cuts = [];
+      if (x > B.traffic.cx + 42 && x < B.commerce.cx - 4) cuts.push([ch1 - 8, ch1 + 8]);
+      if (x > B.trust.cx + 4 && x < B.supply.cx - 34) cuts.push([ch2 - 8, ch2 + 8]);
+      if (x > B.trust.x + 30 && x < B.platform.x + 26) cuts.push([B.platform.y - 36, B.platform.y - 20]);
+      var y = yStart;
+      var parts = [];
+      cuts.sort(function (a, b) { return a[0] - b[0]; }).forEach(function (g) {
+        if (g[0] > y + 6 && g[0] < yEnd - 6) {
+          parts.push([{ x: x, y: y }, { x: x, y: g[0] }]);
+          y = g[1];
+        }
+      });
+      if (y < yEnd - 1) parts.push([{ x: x, y: y }, { x: x, y: yEnd }]);
+      parts.forEach(function (pts, i) { add(edge, pts, i === parts.length - 1); });
+    }
+    downToPlat(EDGES[12], B.identity.cx, B.identity.b);
+    downToPlat(EDGES[10], B.traffic.cx - 28, B.traffic.b);
+    downToPlat(EDGES[13], B.supply.cx + 36, B.supply.b);
+    downToPlat(EDGES[15], B.commerce.cx + 36, B.commerce.b);
+    add(EDGES[17], [
+      { x: B.trust.x + 28, y: B.trust.b },
+      { x: B.trust.x + 28, y: B.platform.y - 28 },
+      { x: B.platform.x + 28, y: B.platform.y - 28 },
+      { x: B.platform.x + 28, y: B.platform.y }
+    ]);
+    add(EDGES[5], [
+      { x: B.interfaces.r, y: B.interfaces.cy },
+      { x: 1108, y: B.interfaces.cy },
+      { x: 1108, y: B.platform.cy },
+      { x: B.platform.r, y: B.platform.cy }
+    ]);
+    applyFilter(filter);
+    fit();
+  }
 
   function fromHash() {
     var id = (location.hash || "").replace("#", "");
-    if (order.indexOf(id) !== -1) selectDomain(id);
+    if (order.indexOf(id) !== -1) {
+      mark(id);
+      show("fact-" + id);
+      var el = document.getElementById(id);
+      if (el && el.offsetParent !== null) el.focus();
+    }
   }
   window.addEventListener("hashchange", fromHash);
+
+  var queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; draw(); });
+  }
+  window.addEventListener("resize", schedule);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { schedule(); fromHash(); });
+  schedule();
   fromHash();
 })();
 </script>
