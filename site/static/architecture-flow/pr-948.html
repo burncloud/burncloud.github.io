@@ -185,13 +185,22 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
 html[data-view="pr"] .sheet {
   display: flex; align-items: flex-start; gap: 72px; width: max-content; min-width: 100%;
 }
-html[data-view="pr"] .cols { flex: none; }
+html[data-view="pr"] .cols { flex: none; position: relative; z-index: 1; }
+html[data-view="pr"] #boot1 { position: relative; }
+html[data-view="pr"] #boot1 .badges {
+  position: absolute; top: 8px; right: 10px; display: flex; gap: 4px; margin: 0; z-index: 3;
+}
+html[data-view="pr"] #boot1 .badges .badge { margin: 0; }
 .deploy-lane { width: 620px; flex: none; }
 .lane-stage { position: relative; }
 .lane-rail {
-  display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(150px, 176px);
-  gap: 16px 84px; align-items: center;
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) 176px;
+  gap: 14px 72px;
+  align-items: start;
 }
+.lane-rail > .card:not(.side) { grid-column: 1; }
+.lane-rail > .card.side { grid-column: 2; }
 .not-linked {
   margin: 0 0 12px; padding: 8px 10px; border: 1px dashed var(--warn); border-radius: 10px;
   color: var(--warn); background: var(--warn-bg); font-size: 0.8rem; line-height: 1.45;
@@ -514,14 +523,12 @@ html[data-view="base"] .overlay { display: none !important; }
             <span class="card-title">做出这一次的启动计划</span>
             <span class="line">计划里有要跑的程序、参数，以及用来等就绪的地址。做不出来就失败，这时还没有新进程。</span>
           </button>
-          <span class="lane-gap" aria-hidden="true"></span>
           <button type="button" class="card new" id="run" data-tags="deploy" aria-pressed="false" aria-controls="panel">
             <span class="badge num newnum">⑦</span>
             <span class="badge tag-new">新增</span>
             <span class="card-title">拉起本机进程</span>
             <span class="line">按计划真正启动，也能停下，并能查它还在不在。程序是空的，或没有进程号，就失败。</span>
           </button>
-          <span class="lane-gap" aria-hidden="true"></span>
           <button type="button" class="card new" id="nready" data-tags="deploy" aria-pressed="false" aria-controls="panel">
             <span class="badge num newnum">⑧</span>
             <span class="badge tag-new">新增</span>
@@ -1233,10 +1240,6 @@ html[data-view="base"] .overlay { display: none !important; }
     var scroll = document.getElementById("diagram-scroll");
     var cols = document.getElementById("cols");
     if (!scroll || !cols) return;
-    if (root.getAttribute("data-view") === "base") {
-      if (cols.style.width) cols.style.width = "";
-      return;
-    }
     var w = Math.max(scroll.clientWidth || 0, 1120);
     var next = w + "px";
     if (cols.style.width !== next) cols.style.width = next;
