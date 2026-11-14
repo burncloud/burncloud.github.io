@@ -174,7 +174,7 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
   <header class="top">
     <div>
       <h1>本机节点怎么工作</h1>
-      <p class="intro">本机推理节点，不是跨网络 P2P。启动时只做接线；有人提出要哪个模型，才去查机器、备文件、起进程，再挂到现有网关上接请求。要拿走时，先让网关选不到。</p>
+      <p class="intro">本机推理节点。启动时只做接线；有人提出要哪个模型，才去查机器、备文件、起进程，再挂到现有网关上接请求。要拿走时，先让网关选不到。</p>
     </div>
     <div class="top-actions">
       <div class="pills" role="radiogroup" aria-label="看哪一部分">
@@ -206,7 +206,7 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
     </div>
     <div class="start-row">
       <button type="button" class="card" id="boot1" data-tags="main" aria-pressed="false" aria-controls="panel">
-        <span class="badge local">本机推理节点，不是跨网络 P2P</span>
+        <span class="badge local">本机推理节点</span>
         <span class="card-title">记下本机节点已挂上</span>
         <span class="line">和网关在同一次启动里。不另开端口，也不再起一个网页服务。</span>
       </button>
@@ -367,7 +367,7 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
   </div>
 
   <footer class="foot">
-    <p>本机推理节点，不是跨网络 P2P。这张图不画点对点直连，也不画源头地址显示。</p>
+    <p>本机推理节点。</p>
     <p>事实来自 burncloud/burncloud 的提交 <a href="https://github.com/burncloud/burncloud/commit/15ee06fce4c469e510d0c7b335578f4159e846ed"><code>15ee06fce4c469e510d0c7b335578f4159e846ed</code></a>。标成「推断 · 待确认」的，是对照代码结构做的推理，不是已经核对过的事实。</p>
     <p><a href="l1.html#platform">底座在领域图里</a> · <a href="l0.html">一次请求</a> · <a href="pr-948.html">PR 948 还没合并的变更</a></p>
   </footer>
@@ -580,7 +580,7 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
   <article id="fact-up" data-title="本机上游">
     <p>挂上的上游用启动计划里的本机地址。现有选路能看见它，和别的上游记在同一套通道里。</p>
     <p class="badge infer">推断 · 待确认</p>
-    <p>选路能看见、地址就是计划里的本机地址，这两点对过代码。一次对话请求会不会就这样被原来的转发发到那个地址，还要再对一遍转发的发送路径。这张图不把它画成跨网络直连。</p>
+    <p>选路能看见、地址就是计划里的本机地址，这两点对过代码。一次对话请求会不会就这样被原来的转发发到那个地址，还要再对一遍转发的发送路径。</p>
     <div class="dev">
       <h3>给开发者看</h3>
       <p class="badge read">直读</p>

@@ -381,7 +381,7 @@ code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
       </section>
 
       <footer class="foot">
-        <p>本机推理节点，不是跨网络 P2P。这张图不画点对点直连，也不画源头地址显示。</p>
+        <p>本机推理节点。</p>
         <p>没改的部分来自 <a href="https://github.com/burncloud/burncloud/commit/15ee06fce4c469e510d0c7b335578f4159e846ed"><code>15ee06fce4c469e510d0c7b335578f4159e846ed</code></a>。新增和改动来自尚未合并的 <a href="https://github.com/burncloud/burncloud/commit/95a7b507d495cf17199efba889c839197c779621"><code>95a7b507d495cf17199efba889c839197c779621</code></a>，也就是 <a href="https://github.com/burncloud/burncloud/pull/948">PR 948</a>。</p>
       </footer>
     </div>
@@ -410,7 +410,7 @@ code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
     </div>
   </article>
   <article id="fact-ov-node" data-title="本机节点">
-    <p>本机节点里新加了部署编排：排队、换掉旧进程、拉起进程、网页健康检查，以及之后持续看着。它仍不是跨网络 P2P。</p>
+    <p>本机推理节点里新加了部署编排：排队、换掉旧进程、拉起进程、网页健康检查，以及之后持续看着。</p>
     <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p>新模块在 <a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/platform/node/src/deployment"><code>crates/platform/node/src/deployment</code></a>。</p></div>
   </article>
   <article id="fact-ov-up" data-title="上游">
@@ -431,7 +431,7 @@ code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
         <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/node_deployment.rs"><code>node_deployment.rs</code></a> · <code>NodeDeploymentState</code></li>
         <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/node_runtime.rs"><code>node_runtime.rs</code></a> · <code>LlamaCppRuntimePreparer</code>、<code>LlamaCppRuntimeAdapter</code></li>
         <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/api/node_deployment.rs"><code>api/node_deployment.rs</code></a></li>
-        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/api/mod.rs"><code>api/mod.rs</code></a> 把这几条路由并进 <code>public_routes</code>，不经过登录中间件。</li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/api/mod.rs"><code>api/mod.rs</code></a> 接上启动、查询、停止。</li>
       </ul>
     </div>
   </article>
@@ -523,7 +523,6 @@ code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
         <li><code>GET /console/api/node/deployments/{model_id}</code> 没有记录则 404。</li>
         <li><code>POST /console/api/node/deployments/{model_id}/stop</code>。停失败 409。没有正在看的进程时，停止结果是假，不是错误。</li>
         <li><code>start_local</code> 用 <code>PreparedArtifact::new(..., Verified)</code>，再 <code>deploy_prepared</code>。准备器只接受运行时名字 <code>llama.cpp</code>，可执行文件来自环境变量 <code>BURNCLOUD_LLAMA_SERVER</code>，而且必须是现存文件。适配器绑定 <code>127.0.0.1</code> 上的空闲端口，就绪地址是 <code>/health</code>。</li>
-        <li>路由在 <code>public_routes</code>，不经过登录中间件。这是这次差异里的接线，不是推断。</li>
       </ul>
     </div>
   </article>
