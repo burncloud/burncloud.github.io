@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>本机节点怎么工作 · BurnCloud</title>
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem("burncloud-arch-theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+})();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --ground: #e6e2da;
+  --card: #f7f5f1;
+  --panel: #f7f5f1;
+  --card-on: #efeae3;
+  --ink: #1c1b19;
+  --muted: #5c574f;
+  --line: #cfc8bc;
+  --group-line: rgba(28, 27, 25, 0.38);
+  --wire: #5c574f;
+  --accent: #c24d28;
+  --warn: #7a5620;
+  --warn-bg: #f3ead6;
+  --end: #f3ebe6;
+  --shadow: 0 16px 40px rgba(28, 27, 25, 0.12);
+  --sans: "WenQuanYi Micro Hei", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --serif: "Palatino Linotype", Palatino, "Songti SC", "Noto Serif CJK SC", "WenQuanYi Micro Hei", Georgia, serif;
+  --mono: "WenQuanYi Micro Hei Mono", ui-monospace, "Sarasa Mono SC", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ground: #121212;
+    --card: #1c1c1c;
+    --panel: #1a1a1a;
+    --card-on: #262320;
+    --ink: #eceae7;
+    --muted: #9c968d;
+    --line: #3a3835;
+    --group-line: rgba(236, 234, 231, 0.32);
+    --wire: #b7b1a8;
+    --accent: #e07a45;
+    --warn: #d4b483;
+    --warn-bg: #2a2418;
+    --end: #241c1a;
+    --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground: #e6e2da; --card: #f7f5f1; --panel: #f7f5f1; --card-on: #efeae3;
+  --ink: #1c1b19; --muted: #5c574f; --line: #cfc8bc; --group-line: rgba(28, 27, 25, 0.38);
+  --wire: #5c574f; --accent: #c24d28; --warn: #7a5620; --warn-bg: #f3ead6; --end: #f3ebe6;
+  --shadow: 0 16px 40px rgba(28, 27, 25, 0.12);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #121212; --card: #1c1c1c; --panel: #1a1a1a; --card-on: #262320;
+  --ink: #eceae7; --muted: #9c968d; --line: #3a3835; --group-line: rgba(236, 234, 231, 0.32);
+  --wire: #b7b1a8; --accent: #e07a45; --warn: #d4b483; --warn-bg: #2a2418; --end: #241c1a;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: auto; }
+body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.5; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: 12px; top: -40px; background: var(--card); color: var(--ink); padding: 6px 10px; z-index: 40; }
+.skip:focus { top: 8px; }
+.wrap { max-width: 1360px; margin: 0 auto; padding: 22px 22px 88px; }
+.top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 14px 24px; }
+h1 { margin: 0; font-family: var(--serif); font-size: 1.7rem; font-weight: 560; letter-spacing: -0.02em; line-height: 1.25; text-wrap: balance; }
+.intro { margin: 6px 0 0; max-width: 40rem; color: var(--muted); font-size: 0.95rem; }
+.top-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pills button, .ghost, .links a {
+  font: inherit; font-size: 0.82rem; border-radius: 999px; border: 1px solid var(--line);
+  background: transparent; color: var(--muted); padding: 4px 11px; text-decoration: none; cursor: pointer;
+}
+.pills button[aria-checked="true"] { background: var(--ink); color: var(--ground); border-color: var(--ink); }
+.links { display: flex; flex-wrap: wrap; gap: 6px; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; list-style: none; margin: 14px 0 16px; padding: 0; color: var(--muted); font-size: 0.8rem; }
+.legend li { display: flex; align-items: center; gap: 7px; }
+.swatch { width: 22px; height: 0; border-top: 1.5px solid var(--wire); display: inline-block; position: relative; }
+.swatch::after { content: ""; position: absolute; right: -1px; top: -4px; border: 4px solid transparent; border-left: 6px solid var(--wire); }
+.swatch.dash { border-top-style: dashed; }
+.swatch.hot { width: 14px; height: 10px; border: 1.5px solid var(--accent); border-radius: 3px; }
+.swatch.hot::after { display: none; }
+.startup { margin-bottom: 18px; }
+.group { border: 1px dashed var(--group-line); border-radius: 18px; padding: 14px 16px 16px; min-width: 0; }
+.group-head { min-height: 48px; margin-bottom: 12px; }
+.group-head h2 { margin: 0; font-size: 0.72rem; font-weight: 650; letter-spacing: 0.16em; color: var(--muted); }
+.group-head p { margin: 4px 0 0; color: var(--muted); font-size: 0.8rem; line-height: 1.45; }
+.start-row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+.card {
+  display: block; width: 100%; margin: 0; text-align: left; font: inherit; color: inherit;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px 11px; cursor: pointer; line-height: 1.4;
+}
+.card-title { display: block; font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+.line { display: block; margin-top: 3px; color: var(--muted); font-size: 0.78rem; line-height: 1.45; }
+.card.accent { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.card.end { background: var(--end); }
+.card.side { border-style: dashed; border-color: var(--warn); }
+.card[aria-pressed="true"] { background: var(--card-on); border-color: var(--ink); }
+.card.accent[aria-pressed="true"] { border-color: var(--accent); }
+.card:hover { border-color: var(--muted); }
+.card.accent:hover { border-color: var(--accent); }
+.badge { display: inline-block; margin: 0 0 6px; padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 0.68rem; letter-spacing: 0.04em; line-height: 1.6; }
+.badge.infer { color: var(--warn); border-color: var(--warn); background: var(--warn-bg); }
+.badge.local { border-color: var(--accent); color: var(--accent); }
+.is-dim { opacity: 0.22; }
+.card.is-dim:focus-visible { opacity: 1; }
+.scroll-hint { display: none; margin: 0 0 10px; color: var(--muted); font-size: 0.82rem; }
+.diagram-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.cols { position: relative; display: grid; grid-template-columns: 200px minmax(0, 1fr) 250px; column-gap: 72px; align-items: start; min-width: 1120px; }
+#wires { position: absolute; left: 0; top: 0; overflow: visible; z-index: 1; pointer-events: none; }
+#labels { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.edge { fill: none; stroke: var(--wire); stroke-width: 1.35; pointer-events: none; }
+.edge.side { stroke-dasharray: 4 4; }
+.hit { fill: none; stroke: transparent; stroke-width: 14; pointer-events: stroke; cursor: pointer; }
+#wires marker path { fill: context-stroke; }
+.edge-label {
+  position: absolute; z-index: 4; pointer-events: auto; transform: translate(-50%, -50%);
+  margin: 0; padding: 0 5px; border: 0; background: var(--ground); color: var(--muted);
+  font: inherit; font-size: 0.72rem; line-height: 1.35; white-space: nowrap; cursor: pointer;
+}
+.rail { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(168px, 220px); gap: 14px 26px; align-items: center; }
+.stack { display: grid; gap: 8px; }
+#hang, #hangfail { grid-column: 1; }
+.off-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; align-items: start; }
+#drop, #recover { grid-column: 1; }
+#panel {
+  position: fixed; right: 16px; bottom: 16px; width: min(420px, calc(100vw - 24px));
+  max-height: min(72vh, 640px); overflow: auto; z-index: 30; background: var(--panel); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 14px 16px 18px;
+}
+#panel[hidden] { display: none; }
+.panel-bar { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; position: sticky; top: 0; background: var(--panel); padding-bottom: 8px; z-index: 1; }
+#panel-title { margin: 0; font-size: 1.05rem; font-weight: 650; letter-spacing: -0.01em; line-height: 1.35; text-wrap: balance; }
+#panel-close { font: inherit; font-size: 0.8rem; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 3px 10px; cursor: pointer; flex: none; }
+#panel-body { font-size: 0.92rem; }
+#panel-body p { margin: 0 0 8px; }
+#panel-body a { color: var(--ink); }
+.dev { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+.dev h3 { margin: 0 0 6px; font-size: 0.72rem; font-weight: 650; letter-spacing: 0.14em; color: var(--muted); }
+.dev h4 { margin: 12px 0 4px; font-size: 0.78rem; color: var(--ink); font-weight: 650; }
+.dev ul, .dev ol { margin: 4px 0 8px; padding-left: 1.15rem; }
+.dev li { margin: 3px 0; }
+.dev a { color: var(--muted); }
+code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
+#library { display: none; }
+.foot { margin-top: 22px; color: var(--muted); font-size: 0.78rem; }
+.foot p { margin: 0 0 6px; }
+.foot a { color: var(--muted); }
+@media (max-width: 1119px) { .scroll-hint { display: block; } }
+@media (max-width: 900px) {
+  .start-row { grid-template-columns: 1fr; }
+  #panel { left: 12px; right: 12px; width: auto; max-height: 54vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#demand">跳到图</a>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>本机节点怎么工作</h1>
+      <p class="intro">本机推理节点，不是跨网络 P2P。启动时只做接线；有人提出要哪个模型，才去查机器、备文件、起进程，再挂到现有网关上接请求。要拿走时，先让网关选不到。</p>
+    </div>
+    <div class="top-actions">
+      <div class="pills" role="radiogroup" aria-label="看哪一部分">
+        <button type="button" role="radio" data-filter="all" aria-checked="true">全部</button>
+        <button type="button" role="radio" data-filter="main" aria-checked="false">准备</button>
+        <button type="button" role="radio" data-filter="fail" aria-checked="false">失败</button>
+        <button type="button" role="radio" data-filter="serve" aria-checked="false">接请求</button>
+      </div>
+      <nav class="links" aria-label="页面">
+        <a href="l0.html">回 L0</a>
+        <a href="l1.html">领域图</a>
+        <a href="pr-948.html">PR 948 变更</a>
+        <a href="/architecture-flow/">返回文档</a>
+        <button type="button" class="ghost" id="theme">深色</button>
+      </nav>
+    </div>
+  </header>
+  <ul class="legend" aria-label="怎么看这张图">
+    <li><span class="swatch" aria-hidden="true"></span>箭头是下一步</li>
+    <li><span class="swatch hot" aria-hidden="true"></span>暖色框是挂上之后，现有选路能看见的本机上游</li>
+    <li><span class="swatch dash" aria-hidden="true"></span>虚线是旁支：失败、跑不了，或摘掉</li>
+    <li>点方块看说明。代码只在点开的「给开发者看」里。</li>
+  </ul>
+
+  <section class="group startup" aria-labelledby="boot-title">
+    <div class="group-head">
+      <h2 id="boot-title">启动接线</h2>
+      <p>只在网关启动时做一次。做到这里就停，不会自己去下载模型或拉起进程。</p>
+    </div>
+    <div class="start-row">
+      <button type="button" class="card" id="boot1" data-tags="main" aria-pressed="false" aria-controls="panel">
+        <span class="badge local">本机推理节点，不是跨网络 P2P</span>
+        <span class="card-title">记下本机节点已挂上</span>
+        <span class="line">和网关在同一次启动里。不另开端口，也不再起一个网页服务。</span>
+      </button>
+      <button type="button" class="card" id="boot2" data-tags="serve" aria-pressed="false" aria-controls="panel">
+        <span class="card-title">把「还在准备」接到找不到上游</span>
+        <span class="line">模型还在准备、选路又没有上游时，网关可以立刻这样回答。</span>
+      </button>
+    </div>
+  </section>
+
+  <p class="scroll-hint">左右滑动看完整流程图</p>
+  <div class="diagram-scroll">
+  <div class="cols" id="cols">
+    <svg id="wires" aria-hidden="true"></svg>
+    <div id="labels"></div>
+
+    <section class="group" id="col-in" aria-labelledby="in-title">
+      <div class="group-head">
+        <h2 id="in-title">谁来触发</h2>
+        <p>准备和对话请求是两件事。</p>
+      </div>
+      <button type="button" class="card" id="demand" data-tags="main" aria-pressed="false" aria-controls="panel">
+        <span class="card-title">提出要准备的模型</span>
+        <span class="line">得有一个模型名字。名字是空的，就停在这里，还不会去查机器。</span>
+      </button>
+      <button type="button" class="card" id="chat" data-tags="serve" aria-pressed="false" aria-controls="panel" style="margin-top:12px">
+        <span class="card-title">调用方发来一次对话</span>
+        <span class="line">这是原来的请求。节点不另开入口，也不自己决定选谁。</span>
+      </button>
+    </section>
+
+    <section class="group" id="col-life" aria-labelledby="life-title">
+      <div class="group-head">
+        <h2 id="life-title">准备这一个模型</h2>
+        <p>每个模型各记一份进度。做到一半停了，下次从记下的地方接着做。</p>
+      </div>
+      <div class="rail">
+        <button type="button" class="card" id="hw" data-tags="main" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">查这台机器</span>
+          <span class="line">看处理器、内存、磁盘和加速卡。后面用最大的那块加速卡内存来判断。</span>
+        </button>
+        <button type="button" class="card end" id="hwfail" data-tags="fail" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">查硬件失败</span>
+          <span class="line">标成失败，这一步停下。</span>
+        </button>
+        <button type="button" class="card" id="ask" data-tags="main" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">问这台机器能不能跑</span>
+          <span class="line">问的是供给。跑不了就停，不当成一次路由错误。</span>
+        </button>
+        <div class="stack">
+          <button type="button" class="card side" id="askno" data-tags="fail" aria-pressed="false" aria-controls="panel">
+            <span class="card-title">这台机器跑不了</span>
+            <span class="line">不下载、不启动、不挂上游。再问一次，还是这个结果。</span>
+          </button>
+          <button type="button" class="card end" id="askfail" data-tags="fail" aria-pressed="false" aria-controls="panel">
+            <span class="card-title">确认时出错</span>
+            <span class="line">标成失败并停下。</span>
+          </button>
+        </div>
+        <button type="button" class="card" id="file" data-tags="main" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">下载模型文件并核对</span>
+          <span class="line">按给的地址下载，再对一遍摘要。没有摘要就不能过。</span>
+        </button>
+        <button type="button" class="card end" id="filefail" data-tags="fail" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">文件没通过对</span>
+          <span class="line">摘要不对就删掉再下一遍。第二遍仍不对，或地址不合法，就标成失败。</span>
+        </button>
+        <button type="button" class="card" id="prog" data-tags="main" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">准备要用来跑它的程序</span>
+          <span class="line">按刚才确认的结果去准备。这一步失败，还不会去启动。</span>
+        </button>
+        <button type="button" class="card end" id="progfail" data-tags="fail" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">程序没备好</span>
+          <span class="line">标成失败。</span>
+        </button>
+        <button type="button" class="card" id="proc" data-tags="main" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">按计划启动本机进程</span>
+          <span class="line">先把启动计划记下，再启动。计划里的地址由适配器给出，编排不自己编。</span>
+        </button>
+        <button type="button" class="card end" id="procfail" data-tags="fail" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">进程起不来</span>
+          <span class="line">标成失败。计划已经记下，下次还能从启动这里接着。</span>
+        </button>
+        <button type="button" class="card" id="watch" data-tags="main" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">等它就绪，再查一次健康</span>
+          <span class="line">两步都过，才算准备好。干等一会儿不算就绪。这里不会一直盯下去。</span>
+        </button>
+        <button type="button" class="card end" id="watchfail" data-tags="fail" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">没就绪或不健康</span>
+          <span class="line">等不到、查健康出错，或就绪了但不健康，都标成失败。</span>
+        </button>
+        <button type="button" class="card" id="hang" data-tags="main serve" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">挂到现有网关</span>
+          <span class="line">只有准备好了才挂。挂上之后，它是网关里的一个上游，不是第二条路。</span>
+        </button>
+        <span id="hang-gap" aria-hidden="true"></span>
+        <button type="button" class="card end" id="hangfail" data-tags="fail" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">挂不上去</span>
+          <span class="line">标成失败，不再告诉调用方还在准备。</span>
+        </button>
+      </div>
+    </section>
+
+    <div id="col-out">
+      <section class="group" id="grp-up" aria-labelledby="up-title">
+        <div class="group-head">
+          <h2 id="up-title">挂上之后</h2>
+        </div>
+        <button type="button" class="card accent" id="up" data-tags="serve" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">本机上游</span>
+          <span class="line">地址是启动计划里的本机地址。现有选路能看见它。</span>
+        </button>
+      </section>
+      <section class="group" id="grp-req" aria-labelledby="req-title" style="margin-top:14px">
+        <div class="group-head">
+          <h2 id="req-title">请求来了怎么回答</h2>
+          <p>先看现有选路有没有上游。节点的进度只在没有上游时才被问起。</p>
+        </div>
+        <button type="button" class="card" id="hit" data-tags="serve" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">已有上游就照旧转发</span>
+          <span class="line">外部的或刚挂上的本机上游都一样。选谁，不是节点决定的。</span>
+        </button>
+        <button type="button" class="card side" id="wait" data-tags="serve" aria-pressed="false" aria-controls="panel" style="margin-top:10px">
+          <span class="card-title">没有上游，但正在准备</span>
+          <span class="line">立刻请对方稍后再试，不等下载或启动结束。</span>
+        </button>
+        <button type="button" class="card end" id="miss" data-tags="serve fail" aria-pressed="false" aria-controls="panel" style="margin-top:10px">
+          <span class="card-title">没有上游，也没在准备</span>
+          <span class="line">失败、不健康、跑不了、还没开始，或已经标成可转发但选路里没有，都按不可用。</span>
+        </button>
+      </section>
+      <section class="group" id="grp-off" aria-labelledby="off-title" style="margin-top:14px">
+        <div class="group-head">
+          <h2 id="off-title">摘掉</h2>
+          <p>不会自己定时去查。有人要求摘掉时才走。</p>
+        </div>
+        <div class="off-grid">
+          <button type="button" class="card" id="detach" data-tags="serve" aria-pressed="false" aria-controls="panel">
+            <span class="card-title">先让网关选不到</span>
+            <span class="line">隔离成功之后，才把这个模型标成不健康。</span>
+          </button>
+          <button type="button" class="card end" id="isofail" data-tags="fail serve" aria-pressed="false" aria-controls="panel">
+            <span class="card-title">隔离失败</span>
+            <span class="line">停住。不标成不健康，也不删除。</span>
+          </button>
+          <button type="button" class="card" id="drop" data-tags="serve" aria-pressed="false" aria-controls="panel">
+            <span class="card-title">再删掉这条上游</span>
+            <span class="line">删不掉就保持已隔离、不健康，可以再删。删掉之前不能开始恢复。</span>
+          </button>
+          <button type="button" class="card" id="recover" data-tags="serve" aria-pressed="false" aria-controls="panel">
+            <span class="card-title">摘掉成功后才能恢复</span>
+            <span class="line">不健康的恢复从重新启动接着做，不重新下载。失败则要从重新确认模型开始。再叫一次准备不会自动恢复。</span>
+          </button>
+        </div>
+      </section>
+    </div>
+  </div>
+  </div>
+
+  <footer class="foot">
+    <p>本机推理节点，不是跨网络 P2P。这张图不画点对点直连，也不画源头地址显示。</p>
+    <p>事实来自 burncloud/burncloud 的提交 <a href="https://github.com/burncloud/burncloud/commit/15ee06fce4c469e510d0c7b335578f4159e846ed"><code>15ee06fce4c469e510d0c7b335578f4159e846ed</code></a>。标成「推断 · 待确认」的，是对照代码结构做的推理，不是已经核对过的事实。</p>
+    <p><a href="l1.html#platform">底座在领域图里</a> · <a href="l0.html">一次请求</a> · <a href="pr-948.html">PR 948 还没合并的变更</a></p>
+  </footer>
+</div>
+
+<aside id="panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" hidden>
+  <div class="panel-bar">
+    <h2 id="panel-title"></h2>
+    <button type="button" id="panel-close">关闭</button>
+  </div>
+  <div id="panel-body" aria-live="polite"></div>
+</aside>
+
+<div id="library">
+  <article id="fact-boot1" data-title="记下本机节点已挂上">
+    <p>网关创建应用时，把本机节点标成已经挂上。这一步只改本地状态：不监听端口，不起第二个网页服务，也不去准备模型。</p>
+    <p><a href="l0.html">回一次请求那页</a> · <a href="l1.html#platform">到底座</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>入口 <code>burncloud-server</code> 在 <code>create_app_with_node_request_state</code> 里调用底座 <code>burncloud-node-runtime</code> 的 <code>NodeRuntime::start()</code>。它只把 <code>NodeContext.started</code> 设为真。</p>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/interfaces/server/src/lib.rs"><code>crates/interfaces/server/src/lib.rs</code></a> · <code>create_app_with_node_request_state</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/lifecycle.rs"><code>crates/platform/node/src/lifecycle.rs</code></a> · <code>NodeRuntime::start</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/lib.rs"><code>crates/platform/node/src/lib.rs</code></a> 注释：不绑定端口、不起第二个 HTTP server。</li>
+      </ul>
+      <p>组合根本身也不编排。<code>NodeComposition::start</code> 只保存硬件、工件、运行时、进程、就绪和健康这几块能力。这个提交的 <code>create_app</code> 没有调用它。</p>
+      <p>本提交没有 <code>local_dispatch</code> 这个文件。本机挂载在 <code>crates/traffic/router/src/local_attachment.rs</code>。</p>
+    </div>
+  </article>
+  <article id="fact-boot2" data-title="把「还在准备」接到找不到上游">
+    <p>启动时把「这个模型还在准备」交到网关找不到上游的那一档。只有编排真的发布过进度，请求才会看到它。启动本身不会发布进度。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>create_app_with_node_request_state</code> 把 <code>NodeRequestState::route_miss_response</code> 传进 <code>create_router_app_with_route_miss</code>。</li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/interfaces/server/src/node_request.rs"><code>crates/interfaces/server/src/node_request.rs</code></a> · <code>node_request_disposition</code>、<code>model_preparing_response</code></li>
+        <li>转发在没有候选、且确实没选到模型时才调用这个回调：<a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/traffic/router/src/lib.rs"><code>crates/traffic/router/src/lib.rs</code></a> 里的 <code>route_miss_responder</code>。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-demand" data-title="提出要准备的模型">
+    <p>准备从「点名一个模型」开始。名字去掉空白后如果是空的，直接拒绝，状态机还不会动。</p>
+    <p>这个提交里，用网页把整条准备跑起来的，只有打开开关、并且只听本机地址的测试接口。那条接口用的是替身：不真查硬件、不下载、不拉起进程。真正会下载并核对文件的准备器存在，但没有接到 <code>create_app</code> 上。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/interfaces/server/src/node_orchestrator.rs"><code>node_orchestrator.rs</code></a> · <code>ModelDemand::new</code> 拒绝空名字；<code>prepare_until_ready</code> 才进入循环。</li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/interfaces/server/src/node_test.rs"><code>node_test.rs</code></a> · <code>BURNCLOUD_NODE_TEST_API</code> 为 <code>1</code> 或 <code>true</code> 才挂上 <code>/test/node/demand</code>，且绑定地址必须是回环。编排器用的是 <code>Fake*</code>。</li>
+        <li>全仓库里 <code>NodeOrchestrator::new</code> 的生产路径没有接上真实探针。集成测试 <code>node_route_visibility_lifecycle.rs</code> 也写明运行时侧用假实现。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-chat" data-title="调用方发来一次对话">
+    <p>对话请求仍走原来的网关。节点不另开一个入口，也不在这里决定用本机还是外面的上游。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>node_request_disposition</code>：只要现有选路已经有候选，就 <code>UseExistingRoute</code>，不再看节点进度。候选偏好属于转发，不属于节点。</p>
+    </div>
+  </article>
+  <article id="fact-hw" data-title="查这台机器">
+    <p>准备一开始先查这台机器：处理器线程、内存、可用磁盘、加速卡和它的显存。查到之后，取加速卡显存里最大的那一个，交给下一步。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>prepare_until_ready</code> 在 <code>ReconcileAction::Resolve</code> 里调用 <code>machine.hardware().inspect()</code>。</li>
+        <li>契约：<a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/contracts.rs"><code>crates/platform/node/src/contracts.rs</code></a> · <code>HardwareProbe</code>、<code>HardwareProfile</code>。</li>
+        <li>非测试代码里没有 <code>HardwareProbe</code> 的真实实现。测试和测试接口用 <code>FakeHardwareProbe</code>。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-hwfail" data-title="查硬件失败">
+    <p>查机器失败时，这个模型标成失败，错误返回，不再问能不能跑，也不下载。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>inspect()</code> 返回错误时调用 <code>mark_failed</code>，也就是 <code>ReconcileEvidence::Failed</code>，状态到 <code>Failed</code>。</p>
+    </div>
+  </article>
+  <article id="fact-ask" data-title="问这台机器能不能跑">
+    <p>拿模型名字和最大加速卡显存去问供给。能跑，才进入下载。跑不了，就停在「这台机器不支持」，这不是路由错误。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>ModelResolver::resolve(ModelResolutionRequest { model, accelerator_memory_bytes })</code></li>
+        <li><code>Local</code>：记下解析回执，证据 <code>Resolved</code>，进入准备文件。</li>
+        <li><code>Unsupported</code>：证据 <code>LocalUnsupported</code>，返回 <code>LocalPreparationOutcome::Unsupported</code>。</li>
+        <li>协调器在 <a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/reconciler.rs"><code>reconciler.rs</code></a>。供给的解析器不在节点 crate 里。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-askno" data-title="这台机器跑不了">
+    <p>供给说这台机器没有能用的本地变体。到此为止：不下载、不准备程序、不启动、不挂上游。同一个模型再准备一次，还是这个结果。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>状态 <code>LocalUnsupported</code> 的下一步是 <code>Noop</code>。<code>is_failure()</code> 不包含它。请求侧在没有现有上游时把它当成不可用，而不是「还在准备」。</p>
+    </div>
+  </article>
+  <article id="fact-askfail" data-title="确认时出错">
+    <p>问供给的时候出错，这个模型标成失败并停下。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>resolve</code> 返回 <code>Err</code> 时 <code>mark_failed</code> 后把错误交回去。</p>
+    </div>
+  </article>
+  <article id="fact-file" data-title="下载模型文件并核对">
+    <p>能跑之后，按解析给出的地址下载模型文件，再按给出的摘要核对。摘要是必须的。来源只接受指定网站上的网页地址。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li>编排：地址解析失败、摘要缺失或解析失败、准备器返回错误、回执未核对，都 <code>mark_failed</code>。</li>
+        <li>真实准备器：<a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/preparation/artifact_preparer.rs"><code>artifact_preparer.rs</code></a>。下载目录名是 <code>models</code>。摘要不对会删掉文件再下一次；第二次仍不对就返回核对失败的回执，路径是空的。</li>
+        <li>允许的来源：<a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/preparation/artifact_source.rs"><code>artifact_source.rs</code></a>，只接受 <code>http</code>/<code>https</code>，主机名只能是 <code>modelscope.cn</code>、<code>hf-mirror.com</code>、<code>huggingface.com</code>、<code>huggingface.co</code>。</li>
+        <li>摘要算法在准备器里有 md5、sha1、sha256、sha384、sha512。这个准备器没有被 <code>create_app</code> 装进编排器。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-filefail" data-title="文件没通过对">
+    <p>地址不合法、没有摘要、下载失败、来源不被接受，或者两遍摘要都对不上，这个模型标成失败。未核对的文件不会当成成功交出去。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>编排在 <code>!artifact.is_verified()</code> 时失败。准备器对失败回执使用空路径，避免把未核对文件交给后面。</p>
+    </div>
+  </article>
+  <article id="fact-prog" data-title="准备要用来跑它的程序">
+    <p>文件核对通过后，按解析结果里的程序名和可选版本去准备可执行文件。准备好才进入启动。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>ReconcileAction::PrepareRuntime</code> 调用 <code>RuntimePreparer::prepare</code>。成功则证据 <code>RuntimePrepared</code>，状态到 <code>Starting</code>。这个提交没有非测试的 <code>RuntimePreparer</code> 实现，测试用 <code>FakeRuntimePreparer</code>。</p>
+    </div>
+  </article>
+  <article id="fact-progfail" data-title="程序没备好">
+    <p>准备程序失败，标成失败，不会去生成启动计划，也不会启动。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>RuntimePrepareError</code> 走 <code>mark_failed</code>。</p>
+    </div>
+  </article>
+  <article id="fact-proc" data-title="按计划启动本机进程">
+    <p>程序和文件都在之后，由适配器生成启动计划：要跑的程序、参数、用来等就绪的地址、以及本机服务地址。编排先把计划记下，再按计划启动。计划不由编排自己拼。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>RuntimeAdapter::plan</code> 产出 <code>ProcessPlan</code>。计划先写入 workload，再 <code>ProcessManager::start</code>。注释写明：启动若被取消，下次仍可从 <code>Starting</code> 继续。</li>
+        <li>契约在 <a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/contracts.rs"><code>contracts.rs</code></a> 的 <code>ProcessManager</code>。非测试代码没有真正拉起操作系统进程的实现。<code>FakeProcessManager</code> 的注释写明它从不拉起进程，<code>start</code> 只返回固定句柄。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-procfail" data-title="进程起不来">
+    <p>生成计划失败，或启动失败，都标成失败。计划如果已经记下，下次准备会从启动这里接着，不用重新下载。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>plan</code> 或 <code>start</code> 的错误都 <code>mark_failed</code>。从 <code>Failed</code> 再调用 <code>prepare_until_ready</code> 不会自动重试，会停在「必须显式恢复」。</p>
+    </div>
+  </article>
+  <article id="fact-watch" data-title="等它就绪，再查一次健康">
+    <p>进程记下已启动之后，先等就绪，再查一次是否健康。两步都过，才算准备好，可以去挂网关。固定睡一会儿不算就绪。这一步只查这一次，没有之后的连续盯梢。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>ReadinessProbe::wait_ready</code> 失败 → <code>Failed</code>。</li>
+        <li><code>HealthProbe::is_healthy</code> 返回 false，错误文本是 runtime is ready but unhealthy，然后 <code>Failed</code>。探测出错同样 <code>Failed</code>。</li>
+        <li>都通过则证据 <code>ReadinessVerified</code>，状态到 <code>Ready</code>。README 写明 <code>Ready</code> 要有明确的就绪证据。</li>
+        <li>非测试代码没有真实的就绪或健康实现。假实现会立刻报就绪且健康。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-watchfail" data-title="没就绪或不健康">
+    <p>等不到就绪、健康检查出错，或已经就绪但不健康，都标成失败，不会去挂网关。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>这三支都在 <code>ReconcileAction::VerifyReadiness</code> 里 <code>mark_failed</code>。不健康在这一步是失败，不是稍后的「摘掉」。</p>
+    </div>
+  </article>
+  <article id="fact-hang" data-title="挂到现有网关">
+    <p>准备好之后，把计划里的本机地址挂到现有网关，成为一条上游。节点不自己再做一套选路。已经挂过的不会再挂一次；再准备一次会直接交回原来的挂载。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/interfaces/server/src/node_attachment.rs"><code>node_attachment.rs</code></a> · <code>prepare_and_attach_node_route</code>、<code>attach_ready_node_route</code>。状态必须是 <code>Ready</code>，且还没有挂载、必须有计划。</li>
+        <li>挂载成功后才记 <code>RouterAttached</code>，状态到 <code>Routable</code>。失败则先 <code>mark_failed</code>，避免停在 <code>Ready</code> 却一直对请求说还在准备。</li>
+        <li>转发侧：<a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/traffic/router/src/local_attachment.rs"><code>local_attachment.rs</code></a> 与 <a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/traffic/router/src/local_attachment_adapter.rs"><code>local_attachment_adapter.rs</code></a>。<code>ExistingRouterLocalAttacher</code> 用供给的通道创建一条上游，<code>base_url</code> 是计划里的 <code>local_endpoint</code>，标记 <code>burncloud-node-local</code>。不另建路由器。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-hangfail" data-title="挂不上去">
+    <p>挂载失败就标成失败，并停止对调用方说「还在准备」。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>attach_ready_node_route</code>：侧效失败时 <code>mark_failed</code> 再返回错误。<code>Ready</code> 在请求侧本来会报「还在准备」；失败之后不再报。</p>
+    </div>
+  </article>
+  <article id="fact-up" data-title="本机上游">
+    <p>挂上的上游用启动计划里的本机地址。现有选路能看见它，和别的上游记在同一套通道里。</p>
+    <p class="badge infer">推断 · 待确认</p>
+    <p>选路能看见、地址就是计划里的本机地址，这两点对过代码。一次对话请求会不会就这样被原来的转发发到那个地址，还要再对一遍转发的发送路径。这张图不把它画成跨网络直连。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>node_route_visibility_lifecycle.rs</code> 用真实的 <code>ExistingRouterLocalAttacher</code> 和数据库证明：<code>ModelRouter::get_candidates</code> 能看到这条通道。运行时侧仍是假进程。</p>
+      <p class="badge infer">推断 · 待确认</p>
+      <p>该测试证明的是选路可见，不是一次 <code>/v1/chat/completions</code> 已经打到本机进程。通道的 <code>base_url</code> 如何被原来的代理拿去发送，这张图没有逐行再对。</p>
+    </div>
+  </article>
+  <article id="fact-hit" data-title="已有上游就照旧转发">
+    <p>选路里已经有上游时，请求照原来的转发走。这个上游可以是外面的，也可以是刚挂上的本机。节点不插进来改选择。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>has_existing_candidate == true</code> 时一律 <code>UseExistingRoute</code>，包括节点还在准备的时候。</p>
+    </div>
+  </article>
+  <article id="fact-wait" data-title="没有上游，但正在准备">
+    <p>选路没有上游，而这个模型正在确认、下载、准备程序、启动、等就绪，或已经就绪还没挂上，请求立刻返回「正在本地准备」，并请对方稍后再试。不会在这次请求里等下载结束。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>状态 <code>Resolving</code>、<code>PreparingArtifact</code>、<code>ArtifactReady</code>、<code>PreparingRuntime</code>、<code>Starting</code>、<code>WaitingReady</code>、<code>Ready</code> 对应 <code>ModelPreparing</code>。响应是 503，<code>Retry-After: 5</code>，错误码 <code>MODEL_PREPARING</code>。</p>
+    </div>
+  </article>
+  <article id="fact-miss" data-title="没有上游，也没在准备">
+    <p>没有上游，并且节点没在往「可挂载」走，就不说还在准备。这包括还没开始、这台跑不了、失败、不健康，以及状态已经是可转发但选路里却没有这条上游。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>Absent</code>、<code>LocalUnsupported</code>、<code>Routable</code>、<code>Failed</code>、<code>Unhealthy</code> 在没有候选时都是 <code>Unavailable</code>，<code>route_miss_response</code> 返回空，交给原来的「没有通道」回答。</p>
+    </div>
+  </article>
+  <article id="fact-detach" data-title="先让网关选不到">
+    <p>摘掉不是启动后自动发生的。有人带着这条上游的身份来摘，而且模型正处于可转发。第一步是隔离：让现有选路立刻看不到它。隔离成功后，才标成不健康。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>detach_unhealthy_node_route</code>：先 <code>quarantine</code>，成功后才 <code>mark_unhealthy</code>（<code>Routable</code> → <code>Unhealthy</code>）。</li>
+        <li><code>ExistingRouterLocalAttacher::quarantine</code> 调供给的 <code>ChannelService::quarantine</code>，不马上删除身份。</li>
+        <li>这个提交里没有定时健康检查去自动调用摘掉。测试接口 <code>POST /test/node/models/{model}/unhealthy</code> 会走这条。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-isofail" data-title="隔离失败">
+    <p>隔离失败就停住。不标成不健康，也不删除。选路那边还没被关掉。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>quarantine</code> 的错误直接返回，<code>mark_unhealthy</code> 不会被调用。测试名 <code>quarantine_failure_stops_before_unhealthy_or_recovery</code>。</p>
+    </div>
+  </article>
+  <article id="fact-drop" data-title="再删掉这条上游">
+    <p>隔离并标成不健康之后才删除这条上游。删除失败就保持不健康、且选路已经看不到；下次可以只重试删除，不用再隔离一次。删除成功才会记下「已经摘掉」的回执。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>detach</code> 失败时函数返回错误，<code>clear_attachment</code> 不跑。状态已是 <code>Unhealthy</code> 时，再次调用可以跳过隔离、只重试删除。<code>ExistingRouterLocalAttacher::detach</code> 调 <code>ChannelService::delete</code>。</p>
+    </div>
+  </article>
+  <article id="fact-recover" data-title="摘掉成功后才能恢复">
+    <p>只有拿到「已经摘掉」的回执，才能开始恢复。不健康的恢复从重新启动进程开始，沿用原来的计划，不再下载、不再重新确认模型。失败状态要恢复，则从重新确认模型开始。直接再叫一次准备，会停住并要求走显式恢复。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>begin_detached_route_recovery</code> 核对回执属于这个模型，且当前已经没有挂载，然后 <code>retry()</code>。</li>
+        <li><code>Unhealthy</code> 的 <code>retry</code> 到 <code>Starting</code>。<code>Failed</code> 的 <code>retry</code> 到 <code>Resolving</code>。</li>
+        <li><code>recover_until_ready</code> 只接受启动、等就绪、挂载这几步，用的是已经记下的计划。</li>
+        <li><code>prepare_until_ready</code> 若遇到 <code>Recover</code>，直接报 explicit recovery is required。</li>
+        <li>状态机允许 <code>Routable → Absent</code>，但这条摘掉路径没有走它。摘掉后停在 <code>Unhealthy</code>，挂载编号被清掉。</li>
+      </ul>
+    </div>
+  </article>
+</div>
+<noscript><style>#library{display:block !important}#library article{display:block;margin:16px 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card)}</style></noscript>
+<script>
+(function () {
+  var root = document.documentElement;
+  var themeBtn = document.getElementById("theme");
+  function effective() {
+    var set = root.getAttribute("data-theme");
+    if (set === "light" || set === "dark") return set;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function paintTheme() { themeBtn.textContent = effective() === "dark" ? "浅色" : "深色"; }
+  themeBtn.addEventListener("click", function () {
+    var next = effective() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("burncloud-arch-theme", next); } catch (e) {}
+    paintTheme();
+  });
+  paintTheme();
+
+  var panel = document.getElementById("panel");
+  var panelTitle = document.getElementById("panel-title");
+  var panelBody = document.getElementById("panel-body");
+  var panelClose = document.getElementById("panel-close");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var lastFocus = null;
+  var filter = "all";
+
+  function park() {
+    if (panel.hidden) { document.body.style.paddingBottom = ""; return; }
+    if (window.innerWidth < 901) document.body.style.paddingBottom = (panel.offsetHeight + 28) + "px";
+    else document.body.style.paddingBottom = "";
+  }
+  function openFact(id) {
+    var src = document.getElementById("fact-" + id);
+    if (!src) return;
+    lastFocus = document.activeElement;
+    panelTitle.textContent = src.getAttribute("data-title") || "";
+    var clone = src.cloneNode(true);
+    clone.removeAttribute("id");
+    panelBody.replaceChildren(clone);
+    panel.hidden = false;
+    cards.forEach(function (c) { c.setAttribute("aria-pressed", c.id === id ? "true" : "false"); });
+    park();
+  }
+  function closePanel() {
+    panel.hidden = true;
+    cards.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+    park();
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  cards.forEach(function (card, i) {
+    card.addEventListener("click", function () { openFact(card.id); });
+    card.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      e.preventDefault();
+      var n = (e.key === "ArrowDown" || e.key === "ArrowRight") ? i + 1 : i - 1;
+      if (n < 0 || n >= cards.length) return;
+      cards[n].focus();
+      openFact(cards[n].id);
+    });
+  });
+  panelClose.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !panel.hidden) closePanel();
+  });
+
+  var pills = Array.prototype.slice.call(document.querySelectorAll(".pills button"));
+  function applyFilter(name) {
+    filter = name;
+    pills.forEach(function (p) {
+      p.setAttribute("aria-checked", p.getAttribute("data-filter") === name ? "true" : "false");
+    });
+    document.querySelectorAll("[data-tags]").forEach(function (el) {
+      var tags = el.getAttribute("data-tags").split(/\s+/);
+      var on = name === "all" || tags.indexOf(name) !== -1;
+      el.classList.toggle("is-dim", !on);
+    });
+  }
+  pills.forEach(function (p, i) {
+    p.addEventListener("click", function () { applyFilter(p.getAttribute("data-filter")); });
+    p.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      e.preventDefault();
+      var n = e.key === "ArrowRight" ? i + 1 : i - 1;
+      if (n < 0 || n >= pills.length) return;
+      pills[n].focus();
+      applyFilter(pills[n].getAttribute("data-filter"));
+    });
+  });
+
+  function box(id) {
+    var el = document.getElementById(id);
+    var rootBox = document.getElementById("cols");
+    var a = el.getBoundingClientRect();
+    var b = rootBox.getBoundingClientRect();
+    return { x: a.left - b.left, y: a.top - b.top, w: a.width, h: a.height };
+  }
+  function port(b, side, t) {
+    if (side === "left") return { x: b.x, y: b.y + b.h * t, dx: -1, dy: 0 };
+    if (side === "right") return { x: b.x + b.w, y: b.y + b.h * t, dx: 1, dy: 0 };
+    if (side === "top") return { x: b.x + b.w * t, y: b.y, dx: 0, dy: -1 };
+    return { x: b.x + b.w * t, y: b.y + b.h, dx: 0, dy: 1 };
+  }
+  function link(a, b) {
+    var gap = 14;
+    var a1 = { x: a.x + a.dx * gap, y: a.y + a.dy * gap };
+    var b1 = { x: b.x + b.dx * gap, y: b.y + b.dy * gap };
+    var pts = [{ x: a.x, y: a.y }];
+    if (a.dy !== 0 && b.dy !== 0 && a.dy === -b.dy) {
+      var midy = (a1.y + b1.y) / 2;
+      pts.push({ x: a.x, y: midy });
+      pts.push({ x: b.x, y: midy });
+    } else if (a.dx !== 0 && b.dx !== 0) {
+      var midx = (a1.x + b1.x) / 2;
+      pts.push({ x: midx, y: a.y });
+      pts.push({ x: midx, y: b.y });
+    } else if (a.dx !== 0) {
+      pts.push({ x: b.x, y: a.y });
+    } else {
+      pts.push({ x: a.x, y: b.y });
+    }
+    pts.push({ x: b.x, y: b.y });
+    return pts;
+  }
+  function clean(pts) {
+    var out = [];
+    pts.forEach(function (p) {
+      var last = out[out.length - 1];
+      if (!last || Math.hypot(last.x - p.x, last.y - p.y) > 0.5) out.push(p);
+    });
+    return out;
+  }
+  function pathOf(pts) {
+    pts = clean(pts);
+    if (pts.length < 2) return "";
+    var r = 12;
+    var d = "M " + pts[0].x.toFixed(1) + " " + pts[0].y.toFixed(1);
+    for (var i = 1; i < pts.length - 1; i++) {
+      var prev = pts[i - 1], cur = pts[i], next = pts[i + 1];
+      var v1x = cur.x - prev.x, v1y = cur.y - prev.y;
+      var v2x = next.x - cur.x, v2y = next.y - cur.y;
+      var l1 = Math.hypot(v1x, v1y) || 1;
+      var l2 = Math.hypot(v2x, v2y) || 1;
+      var rr = Math.min(r, l1 / 2, l2 / 2);
+      if (rr < 2) { d += " L " + cur.x.toFixed(1) + " " + cur.y.toFixed(1); continue; }
+      var ax = cur.x - (v1x / l1) * rr, ay = cur.y - (v1y / l1) * rr;
+      var bx = cur.x + (v2x / l2) * rr, by = cur.y + (v2y / l2) * rr;
+      d += " L " + ax.toFixed(1) + " " + ay.toFixed(1);
+      d += " Q " + cur.x.toFixed(1) + " " + cur.y.toFixed(1) + " " + bx.toFixed(1) + " " + by.toFixed(1);
+    }
+    var last = pts[pts.length - 1];
+    d += " L " + last.x.toFixed(1) + " " + last.y.toFixed(1);
+    return d;
+  }
+  function simple(from, fs, ft, to, ts, tt) {
+    return function (B) { return link(port(B[from], fs, ft), port(B[to], ts, tt)); };
+  }
+  function routeUp(B) {
+    var a = B.hang, b = B.up, g = B["col-life"];
+    var x = g.x + g.w + 46;
+    var y0 = a.y + a.h * 0.5;
+    var y1 = b.y + b.h * 0.45;
+    return [
+      { x: a.x + a.w, y: y0 },
+      { x: x, y: y0 },
+      { x: x, y: y1 },
+      { x: b.x, y: y1 }
+    ];
+  }
+  function routeWait(B) {
+    var g = B["col-life"], b = B.wait;
+    var x = g.x + g.w + 18;
+    var y0 = g.y + 22;
+    var y1 = b.y + b.h * 0.5;
+    return [
+      { x: g.x + g.w, y: y0 },
+      { x: x, y: y0 },
+      { x: x, y: y1 },
+      { x: b.x, y: y1 }
+    ];
+  }
+  var EDGES = [
+    { id: "go", tags: "main", to: "hw", label: "开始准备", kind: "main", pts: simple("demand", "right", 0.5, "hw", "left", 0.5) },
+    { id: "s1", tags: "main", to: "ask", label: "", kind: "main", pts: simple("hw", "bottom", 0.5, "ask", "top", 0.5) },
+    { id: "f1", tags: "fail", to: "hwfail", label: "失败", kind: "side", pts: simple("hw", "right", 0.5, "hwfail", "left", 0.5) },
+    { id: "s2", tags: "main", to: "file", label: "能跑", kind: "main", pts: simple("ask", "bottom", 0.5, "file", "top", 0.5) },
+    { id: "f2", tags: "fail", to: "askno", label: "跑不了", kind: "side", pts: simple("ask", "right", 0.32, "askno", "left", 0.5) },
+    { id: "f3", tags: "fail", to: "askfail", label: "出错", kind: "side", pts: simple("ask", "right", 0.78, "askfail", "left", 0.5) },
+    { id: "s3", tags: "main", to: "prog", label: "", kind: "main", pts: simple("file", "bottom", 0.5, "prog", "top", 0.5) },
+    { id: "f4", tags: "fail", to: "filefail", label: "没通过对", kind: "side", pts: simple("file", "right", 0.5, "filefail", "left", 0.5) },
+    { id: "s4", tags: "main", to: "proc", label: "", kind: "main", pts: simple("prog", "bottom", 0.5, "proc", "top", 0.5) },
+    { id: "f5", tags: "fail", to: "progfail", label: "失败", kind: "side", pts: simple("prog", "right", 0.5, "progfail", "left", 0.5) },
+    { id: "s5", tags: "main", to: "watch", label: "", kind: "main", pts: simple("proc", "bottom", 0.5, "watch", "top", 0.5) },
+    { id: "f6", tags: "fail", to: "procfail", label: "起不来", kind: "side", pts: simple("proc", "right", 0.5, "procfail", "left", 0.5) },
+    { id: "s6", tags: "main", to: "hang", label: "准备好了", kind: "main", pts: simple("watch", "bottom", 0.5, "hang", "top", 0.5) },
+    { id: "f7", tags: "fail", to: "watchfail", label: "没过", kind: "side", pts: simple("watch", "right", 0.5, "watchfail", "left", 0.5) },
+    { id: "f8", tags: "fail", to: "hangfail", label: "挂不上", kind: "side", pts: simple("hang", "bottom", 0.5, "hangfail", "top", 0.5) },
+    { id: "up", tags: "serve", to: "up", label: "当成上游", kind: "main", pts: routeUp },
+    { id: "hit", tags: "serve", to: "hit", label: "选路能看见", kind: "main", pts: simple("up", "bottom", 0.5, "hit", "top", 0.35) },
+    { id: "wait", tags: "serve", to: "wait", label: "还在准备", kind: "side", pts: routeWait },
+    { id: "isofail", tags: "fail", to: "isofail", label: "隔离失败", kind: "side", pts: simple("detach", "right", 0.5, "isofail", "left", 0.5) },
+    { id: "drop", tags: "serve", to: "drop", label: "隔离成功", kind: "main", pts: simple("detach", "bottom", 0.5, "drop", "top", 0.5) },
+    { id: "back", tags: "serve", to: "recover", label: "摘掉之后", kind: "main", pts: simple("drop", "bottom", 0.5, "recover", "top", 0.5) }
+  ];
+
+  var svg = document.getElementById("wires");
+  var labelLayer = document.getElementById("labels");
+  var ns = "http://www.w3.org/2000/svg";
+  var IDS = ["demand","chat","hw","hwfail","ask","askno","askfail","file","filefail","prog","progfail","proc","procfail","watch","watchfail","hang","hangfail","up","hit","wait","miss","detach","isofail","drop","recover","col-life","col-in","col-out"];
+  function draw() {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    labelLayer.replaceChildren();
+    var cols = document.getElementById("cols");
+    svg.setAttribute("width", cols.scrollWidth);
+    svg.setAttribute("height", cols.scrollHeight);
+    svg.style.width = cols.scrollWidth + "px";
+    svg.style.height = cols.scrollHeight + "px";
+    var defs = document.createElementNS(ns, "defs");
+    defs.innerHTML = '<marker id="arrow" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 4 L0 8 z"></path></marker>';
+    svg.appendChild(defs);
+    var B = {};
+    IDS.forEach(function (id) { B[id] = box(id); });
+    EDGES.forEach(function (edge) {
+      var pts = edge.pts(B);
+      var d = pathOf(pts);
+      if (!d) return;
+      var hit = document.createElementNS(ns, "path");
+      hit.setAttribute("d", d);
+      hit.setAttribute("class", "hit");
+      hit.addEventListener("click", function () { openFact(edge.to); });
+      svg.appendChild(hit);
+      var vis = document.createElementNS(ns, "path");
+      vis.setAttribute("d", d);
+      vis.setAttribute("class", "edge" + (edge.kind === "side" ? " side" : ""));
+      vis.setAttribute("marker-end", "url(#arrow)");
+      vis.setAttribute("data-tags", edge.tags);
+      svg.appendChild(vis);
+      if (!edge.label) return;
+      var cleanPts = clean(pts);
+      var best = 0, idx = 0;
+      for (var i = 0; i < cleanPts.length - 1; i++) {
+        var len = Math.hypot(cleanPts[i + 1].x - cleanPts[i].x, cleanPts[i + 1].y - cleanPts[i].y);
+        if (len > best) { best = len; idx = i; }
+      }
+      var p = cleanPts[idx], q = cleanPts[idx + 1];
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "edge-label";
+      btn.textContent = edge.label;
+      btn.setAttribute("data-tags", edge.tags);
+      var x = (p.x + q.x) / 2;
+      var y = (p.y + q.y) / 2;
+      if (Math.abs(q.x - p.x) >= Math.abs(q.y - p.y)) y -= 11;
+      else x += 14;
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+      btn.addEventListener("click", function () { openFact(edge.to); });
+      labelLayer.appendChild(btn);
+    });
+    applyFilter(filter);
+  }
+  var queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; draw(); });
+  }
+  window.addEventListener("resize", schedule);
+  if (window.ResizeObserver) new ResizeObserver(schedule).observe(document.getElementById("cols"));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  schedule();
+})();
+</script>
+</body>
+</html>
