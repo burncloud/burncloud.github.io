@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>七个领域，谁用到了谁 · BurnCloud</title>
 <script>
 (function () {
@@ -92,7 +92,15 @@ h1 { margin: 0; font-family: var(--serif); font-size: 1.7rem; font-weight: 560; 
 .swatch.hot::after { display: none; }
 .filter-note { display: none; margin: 8px 0 12px; color: var(--muted); font-size: 0.88rem; }
 .filter-note.is-on { display: block; }
-#host { position: relative; width: 100%; overflow: hidden; }
+.scroll-hint { display: none; margin: 0 0 10px; color: var(--muted); font-size: 0.82rem; }
+#host {
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-width { width: 1120px; height: 0; }
 #stage { position: absolute; left: 0; top: 0; width: 1120px; height: 760px; }
 #wires { position: absolute; inset: 0; width: 1120px; height: 760px; overflow: visible; }
 .edge { fill: none; stroke: var(--wire); stroke-width: 1.35; pointer-events: none; }
@@ -123,7 +131,7 @@ h1 { margin: 0; font-family: var(--serif); font-size: 1.7rem; font-weight: 560; 
   position: absolute; z-index: 4; margin: 0; padding: 0 4px; background: var(--ground);
   color: var(--warn); font-size: 0.68rem; border: 0; cursor: pointer;
 }
-.stack { display: none; }
+.stack { display: none !important; }
 .stack-card, .edge-btn {
   display: block; width: 100%; text-align: left; font: inherit; color: inherit;
   background: var(--card); border: 1px solid var(--line); border-radius: 10px;
@@ -157,14 +165,8 @@ code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
 .foot { margin-top: 18px; color: var(--muted); font-size: 0.78rem; }
 .foot a, .foot button { color: var(--muted); }
 .foot button { font: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
-@media (min-width: 901px) {
-  .stack { display: none !important; }
-}
 @media (max-width: 900px) {
-  #host { display: none; }
-  .stack { display: block; }
-  h1 { font-size: 1.4rem; }
-  .wrap { padding: 14px 12px 108px; }
+  .scroll-hint { display: block; }
   #panel { left: 12px; right: 12px; width: auto; max-height: 54vh; }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -202,7 +204,9 @@ code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
   </ul>
   <p class="filter-note" id="filter-note">开发中的三件事不是这七个领域。它们没有画成已经接通的流程，在 <a href="l0.html">一次请求</a> 那页单独放着。</p>
 
+  <p class="scroll-hint">左右滑动看完整流程图</p>
   <div id="host">
+    <div class="scroll-width" aria-hidden="true"></div>
     <div id="stage">
       <svg id="wires" aria-hidden="true"></svg>
       <p id="chip"></p>
@@ -602,7 +606,6 @@ code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
     });
   });
 
-  function isWide() { return window.matchMedia("(min-width: 901px)").matches; }
   function box(el) {
     return { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight,
       r: el.offsetLeft + el.offsetWidth, b: el.offsetTop + el.offsetHeight,
@@ -648,10 +651,15 @@ code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
   function fit() {
     var host = document.getElementById("host");
     var stage = document.getElementById("stage");
-    if (!isWide()) { host.style.height = ""; return; }
     var scale = Math.min(1, host.clientWidth / 1120);
-    stage.style.transform = "scale(" + scale + ")";
     stage.style.transformOrigin = "top left";
+    if (host.clientWidth < 1120) {
+      stage.style.transform = "none";
+      stage.style.left = "0px";
+      host.style.height = (stage.offsetHeight + 18) + "px";
+      return;
+    }
+    stage.style.transform = "scale(" + scale + ")";
     stage.style.left = Math.max(0, (host.clientWidth - 1120 * scale) / 2) + "px";
     host.style.height = (stage.offsetHeight * scale + 4) + "px";
   }
