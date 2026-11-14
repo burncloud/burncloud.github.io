@@ -381,11 +381,11 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
   #bill { grid-area: bill; }
   #respond { grid-area: back; }
   .col-right { position: relative; }
-  #upstream, #db { position: absolute; left: 16px; right: 16px; }
+  #grp-up, #grp-db { position: absolute; left: 0; right: 0; }
 }
 @media (max-width: 900px) {
   #wires, .edge-label { display: none !important; }
-  .cols, .gw { display: flex; flex-direction: column; gap: 8px; }
+  .cols, .gw, .col-right { display: flex; flex-direction: column; gap: 8px; }
   .card.end, .card.side { margin-left: 14px; }
   h1 { font-size: 1.4rem; }
   .wip-row, .start-row { grid-template-columns: 1fr; }
@@ -523,7 +523,7 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
         <p class="narrow-arrow">回答回来了</p>
         <button type="button" class="card" id="bill" data-tags="request billing" aria-pressed="false" aria-controls="panel">
           <span class="card-title">数清用量再扣额度</span>
-          <span class="line">数一数生成了多少字（常叫 token），算出费用，从额度里扣。</span>
+          <span class="line">数一数这次用了多少 token（问题和回答都算），算出费用，从额度里扣。</span>
         </button>
         <p class="narrow-arrow">然后把回答送回</p>
         <button type="button" class="card" id="respond" data-tags="request" aria-pressed="false" aria-controls="panel">
@@ -534,24 +534,30 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
       </div>
     </section>
 
-    <section class="group col-right" id="col-right" aria-labelledby="far-title">
-      <div class="group-head">
-        <h2 id="far-title">上游与记录</h2>
-        <p>不是单独的一层。上面是仓库外的模型，下面是底座里的库。</p>
-      </div>
-      <p class="narrow-arrow">网关把请求发到这里</p>
-      <button type="button" class="card" id="upstream" data-tags="request" aria-pressed="false" aria-controls="panel">
-        <span class="badge out">仓库外</span>
-        <span class="card-title">上游模型</span>
-        <span class="line">真正把回答写出来的服务。</span>
-      </button>
-      <p class="narrow-arrow">扣掉的额度和这次记录写进库</p>
-      <button type="button" class="card" id="db" data-tags="billing" aria-pressed="false" aria-controls="panel">
-        <span class="badge">底座</span>
-        <span class="card-title">额度和日志的库</span>
-        <span class="line">扣掉的额度，和这次请求的记录，写在这里。</span>
-      </button>
-    </section>
+    <div class="col-right" id="col-right">
+      <section class="group" id="grp-up" aria-labelledby="up-title">
+        <div class="group-head">
+          <h2 id="up-title">仓库外 · 上游模型</h2>
+        </div>
+        <p class="narrow-arrow">网关把请求发到这里</p>
+        <button type="button" class="card" id="upstream" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="badge out">仓库外</span>
+          <span class="card-title">上游模型</span>
+          <span class="line">真正把回答写出来的服务。</span>
+        </button>
+      </section>
+      <section class="group" id="grp-db" aria-labelledby="db-title">
+        <div class="group-head">
+          <h2 id="db-title">底座 · 额度和日志的库</h2>
+        </div>
+        <p class="narrow-arrow">扣掉的额度和这次记录写进库</p>
+        <button type="button" class="card" id="db" data-tags="billing" aria-pressed="false" aria-controls="panel">
+          <span class="badge">底座</span>
+          <span class="card-title">额度和日志的库</span>
+          <span class="line">扣掉的额度，和这次请求的记录，写在这里。</span>
+        </button>
+      </section>
+    </div>
   </div>
 
   <section class="group wip-group" aria-labelledby="wip-title">
@@ -834,7 +840,7 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
   </article>
 
   <article id="fact-bill" data-title="数清用量再扣额度">
-    <p>回答回来之后，数一数这次用了多少字（常叫 token），算出费用，从调用方的额度里扣掉，并记下这次请求。</p>
+    <p>回答回来之后，数一数这次用了多少 token（问题和回答都算），算出费用，从调用方的额度里扣掉，并记下这次请求。</p>
     <p><a href="l1.html#commerce">到领域图看「计费」</a> · <a href="l1.html#identity">「身份」</a></p>
     <div class="dev">
       <h3>给开发者看</h3>
@@ -1158,24 +1164,25 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
   ];
 
   function layoutRight() {
+    var upG = document.getElementById("grp-up");
+    var dbG = document.getElementById("grp-db");
     var up = document.getElementById("upstream");
     var db = document.getElementById("db");
     var col = document.getElementById("col-right");
     if (!isWide()) {
-      up.style.top = "";
-      db.style.top = "";
+      upG.style.top = "";
+      dbG.style.top = "";
       return;
     }
     var send = document.getElementById("send").getBoundingClientRect();
     var bill = document.getElementById("bill").getBoundingClientRect();
     var colR = col.getBoundingClientRect();
-    var head = col.querySelector(".group-head").offsetHeight + 10;
-    var upTop = (send.top + send.height / 2) - colR.top - up.offsetHeight / 2;
-    var dbTop = (bill.top + bill.height / 2) - colR.top - db.offsetHeight / 2;
-    if (upTop < head) upTop = head;
-    if (dbTop < upTop + up.offsetHeight + 16) dbTop = upTop + up.offsetHeight + 16;
-    up.style.top = upTop + "px";
-    db.style.top = dbTop + "px";
+    var upTop = (send.top + send.height / 2) - colR.top - (up.offsetTop + up.offsetHeight / 2);
+    var dbTop = (bill.top + bill.height / 2) - colR.top - (db.offsetTop + db.offsetHeight / 2);
+    if (upTop < 0) upTop = 0;
+    if (dbTop < upTop + upG.offsetHeight + 14) dbTop = upTop + upG.offsetHeight + 14;
+    upG.style.top = upTop + "px";
+    dbG.style.top = dbTop + "px";
   }
 
   var svg = document.getElementById("wires");
