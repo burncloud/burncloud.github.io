@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>PR 948 改了节点的哪一段 · BurnCloud</title>
+<script>
+(function () {
+  try {
+    var t = localStorage.getItem("burncloud-arch-theme");
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+  } catch (e) {}
+})();
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --ground: #e6e2da; --card: #f7f5f1; --panel: #f7f5f1; --card-on: #efeae3;
+  --ink: #1c1b19; --muted: #5c574f; --line: #cfc8bc; --group-line: rgba(28, 27, 25, 0.38);
+  --wire: #5c574f; --accent: #c24d28; --warn: #7a5620; --warn-bg: #f3ead6; --end: #f3ebe6;
+  --new: #1d6a8a; --new-bg: #e5f1f6;
+  --shadow: 0 16px 40px rgba(28, 27, 25, 0.12);
+  --sans: "WenQuanYi Micro Hei", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --serif: "Palatino Linotype", Palatino, "Songti SC", "Noto Serif CJK SC", "WenQuanYi Micro Hei", Georgia, serif;
+  --mono: "WenQuanYi Micro Hei Mono", ui-monospace, "Sarasa Mono SC", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --ground: #121212; --card: #1c1c1c; --panel: #1a1a1a; --card-on: #262320;
+    --ink: #eceae7; --muted: #9c968d; --line: #3a3835; --group-line: rgba(236, 234, 231, 0.32);
+    --wire: #b7b1a8; --accent: #e07a45; --warn: #d4b483; --warn-bg: #2a2418; --end: #241c1a;
+    --new: #8ecae6; --new-bg: #16303a;
+    --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+  }
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+  --ground: #e6e2da; --card: #f7f5f1; --panel: #f7f5f1; --card-on: #efeae3;
+  --ink: #1c1b19; --muted: #5c574f; --line: #cfc8bc; --group-line: rgba(28, 27, 25, 0.38);
+  --wire: #5c574f; --accent: #c24d28; --warn: #7a5620; --warn-bg: #f3ead6; --end: #f3ebe6;
+  --new: #1d6a8a; --new-bg: #e5f1f6; --shadow: 0 16px 40px rgba(28, 27, 25, 0.12);
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #121212; --card: #1c1c1c; --panel: #1a1a1a; --card-on: #262320;
+  --ink: #eceae7; --muted: #9c968d; --line: #3a3835; --group-line: rgba(236, 234, 231, 0.32);
+  --wire: #b7b1a8; --accent: #e07a45; --warn: #d4b483; --warn-bg: #2a2418; --end: #241c1a;
+  --new: #8ecae6; --new-bg: #16303a; --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: auto; }
+body { margin: 0; background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.5; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.skip { position: absolute; left: 12px; top: -40px; background: var(--card); color: var(--ink); padding: 6px 10px; z-index: 40; }
+.skip:focus { top: 8px; }
+.wrap { max-width: 1360px; margin: 0 auto; padding: 22px 22px 88px; }
+.top { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 14px 24px; }
+h1 { margin: 0; font-family: var(--serif); font-size: 1.7rem; font-weight: 560; letter-spacing: -0.02em; line-height: 1.25; text-wrap: balance; }
+.intro { margin: 6px 0 0; max-width: 42rem; color: var(--muted); font-size: 0.95rem; }
+.top-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.links { display: flex; flex-wrap: wrap; gap: 6px; }
+.links a, .ghost, .steps button {
+  font: inherit; font-size: 0.82rem; border-radius: 999px; border: 1px solid var(--line);
+  background: transparent; color: var(--muted); padding: 4px 11px; text-decoration: none; cursor: pointer;
+}
+.banner { margin: 14px 0 0; padding: 10px 14px; border: 1px solid var(--warn); border-radius: 12px; background: var(--warn-bg); color: var(--warn); font-size: 0.92rem; }
+.summary { margin: 12px 0 0; max-width: 46rem; font-size: 0.95rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px 18px; list-style: none; margin: 14px 0 16px; padding: 0; color: var(--muted); font-size: 0.8rem; }
+.legend li { display: flex; align-items: center; gap: 7px; }
+.swatch { width: 22px; height: 0; border-top: 1.5px solid var(--wire); display: inline-block; position: relative; }
+.swatch::after { content: ""; position: absolute; right: -1px; top: -4px; border: 4px solid transparent; border-left: 6px solid var(--wire); }
+.swatch.dash { border-top-style: dashed; }
+.swatch.hot { width: 14px; height: 10px; border: 1.5px solid var(--new); border-radius: 3px; background: var(--new-bg); }
+.swatch.hot::after { display: none; }
+.swatch.chg { width: 14px; height: 10px; border: 1.5px solid var(--accent); border-radius: 3px; }
+.swatch.chg::after { display: none; }
+.layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 18px; align-items: start; }
+.layout > * { min-width: 0; }
+.steps { position: sticky; top: 12px; margin: 0; padding: 0 0 0 1.2rem; color: var(--muted); font-size: 0.82rem; }
+.steps li { margin: 0 0 8px; }
+.steps button { border-radius: 10px; text-align: left; line-height: 1.4; width: 100%; }
+.group { border: 1px dashed var(--group-line); border-radius: 18px; padding: 14px 16px 16px; min-width: 0; margin: 0 0 16px; }
+.group-head h2 { margin: 0; font-size: 0.72rem; font-weight: 650; letter-spacing: 0.16em; color: var(--muted); }
+.group-head p { margin: 4px 0 12px; color: var(--muted); font-size: 0.8rem; line-height: 1.45; }
+.scroll-hint { display: none; margin: 0 0 10px; color: var(--muted); font-size: 0.82rem; }
+.diagram-scroll { overflow-x: auto; overflow-y: hidden; -webkit-overflow-scrolling: touch; max-width: 100%; }
+.stage { position: relative; min-width: 920px; }
+#wires, #wires-b, #wires-old, #wires-new { position: absolute; left: 0; top: 0; overflow: visible; z-index: 1; pointer-events: none; }
+.labels { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.edge { fill: none; stroke: var(--wire); stroke-width: 1.35; pointer-events: none; }
+.edge.side { stroke-dasharray: 4 4; }
+.edge.new { stroke: var(--new); }
+.hit { fill: none; stroke: transparent; stroke-width: 14; pointer-events: stroke; cursor: pointer; }
+marker path, .edge { }
+svg marker path { fill: context-stroke; }
+.edge-label {
+  position: absolute; z-index: 4; pointer-events: auto; transform: translate(-50%, -50%);
+  margin: 0; padding: 0 5px; border: 0; background: var(--ground); color: var(--muted);
+  font: inherit; font-size: 0.72rem; line-height: 1.35; white-space: nowrap; cursor: pointer;
+}
+.ov { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px 56px; }
+.doms { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 72px; }
+.oldrow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px 40px; }
+.newrail { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(200px, 280px); gap: 12px 28px; align-items: center; }
+#stage-c { padding: 4px 0 8px; }
+#q { grid-column: 1; grid-row: 1; }
+#qfail { grid-column: 2; grid-row: 1; }
+#repl { grid-column: 1; grid-row: 2; }
+#replfail { grid-column: 2; grid-row: 2; }
+#pm { grid-column: 1; grid-row: 3; }
+#probe { grid-column: 1; grid-row: 4; }
+#health { grid-column: 1; grid-row: 5; }
+#healthfail { grid-column: 2; grid-row: 5; }
+#mon { grid-column: 1; grid-row: 6; }
+#monfail { grid-column: 2; grid-row: 6; }
+#api { grid-column: 1; grid-row: 7; }
+#url { grid-column: 2; grid-row: 7; }
+#state { grid-column: 1 / -1; grid-row: 8; }
+.card {
+  display: block; width: 100%; margin: 0; text-align: left; font: inherit; color: inherit;
+  background: var(--card); border: 1px solid var(--line); border-radius: 10px;
+  padding: 10px 12px 11px; cursor: pointer; line-height: 1.4; position: relative; z-index: 2;
+}
+.card-title { display: block; font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+.line { display: block; margin-top: 3px; color: var(--muted); font-size: 0.78rem; line-height: 1.45; }
+.card.new { border-color: var(--new); box-shadow: inset 0 0 0 1px var(--new); background: var(--new-bg); }
+.card.changed { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.card.same { opacity: 0.48; }
+.card.end { background: var(--end); }
+.card.side { border-style: dashed; }
+.card.new.side { border-style: dashed; }
+.card[aria-pressed="true"] { border-color: var(--ink); }
+.card.same[aria-pressed="true"], .card.same:focus-visible { opacity: 1; }
+.card:hover { border-color: var(--muted); }
+.badge { display: inline-block; margin: 0 0 6px; padding: 0 6px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font-size: 0.68rem; letter-spacing: 0.04em; line-height: 1.6; }
+.badge.new { color: var(--new); border-color: var(--new); }
+.badge.changed { color: var(--accent); border-color: var(--accent); }
+.badge.infer { color: var(--warn); border-color: var(--warn); background: var(--warn-bg); }
+#panel {
+  position: fixed; right: 16px; bottom: 16px; width: min(420px, calc(100vw - 24px));
+  max-height: min(72vh, 640px); overflow: auto; z-index: 30; background: var(--panel); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 14px 16px 18px;
+}
+#panel[hidden] { display: none; }
+.panel-bar { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; position: sticky; top: 0; background: var(--panel); padding-bottom: 8px; z-index: 1; }
+#panel-title { margin: 0; font-size: 1.05rem; font-weight: 650; line-height: 1.35; text-wrap: balance; }
+#panel-close { font: inherit; font-size: 0.8rem; border: 1px solid var(--line); background: transparent; color: var(--ink); border-radius: 999px; padding: 3px 10px; cursor: pointer; flex: none; }
+#panel-body { font-size: 0.92rem; }
+#panel-body p { margin: 0 0 8px; }
+#panel-body a { color: var(--ink); }
+.dev { margin-top: 12px; padding-top: 10px; border-top: 1px dashed var(--line); color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+.dev h3 { margin: 0 0 6px; font-size: 0.72rem; font-weight: 650; letter-spacing: 0.14em; }
+.dev h4 { margin: 12px 0 4px; font-size: 0.78rem; color: var(--ink); font-weight: 650; }
+.dev ul { margin: 4px 0 8px; padding-left: 1.15rem; }
+.dev li { margin: 3px 0; }
+.dev a { color: var(--muted); }
+code { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
+#library { display: none; }
+.foot { margin-top: 8px; color: var(--muted); font-size: 0.78rem; }
+.foot a { color: var(--muted); }
+.foot p { margin: 0 0 6px; }
+@media (max-width: 1119px) { .scroll-hint { display: block; } }
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .steps { position: static; }
+  #panel { left: 12px; right: 12px; width: auto; max-height: 54vh; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#ov-caller">跳到图</a>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>PR 948 改了节点的哪一段</h1>
+      <p class="intro">在<a href="node.html">本机节点怎么工作</a>上面，标出这次还没合并的改动。从上到下：节点在整张图里的位置，动到哪些领域，再看生命周期里哪些是新的、哪些只是改了接线、哪些没动。</p>
+    </div>
+    <nav class="links" aria-label="页面">
+      <a href="node.html">节点基线</a>
+      <a href="l0.html">回 L0</a>
+      <a href="/architecture-flow/">返回文档</a>
+      <button type="button" class="ghost" id="theme">深色</button>
+    </nav>
+  </header>
+  <p class="banner">PR 948 还没有合并。图上的新增和改动都还在提议里，不是当前主线。</p>
+  <p class="summary">这次让本机节点可以按顺序部署：请求排成一队，同一个模型、同一份文件或同一个地址还在做时就合并等一个结果；用本机进程管理拉起真正的进程；先做一次网页健康检查，再隔一会儿继续看，并把状态发出去；同一个模型再部署时，先停掉正在看着的旧进程。服务启动时就把这套接上，并多了启动、查询、停止的接口。原来的下载核对、挂上上游和摘掉没有改做法。新接口不会把模型挂上网关。</p>
+  <ul class="legend" aria-label="怎么看这张图">
+    <li><span class="swatch hot" aria-hidden="true"></span>青框，标着「新增」</li>
+    <li><span class="swatch chg" aria-hidden="true"></span>暖色框，标着「改动」</li>
+    <li><span class="swatch" aria-hidden="true"></span>箭头是下一步</li>
+    <li><span class="swatch dash" aria-hidden="true"></span>虚线是失败或没走的入口</li>
+    <li>变淡的是这次没改的做法</li>
+  </ul>
+
+  <div class="layout">
+    <ol class="steps" aria-label="按从上到下的顺序看改动">
+      <li><button type="button" data-goto="ov-node">节点在整张图里：动的是网关启动和本机节点</button></li>
+      <li><button type="button" data-goto="dom-if">动到的领域：入口和底座</button></li>
+      <li><button type="button" data-goto="boot">启动接线改了</button></li>
+      <li><button type="button" data-goto="q">新增部署队列，相同的合并</button></li>
+      <li><button type="button" data-goto="repl">新增：先换掉旧进程</button></li>
+      <li><button type="button" data-goto="pm">新增本机进程管理</button></li>
+      <li><button type="button" data-goto="probe">新增网页探测</button></li>
+      <li><button type="button" data-goto="health">先查一次健康，再持续看着</button></li>
+      <li><button type="button" data-goto="api">新增部署接口，不挂上网关</button></li>
+      <li><button type="button" data-goto="state">状态机多了两条路</button></li>
+      <li><button type="button" data-goto="old-hw">原来的准备、挂载和摘掉没改</button></li>
+    </ol>
+
+    <div>
+      <section class="group" aria-labelledby="a-title">
+        <div class="group-head">
+          <h2 id="a-title">节点在整张图的哪里</h2>
+          <p>仍是调用方、网关、本机节点、上游。高亮的是这次动过的位置。</p>
+        </div>
+        <p class="scroll-hint">左右滑动看完整流程图</p>
+        <div class="diagram-scroll">
+          <div class="stage" id="stage-a">
+            <svg id="wires" aria-hidden="true"></svg>
+            <div class="labels" id="labels-a"></div>
+            <div class="ov">
+              <button type="button" class="card same" id="ov-caller" data-tags="same" aria-pressed="false" aria-controls="panel">
+                <span class="card-title">调用方</span>
+                <span class="line">发对话的人或工具。这次没改。</span>
+              </button>
+              <button type="button" class="card changed" id="ov-gw" data-tags="changed" aria-pressed="false" aria-controls="panel">
+                <span class="badge changed">改动</span>
+                <span class="card-title">网关</span>
+                <span class="line">启动时多接上部署服务，并多了部署接口。</span>
+              </button>
+              <button type="button" class="card new" id="ov-node" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">本机节点</span>
+                <span class="line">多了按顺序部署、换旧进程，以及之后一直看着。</span>
+              </button>
+              <button type="button" class="card same" id="ov-up" data-tags="same" aria-pressed="false" aria-controls="panel">
+                <span class="card-title">上游</span>
+                <span class="line">挂到网关上的做法这次没改。新接口也不会去挂。</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="b-title">
+        <div class="group-head">
+          <h2 id="b-title">动到哪些领域</h2>
+          <p>只动了入口里的服务，和底座里的节点。身份、转发、供给、计费、本地推理这几处的做法没进这次差异。</p>
+        </div>
+        <p class="scroll-hint">左右滑动看完整流程图</p>
+        <div class="diagram-scroll">
+          <div class="stage" id="stage-b">
+            <svg id="wires-b" aria-hidden="true"></svg>
+            <div class="labels" id="labels-b"></div>
+            <div class="doms">
+              <button type="button" class="card changed" id="dom-if" data-tags="changed" aria-pressed="false" aria-controls="panel">
+                <span class="badge changed">改动</span>
+                <span class="card-title">入口 · 服务</span>
+                <span class="line">启动时接上部署，并提供启动、查询、停止。</span>
+              </button>
+              <button type="button" class="card new" id="dom-node" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">底座 · 节点</span>
+                <span class="line">部署队列、本机进程、网页探测和持续看着，都加在这里。</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="group" aria-labelledby="c-title">
+        <div class="group-head">
+          <h2 id="c-title">生命周期里哪些变了</h2>
+          <p>上面是改过的启动。中间是这次新加的部署。最下面变淡的，是<a href="node.html">基线图</a>里原来的准备和挂载，做法没改。</p>
+        </div>
+        <p class="scroll-hint">左右滑动看完整流程图</p>
+        <div class="diagram-scroll">
+          <div class="stage" id="stage-c">
+            <svg id="wires-new" aria-hidden="true"></svg>
+            <div class="labels" id="labels-new"></div>
+            <button type="button" class="card changed" id="boot" data-tags="changed" aria-pressed="false" aria-controls="panel" style="margin-bottom:14px">
+              <span class="badge changed">改动</span>
+              <span class="card-title">启动时把部署也接上</span>
+              <span class="line">原来只记下节点已挂上，并把「还在准备」交给找不到上游的回答。现在同一次启动还会建好部署服务、本机进程管理和网页探测。</span>
+            </button>
+            <div class="newrail" id="newrail">
+              <button type="button" class="card new" id="q" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">部署请求排成一队</span>
+                <span class="line">整个节点一次只做一单，先来的先做。同一个模型、同一份文件或同一个地址还在做时，后来的不另开一单，一起等这一单的结果。</span>
+              </button>
+              <button type="button" class="card new side" id="qfail" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">还没开始就拒绝</span>
+                <span class="line">名字是空的，地址不是网页地址，文件没标成已核对或根本不是文件，或同一个模型还在做但文件或地址不同，都不进队列。</span>
+              </button>
+              <button type="button" class="card new" id="repl" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">先停掉这个模型的旧进程</span>
+                <span class="line">同一个模型已经有正在看着的进程时，先停掉它，再规划新的。没有旧进程就直接往下。</span>
+              </button>
+              <button type="button" class="card new side end" id="replfail" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">旧进程停不掉</span>
+                <span class="line">旧的留在监控里，新的不起。</span>
+              </button>
+              <button type="button" class="card new" id="pm" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">本机进程管理拉起进程</span>
+                <span class="line">按计划真正启动操作系统进程，也能停掉，并能查它还在不在。程序是空的，或系统没给进程号，就失败。</span>
+              </button>
+              <button type="button" class="card new" id="probe" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">用网页请求看就绪和健康</span>
+                <span class="line">等就绪时会隔一秒再试，最多等十分钟。健康检查只问一次，不成功就是不健康或检查失败。</span>
+              </button>
+              <button type="button" class="card new" id="health" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">先做一次健康检查</span>
+                <span class="line">就绪之后再查一次。健康就是就绪；不健康也留下进程，并开始后面的持续看着。</span>
+              </button>
+              <button type="button" class="card new side end" id="healthfail" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">等不到，或检查本身出错</span>
+                <span class="line">停掉这次新进程。计划做不出或进程起不来时，还没有进程要停。</span>
+              </button>
+              <button type="button" class="card new" id="mon" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">之后继续看，并把状态发出去</span>
+                <span class="line">大约每十秒看进程还在不在、健不健康。变了就发出去；每次查完也发一次心跳。退出或再查失败，就报失败。</span>
+              </button>
+              <button type="button" class="card new side" id="monfail" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">看着的时候失败</span>
+                <span class="line">进程已经退出就报退出。查存活或查健康出错，会尽量停掉并报失败。状态发不出去，也会停掉，但不再另发一条失败。</span>
+              </button>
+              <button type="button" class="card new" id="api" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">用本机文件发起部署</span>
+                <span class="line">给出已经在磁盘上的模型文件，就能排队启动，也可以查看或停止。接口把文件直接当成已经核对过。这一步不挂上网关。</span>
+              </button>
+              <button type="button" class="card new side" id="url" data-tags="new" aria-pressed="false" aria-controls="panel">
+                <span class="badge new">新增</span>
+                <span class="card-title">也可以只给一个网页地址</span>
+                <span class="line">部署服务自己不下载、不核对。当前这个接口没有走这条。</span>
+              </button>
+              <button type="button" class="card changed" id="state" data-tags="changed" aria-pressed="false" aria-controls="panel" style="grid-column: 1 / -1">
+                <span class="badge changed">改动</span>
+                <span class="card-title">状态机多了两条路</span>
+                <span class="line">等待就绪可以到不健康，不健康可以直接回到就绪。持续看着用的是这两条。失败不能直接跳回就绪。原来的协调器没有改去走这两条。</span>
+              </button>
+            </div>
+            <div class="oldrow" id="oldrow" style="margin-top:16px">
+              <button type="button" class="card same" id="old-hw" data-tags="same" aria-pressed="false" aria-controls="panel">
+                <span class="card-title">查硬件，再问能不能跑</span>
+                <span class="line">还是原来的准备。这次没改。</span>
+              </button>
+              <button type="button" class="card same" id="old-file" data-tags="same" aria-pressed="false" aria-controls="panel">
+                <span class="card-title">下载并核对模型文件</span>
+                <span class="line">摘要不对会再下一遍。这次没改。</span>
+              </button>
+              <button type="button" class="card same" id="old-watch" data-tags="same" aria-pressed="false" aria-controls="panel">
+                <span class="card-title">启动后只查一次</span>
+                <span class="line">等就绪，再查一次健康。没有连续盯梢。这次没改。</span>
+              </button>
+              <button type="button" class="card same" id="old-hang" data-tags="same" aria-pressed="false" aria-controls="panel">
+                <span class="card-title">挂成网关的上游</span>
+                <span class="line">准备好才挂。这次没改。</span>
+              </button>
+              <button type="button" class="card same" id="old-off" data-tags="same" aria-pressed="false" aria-controls="panel">
+                <span class="card-title">先隔离再摘掉</span>
+                <span class="line">不会自己定时去摘。这次没改。</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="foot">
+        <p>本机推理节点。</p>
+        <p>没改的部分来自 <a href="https://github.com/burncloud/burncloud/commit/15ee06fce4c469e510d0c7b335578f4159e846ed"><code>15ee06fce4c469e510d0c7b335578f4159e846ed</code></a>。新增和改动来自尚未合并的 <a href="https://github.com/burncloud/burncloud/commit/95a7b507d495cf17199efba889c839197c779621"><code>95a7b507d495cf17199efba889c839197c779621</code></a>，也就是 <a href="https://github.com/burncloud/burncloud/pull/948">PR 948</a>。</p>
+      </footer>
+    </div>
+  </div>
+</div>
+
+<aside id="panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" hidden>
+  <div class="panel-bar">
+    <h2 id="panel-title"></h2>
+    <button type="button" id="panel-close">关闭</button>
+  </div>
+  <div id="panel-body" aria-live="polite"></div>
+</aside>
+<div id="library">
+  <article id="fact-ov-caller" data-title="调用方">
+    <p>调用方没进这次差异。对话请求还是走原来的网关。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p>PR 948 的 32 个文件都在 <code>crates/interfaces/server</code> 和 <code>crates/platform/node</code>。没有改调用方。</p></div>
+  </article>
+  <article id="fact-ov-gw" data-title="网关">
+    <p>网关启动时，除了原来记下节点已挂上，还会把部署服务接进来，并挂上部署接口。</p>
+    <p><a href="node.html">看没改之前的启动接线</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>新接线在 <a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/lib.rs"><code>crates/interfaces/server/src/lib.rs</code></a> 的 <code>create_app_with_node_request_state</code>。原来的 <code>NodeRuntime::start</code> 和 route miss 回调还在，见基线 <a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/interfaces/server/src/lib.rs"><code>15ee06fc</code> 的同一文件</a>。</p>
+    </div>
+  </article>
+  <article id="fact-ov-node" data-title="本机节点">
+    <p>本机推理节点里新加了部署编排：排队、换掉旧进程、拉起进程、网页健康检查，以及之后持续看着。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p>新模块在 <a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/platform/node/src/deployment"><code>crates/platform/node/src/deployment</code></a>。</p></div>
+  </article>
+  <article id="fact-ov-up" data-title="上游">
+    <p>挂到现有网关、变成上游的做法没有改。新的部署服务和部署接口里没有挂载、隔离或删除上游。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>local_attachment*</code> 不在这次差异里。部署服务的代码没有调用挂载。模块注释里有一句 attach / detach，和实现不符；图按实现画。</p>
+      <p>基线挂载仍是 <a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/traffic/router/src/local_attachment_adapter.rs"><code>local_attachment_adapter.rs</code></a>。</p>
+    </div>
+  </article>
+  <article id="fact-dom-if" data-title="入口 · 服务">
+    <p>入口里的服务负责在启动时把部署接上，并用本机已有的模型文件去调用它。程序名和启动参数也是在这里按本机推理程序生成的。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/node_deployment.rs"><code>node_deployment.rs</code></a> · <code>NodeDeploymentState</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/node_runtime.rs"><code>node_runtime.rs</code></a> · <code>LlamaCppRuntimePreparer</code>、<code>LlamaCppRuntimeAdapter</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/api/node_deployment.rs"><code>api/node_deployment.rs</code></a></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/interfaces/server/src/api/mod.rs"><code>api/mod.rs</code></a> 接上启动、查询、停止。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-dom-node" data-title="底座 · 节点">
+    <p>队列、进程、网页探测和持续看着都在底座的节点里。入口只是调用它们。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/platform/node/src/deployment/service.rs"><code>deployment/service.rs</code></a> · <code>DeploymentService</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/platform/node/src/deployment/process.rs"><code>deployment/process.rs</code></a> · <code>LocalProcessManager</code></li>
+        <li><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/platform/node/src/deployment/http_probe.rs"><code>deployment/http_probe.rs</code></a> · <code>HttpProbe</code></li>
+        <li><code>lib.rs</code> 增加 <code>pub mod deployment</code>。组合根 <a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/platform/node/src/composition.rs"><code>composition.rs</code></a> 改为接收共享的进程与探测器，以及监控错误的接收端。服务启动没有改用组合根来跑旧编排。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-boot" data-title="启动时把部署也接上">
+    <p>服务一起来，就创建部署事件记录、会在丢弃时结束子进程的进程管理、共用的网页探测，以及部署服务。监控失败交给一个后台任务写进日志。原来的「节点已挂上」和「还在准备」接线还在。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>LocalProcessManager::with_kill_on_drop</code>，同一个 <code>HttpProbe</code> 同时当就绪和健康检查。<code>DeploymentService::new</code> 的错误接收端由 <code>tokio::spawn</code> 读出并 <code>tracing::error!</code>。运行时准备器用 <code>LlamaCppRuntimePreparer</code>，要到真正部署时才去找 <code>BURNCLOUD_LLAMA_SERVER</code>。</p>
+      <p>旧编排器的测试改为把进程和探测器包进共享引用，并传入一条已经关上的监控错误通道。编排步骤本身没有改。</p>
+    </div>
+  </article>
+  <article id="fact-q" data-title="部署请求排成一队">
+    <p>一个后台循环一次只做队首的那一单。同一个模型还在做，而且文件或地址相同，后来的调用挂在同一次结果上。文件或地址不同就拒绝，不并进去。合并不看要跑的程序是不是同一个。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>enqueue_or_join</code> 用 <code>VecDeque</code>，<code>run_queue</code> 串行取 <code>take_next_deployment</code>。在途键是模型标识加 <code>DeploymentInputKey</code>（已核对工件，或模型地址），不含 runtime。队首要等「已排队」事件发出去才开始做。事件发不出去会把这一单从队列里拿掉，并通知等待的人。</p>
+    </div>
+  </article>
+  <article id="fact-qfail" data-title="还没开始就拒绝">
+    <p>空的模型名字、不是带主机名的网页地址、没标成已核对的文件、路径不是现存文件，都在入队前拒绝。同一个模型已在途但输入不同，也拒绝，不共享那一次的结果。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p>错误种类是 <code>InvalidRequest</code>。<code>deploy</code> 要求 <code>http</code>/<code>https</code> 且有 host。<code>deploy_prepared</code> 要求 <code>is_verified()</code> 且 <code>local_path().is_file()</code>。</p></div>
+  </article>
+  <article id="fact-repl" data-title="先停掉这个模型的旧进程">
+    <p>这一单真正开始时，如果这个模型已经有被看着的进程，就先宣布正在停旧的，再取消旧的看着、停掉旧进程，然后才去生成新计划。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p><code>run_deployment</code> 第一步 <code>stop_old_runtime</code>。没有旧记录就返回空，继续规划。停成功后，进度事件里可以带上旧状态。</p></div>
+  </article>
+  <article id="fact-replfail" data-title="旧进程停不掉">
+    <p>停旧进程失败时，把旧的重新放回监控，不启动新的。宣布「正在停」如果发不出去，旧进程保持不动。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p><code>OldRuntimeStopFailed</code>，并带上保留的旧状态。发布 <code>StoppingOldRuntime</code> 失败则 <code>EventPublishFailed</code>，不移除监控记录。</p></div>
+  </article>
+  <article id="fact-pm" data-title="本机进程管理拉起进程">
+    <p>这次有了真正拉起和停掉本机进程的实现，也能查进程还在不在。进程管理被丢掉时，启动时接上的那一份会结束还在跑的子进程。默认的另一份构造只放开句柄，不主动结束。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>LocalProcessManager</code> 用 tokio 的 <code>Command</code>。<code>start</code> 拒绝空程序名、零号进程或拿不到进程号。</li>
+        <li><code>stop</code> 对表里没有的进程号当作已经停了。<code>is_running</code> 用 <code>try_wait</code>。</li>
+        <li>契约 <a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/platform/node/src/contracts.rs"><code>contracts.rs</code></a> 新增 <code>ProcessError::IsRunningFailed</code> 和默认的 <code>is_running</code>（默认实现报未实现，零号进程号也报错）。基线的 <a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/contracts.rs"><code>ProcessManager</code></a> 只有 start/stop。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-probe" data-title="用网页请求看就绪和健康">
+    <p>就绪和健康都是发一次网页请求。单次最多等十秒。等就绪时，没成功就隔一秒再试，整个最多十分钟；地址本身不合法就不再试。健康检查不重试：请求失败是检查出错，状态不是成功就是不健康。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><code>HttpProbe</code> 同时实现就绪和健康。路径不是 <code>/v1/models</code> 时，2xx 就算健康。路径是 <code>/v1/models</code> 时，还要在列表里看到状态为 loaded；如果地址带了 <code>model_id</code>，还要标识相符。</p>
+    </div>
+  </article>
+  <article id="fact-health" data-title="先做一次健康检查">
+    <p>顺序是：规划、启动、等就绪、再查一次健康。健康就定为就绪；查到了但不健康，也定为不健康，进程留着，并进入持续看着。两种结果都会先发出去，发不出去就停掉这次进程。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p>进度阶段：<code>Queued</code>、<code>StoppingOldRuntime</code>、<code>Planning</code>、<code>Starting</code>、<code>WaitingReady</code>、<code>HealthChecking</code>。首次结果只有 <code>Ready</code> 或 <code>Unhealthy</code>，然后 <code>spawn_monitor</code>。</p></div>
+  </article>
+  <article id="fact-healthfail" data-title="等不到，或检查本身出错">
+    <p>等就绪失败，或健康检查本身出错，会停掉已经启动的进程再报失败。生成计划失败或启动失败时进程还没留下（或没启动成功），只报失败。进程已经起来之后，如果进度发不出去，也会停掉它。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p>种类：<code>PlanFailed</code>、<code>ProcessStartFailed</code>、<code>ReadinessFailed</code>、<code>HealthProbeFailed</code>、<code>EventPublishFailed</code>。清理失败只附加在诊断上，不改原来的错误种类。</p></div>
+  </article>
+  <article id="fact-mon" data-title="之后继续看，并把状态发出去">
+    <p>第一次结果发出去之后，大约每十秒看一次：进程还在不在，然后做一次健康检查。每次查完都尝试发心跳。健康与否变了，再发一条状态变化。不健康不会因此把进程停掉。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p><code>monitor_runtime</code> 的间隔是 10 秒，第一次也不立刻打。心跳是 <code>Heartbeat</code>，变化是 <code>StateChanged</code>。心跳发不出去只记警告，循环继续。服务启动把监控错误写进日志，不自动摘掉上游。</p></div>
+  </article>
+  <article id="fact-monfail" data-title="看着的时候失败">
+    <p>进程已经不在了，就报「已退出」，不再去停。查它还在不在如果出错，或健康检查本身出错，会尽量停掉并报失败。状态变化发不出去时也会停掉，但不再另发一条失败，避免失败通知自己又失败。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p><code>ProcessExited</code> 不 stop。<code>ProcessLivenessFailed</code> 和 <code>HealthProbeFailed</code> 会 stop，并发布 <code>Failed</code>。<code>EventPublishFailed</code> 会 stop，<code>publish_failed_state</code> 为假。错误从 <code>DeploymentMonitorError</code> 通道送出。</p></div>
+  </article>
+  <article id="fact-api" data-title="用本机文件发起部署">
+    <p>接口收一个本机模型文件路径。文件必须已经在。模型名字用文件名去掉扩展名。它把这个文件直接标成已经核对过，不再算摘要，然后去准备本机推理程序并排队。可以按名字查看，也可以停止正在被看着的进程。停止成功会记成已经不在。不会把地址挂到网关的上游上。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <ul>
+        <li><code>POST /console/api/node/deployments</code>，正文 <code>model_path</code>。空路径或不是文件则 400。部署失败 503。</li>
+        <li><code>GET /console/api/node/deployments/{model_id}</code> 没有记录则 404。</li>
+        <li><code>POST /console/api/node/deployments/{model_id}/stop</code>。停失败 409。没有正在看的进程时，停止结果是假，不是错误。</li>
+        <li><code>start_local</code> 用 <code>PreparedArtifact::new(..., Verified)</code>，再 <code>deploy_prepared</code>。准备器只接受运行时名字 <code>llama.cpp</code>，可执行文件来自环境变量 <code>BURNCLOUD_LLAMA_SERVER</code>，而且必须是现存文件。适配器绑定 <code>127.0.0.1</code> 上的空闲端口，就绪地址是 <code>/health</code>。</li>
+      </ul>
+    </div>
+  </article>
+  <article id="fact-url" data-title="也可以只给一个网页地址">
+    <p>部署服务另外有一条入口：给模型标识、一个网页地址和已经准备好的程序。它自己不下载文件，也不核对摘要。当前的部署接口没有调用这条，接口走的是本机文件。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p><code>DeploymentService::deploy</code> 对 <code>ModelUrlRuntimeAdapter::plan_model_url</code>。注释写明本服务不下载、不校验摘要。<code>LlamaCppRuntimeAdapter::plan_model_url</code> 写一份临时预设，让程序按地址加载，就绪地址是 <code>/v1/models?model_id=</code>。<code>NodeDeploymentState::start_local</code> 只调用 <code>deploy_prepared</code>。</p></div>
+  </article>
+  <article id="fact-state" data-title="状态机多了两条路">
+    <p>合法迁移多了两条：等就绪可以到不健康，不健康可以直接回到就绪。失败仍然不能直接到就绪或可转发。原来的准备协调器没有改，它不会走这两条。持续看着是自己记下状态并发出去。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p><a href="https://github.com/burncloud/burncloud/blob/95a7b507d495cf17199efba889c839197c779621/crates/platform/node/src/state.rs"><code>state.rs</code></a> 新增 <code>WaitingReady → Unhealthy</code> 和 <code>Unhealthy → Ready</code>。基线表在 <a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/state.rs"><code>15ee06fc</code> 的 state.rs</a>。<code>reconciler.rs</code> 不在这次差异里。部署服务没有调用 <code>NodeStateMachine::transition</code>。</p>
+    </div>
+  </article>
+  <article id="fact-old-hw" data-title="查硬件，再问能不能跑">
+    <p>查这台机器、再问能不能跑，仍是原来的准备流程。这次差异没有改它的步骤。新的部署接口不走这一问。</p>
+    <p><a href="node.html">回基线图</a></p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p><code>node_orchestrator.rs</code> 的逻辑差异只有注释和组合根参数。行为仍见 <a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/interfaces/server/src/node_orchestrator.rs"><code>15ee06fc</code> 的 node_orchestrator.rs</a>。</p></div>
+  </article>
+  <article id="fact-old-file" data-title="下载并核对模型文件">
+    <p>下载、核对摘要、不对再下一遍，这次没有改。新接口不调用这个下载，而是把调用方给的本机文件直接标成已核对。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/platform/node/src/preparation/artifact_preparer.rs"><code>artifact_preparer.rs</code></a> 不在差异文件里。</p></div>
+  </article>
+  <article id="fact-old-watch" data-title="启动后只查一次">
+    <p>原来的准备仍是：等就绪，再查一次健康，没有通过就标成失败。它不会每过一会儿再查。连续看着是这次新加的另一条部署。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p>基线 <code>ReconcileAction::VerifyReadiness</code> 未改。新的 <code>monitor_runtime</code> 不由这个协调器调用。</p></div>
+  </article>
+  <article id="fact-old-hang" data-title="挂成网关的上游">
+    <p>准备好之后挂到现有网关，这次没改。新的部署完成之后不会自动做这件事。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p><a href="https://github.com/burncloud/burncloud/blob/15ee06fce4c469e510d0c7b335578f4159e846ed/crates/interfaces/server/src/node_attachment.rs"><code>node_attachment.rs</code></a> 的挂载顺序未改。差异只是测试里的组合根参数。</p></div>
+  </article>
+  <article id="fact-old-off" data-title="先隔离再摘掉">
+    <p>要求摘掉时仍是先隔离，再标不健康，再删除。隔离失败就停住。这次没有改成自动摘掉。</p>
+    <div class="dev"><h3>给开发者看</h3><p class="badge read">直读</p><p>基线 <code>detach_unhealthy_node_route</code>。新监控只发布状态和错误日志。</p></div>
+  </article>
+</div>
+<noscript><style>#library{display:block !important}#library article{display:block;margin:16px 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card)}</style></noscript>
+<script>
+(function () {
+  var root = document.documentElement;
+  var themeBtn = document.getElementById("theme");
+  function effective() {
+    var set = root.getAttribute("data-theme");
+    if (set === "light" || set === "dark") return set;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  function paintTheme() { themeBtn.textContent = effective() === "dark" ? "浅色" : "深色"; }
+  themeBtn.addEventListener("click", function () {
+    var next = effective() === "dark" ? "light" : "dark";
+    root.setAttribute("data-theme", next);
+    try { localStorage.setItem("burncloud-arch-theme", next); } catch (e) {}
+    paintTheme();
+  });
+  paintTheme();
+
+  var panel = document.getElementById("panel");
+  var panelTitle = document.getElementById("panel-title");
+  var panelBody = document.getElementById("panel-body");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var lastFocus = null;
+  function park() {
+    if (panel.hidden) { document.body.style.paddingBottom = ""; return; }
+    if (window.innerWidth < 901) document.body.style.paddingBottom = (panel.offsetHeight + 28) + "px";
+    else document.body.style.paddingBottom = "";
+  }
+  function openFact(id) {
+    var src = document.getElementById("fact-" + id);
+    if (!src) return;
+    lastFocus = document.activeElement;
+    panelTitle.textContent = src.getAttribute("data-title") || "";
+    var clone = src.cloneNode(true);
+    clone.removeAttribute("id");
+    panelBody.replaceChildren(clone);
+    panel.hidden = false;
+    cards.forEach(function (c) { c.setAttribute("aria-pressed", c.id === id ? "true" : "false"); });
+    park();
+  }
+  function closePanel() {
+    panel.hidden = true;
+    cards.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+    park();
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  cards.forEach(function (card, i) {
+    card.addEventListener("click", function () { openFact(card.id); });
+    card.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      e.preventDefault();
+      var n = (e.key === "ArrowDown" || e.key === "ArrowRight") ? i + 1 : i - 1;
+      if (n < 0 || n >= cards.length) return;
+      cards[n].focus();
+      openFact(cards[n].id);
+    });
+  });
+  document.getElementById("panel-close").addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !panel.hidden) closePanel();
+  });
+  Array.prototype.forEach.call(document.querySelectorAll(".steps button"), function (btn) {
+    btn.addEventListener("click", function () {
+      var id = btn.getAttribute("data-goto");
+      var card = document.getElementById(id);
+      if (!card) return;
+      card.focus();
+      try { card.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" }); } catch (e) {}
+      openFact(id);
+    });
+  });
+
+  function box(stage, id) {
+    var el = document.getElementById(id);
+    var a = el.getBoundingClientRect();
+    var b = stage.getBoundingClientRect();
+    return { x: a.left - b.left, y: a.top - b.top, w: a.width, h: a.height };
+  }
+  function port(b, side, t) {
+    if (side === "left") return { x: b.x, y: b.y + b.h * t, dx: -1, dy: 0 };
+    if (side === "right") return { x: b.x + b.w, y: b.y + b.h * t, dx: 1, dy: 0 };
+    if (side === "top") return { x: b.x + b.w * t, y: b.y, dx: 0, dy: -1 };
+    return { x: b.x + b.w * t, y: b.y + b.h, dx: 0, dy: 1 };
+  }
+  function link(a, b) {
+    var gap = 12;
+    var a1 = { x: a.x + a.dx * gap, y: a.y + a.dy * gap };
+    var b1 = { x: b.x + b.dx * gap, y: b.y + b.dy * gap };
+    var pts = [{ x: a.x, y: a.y }];
+    if (a.dy !== 0 && b.dy !== 0 && a.dy === -b.dy) {
+      var midy = (a1.y + b1.y) / 2;
+      pts.push({ x: a.x, y: midy });
+      pts.push({ x: b.x, y: midy });
+    } else if (a.dx !== 0 && b.dx !== 0) {
+      var midx = (a1.x + b1.x) / 2;
+      pts.push({ x: midx, y: a.y });
+      pts.push({ x: midx, y: b.y });
+    } else if (a.dx !== 0) pts.push({ x: b.x, y: a.y });
+    else pts.push({ x: a.x, y: b.y });
+    pts.push({ x: b.x, y: b.y });
+    return pts;
+  }
+  function clean(pts) {
+    var out = [];
+    pts.forEach(function (p) {
+      var last = out[out.length - 1];
+      if (!last || Math.hypot(last.x - p.x, last.y - p.y) > 0.5) out.push(p);
+    });
+    return out;
+  }
+  function pathOf(pts) {
+    pts = clean(pts);
+    if (pts.length < 2) return "";
+    var r = 10;
+    var d = "M " + pts[0].x.toFixed(1) + " " + pts[0].y.toFixed(1);
+    for (var i = 1; i < pts.length - 1; i++) {
+      var prev = pts[i - 1], cur = pts[i], next = pts[i + 1];
+      var v1x = cur.x - prev.x, v1y = cur.y - prev.y;
+      var v2x = next.x - cur.x, v2y = next.y - cur.y;
+      var l1 = Math.hypot(v1x, v1y) || 1, l2 = Math.hypot(v2x, v2y) || 1;
+      var rr = Math.min(r, l1 / 2, l2 / 2);
+      if (rr < 2) { d += " L " + cur.x.toFixed(1) + " " + cur.y.toFixed(1); continue; }
+      d += " L " + (cur.x - (v1x / l1) * rr).toFixed(1) + " " + (cur.y - (v1y / l1) * rr).toFixed(1);
+      d += " Q " + cur.x.toFixed(1) + " " + cur.y.toFixed(1) + " " + (cur.x + (v2x / l2) * rr).toFixed(1) + " " + (cur.y + (v2y / l2) * rr).toFixed(1);
+    }
+    var last = pts[pts.length - 1];
+    d += " L " + last.x.toFixed(1) + " " + last.y.toFixed(1);
+    return d;
+  }
+  var ns = "http://www.w3.org/2000/svg";
+  function drawStage(stage, svg, labelLayer, edges, ids) {
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    labelLayer.replaceChildren();
+    svg.setAttribute("width", stage.scrollWidth);
+    svg.setAttribute("height", stage.scrollHeight);
+    svg.style.width = stage.scrollWidth + "px";
+    svg.style.height = stage.scrollHeight + "px";
+    var defs = document.createElementNS(ns, "defs");
+    var mid = "arrow-" + stage.id;
+    defs.innerHTML = '<marker id="' + mid + '" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 4 L0 8 z"></path></marker>';
+    svg.appendChild(defs);
+    var B = {};
+    ids.forEach(function (id) { B[id] = box(stage, id); });
+    edges.forEach(function (edge) {
+      var pts = edge.pts(B);
+      var d = pathOf(pts);
+      if (!d) return;
+      var hit = document.createElementNS(ns, "path");
+      hit.setAttribute("d", d);
+      hit.setAttribute("class", "hit");
+      hit.addEventListener("click", function () { openFact(edge.to); });
+      svg.appendChild(hit);
+      var vis = document.createElementNS(ns, "path");
+      vis.setAttribute("d", d);
+      vis.setAttribute("class", "edge" + (edge.kind === "side" ? " side" : "") + (edge.fresh ? " new" : ""));
+      vis.setAttribute("marker-end", "url(#" + mid + ")");
+      svg.appendChild(vis);
+      if (!edge.label) return;
+      var cp = clean(pts), best = 0, idx = 0;
+      for (var i = 0; i < cp.length - 1; i++) {
+        var len = Math.hypot(cp[i + 1].x - cp[i].x, cp[i + 1].y - cp[i].y);
+        if (len > best) { best = len; idx = i; }
+      }
+      var p = cp[idx], q = cp[idx + 1];
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "edge-label";
+      btn.textContent = edge.label;
+      var x = (p.x + q.x) / 2, y = (p.y + q.y) / 2;
+      if (Math.abs(q.x - p.x) >= Math.abs(q.y - p.y)) y -= 11; else x += 12;
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+      btn.addEventListener("click", function () { openFact(edge.to); });
+      labelLayer.appendChild(btn);
+    });
+  }
+  function simple(from, fs, ft, to, ts, tt) {
+    return function (B) { return link(port(B[from], fs, ft), port(B[to], ts, tt)); };
+  }
+  function draw() {
+    drawStage(document.getElementById("stage-a"), document.getElementById("wires"), document.getElementById("labels-a"), [
+      { to: "ov-gw", label: "把请求交给网关", kind: "main", pts: simple("ov-caller", "right", 0.5, "ov-gw", "left", 0.5) },
+      { to: "ov-node", label: "启动时接上部署", kind: "main", fresh: true, pts: simple("ov-gw", "right", 0.5, "ov-node", "left", 0.5) },
+      { to: "ov-up", label: "挂载没改", kind: "side", pts: simple("ov-node", "right", 0.5, "ov-up", "left", 0.5) }
+    ], ["ov-caller", "ov-gw", "ov-node", "ov-up"]);
+    drawStage(document.getElementById("stage-b"), document.getElementById("wires-b"), document.getElementById("labels-b"), [
+      { to: "dom-node", label: "启动时用到底座", kind: "main", fresh: true, pts: simple("dom-if", "right", 0.5, "dom-node", "left", 0.5) }
+    ], ["dom-if", "dom-node"]);
+    drawStage(document.getElementById("stage-c"), document.getElementById("wires-new"), document.getElementById("labels-new"), [
+      { to: "q", label: "部署从这里进", kind: "main", fresh: true, pts: function (B) {
+          var q = B.q, a = B.boot;
+          var x = q.x + q.w * 0.42;
+          return [{ x: x, y: a.y + a.h }, { x: x, y: q.y }];
+        } },
+      { to: "qfail", label: "不合格", kind: "side", fresh: true, pts: simple("q", "right", 0.5, "qfail", "left", 0.5) },
+      { to: "repl", label: "轮到这一单", kind: "main", fresh: true, pts: simple("q", "bottom", 0.5, "repl", "top", 0.5) },
+      { to: "replfail", label: "停不掉", kind: "side", fresh: true, pts: simple("repl", "right", 0.5, "replfail", "left", 0.5) },
+      { to: "pm", label: "旧的已停或本来没有", kind: "main", fresh: true, pts: simple("repl", "bottom", 0.5, "pm", "top", 0.5) },
+      { to: "probe", label: "", kind: "main", fresh: true, pts: simple("pm", "bottom", 0.5, "probe", "top", 0.5) },
+      { to: "health", label: "用它来查", kind: "main", fresh: true, pts: simple("probe", "bottom", 0.5, "health", "top", 0.5) },
+      { to: "healthfail", label: "没过", kind: "side", fresh: true, pts: simple("health", "right", 0.45, "healthfail", "left", 0.5) },
+      { to: "mon", label: "第一次有结果", kind: "main", fresh: true, pts: simple("health", "bottom", 0.5, "mon", "top", 0.5) },
+      { to: "monfail", label: "之后失败", kind: "side", fresh: true, pts: simple("mon", "right", 0.5, "monfail", "left", 0.5) },
+      { to: "url", label: "另一条入口", kind: "side", fresh: true, pts: simple("api", "right", 0.5, "url", "left", 0.5) },
+      { to: "old-file", label: "这次没改", kind: "side", pts: simple("old-hw", "right", 0.5, "old-file", "left", 0.5) },
+      { to: "old-watch", label: "这次没改", kind: "side", pts: simple("old-file", "right", 0.5, "old-watch", "left", 0.5) },
+      { to: "old-hang", label: "这次没改", kind: "side", pts: simple("old-watch", "right", 0.5, "old-hang", "left", 0.5) },
+      { to: "old-off", label: "这次没改", kind: "side", pts: simple("old-hang", "right", 0.5, "old-off", "left", 0.5) }
+    ], ["boot","q","qfail","repl","replfail","pm","probe","health","healthfail","mon","monfail","api","url","state","old-hw","old-file","old-watch","old-hang","old-off"]);
+  }
+  var queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; draw(); });
+  }
+  window.addEventListener("resize", schedule);
+  if (window.ResizeObserver) {
+    ["stage-a", "stage-b", "stage-c"].forEach(function (id) {
+      new ResizeObserver(schedule).observe(document.getElementById(id));
+    });
+  }
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  schedule();
+})();
+</script>
+</body>
+</html>
