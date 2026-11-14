@@ -268,18 +268,6 @@ h1 {
   white-space: nowrap;
   cursor: pointer;
 }
-.narrow-arrow {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-.narrow-arrow::before { content: none; }
 .gw {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(148px, 200px);
@@ -387,8 +375,10 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
 }
 .foot p { margin: 0 0 6px; }
 .foot a { color: var(--muted); }
-@media (max-width: 900px) {
+@media (max-width: 1119px) {
   .scroll-hint { display: block; }
+}
+@media (max-width: 900px) {
   .wip-row, .start-row { grid-template-columns: 1fr; }
   #panel { left: 12px; right: 12px; width: auto; max-height: 54vh; }
 }
@@ -464,7 +454,6 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
         <span class="line">人用的软件，或自动工具，把一次对话发过来。</span>
       </button>
     </section>
-    <p class="narrow-arrow">带着密钥发请求</p>
 
     <section class="group col-gw" id="col-gw" aria-labelledby="gw-title">
       <div class="group-head">
@@ -476,63 +465,51 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
           <span class="card-title">接住这次对话请求</span>
           <span class="line">这条对话地址没有单独挂号，和别的没挂号的请求一起处理。</span>
         </button>
-        <p class="narrow-arrow">接着核对密钥</p>
         <button type="button" class="card" id="auth" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="card-title">检查调用方的密钥</span>
           <span class="line">核对那串用来证明身份的字符，是不是我们发出去的。</span>
         </button>
-        <p class="narrow-arrow">密钥不对</p>
         <button type="button" class="card end" id="reject-key" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="card-title">密钥不对</span>
           <span class="line">没带，或对不上，这次就停在这里。</span>
         </button>
-        <p class="narrow-arrow">密钥通过，继续</p>
         <button type="button" class="card" id="price" data-tags="request billing" aria-pressed="false" aria-controls="panel">
           <span class="card-title">先查有没有标价</span>
           <span class="line">先看这个模型定了价没有，好知道稍后大概扣多少。</span>
         </button>
-        <p class="narrow-arrow">没有标价，而且规定必须有</p>
         <button type="button" class="card end" id="reject-price" data-tags="billing" aria-pressed="false" aria-controls="panel">
           <span class="card-title">没有标价就拒绝</span>
           <span class="line">规定必须有定价却没有时才拒绝；否则只记一笔警告。</span>
         </button>
-        <p class="narrow-arrow">可以继续</p>
         <button type="button" class="card accent" id="pick" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="card-title">挑一个上游</span>
           <span class="line">上游是仓库外真正写回答的服务，这里从能做的里面挑一个。</span>
         </button>
-        <p class="narrow-arrow">没有可用上游</p>
         <button type="button" class="card end" id="no-up" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="card-title">没有可用上游</span>
           <span class="line">一个能用的都没有就报错；本机若正在准备，就告诉对方再等。</span>
         </button>
-        <p class="narrow-arrow">选定之后继续</p>
         <button type="button" class="card" id="send" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="card-title">按对方的格式发出</span>
           <span class="line">能直接送就直接送，否则先换成对方听得懂的说法。</span>
         </button>
-        <p class="narrow-arrow">上游失败</p>
         <button type="button" class="card end" id="retry" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="card-title">重试或换一个</span>
           <span class="line">上游没答好，就再试，或换一个还能用的。</span>
         </button>
-        <p class="narrow-arrow">也可以交给本机</p>
         <button type="button" class="card side" id="local" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="badge infer">推断 · 待确认</span>
           <span class="card-title">本机推理节点</span>
           <span class="line">交给这台机器上挂着的推理，不是跨网络的点对点。</span>
         </button>
-        <p class="narrow-arrow">回答回来了</p>
         <button type="button" class="card" id="bill" data-tags="request billing" aria-pressed="false" aria-controls="panel">
           <span class="card-title">数清用量再扣额度</span>
           <span class="line">数一数这次用了多少 token（问题和回答都算），算出费用，从额度里扣。</span>
         </button>
-        <p class="narrow-arrow">然后把回答送回</p>
         <button type="button" class="card" id="respond" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="card-title">把回答送回去</span>
           <span class="line">回答回到调用方，并带一个编号，方便以后对上这一次。</span>
         </button>
-        <p class="narrow-arrow">把回答送回给上面的用户或工具</p>
       </div>
     </section>
 
@@ -541,7 +518,6 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
         <div class="group-head">
           <h2 id="up-title">仓库外 · 上游模型</h2>
         </div>
-        <p class="narrow-arrow">网关把请求发到这里</p>
         <button type="button" class="card" id="upstream" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="badge out">仓库外</span>
           <span class="card-title">上游模型</span>
@@ -552,7 +528,6 @@ code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhe
         <div class="group-head">
           <h2 id="db-title">底座 · 额度和日志的库</h2>
         </div>
-        <p class="narrow-arrow">扣掉的额度和这次记录写进库</p>
         <button type="button" class="card" id="db" data-tags="billing" aria-pressed="false" aria-controls="panel">
           <span class="badge">底座</span>
           <span class="card-title">额度和日志的库</span>
