@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>L0 一次请求 · BurnCloud 架构洋葱</title>
+<title>一次对话请求怎么走完 · BurnCloud</title>
 <script>
 (function () {
   try {
@@ -15,299 +15,382 @@
 <style>
 :root {
   color-scheme: light;
-  --paper: #e7eef4;
-  --sheet: #f8fafc;
-  --ink: #17202b;
-  --muted: #4c6070;
-  --line: #c5d3df;
-  --accent: #1d4ed8;
-  --accent-2: #1e3a8a;
-  --soft: #e7effc;
-  --warn: #6b450c;
-  --warn-bg: #f4ecdc;
-  --wip: #e8eef2;
-  --shadow: 0 1px 0 rgba(23, 32, 43, 0.04);
-  --serif: "Liberation Serif", "Noto Serif", Palatino, "Palatino Linotype", Georgia, serif;
-  --sans: "WenQuanYi Micro Hei", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "Noto Sans", sans-serif;
-  --mono: "JetBrains Mono", "Cascadia Mono", "WenQuanYi Micro Hei Mono", ui-monospace, monospace;
+  --ground: #e6e2da;
+  --card: #f7f5f1;
+  --panel: #f7f5f1;
+  --card-on: #efeae3;
+  --ink: #1c1b19;
+  --muted: #5c574f;
+  --line: #cfc8bc;
+  --group-line: rgba(28, 27, 25, 0.38);
+  --wire: #5c574f;
+  --accent: #c24d28;
+  --warn: #7a5620;
+  --warn-bg: #f3ead6;
+  --end: #f3ebe6;
+  --shadow: 0 16px 40px rgba(28, 27, 25, 0.12);
+  --sans: "WenQuanYi Micro Hei", "PingFang SC", "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --serif: "Palatino Linotype", Palatino, "Songti SC", "Noto Serif CJK SC", "WenQuanYi Micro Hei", Georgia, serif;
+  --mono: "WenQuanYi Micro Hei Mono", ui-monospace, "Sarasa Mono SC", monospace;
 }
 @media (prefers-color-scheme: dark) {
   :root {
     color-scheme: dark;
-    --paper: #10161c;
-    --sheet: #18222c;
-    --ink: #e6eef4;
-    --muted: #9aafbf;
-    --line: #314352;
-    --accent: #8eb0f5;
-    --accent-2: #d5e4ff;
-    --soft: #243246;
-    --warn: #f0d7a2;
-    --warn-bg: #3a2e1c;
-    --wip: #1a242c;
-    --shadow: none;
+    --ground: #121212;
+    --card: #1c1c1c;
+    --panel: #1a1a1a;
+    --card-on: #262320;
+    --ink: #eceae7;
+    --muted: #9c968d;
+    --line: #3a3835;
+    --group-line: rgba(236, 234, 231, 0.32);
+    --wire: #b7b1a8;
+    --accent: #e07a45;
+    --warn: #d4b483;
+    --warn-bg: #2a2418;
+    --end: #241c1a;
+    --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
   }
 }
 :root[data-theme="light"] {
   color-scheme: light;
-  --paper: #e7eef4;
-  --sheet: #f8fafc;
-  --ink: #17202b;
-  --muted: #4c6070;
-  --line: #c5d3df;
-  --accent: #1d4ed8;
-  --accent-2: #1e3a8a;
-  --soft: #e7effc;
-  --warn: #6b450c;
-  --warn-bg: #f4ecdc;
-  --wip: #e8eef2;
-  --shadow: 0 1px 0 rgba(23, 32, 43, 0.04);
+  --ground: #e6e2da;
+  --card: #f7f5f1;
+  --panel: #f7f5f1;
+  --card-on: #efeae3;
+  --ink: #1c1b19;
+  --muted: #5c574f;
+  --line: #cfc8bc;
+  --group-line: rgba(28, 27, 25, 0.38);
+  --wire: #5c574f;
+  --accent: #c24d28;
+  --warn: #7a5620;
+  --warn-bg: #f3ead6;
+  --end: #f3ebe6;
+  --shadow: 0 16px 40px rgba(28, 27, 25, 0.12);
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --paper: #10161c;
-  --sheet: #18222c;
-  --ink: #e6eef4;
-  --muted: #9aafbf;
-  --line: #314352;
-  --accent: #8eb0f5;
-  --accent-2: #d5e4ff;
-  --soft: #243246;
-  --warn: #f0d7a2;
-  --warn-bg: #3a2e1c;
-  --wip: #1a242c;
-  --shadow: none;
+  --ground: #121212;
+  --card: #1c1c1c;
+  --panel: #1a1a1a;
+  --card-on: #262320;
+  --ink: #eceae7;
+  --muted: #9c968d;
+  --line: #3a3835;
+  --group-line: rgba(236, 234, 231, 0.32);
+  --wire: #b7b1a8;
+  --accent: #e07a45;
+  --warn: #d4b483;
+  --warn-bg: #2a2418;
+  --end: #241c1a;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: auto; }
 body {
   margin: 0;
-  background: var(--paper);
+  background: var(--ground);
   color: var(--ink);
   font-family: var(--sans);
   font-size: 16px;
-  line-height: 1.55;
+  line-height: 1.5;
 }
-a { color: var(--accent-2); }
-a:hover { text-decoration-thickness: 2px; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .skip {
   position: absolute;
   left: 12px;
   top: -40px;
-  background: var(--sheet);
+  background: var(--card);
+  color: var(--ink);
   padding: 6px 10px;
-  z-index: 5;
+  z-index: 40;
 }
 .skip:focus { top: 8px; }
-.wrap { max-width: 1120px; margin: 0 auto; padding: 28px 20px 72px; }
-.mast { display: flex; justify-content: space-between; gap: 20px; align-items: flex-end; flex-wrap: wrap; }
-.kicker {
-  margin: 0 0 6px;
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 0.95rem;
-  color: var(--accent-2);
-}
-h1 { margin: 0; font-size: 1.85rem; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; text-wrap: balance; }
-.latin { font-family: var(--serif); font-style: italic; font-weight: 500; letter-spacing: 0; }
-.tools { display: flex; gap: 8px; align-items: center; }
-button.ghost, a.ghost {
-  font: inherit;
-  background: var(--sheet);
-  color: var(--ink);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 6px 10px;
-  text-decoration: none;
-  cursor: pointer;
-}
-.layers { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 18px 0 8px; padding: 0; list-style: none; }
-.layers a, .layers span { font-size: 0.92rem; }
-.layers span { color: var(--muted); }
-.layers a[aria-current="page"] { color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 2px solid var(--accent); }
-.lead { max-width: 44rem; margin: 8px 0 18px; color: var(--ink); }
-.legend { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0 0 18px; padding: 0; list-style: none; color: var(--muted); font-size: 0.88rem; }
-.legend li { display: flex; align-items: center; gap: 8px; }
-.swatch { width: 22px; height: 0; border-top: 2px solid var(--accent); display: inline-block; }
-.swatch.dash { border-top-style: dashed; border-top-color: var(--muted); }
-.swatch.infer { width: 10px; height: 10px; border: 0; background: var(--warn-bg); box-shadow: inset 0 0 0 1px var(--warn); }
-.spine { margin: 0 0 22px; }
-.phase { margin: 0; color: var(--muted); font-size: 0.88rem; max-width: 40rem; }
-.head, .step, .actor, .local {
-  background: var(--sheet);
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  box-shadow: var(--shadow);
-}
-.head { display: flex; justify-content: space-between; gap: 12px; align-items: center; padding: 12px 14px; flex-wrap: wrap; }
-.head p { margin: 0; }
-.head .name { font-weight: 600; }
-.head a.enter {
-  background: var(--accent);
-  color: #f8fafc;
-  text-decoration: none;
-  padding: 7px 12px;
-  border-radius: 2px;
-  font-weight: 600;
-}
-:root[data-theme="dark"] .head a.enter { color: #10161c; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .head a.enter { color: #10161c; }
-}
-.step { border-left: 3px solid var(--accent); }
-.step-btn, .actor-btn {
+.wrap { max-width: 1360px; margin: 0 auto; padding: 22px 22px 88px; }
+.top {
   display: flex;
-  gap: 12px;
-  width: 100%;
-  text-align: left;
-  background: transparent;
-  border: 0;
-  color: inherit;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px 24px;
+}
+h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.7rem;
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.intro { margin: 6px 0 0; max-width: 38rem; color: var(--muted); font-size: 0.95rem; }
+.top-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; }
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pills button, .ghost, .links a {
   font: inherit;
-  padding: 12px 12px 6px;
+  font-size: 0.82rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--muted);
+  padding: 4px 11px;
+  text-decoration: none;
   cursor: pointer;
 }
-.step-btn[aria-pressed="true"], .actor-btn[aria-pressed="true"] { background: var(--soft); }
-.idx {
-  font-family: var(--serif);
-  font-style: italic;
-  font-variant-numeric: tabular-nums;
-  color: var(--accent-2);
-  width: 1.7rem;
-  flex: none;
-  padding-top: 1px;
+.pills button[aria-checked="true"] {
+  background: var(--ink);
+  color: var(--ground);
+  border-color: var(--ink);
 }
-.copy { min-width: 0; }
-.title { display: block; font-weight: 600; }
-.sub { display: block; color: var(--muted); font-size: 0.92rem; }
-.path { display: block; margin-top: 4px; font-family: var(--mono); font-size: 0.75rem; line-height: 1.45; overflow-wrap: anywhere; }
-.chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 10px 46px; }
-.chips a {
-  font-family: var(--mono);
+.links { display: flex; flex-wrap: wrap; gap: 6px; }
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  list-style: none;
+  margin: 14px 0 16px;
+  padding: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+.legend li { display: flex; align-items: center; gap: 7px; }
+.swatch { width: 22px; height: 0; border-top: 1.5px solid var(--wire); display: inline-block; position: relative; }
+.swatch::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: -4px;
+  border: 4px solid transparent;
+  border-left: 6px solid var(--wire);
+}
+.swatch.dash { border-top-style: dashed; }
+.swatch.hot {
+  width: 14px;
+  height: 10px;
+  border: 1.5px solid var(--accent);
+  border-radius: 3px;
+}
+.swatch.hot::after { display: none; }
+.startup { margin-bottom: 18px; }
+.group {
+  border: 1px dashed var(--group-line);
+  border-radius: 18px;
+  padding: 14px 16px 16px;
+  min-width: 0;
+}
+.group-head { min-height: 48px; margin-bottom: 12px; }
+.group-head h2 {
+  margin: 0;
   font-size: 0.72rem;
-  text-decoration: none;
-  border: 1px solid var(--line);
-  background: var(--paper);
-  color: var(--accent-2);
-  padding: 2px 6px;
-  border-radius: 2px;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  color: var(--muted);
 }
-.chips a:hover { border-color: var(--accent); }
-.actor, .local { padding: 0; }
-.actor .title, .local .title { display: block; font-size: 1rem; font-weight: 600; }
-.dir { display: block; margin-top: 6px; font-family: var(--mono); font-size: 0.75rem; color: var(--accent-2); }
-.local { border-style: dashed; border-left: 3px dashed var(--warn); }
+.group-head p { margin: 4px 0 0; color: var(--muted); font-size: 0.8rem; line-height: 1.45; max-width: 40rem; }
+.start-row, .wip-row { display: grid; gap: 12px; }
+.start-row { grid-template-columns: 1fr 1fr; }
+.wip-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.wip-group { margin-top: 18px; }
+.card {
+  display: block;
+  width: 100%;
+  margin: 0;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 12px 11px;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.card-title { display: block; font-weight: 650; font-size: 0.95rem; letter-spacing: -0.01em; }
+.line { display: block; margin-top: 3px; color: var(--muted); font-size: 0.78rem; line-height: 1.45; }
+.card.accent { border-color: var(--accent); box-shadow: inset 0 0 0 1px var(--accent); }
+.card.end { background: var(--end); }
+.card.side, .card.wip { border-style: dashed; }
+.card.side { border-color: var(--warn); }
+.card[aria-pressed="true"] { background: var(--card-on); border-color: var(--ink); }
+.card.accent[aria-pressed="true"] { border-color: var(--accent); }
+.card:hover { border-color: var(--muted); }
+.card.accent:hover { border-color: var(--accent); }
 .badge {
   display: inline-block;
-  font-size: 0.75rem;
-  line-height: 1.3;
-  padding: 1px 6px;
-  border-radius: 2px;
+  margin: 0 0 6px;
+  padding: 0 6px;
   border: 1px solid var(--line);
+  border-radius: 999px;
   color: var(--muted);
-  margin-bottom: 6px;
+  font-size: 0.68rem;
+  letter-spacing: 0.04em;
+  line-height: 1.6;
 }
-.badge.infer { color: var(--warn); background: var(--warn-bg); border-color: transparent; }
-.badge.wip { color: var(--ink); background: var(--wip); border-style: dashed; }
-.badge.read { color: var(--muted); }
-#detail {
-  background: var(--sheet);
+.badge.infer { color: var(--warn); border-color: var(--warn); background: var(--warn-bg); }
+.badge.wip { border-style: dashed; }
+.is-dim { opacity: 0.22; }
+.card.is-dim:focus-visible { opacity: 1; }
+.cols { position: relative; }
+#wires { position: absolute; left: 0; top: 0; overflow: visible; z-index: 1; pointer-events: none; }
+#labels { position: absolute; inset: 0; z-index: 4; pointer-events: none; }
+.edge { fill: none; stroke: var(--wire); stroke-width: 1.35; pointer-events: none; }
+.edge.side { stroke-dasharray: 4 4; }
+.hit { fill: none; stroke: transparent; stroke-width: 14; pointer-events: stroke; cursor: pointer; }
+#wires marker path { fill: context-stroke; }
+.edge-label {
+  position: absolute;
+  z-index: 4;
+  pointer-events: auto;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 0 5px;
+  border: 0;
+  background: var(--ground);
+  color: var(--muted);
+  font: inherit;
+  font-size: 0.72rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.narrow-arrow { margin: 2px 0; color: var(--muted); font-size: 0.8rem; }
+.narrow-arrow::before { content: "↓ "; }
+#panel {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: min(400px, calc(100vw - 24px));
+  max-height: min(72vh, 640px);
+  overflow: auto;
+  z-index: 30;
+  background: var(--panel);
+  color: var(--ink);
   border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 16px 18px 8px;
-  margin: 8px 0 28px;
-  min-height: 8rem;
+  border-radius: 14px;
+  box-shadow: var(--shadow);
+  padding: 14px 16px 18px;
 }
-#detail h2 { margin: 0 0 8px; font-size: 1.2rem; }
-#detail h3 { margin: 16px 0 6px; font-size: 0.95rem; }
-#detail ul, #detail ol { margin: 6px 0 12px; padding-left: 1.2rem; }
-#detail li { margin: 4px 0; }
-#detail code, .mono, code {
-  font-family: var(--mono);
-  font-size: 0.84em;
-  overflow-wrap: anywhere;
+#panel[hidden] { display: none; }
+.panel-bar {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  padding-bottom: 8px;
+  z-index: 1;
 }
-.note { color: var(--muted); font-size: 0.92rem; }
-.section { margin: 28px 0; }
-.section h2 { font-size: 1.2rem; margin: 0 0 8px; }
-.wip-grid, .entry-list { display: grid; gap: 10px; }
-@media (min-width: 800px) {
-  .wip-grid { grid-template-columns: repeat(3, 1fr); }
+#panel-title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  text-wrap: balance;
 }
-.wip-card {
-  background-color: var(--wip);
-  background-image: repeating-linear-gradient(-45deg, transparent, transparent 7px, rgba(23, 32, 43, 0.035) 7px, rgba(23, 32, 43, 0.035) 8px);
-  border: 1px dashed var(--line);
-  border-radius: 2px;
-  padding: 12px;
-}
-:root[data-theme="dark"] .wip-card {
-  background-image: repeating-linear-gradient(-45deg, transparent, transparent 7px, rgba(230, 238, 244, 0.04) 7px, rgba(230, 238, 244, 0.04) 8px);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .wip-card {
-    background-image: repeating-linear-gradient(-45deg, transparent, transparent 7px, rgba(230, 238, 244, 0.04) 7px, rgba(230, 238, 244, 0.04) 8px);
-  }
-}
-.wip-card h3 { margin: 0 0 6px; font-size: 1rem; }
-.wip-card p, .entry-list li { margin: 0 0 6px; }
-.entry-list { list-style: none; padding: 0; }
-.entry-list li {
-  background: var(--sheet);
+#panel-close {
+  font: inherit;
+  font-size: 0.8rem;
   border: 1px solid var(--line);
-  border-radius: 2px;
-  padding: 10px 12px;
+  background: transparent;
+  color: var(--ink);
+  border-radius: 999px;
+  padding: 3px 10px;
+  cursor: pointer;
+  flex: none;
 }
+#panel-body { font-size: 0.92rem; }
+#panel-body p { margin: 0 0 8px; }
+#panel-body a { color: var(--ink); }
+.dev {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--line);
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.dev h3 {
+  margin: 0 0 6px;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+}
+.dev h4 { margin: 12px 0 4px; font-size: 0.78rem; color: var(--ink); font-weight: 650; }
+.dev ul, .dev ol { margin: 4px 0 8px; padding-left: 1.15rem; }
+.dev li { margin: 3px 0; }
+.dev a { color: var(--muted); }
+code, .mono { font-family: var(--mono); font-size: 0.92em; overflow-wrap: anywhere; }
+#library { display: none; }
 .foot {
-  margin-top: 36px;
-  padding-top: 14px;
-  border-top: 1px solid var(--line);
+  margin-top: 22px;
   color: var(--muted);
-  font-size: 0.88rem;
+  font-size: 0.78rem;
 }
-.foot code { font-size: 0.8rem; }
-@media (min-width: 861px) {
-  .spine {
+.foot p { margin: 0 0 6px; }
+.foot a { color: var(--muted); }
+@media (min-width: 901px) {
+  .cols {
     display: grid;
-    grid-template-columns: 210px minmax(280px, 1fr) 230px;
-    column-gap: 18px;
-    row-gap: 8px;
-    align-items: start;
+    grid-template-columns: 200px minmax(0, 1fr) 230px;
+    column-gap: 78px;
+    align-items: stretch;
   }
-  .head, .phase, .s1, .s2, .s3, .s4, .s5, .s6, .s7, .local, .s8, .s9 { grid-column: 2; }
-  .head { grid-row: 1; }
-  .phase { grid-row: 2; }
-  .s1 { grid-row: 3; }
-  .s2 { grid-row: 4; }
-  .client { grid-column: 1; grid-row: 5; position: relative; }
-  .s3 { grid-row: 5; }
-  .s4 { grid-row: 6; }
-  .s5 { grid-row: 7; }
-  .s6 { grid-row: 8; }
-  .s7 { grid-row: 9; }
-  .up { grid-column: 3; grid-row: 9; position: relative; }
-  .local { grid-row: 10; margin-left: 36px; }
-  .s8 { grid-row: 11; }
-  .back { grid-column: 1; grid-row: 12; }
-  .s9 { grid-row: 12; }
-  .client::after, .up::before {
-    content: "";
+  .narrow-arrow {
     position: absolute;
-    top: 26px;
-    border: 6px solid transparent;
-    border-left: 7px solid var(--accent);
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
-  .client::after { right: -16px; }
-  .up::before { left: -16px; }
-  .dir-narrow { display: none; }
+  .narrow-arrow::before { content: none; }
+  .gw {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(148px, 200px);
+    grid-template-areas:
+      "recv ."
+      "auth badkey"
+      "price badprice"
+      "pick noup"
+      "send ."
+      ". retry"
+      ". local"
+      "bill ."
+      "back .";
+    gap: 18px 28px;
+    align-items: center;
+  }
+  #recv { grid-area: recv; }
+  #auth { grid-area: auth; }
+  #reject-key { grid-area: badkey; }
+  #price { grid-area: price; }
+  #reject-price { grid-area: badprice; }
+  #pick { grid-area: pick; }
+  #no-up { grid-area: noup; }
+  #send { grid-area: send; }
+  #retry { grid-area: retry; }
+  #local { grid-area: local; }
+  #bill { grid-area: bill; }
+  #respond { grid-area: back; }
+  .col-right { position: relative; }
+  #grp-up, #grp-db { position: absolute; left: 0; right: 0; }
 }
-@media (max-width: 860px) {
-  .spine { display: flex; flex-direction: column; gap: 8px; }
-  .dir-wide { display: none; }
-  h1 { font-size: 1.45rem; }
-  .chips { padding-left: 12px; }
-  .local { margin-left: 16px; }
+@media (max-width: 900px) {
+  #wires, .edge-label { display: none !important; }
+  .cols, .gw, .col-right { display: flex; flex-direction: column; gap: 8px; }
+  .card.end, .card.side { margin-left: 14px; }
+  h1 { font-size: 1.4rem; }
+  .wip-row, .start-row { grid-template-columns: 1fr; }
+  .wrap { padding: 14px 12px 108px; }
+  #panel { left: 12px; right: 12px; width: auto; max-height: 54vh; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
@@ -319,213 +402,211 @@ button.ghost, a.ghost {
 </style>
 </head>
 <body>
-<a class="skip" href="#detail">跳到步骤说明</a>
+<a class="skip" href="#recv">跳到图</a>
 <div class="wrap">
-  <header class="mast">
+  <header class="top">
     <div>
-      <p class="kicker">L0 · 架构洋葱</p>
-      <h1>一次 <span class="latin">POST /v1/chat/completions</span> 怎么走完</h1>
+      <h1>一次对话请求怎么走完</h1>
+      <p class="intro">调用方把对话交给网关，网关挑一个上游写出回答，再送回来。</p>
     </div>
-    <div class="tools">
-      <button type="button" class="ghost" id="theme">切换深色</button>
-      <a class="ghost" href="/architecture-flow/">返回文档</a>
+    <div class="top-actions">
+      <div class="pills" role="radiogroup" aria-label="看哪一部分">
+        <button type="button" role="radio" data-filter="all" aria-checked="true">全部</button>
+        <button type="button" role="radio" data-filter="request" aria-checked="false">一次请求</button>
+        <button type="button" role="radio" data-filter="billing" aria-checked="false">计费</button>
+        <button type="button" role="radio" data-filter="wip" aria-checked="false">开发中</button>
+      </div>
+      <nav class="links" aria-label="页面">
+        <a href="l1.html">领域图</a>
+        <a href="/architecture-flow/">返回文档</a>
+        <button type="button" class="ghost" id="theme">深色</button>
+      </nav>
     </div>
   </header>
-  <nav aria-label="架构层次">
-    <ul class="layers">
-      <li><a href="l0.html" aria-current="page">L0 一次请求</a></li>
-      <li><a href="l1.html">L1 领域与依赖</a></li>
-      <li><span>L2 模块 · 稍后</span></li>
-      <li><span>L3 关键流程 · 稍后</span></li>
-    </ul>
-  </nav>
-  <p class="lead">客户或工具把这次对话补全交给 BurnCloud 网关，网关选上游、转发、记账，再把响应送回来。中间九步都标了 main 上的路径和函数。点一步看全文；点领域名进入 L1。</p>
-  <ul class="legend">
-    <li><span class="swatch" aria-hidden="true"></span>实线是这条请求的主线</li>
-    <li><span class="swatch dash" aria-hidden="true"></span>虚线不在主线上，不是已接通的流程</li>
-    <li><span class="swatch infer" aria-hidden="true"></span>琥珀色「推断 · 待确认」来自素材标注，不是已核对的事实</li>
+  <ul class="legend" aria-label="怎么看这张图">
+    <li><span class="swatch" aria-hidden="true"></span>箭头是下一步</li>
+    <li><span class="swatch hot" aria-hidden="true"></span>暖色框是关键一步：挑谁来回答</li>
+    <li><span class="swatch dash" aria-hidden="true"></span>虚线是旁支，不是主线</li>
+    <li>点方块看说明。开发中只有虚线框，没有箭头。</li>
   </ul>
 
-  <div class="spine">
-    <header class="head">
-      <div>
-        <p class="name">BurnCloud 网关</p>
-        <p class="sub">下面九步都发生在网关里。领域分工在 L1。</p>
+  <section class="group startup" aria-labelledby="boot-title">
+    <div class="group-head">
+      <h2 id="boot-title">启动</h2>
+      <p>只在启动时做一次，不是每次请求都重做。</p>
+    </div>
+    <div class="start-row">
+      <button type="button" class="card" id="boot1" data-tags="start" aria-pressed="false" aria-controls="panel">
+        <span class="card-title">把程序跑起来</span>
+        <span class="line">只在启动时做一次。读地址和端口，并备好程序自己用的钥匙。</span>
+      </button>
+      <button type="button" class="card" id="boot2" data-tags="start" aria-pressed="false" aria-controls="panel">
+        <span class="card-title">打开端口等人来</span>
+        <span class="line">只在启动时做一次。准备数据库，打开端口，本机推理一起待命。</span>
+      </button>
+    </div>
+  </section>
+
+  <div class="cols" id="cols">
+    <svg id="wires" aria-hidden="true"></svg>
+    <div id="labels"></div>
+
+    <section class="group col-client" id="col-client" aria-labelledby="client-title">
+      <div class="group-head">
+        <h2 id="client-title">客户端</h2>
+        <p>仓库外的调用方。</p>
       </div>
-      <a class="enter" href="l1.html">进入领域层 L1</a>
-    </header>
-    <p class="phase">读图：01 和 02 是进程启动，不是每一次请求都重做。素材把它们和后面七步编在同一条主线里。</p>
-
-    <article class="step s1">
-      <button type="button" class="step-btn" data-step="s1" aria-pressed="false" aria-controls="detail">
-        <span class="idx">01</span>
-        <span class="copy">
-          <span class="title">程序入口</span>
-          <span class="sub">进程从 <span class="latin">main()</span> 启动，读 HOST / PORT，再拉起 server。</span>
-          <span class="path">crates/interfaces/cli/src/main.rs · main()</span>
-        </span>
+      <button type="button" class="card" id="client" data-tags="request" aria-pressed="false" aria-controls="panel">
+        <span class="badge out">仓库外</span>
+        <span class="card-title">用户或工具</span>
+        <span class="line">人用的软件，或自动工具，把一次对话发过来。</span>
       </button>
-      <div class="chips"><a href="l1.html#interfaces">interfaces · 入口</a></div>
-    </article>
+    </section>
+    <p class="narrow-arrow">带着密钥发请求</p>
 
-    <article class="step s2">
-      <button type="button" class="step-btn" data-step="s2" aria-pressed="false" aria-controls="detail">
-        <span class="idx">02</span>
-        <span class="copy">
-          <span class="title">Server 启动</span>
-          <span class="sub">建库、初始化路由库、启动 NodeRuntime、绑端口，然后 axum 开始接请求。</span>
-          <span class="path">crates/interfaces/server/src/lib.rs · start_server()</span>
-        </span>
-      </button>
-      <div class="chips"><a href="l1.html#interfaces">interfaces · 入口</a></div>
-    </article>
-
-    <article class="actor client">
-      <button type="button" class="actor-btn" data-step="client" aria-pressed="false" aria-controls="detail">
-        <span class="copy">
-          <span class="title">客户或工具</span>
-          <span class="sub">仓库外的调用方。素材没有给它的源码路径。</span>
-          <span class="dir dir-wide">→ 步骤 03　POST /v1/chat/completions</span>
-          <span class="dir dir-narrow">↓ 进入步骤 03　POST /v1/chat/completions</span>
-        </span>
-      </button>
-    </article>
-
-    <article class="step s3">
-      <button type="button" class="step-btn" data-step="s3" aria-pressed="false" aria-controls="detail">
-        <span class="idx">03</span>
-        <span class="copy">
-          <span class="title">HTTP 路由注册</span>
-          <span class="sub">没有单独的 chat/completions 路由。数据面用 fallback 把这条请求交给 proxy_handler。</span>
-          <span class="path">crates/traffic/router/src/lib.rs · create_router_app_with_route_miss()</span>
-        </span>
-      </button>
-      <div class="chips">
-        <a href="l1.html#interfaces">interfaces · 入口</a>
-        <a href="l1.html#traffic">traffic · 转发</a>
+    <section class="group col-gw" id="col-gw" aria-labelledby="gw-title">
+      <div class="group-head">
+        <h2 id="gw-title">BurnCloud 网关</h2>
+        <p>一次请求里，入口、身份、转发、供给、计费配合着做完。领域分工在 <a href="l1.html">领域图</a>。</p>
       </div>
-    </article>
-
-    <article class="step s4">
-      <button type="button" class="step-btn" data-step="s4" aria-pressed="false" aria-controls="detail">
-        <span class="idx">04</span>
-        <span class="copy">
-          <span class="title">鉴权</span>
-          <span class="sub">从 Bearer、x-api-key 或 x-goog-api-key 取 token。取不到就 401。</span>
-          <span class="path">crates/traffic/router/src/lib.rs · proxy_handler()</span>
-        </span>
-      </button>
-      <div class="chips"><a href="l1.html#identity">identity · 身份</a></div>
-    </article>
-
-    <article class="step s5">
-      <button type="button" class="step-btn" data-step="s5" aria-pressed="false" aria-controls="detail">
-        <span class="idx">05</span>
-        <span class="copy">
-          <span class="title">计费预检</span>
-          <span class="sub">先查这个模型有没有价格。严格模式查不到就 400。</span>
-          <span class="path">proxy_logic() · cost_calculator.preflight(model, None)</span>
-        </span>
-      </button>
-      <div class="chips"><a href="l1.html#commerce">commerce · 计费</a></div>
-    </article>
-
-    <article class="step s6">
-      <button type="button" class="step-btn" data-step="s6" aria-pressed="false" aria-controls="detail">
-        <span class="idx">06</span>
-        <span class="copy">
-          <span class="title">路由 / 选上游</span>
-          <span class="sub">Traffic 做路由决策，Supply 提供候选渠道。没有候选就走 route_miss。</span>
-          <span class="path">crates/traffic/router/src/model_router.rs · route_for_dispatch()</span>
-        </span>
-      </button>
-      <div class="chips">
-        <a href="l1.html#traffic">traffic · 转发</a>
-        <a href="l1.html#supply">supply · 供给</a>
-      </div>
-    </article>
-
-    <article class="step s7">
-      <button type="button" class="step-btn" data-step="s7" aria-pressed="false" aria-controls="detail">
-        <span class="idx">07</span>
-        <span class="copy">
-          <span class="title">适配器 + 调上游</span>
-          <span class="sub">按上游协议透传或转换，由 reqwest 发出。失败时重试、熔断、failover。</span>
-          <span class="path">proxy_logic() · req_builder.send()</span>
-        </span>
-      </button>
-      <div class="chips"><a href="l1.html#traffic">traffic · 转发</a></div>
-    </article>
-
-    <article class="actor up">
-      <button type="button" class="actor-btn" data-step="up" aria-pressed="false" aria-controls="detail">
-        <span class="copy">
-          <span class="title">上游模型</span>
-          <span class="sub">仓库外。claude / gemini / vertex / zai，其余按 OpenAI。</span>
-          <span class="dir dir-wide">← 步骤 07　req_builder.send()</span>
-          <span class="dir dir-narrow">↑ 由步骤 07 的 req_builder.send() 发出</span>
-        </span>
-      </button>
-    </article>
-
-    <article class="local">
-      <button type="button" class="actor-btn" data-step="local" aria-pressed="false" aria-controls="detail">
-        <span class="copy">
+      <div class="gw">
+        <button type="button" class="card" id="recv" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">接住这次对话请求</span>
+          <span class="line">这条对话地址没有单独挂号，和别的没挂号的请求一起处理。</span>
+        </button>
+        <p class="narrow-arrow">接着核对密钥</p>
+        <button type="button" class="card" id="auth" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">检查调用方的密钥</span>
+          <span class="line">核对那串用来证明身份的字符，是不是我们发出去的。</span>
+        </button>
+        <p class="narrow-arrow">密钥不对</p>
+        <button type="button" class="card end" id="reject-key" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">密钥不对</span>
+          <span class="line">没带，或对不上，这次就停在这里。</span>
+        </button>
+        <p class="narrow-arrow">密钥通过，继续</p>
+        <button type="button" class="card" id="price" data-tags="request billing" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">先查有没有标价</span>
+          <span class="line">先看这个模型定了价没有，好知道稍后大概扣多少。</span>
+        </button>
+        <p class="narrow-arrow">没有标价，而且规定必须有</p>
+        <button type="button" class="card end" id="reject-price" data-tags="billing" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">没有标价就拒绝</span>
+          <span class="line">规定必须有定价却没有时才拒绝；否则只记一笔警告。</span>
+        </button>
+        <p class="narrow-arrow">可以继续</p>
+        <button type="button" class="card accent" id="pick" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">挑一个上游</span>
+          <span class="line">上游是仓库外真正写回答的服务，这里从能做的里面挑一个。</span>
+        </button>
+        <p class="narrow-arrow">没有可用上游</p>
+        <button type="button" class="card end" id="no-up" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">没有可用上游</span>
+          <span class="line">一个能用的都没有就报错；本机若正在准备，就告诉对方再等。</span>
+        </button>
+        <p class="narrow-arrow">选定之后继续</p>
+        <button type="button" class="card" id="send" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">按对方的格式发出</span>
+          <span class="line">能直接送就直接送，否则先换成对方听得懂的说法。</span>
+        </button>
+        <p class="narrow-arrow">上游失败</p>
+        <button type="button" class="card end" id="retry" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">重试或换一个</span>
+          <span class="line">上游没答好，就再试，或换一个还能用的。</span>
+        </button>
+        <p class="narrow-arrow">也可以交给本机</p>
+        <button type="button" class="card side" id="local" data-tags="request" aria-pressed="false" aria-controls="panel">
           <span class="badge infer">推断 · 待确认</span>
-          <span class="title">本机挂载的推理节点</span>
-          <span class="sub">步骤 07 的旁支，不是 P2P，也不是已上线的跨网络直连。</span>
-          <span class="path">local_dispatch::LocalExchange · local_attachment*.rs</span>
-        </span>
-      </button>
-    </article>
-
-    <article class="step s8">
-      <button type="button" class="step-btn" data-step="s8" aria-pressed="false" aria-controls="detail">
-        <span class="idx">08</span>
-        <span class="copy">
-          <span class="title">用量统计与计费结算</span>
-          <span class="sub">数 token，算纳美元成本，扣额度，再异步写路由日志。</span>
-          <span class="path">proxy_handler() · TokenService::deduct_quota</span>
-        </span>
-      </button>
-      <div class="chips">
-        <a href="l1.html#commerce">commerce · 计费</a>
-        <a href="l1.html#identity">identity · 身份</a>
+          <span class="card-title">本机推理节点</span>
+          <span class="line">交给这台机器上挂着的推理，不是跨网络的点对点。</span>
+        </button>
+        <p class="narrow-arrow">回答回来了</p>
+        <button type="button" class="card" id="bill" data-tags="request billing" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">数清用量再扣额度</span>
+          <span class="line">数一数这次用了多少 token（问题和回答都算），算出费用，从额度里扣。</span>
+        </button>
+        <p class="narrow-arrow">然后把回答送回</p>
+        <button type="button" class="card" id="respond" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="card-title">把回答送回去</span>
+          <span class="line">回答回到调用方，并带一个编号，方便以后对上这一次。</span>
+        </button>
+        <p class="narrow-arrow">把回答送回给上面的用户或工具</p>
       </div>
-    </article>
-
-    <p class="phase back">响应回到客户或工具。Server 会加上 x-request-id。</p>
-
-    <article class="step s9">
-      <button type="button" class="step-btn" data-step="s9" aria-pressed="false" aria-controls="detail">
-        <span class="idx">09</span>
-        <span class="copy">
-          <span class="title">返回响应</span>
-          <span class="sub">proxy_handler 返回 ProxyResult.response，并带上 x-request-id。</span>
-          <span class="path">proxy_handler() · ProxyResult.response</span>
-        </span>
-      </button>
-      <div class="chips">
-        <a href="l1.html#interfaces">interfaces · 入口</a>
-        <a href="l1.html#traffic">traffic · 转发</a>
-      </div>
-    </article>
-  </div>
-
-  <p class="note">键盘：Tab 到某一步，Enter 打开说明；在步骤按钮上用上下方向键移动。Esc 回到总览。领域名是单独的链接。</p>
-
-  <div id="detail" aria-live="polite">
-    <section class="pane is-on" data-pane="overview">
-      <h2>先看整条主线</h2>
-      <p>这次请求没有自己的路由登记。数据面 <code>create_router_app_with_route_miss()</code> 把 <code>/v1/chat/completions</code> 和其它没单独登记的路径一起交给 <code>.fallback(proxy_handler)</code>。这是有意的设计。</p>
-      <p>trust 领域不在这九步里。它的唯一 crate 是本地推理进程管理，只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖。这一点是直读。<a href="l1.html#trust">到 L1 看 trust</a>。</p>
-      <p class="note">点上面任意一步、客户、上游或本机节点，这里会换成它的路径和函数。</p>
     </section>
 
-    <section class="pane" data-pane="s1" hidden>
+    <div class="col-right" id="col-right">
+      <section class="group" id="grp-up" aria-labelledby="up-title">
+        <div class="group-head">
+          <h2 id="up-title">仓库外 · 上游模型</h2>
+        </div>
+        <p class="narrow-arrow">网关把请求发到这里</p>
+        <button type="button" class="card" id="upstream" data-tags="request" aria-pressed="false" aria-controls="panel">
+          <span class="badge out">仓库外</span>
+          <span class="card-title">上游模型</span>
+          <span class="line">真正把回答写出来的服务。</span>
+        </button>
+      </section>
+      <section class="group" id="grp-db" aria-labelledby="db-title">
+        <div class="group-head">
+          <h2 id="db-title">底座 · 额度和日志的库</h2>
+        </div>
+        <p class="narrow-arrow">扣掉的额度和这次记录写进库</p>
+        <button type="button" class="card" id="db" data-tags="billing" aria-pressed="false" aria-controls="panel">
+          <span class="badge">底座</span>
+          <span class="card-title">额度和日志的库</span>
+          <span class="line">扣掉的额度，和这次请求的记录，写在这里。</span>
+        </button>
+      </section>
+    </div>
+  </div>
+
+  <section class="group wip-group" aria-labelledby="wip-title">
+    <div class="group-head">
+      <h2 id="wip-title">开发中</h2>
+      <p>没有接在上面的箭头上，不能当成已经跑通的流程。</p>
+    </div>
+    <div class="wip-row">
+      <button type="button" class="card wip" id="wip-p2p" data-tags="wip" aria-pressed="false" aria-controls="panel">
+        <span class="badge wip">开发中</span>
+        <span class="card-title">点对点直连</span>
+        <span class="line">还没接通。仓库里只有界面上的一句文案，没有真正的跨网络直连。</span>
+      </button>
+      <button type="button" class="card wip" id="wip-source" data-tags="wip" aria-pressed="false" aria-controls="panel">
+        <span class="badge wip">开发中</span>
+        <span class="card-title">显示源头地址</span>
+        <span class="line">还没接通。没有找到显示回答从哪来的实现。</span>
+      </button>
+      <button type="button" class="card wip" id="wip-market" data-tags="wip" aria-pressed="false" aria-controls="panel">
+        <span class="badge wip">开发中</span>
+        <span class="card-title">算力和额度的市场</span>
+        <span class="line">还没接通。界面写死了 6 个模型，没有真正的交易后台。</span>
+      </button>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <p>本地推理不在这几步的主线上。<a href="l1.html#trust">到领域图看本地推理</a>。开发中的三件事没有接上箭头。</p>
+    <p>事实来自 burncloud/burncloud 的 main 提交 <a href="https://github.com/burncloud/burncloud/commit/879e5276b0ed24c3164ec05750d4f44339e92663"><code>879e5276b0ed24c3164ec05750d4f44339e92663</code></a>。标成「推断 · 待确认」的，是对照代码结构做的推理，不是已经核对过的事实。</p>
+  </footer>
+</div>
+
+<aside id="panel" role="dialog" aria-modal="false" aria-labelledby="panel-title" hidden>
+  <div class="panel-bar">
+    <h2 id="panel-title"></h2>
+    <button type="button" id="panel-close">关闭</button>
+  </div>
+  <div id="panel-body" aria-live="polite"></div>
+</aside>
+
+<div id="library">
+  <article id="fact-boot1" data-title="把程序跑起来">
+    <p>这一步只在程序启动时做一次，不是每次有人发对话都重来。程序从这里跑起来，读它要听哪个地址，并准备好自己内部用的钥匙。</p>
+    <p><a href="l1.html#interfaces">到领域图看「入口」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>01 程序入口</h2>
-      <h3>路径与函数</h3>
+      <p>对应领域：入口（interfaces）。crate：根包 <code>burncloud</code>，路径 <code>crates/interfaces/cli</code>。</p>
+      <h4>路径与函数</h4>
       <ul>
         <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/cli/src/main.rs"><code>crates/interfaces/cli/src/main.rs</code></a> · <code>main()</code></li>
         <li>根 <code>Cargo.toml</code> 的 <code>[[bin]] name = "burncloud"</code> 指向这个文件。</li>
@@ -535,30 +616,51 @@ button.ghost, a.ghost {
         <li><code>ensure_runtime_secrets()</code> 生成 <code>MASTER_KEY</code>、<code>JWT_SECRET</code>、<code>BURNCLOUD_INTERNAL_SECRET</code>，并写进 <code>.env</code>。</li>
         <li>默认地址：HOST 默认 <code>127.0.0.1</code>（main.rs）；PORT 默认 <code>3000</code>（<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/common/src/constants.rs"><code>crates/interfaces/common/src/constants.rs</code></a> 的 <code>DEFAULT_PORT</code>）。</li>
       </ul>
-    </section>
+      <h4>其他入口</h4>
+      <p>这些能把程序拉起来，但不是这一次 <code>POST /v1/chat/completions</code> 的步骤。直读。</p>
+      <ul>
+        <li><code>burncloud client</code>：桌面 GUI，只支持 Windows / macOS。</li>
+        <li>不带参数：GUI + 后台 server，或无界面 LiveView server。见上面的 <code>launch_gui_with_tray()</code>。</li>
+        <li>其余子命令在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/cli/src/cli/commands.rs"><code>crates/interfaces/cli/src/cli/commands.rs</code></a>：<code>code</code>、<code>update</code>、<code>install</code>、<code>bundle</code>、<code>channel</code>、<code>price</code>、<code>token</code>、<code>protocol</code>、<code>currency</code>、<code>user</code>、<code>log</code>、<code>monitor</code> 等。</li>
+        <li>环境变量 <code>BURNCLOUD_NODE_TEST_API</code> 打开时会额外挂载测试用的 Node 路由（<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/node_test.rs"><code>crates/interfaces/server/src/node_test.rs</code></a>）。</li>
+      </ul>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="s2" hidden>
+  <article id="fact-boot2" data-title="打开端口等人来">
+    <p>还是只在启动时做一次。数据库准备好，端口打开，本机上的推理运行时一起待命，然后才开始接外面的请求。</p>
+    <p><a href="l1.html#interfaces">到领域图看「入口」</a> · <a href="l1.html#platform">「底座」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>02 Server 启动</h2>
-      <h3>路径与函数</h3>
+      <p>对应领域：入口（interfaces）的 <code>burncloud-server</code>。这一步用到底座（platform）的 <code>burncloud-database</code>、<code>burncloud-node-runtime</code>，以及转发（traffic）里的路由库初始化。</p>
+      <h4>路径与函数</h4>
       <ul>
         <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/lib.rs"><code>crates/interfaces/server/src/lib.rs</code></a> · <code>start_server()</code> → <code>create_app()</code> → <code>create_app_with_node_request_state()</code></li>
         <li>依次做：<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>create_default_database()</code></a>（<code>crates/platform/storage/database/src/database.rs</code> 第 324 行）、<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/storage/mod.rs#L67"><code>RouterDatabase::init</code></a>（<code>crates/traffic/router/src/storage/mod.rs</code> 第 67 行）、启动 <code>NodeRuntime</code>、<code>TcpListener::bind</code>，最后 <code>axum::serve</code>。</li>
       </ul>
-    </section>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="client" hidden>
+  <article id="fact-client" data-title="用户或工具">
+    <p>调用方不在这个仓库里。可能是人用的聊天软件，也可能是脚本或别的工具。它把一次对话请求发到网关。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>客户或工具</h2>
-      <p>调用方在 burncloud 仓库外面。素材没有给出客户、脚本或 IDE 插件的路径，所以这里不编一个。</p>
-      <p>它发出的是 <code>POST /v1/chat/completions</code>，在步骤 03 进入网关。</p>
-      <p>本仓库里相关、但不是这次请求本身的程序入口，写在页面下方「其他入口」。</p>
-    </section>
+      <p>仓库外。没有对应的领域或 crate。素材没有给出客户、脚本或 IDE 插件的路径，所以这里不编一个。</p>
+      <p>它发出的是 <code>POST /v1/chat/completions</code>，由「接住这次对话请求」进入网关。</p>
+      <p>本仓库里相关、但不是这次请求本身的程序入口，写在「把程序跑起来」的其他入口里。</p>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="s3" hidden>
+  <article id="fact-recv" data-title="接住这次对话请求">
+    <p>网关接住这次对话。这条地址没有自己的挂号，凡是没单独挂号的请求，都进到同一步处理。这是有意这样设计的。</p>
+    <p><a href="l1.html#interfaces">到领域图看「入口」</a> · <a href="l1.html#traffic">「转发」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>03 HTTP 路由注册</h2>
-      <h3>Server 层</h3>
+      <p>对应领域：入口（interfaces）的 <code>burncloud-server</code> 把其余请求交给转发（traffic）的 <code>burncloud-router</code>。</p>
+      <h4>Server 层</h4>
       <p>同一个文件里的 <code>create_app_with_node_request_state</code>，按这个顺序挂载：</p>
       <ol>
         <li><code>/health</code></li>
@@ -569,7 +671,7 @@ button.ghost, a.ghost {
         <li><code>fallback_service(router_app)</code>，其余请求交给数据面</li>
       </ol>
       <p>全局还有一层 <code>api::auth::security_boundary_middleware</code>（<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/api/auth.rs"><code>crates/interfaces/server/src/api/auth.rs</code></a>）。注释写明：控制台 JWT 不能当推理凭证用；敏感的内部 POST 必须带 <code>BURNCLOUD_INTERNAL_SECRET</code>。</p>
-      <h3>数据面</h3>
+      <h4>数据面</h4>
       <p><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/lib.rs"><code>crates/traffic/router/src/lib.rs</code></a> · <code>create_router_app_with_route_miss()</code> 登记了：</p>
       <ul>
         <li><code>/v1/models</code></li>
@@ -579,143 +681,247 @@ button.ghost, a.ghost {
         <li><code>/console/internal/prices/sync</code></li>
         <li><code>/console/internal/circuit-breaker/trip-all</code></li>
       </ul>
-      <p>其余路径，包括 <code>/v1/chat/completions</code>，都走 <code>.fallback(proxy_handler)</code>。代码里没有单独为 chat/completions 注册的路由。</p>
-    </section>
+      <p>其余路径，包括 <code>/v1/chat/completions</code>，都走 <code>.fallback(proxy_handler)</code>。代码里没有单独为 chat/completions 注册的路由。这是有意的设计，不是缺失。</p>
+      <p>trust 领域不在这次请求的步骤里。它的唯一 crate 是本地推理进程管理，只被 <code>burncloud-service</code> 依赖，而 <code>burncloud-service</code> 没有被任何 crate 依赖。这一点是直读。<a href="l1.html#trust">到领域图看本地推理</a>。</p>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="s4" hidden>
+  <article id="fact-auth" data-title="检查调用方的密钥">
+    <p>网关取出调用方带来的密钥，核对是谁。密钥就是用来证明身份的一串字符。</p>
+    <p><a href="l1.html#identity">到领域图看「身份」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>04 鉴权</h2>
+      <p>对应领域：身份（identity）。crate：<code>burncloud-identity-token</code>。调用发生在转发（traffic）的 <code>burncloud-router</code>。</p>
       <ul>
         <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/lib.rs"><code>crates/traffic/router/src/lib.rs</code></a> · <code>proxy_handler()</code></li>
         <li>依次从 <code>Authorization: Bearer</code>、<code>x-api-key</code>、<code>x-goog-api-key</code> 取 token，取不到就返回 401。</li>
         <li>然后调用 <code>RouterDatabase::validate_token_and_get_info</code>（<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/storage/mod.rs"><code>crates/traffic/router/src/storage/mod.rs</code></a>），内部转调 <code>burncloud_identity_token::TokenService::active_api_key_identity</code>。</li>
         <li>查不到时退回 <code>validate_token_detailed</code>，旧 token 表还会尝试 JWT 校验。</li>
       </ul>
-    </section>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="s5" hidden>
+  <article id="fact-reject-key" data-title="密钥不对">
+    <p>这不是另一步工作，是核对没通过的结果。没带密钥，或对不上，请求就停在这里，不会去挑上游。</p>
+    <p><a href="l1.html#identity">到领域图看「身份」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>05 计费预检</h2>
+      <p>不是单独的 crate。结果来自「检查调用方的密钥」：取不到 token 就返回 401。对应领域仍是身份（identity）的 <code>burncloud-identity-token</code>，调用点在转发的 <code>proxy_handler()</code>。</p>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/lib.rs"><code>crates/traffic/router/src/lib.rs</code></a> · <code>proxy_handler()</code></li>
+        <li>依次从 <code>Authorization: Bearer</code>、<code>x-api-key</code>、<code>x-goog-api-key</code> 取 token，取不到就返回 401。</li>
+      </ul>
+    </div>
+  </article>
+
+  <article id="fact-price" data-title="先查有没有标价">
+    <p>在真正发出去之前，先看这个模型有没有定价，用来估计稍后要扣多少。看的是有没有标价。</p>
+    <p><a href="l1.html#commerce">到领域图看「计费」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>对应领域：计费（commerce）。crate：<code>burncloud-commerce-billing</code>。调用发生在转发（traffic）的 <code>proxy_logic()</code>。</p>
       <ul>
         <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/lib.rs"><code>crates/traffic/router/src/lib.rs</code></a> · <code>proxy_logic()</code> 内的 <code>state.cost_calculator.preflight(model, None)</code></li>
         <li><code>CostCalculator</code> 来自 <code>burncloud_commerce_billing</code>。</li>
         <li>严格模式下查不到价格直接返回 400；非严格模式只打警告（见 <code>create_router_app_with_route_miss</code> 里的注释）。</li>
       </ul>
-    </section>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="s6" hidden>
+  <article id="fact-reject-price" data-title="没有标价就拒绝">
+    <p>这也是结果，不是另一个模块。只有被设置成必须有定价时，查不到才会拒绝。没这么规定，就只记一笔警告，请求还继续。</p>
+    <p><a href="l1.html#commerce">到领域图看「计费」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>06 路由 / 选上游</h2>
+      <p>不是单独的 crate。结果来自「先查有没有标价」：严格模式返回 400。对应领域：计费（commerce）的 <code>burncloud-commerce-billing</code>。</p>
+      <ul>
+        <li>严格模式下查不到价格直接返回 400；非严格模式只打警告（见 <code>create_router_app_with_route_miss</code> 里的注释）。</li>
+        <li><code>state.cost_calculator.preflight(model, None)</code></li>
+      </ul>
+    </div>
+  </article>
+
+  <article id="fact-pick" data-title="挑一个上游">
+    <p>上游就是仓库外面、真正把回答写出来的服务。供给这一侧列出谁能做这个模型，转发这一侧来挑一个。</p>
+    <p><a href="l1.html#traffic">到领域图看「转发」</a> · <a href="l1.html#supply">「供给」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>对应领域：转发（traffic）的 <code>burncloud-router</code> 做路由决定；供给（supply）的 <code>burncloud-supply-channel</code> 提供候选。</p>
       <ul>
         <li><code>proxy_logic()</code> 调用 <code>state.model_router.route_for_dispatch(RouteInputs{..})</code>（<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/model_router.rs"><code>crates/traffic/router/src/model_router.rs</code></a>），里面再调 <code>route_with_scheduler()</code>。</li>
         <li>调度分为 strict 和 legacy。相关模块：<code>crates/traffic/router/src/scheduler/</code>（strict / passthrough / combined）和 <code>balancer/</code>。</li>
         <li>候选渠道通过 <code>burncloud_supply_channel::ChannelService</code> 查 <code>channel_abilities</code>。代码注释原话：Supply 拥有查询，Traffic 拥有路由决策。</li>
         <li>没有候选时，调用 server 注入的 <code>route_miss_responder</code> → <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/node_request.rs"><code>crates/interfaces/server/src/node_request.rs</code></a> · <code>route_miss_response()</code>。如果本机 Node 正在准备这个模型，返回 “model preparing”。</li>
       </ul>
-    </section>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="s7" hidden>
+  <article id="fact-no-up" data-title="没有可用上游">
+    <p>一个能用的上游都没有，就给调用方返回错误。如果这台机器正在准备这个模型，就改为告诉对方还在准备。</p>
+    <p><a href="l1.html#traffic">到领域图看「转发」</a> · <a href="l1.html#interfaces">「入口」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>07 适配器 + 调上游</h2>
+      <p>不是单独的 crate。没有候选时，转发调用入口（interfaces）<code>burncloud-server</code> 注入的 <code>route_miss_responder</code>。</p>
+      <ul>
+        <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/node_request.rs"><code>crates/interfaces/server/src/node_request.rs</code></a> · <code>route_miss_response()</code></li>
+        <li>如果本机 Node 正在准备这个模型，返回 “model preparing”。</li>
+      </ul>
+    </div>
+  </article>
+
+  <article id="fact-send" data-title="按对方的格式发出">
+    <p>挑好之后，按对方听得懂的格式把请求送出去。有的上游可以原样转交，有的要先翻译一层。</p>
+    <p><a href="l1.html#traffic">到领域图看「转发」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>对应领域：转发（traffic）。crate：<code>burncloud-router</code>。</p>
       <p><code>proxy_logic()</code> 按 <code>upstream.protocol</code> 把请求映射成 <code>ChannelType</code>（claude / gemini / vertex / zai，其余按 OpenAI 处理）。有两条发往上游的路径：</p>
       <ul>
         <li>透传：<code>passthrough.rs</code>，比如 <code>build_gemini_passthrough_url</code>。</li>
         <li>转换：<code>state.adaptor_factory.get_adaptor(...)</code>。适配器在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/adaptor"><code>crates/traffic/router/src/adaptor/</code></a>（claude / gemini / vertex / zai / dynamic / factory）。</li>
       </ul>
       <p>两条路径都由 reqwest 的 <code>req_builder.send()</code> 发出。失败时走重试、熔断和 failover，相关文件是 <code>circuit_breaker.rs</code>、<code>smart_circuit_breaker.rs</code>、<code>channel_health_manager.rs</code>。</p>
-      <p>本机节点是另一条旁支，见下方虚线卡片，不和上游模型画成同一条已接通的箭头。</p>
-    </section>
+      <p>本机节点是另一条旁支，见「本机推理节点」，不和上游模型画成同一条已接通的箭头。</p>
+      <h4>留给 L2、L3</h4>
+      <p><code>proxy_logic</code> 很长，素材注明大约从 <code>lib.rs</code> 第 2238 行到第 5330 行。本页只取主干。重试、限流（<code>limiter.rs</code>、<code>aimd_limiter.rs</code>、<code>rate_budget.rs</code>）、亲和（<code>affinity.rs</code>）的细节不在这张图上。</p>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="up" hidden>
+  <article id="fact-retry" data-title="重试或换一个">
+    <p>上游没有正常答上来时，网关会再试，或者换一个还能用的上游。这是已经有的失败处理。</p>
+    <p><a href="l1.html#traffic">到领域图看「转发」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>上游模型</h2>
-      <p>上游在 burncloud 仓库之外，素材没有上游服务自己的路径。</p>
-      <p>网关侧的发送点：<code>passthrough.rs</code>（例如 <code>build_gemini_passthrough_url</code>）和 <code>crates/traffic/router/src/adaptor/</code>。两条都由 reqwest 的 <code>req_builder.send()</code> 发出。</p>
-      <p>协议映射：claude / gemini / vertex / zai，其余按 OpenAI。</p>
-    </section>
+      <p>不是单独的 crate。对应领域：转发（traffic）的 <code>burncloud-router</code>。失败时走重试、熔断和 failover。</p>
+      <ul>
+        <li><code>circuit_breaker.rs</code></li>
+        <li><code>smart_circuit_breaker.rs</code></li>
+        <li><code>channel_health_manager.rs</code></li>
+      </ul>
+      <p>限流（<code>limiter.rs</code>、<code>aimd_limiter.rs</code>、<code>rate_budget.rs</code>）和亲和（<code>affinity.rs</code>）的细节留给 L2、L3，不在这张图上。</p>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="local" hidden>
+  <article id="fact-local" data-title="本机推理节点">
+    <p class="badge infer">推断 · 待确认</p>
+    <p>请求也可以交给本机上挂着的推理节点。它是本机节点，不是跨网络的点对点。代码能确认有这条旁支；它是不是和网关同一个进程，还要再确认。这张图不把它画成已经接通的跨网络直连，也不把它标成开发中。</p>
+    <p><a href="l1.html#traffic">到领域图看「转发」</a> · <a href="l1.html#platform">「底座」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge infer">推断 · 待确认</p>
-      <h2>本机挂载的推理节点</h2>
       <p>这条旁支的代码是直读到的。推断的只有一件事：它是不是同一个进程里的本地节点。素材写明画图前要再确认，也写明看不出它和「跨网络 P2P 直连源头」有关。本页不把它画成 P2P，也不标成「开发中」——要不要在 L2 标成开发中，素材留给总监确认。</p>
-      <h3>路径与函数</h3>
+      <p>对应领域：转发（traffic）的 <code>burncloud-router</code>（<code>local_dispatch</code> / <code>local_attachment</code>），以及底座（platform）的 <code>burncloud-node-runtime</code>（<code>crates/platform/node</code>）。入口（interfaces）的 <code>crates/interfaces/server/src/node_*.rs</code> 也参与本机节点。</p>
+      <h4>路径与函数</h4>
       <ul>
         <li><code>local_dispatch::LocalExchange</code> / <code>local_attachment*.rs</code>，路径在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/traffic/router/src/local_dispatch.rs"><code>crates/traffic/router/src/local_dispatch.rs</code></a> 和 <code>crates/traffic/router/src/local_attachment*.rs</code>。它把请求交给本机挂载的推理节点。</li>
         <li><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/node"><code>crates/platform/node</code></a>：注释写明它不监听端口、不起第二个 HTTP server，只负责本机 Node 的运行时生命周期。</li>
         <li><code>crates/interfaces/server/src/node_*.rs</code></li>
       </ul>
-    </section>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="s8" hidden>
+  <article id="fact-upstream" data-title="上游模型">
+    <p>真正写出回答的服务在仓库外面。网关只负责把请求送到它，再把回答接回来。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>08 用量统计与计费结算</h2>
-      <p>发生在 <code>proxy_handler()</code> 里，<code>proxy_logic</code> 返回之后。</p>
+      <p>仓库外。没有对应的领域或 crate。素材没有上游服务自己的路径。</p>
+      <p>网关侧的发送点在转发（traffic）的 <code>burncloud-router</code>：<code>passthrough.rs</code>（例如 <code>build_gemini_passthrough_url</code>）和 <code>crates/traffic/router/src/adaptor/</code>。两条都由 reqwest 的 <code>req_builder.send()</code> 发出。</p>
+      <p>协议映射：claude / gemini / vertex / zai，其余按 OpenAI。</p>
+    </div>
+  </article>
+
+  <article id="fact-bill" data-title="数清用量再扣额度">
+    <p>回答回来之后，数一数这次用了多少 token（问题和回答都算），算出费用，从调用方的额度里扣掉，并记下这次请求。</p>
+    <p><a href="l1.html#commerce">到领域图看「计费」</a> · <a href="l1.html#identity">「身份」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>对应领域：计费（commerce）的 <code>burncloud-commerce-billing</code>，以及身份（identity）的 <code>burncloud-identity-token</code>。调用在转发（traffic）的 <code>proxy_handler()</code> 里，<code>proxy_logic</code> 返回之后。写入底座的库见「额度和日志的库」。</p>
       <ul>
         <li><code>UnifiedTokenCounter</code>（<code>token_counter.rs</code>）统计用量。</li>
         <li><code>cost_calculator.calculate(...)</code> 算出纳美元成本。</li>
         <li><code>RouterDatabase::deduct_quota</code>，内部转调 <code>burncloud_identity_token::TokenService::deduct_quota</code> 扣额度。</li>
         <li>生成 <code>RouterLog</code> 后发到 <code>state.log_tx</code>，由后台任务 <code>RouterDatabase::insert_log</code> 写库（在 <code>create_router_app_with_route_miss</code> 里 spawn）。</li>
       </ul>
-    </section>
+    </div>
+  </article>
 
-    <section class="pane" data-pane="s9" hidden>
+  <article id="fact-db" data-title="额度和日志的库">
+    <p>扣掉的额度，还有这次请求的记录，写进底座里的库。库在这个仓库里，是底座的一部分。</p>
+    <p><a href="l1.html#platform">到领域图看「底座」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
       <p class="badge read">直读</p>
-      <h2>09 返回响应</h2>
+      <p>对应领域：底座（platform）。crate：<code>burncloud-database</code>，路径 <code>crates/platform/storage/database</code>。写入由转发（traffic）的 <code>RouterDatabase</code> 完成，不是一个独立的新步骤。</p>
+      <ul>
+        <li><code>RouterDatabase::deduct_quota</code>，内部转调 <code>burncloud_identity_token::TokenService::deduct_quota</code> 扣额度。</li>
+        <li>生成 <code>RouterLog</code> 后发到 <code>state.log_tx</code>，由后台任务 <code>RouterDatabase::insert_log</code> 写库（在 <code>create_router_app_with_route_miss</code> 里 spawn）。</li>
+        <li>启动时的 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/platform/storage/database/src/database.rs#L324"><code>create_default_database()</code></a> 在「打开端口等人来」。</li>
+      </ul>
+    </div>
+  </article>
+
+  <article id="fact-respond" data-title="把回答送回去">
+    <p>最后把回答送回调用方，并附上一个编号，方便以后查出就是这一次。</p>
+    <p><a href="l1.html#traffic">到领域图看「转发」</a> · <a href="l1.html#interfaces">「入口」</a></p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge read">直读</p>
+      <p>对应领域：转发（traffic）的 <code>burncloud-router</code> 返回响应；入口（interfaces）的 <code>burncloud-server</code> 加上请求编号。</p>
       <ul>
         <li><code>proxy_handler</code> 返回 <code>ProxyResult.response</code>。</li>
         <li>Server 层的 <code>SetRequestIdLayer</code> 和 <code>PropagateRequestIdLayer</code> 会加上 <code>x-request-id</code>。</li>
       </ul>
-    </section>
-  </div>
-
-  <section class="section" aria-labelledby="wip-title">
-    <h2 id="wip-title">开发中，没有画成流程</h2>
-    <p class="note">这三件事不接在上面的箭头上。标成「开发中」只说明它们还不是这条已接通的请求主线。</p>
-    <div class="wip-grid">
-      <article class="wip-card">
-        <p class="badge wip">开发中</p>
-        <h3>P2P 直连</h3>
-        <p>整个 <code>crates/</code> 里只有一处，是 UI 页脚文案。<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client/src/domains/buyer/chat/page.rs#L169"><code>crates/interfaces/client/src/domains/buyer/chat/page.rs</code> 第 169 行</a>写着 “BurnCloud Gateway v2.4 · Verifiable P2P Decentralized Inference”。</p>
-        <p>根 <code>Cargo.toml</code> 的 keywords 里有 <code>"p2p"</code>，description 写的是 “A cross-platform file sharing and synchronization tool”，像是早期遗留。</p>
-        <p>后端没有找到任何 P2P、穿透（hole punch / NAT traversal）、peer 相关代码。</p>
-      </article>
-      <article class="wip-card">
-        <p class="badge wip">开发中</p>
-        <h3>源头地址显示</h3>
-        <p>没有搜到 <code>source_address</code> / 源头 之类的实现。素材没有路径可以标。</p>
-      </article>
-      <article class="wip-card">
-        <p class="badge wip">开发中</p>
-        <h3>GPU / Token 交易市场</h3>
-        <p>只在客户端 UI 里出现：<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client/src/domains/buyer/marketplace"><code>crates/interfaces/client/src/domains/buyer/marketplace/</code></a>（page、state、model、actions 等），路由 <code>/buyer/marketplace</code> 和 <code>/marketplace</code>（<code>app/router/routes.rs</code>），以及 i18n 文案。</p>
-        <p><code>/marketplace</code> 渲染的是 <code>PlaceholderPage { title: "Marketplace" }</code>。</p>
-        <p><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client/src/domains/buyer/marketplace/model.rs#L80"><code>crates/interfaces/client/src/domains/buyer/marketplace/model.rs</code> 第 80 行</a>是 <code>pub const MODEL_CATALOG: [MarketplaceModel; 6]</code>，6 个模型写死在客户端常量里。直读。<span class="badge infer">推断 · 待确认</span> 这 6 个模型是静态演示数据。</p>
-        <p>客户端以外只有 <code>crates/traffic/router/src/order_type.rs</code> 的注释用到 “Market order”，那是订单类型（Enterprise = 偏稳定），和交易市场无关。没有找到交易市场的后端 API。</p>
-      </article>
     </div>
-  </section>
+  </article>
 
-  <section class="section" aria-labelledby="entry-title">
-    <h2 id="entry-title">其他入口</h2>
-    <p class="note">这些能把程序拉起来，但不是这一次 <code>POST /v1/chat/completions</code> 的九步。直读。</p>
-    <ul class="entry-list">
-      <li><code>burncloud client</code>：桌面 GUI，只支持 Windows / macOS。</li>
-      <li>不带参数：GUI + 后台 server，或无界面 LiveView server。见步骤 01 的 <code>launch_gui_with_tray()</code>。</li>
-      <li>其余子命令在 <a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/cli/src/cli/commands.rs"><code>crates/interfaces/cli/src/cli/commands.rs</code></a>：<code>code</code>、<code>update</code>、<code>install</code>、<code>bundle</code>、<code>channel</code>、<code>price</code>、<code>token</code>、<code>protocol</code>、<code>currency</code>、<code>user</code>、<code>log</code>、<code>monitor</code> 等。</li>
-      <li>环境变量 <code>BURNCLOUD_NODE_TEST_API</code> 打开时会额外挂载测试用的 Node 路由（<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/server/src/node_test.rs"><code>crates/interfaces/server/src/node_test.rs</code></a>）。</li>
-    </ul>
-  </section>
+  <article id="fact-wip-p2p" data-title="点对点直连">
+    <p class="badge wip">开发中</p>
+    <p>还没有接通，所以图上不画箭头。仓库里能看到的，只是界面脚上一句文案，后端没有真正的跨网络直连。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge wip">开发中</p>
+      <p>不对应一条已接通的流程，没有可以画成工作流的 crate。</p>
+      <p>整个 <code>crates/</code> 里只有一处，是 UI 页脚文案。<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client/src/domains/buyer/chat/page.rs#L169"><code>crates/interfaces/client/src/domains/buyer/chat/page.rs</code> 第 169 行</a>写着 “BurnCloud Gateway v2.4 · Verifiable P2P Decentralized Inference”。</p>
+      <p>根 <code>Cargo.toml</code> 的 keywords 里有 <code>"p2p"</code>，description 写的是 “A cross-platform file sharing and synchronization tool”，像是早期遗留。</p>
+      <p>后端没有找到任何 P2P、穿透（hole punch / NAT traversal）、peer 相关代码。</p>
+    </div>
+  </article>
 
-  <section class="section" aria-labelledby="later-title">
-    <h2 id="later-title">留给 L2、L3 的部分</h2>
-    <p><code>proxy_logic</code> 很长，素材注明大约从 <code>lib.rs</code> 第 2238 行到第 5330 行。本页只取主干。重试、限流（<code>limiter.rs</code>、<code>aimd_limiter.rs</code>、<code>rate_budget.rs</code>）、亲和（<code>affinity.rs</code>）的细节不在这张图上。</p>
-  </section>
+  <article id="fact-wip-source" data-title="显示源头地址">
+    <p class="badge wip">开发中</p>
+    <p>还没有接通，所以图上不画箭头。没有找到显示回答从哪来的实现。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge wip">开发中</p>
+      <p>没有搜到 <code>source_address</code> / 源头 之类的实现。素材没有路径可以标。</p>
+    </div>
+  </article>
 
-  <footer class="foot">
-    <p>架构事实只来自 burncloud/burncloud 的 main 提交 <a href="https://github.com/burncloud/burncloud/commit/879e5276b0ed24c3164ec05750d4f44339e92663"><code>879e5276b0ed24c3164ec05750d4f44339e92663</code></a>。标注「推断 · 待确认」的句子是素材里的推理，不是已经核对过的事实。dev-dependencies 没有画进这张图。</p>
-  </footer>
+  <article id="fact-wip-market" data-title="算力和额度的市场">
+    <p class="badge wip">开发中</p>
+    <p>还没有接通，所以图上不画箭头。界面上有一份写死的模型名单，没有真正的交易后台。</p>
+    <div class="dev">
+      <h3>给开发者看</h3>
+      <p class="badge wip">开发中</p>
+      <p>只在客户端 UI 里出现，对应入口（interfaces）的 <code>burncloud-client</code>。没有交易市场的后端 API，所以不是底座或计费里的一条已接通流程。</p>
+      <p>只在客户端 UI 里出现：<a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client/src/domains/buyer/marketplace"><code>crates/interfaces/client/src/domains/buyer/marketplace/</code></a>（page、state、model、actions 等），路由 <code>/buyer/marketplace</code> 和 <code>/marketplace</code>（<code>app/router/routes.rs</code>），以及 i18n 文案。</p>
+      <p><code>/marketplace</code> 渲染的是 <code>PlaceholderPage { title: "Marketplace" }</code>。</p>
+      <p><a href="https://github.com/burncloud/burncloud/blob/879e5276b0ed24c3164ec05750d4f44339e92663/crates/interfaces/client/src/domains/buyer/marketplace/model.rs#L80"><code>crates/interfaces/client/src/domains/buyer/marketplace/model.rs</code> 第 80 行</a>是 <code>pub const MODEL_CATALOG: [MarketplaceModel; 6]</code>，6 个模型写死在客户端常量里。直读。<span class="badge infer">推断 · 待确认</span> 这 6 个模型是静态演示数据。</p>
+      <p>客户端以外只有 <code>crates/traffic/router/src/order_type.rs</code> 的注释用到 “Market order”，那是订单类型（Enterprise = 偏稳定），和交易市场无关。没有找到交易市场的后端 API。</p>
+    </div>
+  </article>
 </div>
-<noscript><style>.pane[hidden]{display:block !important;border-top:1px solid var(--line);margin-top:12px;padding-top:12px}</style></noscript>
+<noscript><style>#library{display:block !important}#library article{display:block;margin:16px 0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card)}</style></noscript>
 <script>
 (function () {
   var root = document.documentElement;
@@ -726,7 +932,7 @@ button.ghost, a.ghost {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   }
   function paintTheme() {
-    themeBtn.textContent = effective() === "dark" ? "切换浅色" : "切换深色";
+    themeBtn.textContent = effective() === "dark" ? "浅色" : "深色";
   }
   themeBtn.addEventListener("click", function () {
     var next = effective() === "dark" ? "light" : "dark";
@@ -736,36 +942,333 @@ button.ghost, a.ghost {
   });
   paintTheme();
 
-  var buttons = Array.prototype.slice.call(document.querySelectorAll("[data-step]"));
-  var stepButtons = buttons.filter(function (b) { return b.classList.contains("step-btn"); });
-  function select(id) {
-    document.querySelectorAll(".pane").forEach(function (pane) {
-      var on = pane.getAttribute("data-pane") === id;
-      pane.hidden = !on;
-      pane.classList.toggle("is-on", on);
+  var panel = document.getElementById("panel");
+  var panelTitle = document.getElementById("panel-title");
+  var panelBody = document.getElementById("panel-body");
+  var panelClose = document.getElementById("panel-close");
+  var cards = Array.prototype.slice.call(document.querySelectorAll(".card"));
+  var lastFocus = null;
+  var filter = "all";
+
+  function park() {
+    if (panel.hidden) {
+      document.body.style.paddingBottom = "";
+      return;
+    }
+    if (window.innerWidth < 901) document.body.style.paddingBottom = (panel.offsetHeight + 28) + "px";
+    else document.body.style.paddingBottom = "";
+  }
+  function openFact(id) {
+    var src = document.getElementById("fact-" + id);
+    if (!src) return;
+    lastFocus = document.activeElement;
+    panelTitle.textContent = src.getAttribute("data-title") || "";
+    var clone = src.cloneNode(true);
+    clone.removeAttribute("id");
+    panelBody.replaceChildren(clone);
+    panel.hidden = false;
+    cards.forEach(function (c) {
+      c.setAttribute("aria-pressed", c.id === id ? "true" : "false");
     });
-    buttons.forEach(function (b) {
-      b.setAttribute("aria-pressed", b.getAttribute("data-step") === id ? "true" : "false");
+    park();
+  }
+  function closePanel() {
+    panel.hidden = true;
+    cards.forEach(function (c) { c.setAttribute("aria-pressed", "false"); });
+    park();
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  cards.forEach(function (card, i) {
+    card.addEventListener("click", function () { openFact(card.id); });
+    card.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      e.preventDefault();
+      var n = (e.key === "ArrowDown" || e.key === "ArrowRight") ? i + 1 : i - 1;
+      if (n < 0 || n >= cards.length) return;
+      cards[n].focus();
+      openFact(cards[n].id);
+    });
+  });
+  panelClose.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && !panel.hidden) closePanel();
+  });
+
+  var pills = Array.prototype.slice.call(document.querySelectorAll(".pills button"));
+  function applyFilter(name) {
+    filter = name;
+    pills.forEach(function (p) {
+      p.setAttribute("aria-checked", p.getAttribute("data-filter") === name ? "true" : "false");
+    });
+    document.querySelectorAll("[data-tags]").forEach(function (el) {
+      var tags = el.getAttribute("data-tags").split(/\s+/);
+      var on = name === "all" || tags.indexOf(name) !== -1;
+      el.classList.toggle("is-dim", !on);
     });
   }
-  buttons.forEach(function (b) {
-    b.addEventListener("click", function () { select(b.getAttribute("data-step")); });
-  });
-  stepButtons.forEach(function (b, i) {
-    b.addEventListener("keydown", function (e) {
-      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
+  pills.forEach(function (p, i) {
+    p.addEventListener("click", function () { applyFilter(p.getAttribute("data-filter")); });
+    p.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       e.preventDefault();
-      var n = e.key === "ArrowDown" ? i + 1 : i - 1;
-      if (n < 0 || n >= stepButtons.length) return;
-      stepButtons[n].focus();
-      select(stepButtons[n].getAttribute("data-step"));
+      var n = e.key === "ArrowRight" ? i + 1 : i - 1;
+      if (n < 0 || n >= pills.length) return;
+      pills[n].focus();
+      applyFilter(pills[n].getAttribute("data-filter"));
     });
   });
-  document.addEventListener("keydown", function (e) {
-    if (e.key === "Escape") {
-      select("overview");
+
+  function isWide() { return window.matchMedia("(min-width: 901px)").matches; }
+  function box(id) {
+    var el = document.getElementById(id);
+    var root = document.getElementById("cols");
+    var a = el.getBoundingClientRect();
+    var b = root.getBoundingClientRect();
+    return { x: a.left - b.left, y: a.top - b.top, w: a.width, h: a.height };
+  }
+  function port(b, side, t) {
+    if (side === "left") return { x: b.x, y: b.y + b.h * t, dx: -1, dy: 0 };
+    if (side === "right") return { x: b.x + b.w, y: b.y + b.h * t, dx: 1, dy: 0 };
+    if (side === "top") return { x: b.x + b.w * t, y: b.y, dx: 0, dy: -1 };
+    return { x: b.x + b.w * t, y: b.y + b.h, dx: 0, dy: 1 };
+  }
+  function link(a, b) {
+    var gap = 14;
+    var a1 = { x: a.x + a.dx * gap, y: a.y + a.dy * gap };
+    var b1 = { x: b.x + b.dx * gap, y: b.y + b.dy * gap };
+    var pts = [{ x: a.x, y: a.y }];
+    if (a.dy !== 0 && b.dy !== 0 && a.dy === -b.dy) {
+      var midy = (a1.y + b1.y) / 2;
+      pts.push({ x: a.x, y: midy });
+      pts.push({ x: b.x, y: midy });
+    } else if (a.dx !== 0 && b.dx !== 0) {
+      var midx = (a1.x + b1.x) / 2;
+      pts.push({ x: midx, y: a.y });
+      pts.push({ x: midx, y: b.y });
+    } else if (a.dx !== 0) {
+      pts.push({ x: b.x, y: a.y });
+    } else {
+      pts.push({ x: a.x, y: b.y });
     }
-  });
+    pts.push({ x: b.x, y: b.y });
+    return pts;
+  }
+  function clean(pts) {
+    var out = [];
+    pts.forEach(function (p) {
+      var last = out[out.length - 1];
+      if (!last || Math.hypot(last.x - p.x, last.y - p.y) > 0.5) out.push(p);
+    });
+    return out;
+  }
+  function pathOf(pts) {
+    pts = clean(pts);
+    if (pts.length < 2) return "";
+    var r = 12;
+    var d = "M " + pts[0].x.toFixed(1) + " " + pts[0].y.toFixed(1);
+    for (var i = 1; i < pts.length - 1; i++) {
+      var prev = pts[i - 1], cur = pts[i], next = pts[i + 1];
+      var v1x = cur.x - prev.x, v1y = cur.y - prev.y;
+      var v2x = next.x - cur.x, v2y = next.y - cur.y;
+      var l1 = Math.hypot(v1x, v1y) || 1;
+      var l2 = Math.hypot(v2x, v2y) || 1;
+      var rr = Math.min(r, l1 / 2, l2 / 2);
+      if (rr < 2) {
+        d += " L " + cur.x.toFixed(1) + " " + cur.y.toFixed(1);
+        continue;
+      }
+      var ax = cur.x - (v1x / l1) * rr, ay = cur.y - (v1y / l1) * rr;
+      var bx = cur.x + (v2x / l2) * rr, by = cur.y + (v2y / l2) * rr;
+      d += " L " + ax.toFixed(1) + " " + ay.toFixed(1);
+      d += " Q " + cur.x.toFixed(1) + " " + cur.y.toFixed(1) + " " + bx.toFixed(1) + " " + by.toFixed(1);
+    }
+    var last = pts[pts.length - 1];
+    d += " L " + last.x.toFixed(1) + " " + last.y.toFixed(1);
+    return d;
+  }
+  function simple(from, fs, ft, to, ts, tt) {
+    return function (B) { return link(port(B[from], fs, ft), port(B[to], ts, tt)); };
+  }
+  function routeFail(B) {
+    var u = B.upstream, r = B.retry;
+    var y1 = u.y + u.h * 0.78;
+    var y2 = r.y + r.h * 0.42;
+    var x = r.x + r.w + 10;
+    return [
+      { x: u.x, y: y1 },
+      { x: x, y: y1 },
+      { x: x, y: y2 },
+      { x: r.x + r.w, y: y2 }
+    ];
+  }
+  function routeLoop(B) {
+    var r = B.retry, p = B.pick, g = B["col-gw"];
+    var x = g.x + 11;
+    return [
+      { x: r.x, y: r.y + r.h * 0.5 },
+      { x: x, y: r.y + r.h * 0.5 },
+      { x: x, y: p.y + p.h * 0.72 },
+      { x: p.x, y: p.y + p.h * 0.72 }
+    ];
+  }
+  function routeLocal(B) {
+    var s = B.send, l = B.local, g = B["col-gw"];
+    var x = g.x + g.w - 8;
+    var y0 = s.y + s.h * 0.78;
+    var y1 = l.y + l.h * 0.45;
+    return [
+      { x: s.x + s.w, y: y0 },
+      { x: x, y: y0 },
+      { x: x, y: y1 },
+      { x: l.x + l.w, y: y1 }
+    ];
+  }
+  function routeBack(B) {
+    var u = B.upstream, b = B.bill, g = B["col-gw"];
+    var x = g.x + g.w + 22;
+    var y = b.y + b.h * 0.28;
+    return [
+      { x: u.x, y: u.y + u.h * 0.72 },
+      { x: x, y: u.y + u.h * 0.72 },
+      { x: x, y: y },
+      { x: b.x + b.w, y: y }
+    ];
+  }
+  function routeReturn(B) {
+    var o = B.respond, c = B.client;
+    var x = c.x + c.w * 0.5;
+    var y = o.y + o.h * 0.55;
+    return [
+      { x: o.x, y: y },
+      { x: x, y: y },
+      { x: x, y: c.y + c.h }
+    ];
+  }
+  var EDGES = [
+    { id: "in", tags: "request", to: "recv", label: "带着密钥发请求", kind: "main", pts: simple("client", "right", 0.5, "recv", "left", 0.45) },
+    { id: "s1", tags: "request", to: "auth", label: "", kind: "main", pts: simple("recv", "bottom", 0.5, "auth", "top", 0.5) },
+    { id: "badkey", tags: "request", to: "reject-key", label: "", kind: "main", pts: simple("auth", "right", 0.5, "reject-key", "left", 0.5) },
+    { id: "s2", tags: "request", to: "price", label: "", kind: "main", pts: simple("auth", "bottom", 0.5, "price", "top", 0.5) },
+    { id: "noprice", tags: "billing", to: "reject-price", label: "", kind: "main", pts: simple("price", "right", 0.5, "reject-price", "left", 0.5) },
+    { id: "s3", tags: "request billing", to: "pick", label: "", kind: "main", pts: simple("price", "bottom", 0.5, "pick", "top", 0.5) },
+    { id: "none", tags: "request", to: "no-up", label: "", kind: "main", pts: simple("pick", "right", 0.42, "no-up", "left", 0.5) },
+    { id: "s4", tags: "request", to: "send", label: "", kind: "main", pts: simple("pick", "bottom", 0.5, "send", "top", 0.5) },
+    { id: "go", tags: "request", to: "upstream", label: "把请求发出去", kind: "main", pts: simple("send", "right", 0.32, "upstream", "left", 0.42) },
+    { id: "fail", tags: "request", to: "retry", label: "上游失败", kind: "main", pts: routeFail },
+    { id: "loop", tags: "request", to: "pick", label: "回到挑选", kind: "main", pts: routeLoop },
+    { id: "side", tags: "request", to: "local", label: "交给本机", kind: "side", pts: routeLocal },
+    { id: "back", tags: "request billing", to: "bill", label: "回答回来了", kind: "main", pts: routeBack },
+    { id: "log", tags: "billing", to: "db", label: "扣额度、记日志", kind: "main", pts: simple("bill", "right", 0.72, "db", "left", 0.62) },
+    { id: "done", tags: "request billing", to: "respond", label: "", kind: "main", pts: simple("bill", "bottom", 0.5, "respond", "top", 0.5) },
+    { id: "ret", tags: "request", to: "client", label: "把回答送回", kind: "main", pts: routeReturn }
+  ];
+
+  function layoutRight() {
+    var upG = document.getElementById("grp-up");
+    var dbG = document.getElementById("grp-db");
+    var up = document.getElementById("upstream");
+    var db = document.getElementById("db");
+    var col = document.getElementById("col-right");
+    if (!isWide()) {
+      upG.style.top = "";
+      dbG.style.top = "";
+      return;
+    }
+    var send = document.getElementById("send").getBoundingClientRect();
+    var bill = document.getElementById("bill").getBoundingClientRect();
+    var colR = col.getBoundingClientRect();
+    var upTop = (send.top + send.height / 2) - colR.top - (up.offsetTop + up.offsetHeight / 2);
+    var dbTop = (bill.top + bill.height / 2) - colR.top - (db.offsetTop + db.offsetHeight / 2);
+    if (upTop < 0) upTop = 0;
+    if (dbTop < upTop + upG.offsetHeight + 14) dbTop = upTop + upG.offsetHeight + 14;
+    upG.style.top = upTop + "px";
+    dbG.style.top = dbTop + "px";
+  }
+
+  var svg = document.getElementById("wires");
+  var labelLayer = document.getElementById("labels");
+  var ns = "http://www.w3.org/2000/svg";
+  function draw() {
+    layoutRight();
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    labelLayer.replaceChildren();
+    if (!isWide()) return;
+    var cols = document.getElementById("cols");
+    svg.setAttribute("width", cols.clientWidth);
+    svg.setAttribute("height", cols.clientHeight);
+    svg.style.width = cols.clientWidth + "px";
+    svg.style.height = cols.clientHeight + "px";
+    var defs = document.createElementNS(ns, "defs");
+    defs.innerHTML = '<marker id="arrow" viewBox="0 0 10 8" refX="9" refY="4" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 4 L0 8 z"></path></marker>';
+    svg.appendChild(defs);
+    var B = {};
+    ["client","recv","auth","reject-key","price","reject-price","pick","no-up","send","retry","local","upstream","bill","db","respond","col-gw","col-client","col-right"].forEach(function (id) {
+      B[id] = box(id);
+    });
+    EDGES.forEach(function (edge) {
+      var pts = edge.pts(B);
+      var d = pathOf(pts);
+      if (!d) return;
+      var hit = document.createElementNS(ns, "path");
+      hit.setAttribute("d", d);
+      hit.setAttribute("class", "hit");
+      hit.addEventListener("click", function () { openFact(edge.to); });
+      svg.appendChild(hit);
+      var vis = document.createElementNS(ns, "path");
+      vis.setAttribute("d", d);
+      vis.setAttribute("class", "edge" + (edge.kind === "side" ? " side" : ""));
+      vis.setAttribute("marker-end", "url(#arrow)");
+      vis.setAttribute("data-tags", edge.tags);
+      svg.appendChild(vis);
+      if (!edge.label) return;
+      var cleanPts = clean(pts);
+      var best = 0, idx = 0;
+      for (var i = 0; i < cleanPts.length - 1; i++) {
+        var len = Math.hypot(cleanPts[i + 1].x - cleanPts[i].x, cleanPts[i + 1].y - cleanPts[i].y);
+        if (len > best) { best = len; idx = i; }
+      }
+      var p = cleanPts[idx], q = cleanPts[idx + 1];
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "edge-label";
+      btn.textContent = edge.label;
+      btn.setAttribute("data-tags", edge.tags);
+      var x = (p.x + q.x) / 2;
+      var y = (p.y + q.y) / 2;
+      if (Math.abs(q.x - p.x) >= Math.abs(q.y - p.y)) y -= 12;
+      else x += 16;
+      if (edge.id === "in") {
+        x = (B.client.x + B.client.w + B.recv.x) / 2;
+        y = B.recv.y + 10;
+      }
+      if (edge.id === "loop") {
+        x = B.pick.x + 28;
+        y = B.pick.y + B.pick.h + 16;
+      }
+      if (edge.id === "back") {
+        x = B["col-gw"].x + B["col-gw"].w + 36;
+        y = (B.upstream.y + B.upstream.h * 0.72 + B.bill.y) / 2;
+      }
+      btn.style.left = x + "px";
+      btn.style.top = y + "px";
+      btn.addEventListener("click", function () { openFact(edge.to); });
+      labelLayer.appendChild(btn);
+    });
+    applyFilter(filter);
+  }
+  var queued = false;
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () {
+      queued = false;
+      draw();
+    });
+  }
+  window.addEventListener("resize", schedule);
+  if (window.ResizeObserver) new ResizeObserver(schedule).observe(document.getElementById("cols"));
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  schedule();
 })();
 </script>
 </body>
